@@ -1,0 +1,25 @@
+{
+    "name": "dac-auth",
+    "version": "0.0.1",
+    "scripts": {
+        "start": "node index.js",
+        "test": "NODE_ENV=test mocha test/* -R spec"
+    },
+    "engines": {
+        "node": "0.10.21"
+    },
+    "dependencies": {
+        "express": "4.x.x",
+        "body-parser" : "1.0.x",
+        "mongoose": "3.x.x",
+        "mongoose-json-select": "0.2.x",
+        "forky": "0.0.x",
+        "nconf": "0.6.x",
+        "redis": "0.10.x"
+    },
+    "devDependencies": {
+        "mocha": "~1.15.1",
+        "should": "3.2.x",
+        "supertest": "0.9.x"
+    }
+}
