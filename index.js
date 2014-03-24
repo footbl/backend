@@ -15,7 +15,7 @@ nconf.defaults({
     'URI'            : 'http://localhost',
     'KEY'            : '-f-Z~Nyhq!3&oSP:Do@E(/pj>K)Tza%})Qh= pxJ{o9j)F2.*$+#n}XJ(iSKQnXf',
     'PASSWORD_SALT'  : 'MQE*zaHAVyt|nt#B&1RvN]`~exu@4&L/k a-,IS&Qz.|0`za~4YBqbNrL +L>J/0',
-    'TOKEN_SALT'    : 'rED/+_/g0`s=Zhb%=591SB.]lG;b}pOW$Gu0;IQ+2uHqW+S|Ou@p.IV^XxjJUM^L'
+    'TOKEN_SALT'     : 'rED/+_/g0`s=Zhb%=591SB.]lG;b}pOW$Gu0;IQ+2uHqW+S|Ou@p.IV^XxjJUM^L'
 });
 
 app = express();
