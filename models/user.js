@@ -67,7 +67,7 @@ schema.plugin(require('mongoose-json-select'), {
 schema.pre('save', function (next) {
     'use strict';
 
-    this.password = crypto.createHash('sha1').update(this.password + nconf.get('password-salt')).digest('hex');
+    this.password = crypto.createHash('sha1').update(this.password + nconf.get('PASSWORD_SALT')).digest('hex');
     return next();
 });
 
@@ -85,7 +85,7 @@ schema.statics.findByPassword = function (password) {
 
     var query;
     query = this.findOne();
-    password = crypto.createHash('sha1').update(password + nconf.get('password-salt')).digest('hex');
+    password = crypto.createHash('sha1').update(password + nconf.get('PASSWORD_SALT')).digest('hex');
 
     query.where('password').equals(password);
     return query;

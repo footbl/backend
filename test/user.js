@@ -9,7 +9,7 @@ nconf    = require('nconf');
 auth     = require('../lib/auth');
 
 beforeEach(function (done) {
-    mongoose.connect(nconf.get('mongo-uri'), function () {
+    mongoose.connect(nconf.get('MONGOHQ_URL'), function () {
         mongoose.connection.db.dropDatabase(done);
     });
 });

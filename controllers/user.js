@@ -37,7 +37,7 @@ router.get('/', function (request, response) {
 
     var query, page, pageSize;
     query    = User.find();
-    pageSize = nconf.get('page-size');
+    pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
     if (request.param('emails'))    {query.where('email').in(request.param('emails'));}
