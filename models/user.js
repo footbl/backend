@@ -48,6 +48,33 @@ schema = new Schema({
         'required' : true,
         'default' : 'user',
         'enum' : ['user', 'admin']
+    },
+    /** @property */
+    'ranking' : {
+        'type' : Number,
+        'required' : true,
+        'default' : Infinity
+    },
+    /** @property */
+    'wallet' : {
+        /** @property */
+        'available' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 100
+        },
+        /** @property */
+        'stake' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 0
+        },
+        /** @property */
+        'return' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 0
+        }
     }
 }, {
     'collection' : 'users'
@@ -57,7 +84,9 @@ schema.plugin(require('mongoose-json-select'), {
     'email'    : 1,
     'username' : 1,
     'password' : 0,
-    'picture'  : 1
+    'picture'  : 1,
+    'ranking'  : 1,
+    'wallet'   : 1
 });
 
 /**
