@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match,
-    user, guest, visitor, championship, match;
+    user, guest, visitor, championship, match, otherMatch;
 
 require('should');
 
@@ -46,6 +46,11 @@ describe('bet controller', function () {
     before(function (done) {
         match = new Match({'guest' : guest._id, 'visitor' : visitor._id, 'date' : new Date(), 'championship' : championship._id});
         match.save(done);
+    });
+
+    before(function (done) {
+        otherMatch = new Match({'guest' : guest._id, 'visitor' : visitor._id, 'date' : new Date(), 'championship' : championship._id});
+        otherMatch.save(done);
     });
 
     describe('create', function () {
@@ -130,6 +135,16 @@ describe('bet controller', function () {
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({date : new Date(), result : 'draw', bid : 50});
+            req = req.expect(500);
+            req.end(done);
+        });
+
+        it('should raise error with insufficient funds', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + otherMatch._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), result : 'draw', bid : 70});
             req = req.expect(500);
             req.end(done);
         });

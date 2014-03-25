@@ -5,10 +5,11 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var mongoose, Schema, schema;
+var mongoose, Schema, schema, User;
 
 mongoose = require('mongoose');
 Schema   = mongoose.Schema;
+User     = require('./user');
 
 /**
  * @class
@@ -45,9 +46,45 @@ schema = new Schema({
     'bid' : {
         'type' : Number,
         'required' : true
+    },
+    /** @property */
+    'reward' : {
+        'type' : Number,
+        'required' : true,
+        'default' : 0
     }
 }, {
     'collection' : 'bets'
+});
+
+/**
+ * @callback
+ * @summary Ensures sufficient funds
+ * When saving a bet, the system must ensure that the user have enough funds to perform the bet, and appends the bet in
+ * the user profile.
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    var query, bid, _id;
+    bid   = this.bid;
+    _id   = this._id;
+    query = User.findById(this.user);
+    query.populate('bets');
+
+    return query.exec(function (error, user) {
+        if (error) {return next(error);}
+        if (!user) {return next(new Error('user not found'));}
+        if (user.funds < bid) {return next(new Error('insufficient funds'));}
+
+        user.bets.push(_id);
+        return user.save(next);
+    });
 });
 
 /**

@@ -56,26 +56,10 @@ schema = new Schema({
         'default' : Infinity
     },
     /** @property */
-    'wallet' : {
-        /** @property */
-        'available' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 100
-        },
-        /** @property */
-        'stake' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        },
-        /** @property */
-        'return' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        }
-    }
+    'bets' : [{
+        'type' : Schema.Types.ObjectId,
+        'ref' : 'Bet'
+    }]
 }, {
     'collection' : 'users'
 });
@@ -86,7 +70,7 @@ schema.plugin(require('mongoose-json-select'), {
     'password' : 0,
     'picture'  : 1,
     'ranking'  : 1,
-    'wallet'   : 1
+    'bets'     : 0
 });
 
 /**
@@ -105,6 +89,23 @@ schema.pre('save', function (next) {
 
     this.password = crypto.createHash('sha1').update(this.password + nconf.get('PASSWORD_SALT')).digest('hex');
     return next();
+});
+
+/**
+ * @method
+ * @summary Calculates user available funds
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.virtual('funds').get(function () {
+    'use strict';
+
+    return this.bets.map(function (bet) {
+        return bet.reward - bet.bid;
+    }).reduce(function (funds, profit) {
+        return funds + profit;
+    }, nconf.get('INITIAL_FUNDS'));
 });
 
 /**
