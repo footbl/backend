@@ -102,7 +102,7 @@ describe('match controller', function () {
     });
 
     describe('list', function () {
-        it('should list valid credentials', function (done) {
+        it('should list with valid credentials', function (done) {
             var req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());

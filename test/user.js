@@ -20,119 +20,234 @@ describe('user controller', function () {
     describe('create', function () {
         describe('with invalid credentials', function () {
             it('should raise error without transactionId', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.transactionId = null;
-                request(app).post('/users').send(data).expect(401).end(done);
+
+                req = req.post('/users');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
 
             it('should raise error without timestamp', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.timestamp = null;
-                request(app).post('/users').send(data).expect(401).end(done);
+
+                req = req.post('/users');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
 
             it('should raise error without signature', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.signature = null;
-                request(app).post('/users').send(data).expect(401).end(done);
+
+                req = req.post('/users');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
 
             it('should raise error with invalid signature', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.signature = auth.credentials().signature;
-                request(app).post('/users').send(data).expect(401).end(done);
+
+                req = req.post('/users');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
         });
 
         it('should raise error without password', function (done) {
-            request(app).post('/users').send(auth.credentials()).expect(500).end(done);
+            var req = request(app);
+            req = req.post('/users');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(500);
+            req.end(done);
         });
 
         it('should create with valid credentials and password', function (done) {
-            request(app).post('/users').send(auth.credentials()).send({password : 'random password'}).expect(201).expect(function (response) {
+            var req = request(app);
+            req = req.post('/users');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({password : '1234'});
+            req = req.expect(201);
+            req = req.expect(function (response) {
                 response.body.should.have.property('_id');
-            }).end(done);
+            });
+            req.end(done);
         });
     });
 
     describe('search', function () {
-        describe('without filter', function () {
-            it('should return all users', function (done) {
-                request(app).get('/users').send(auth.credentials()).send({token : auth.token(user)}).expect(200).expect(function (response) {
-                    response.body.should.be.instanceOf(Array);
-                }).end(done);
+        it('should list with valid credentials', function (done) {
+            var req = request(app);
+            req = req.get('/users');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                });
             });
-        });
-
-        describe('filter by ids', function () {
-            it('should return the filtered user', function (done) {
-                request(app).get('/users').send(auth.credentials()).send({token : auth.token(user)}).send({ids : [user._id]}).expect(200).expect(function (response) {
-                    response.body.should.be.instanceOf(Array).and.have.lengthOf(1);
-                }).end(done);
-            });
+            req.end(done);
         });
     });
 
     describe('details', function () {
+        var id;
+
+        before(function (done) {
+            var req = request(app);
+            req = req.get('/users');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
         it('should raise error with invalid user id', function (done) {
-            request(app).get('/users/invalid').send(auth.credentials()).send({token : auth.token(user)}).expect(404).end(done);
+            var req = request(app);
+            req = req.get('/users/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
         });
 
         it('should return', function (done) {
-            request(app).get('/users/' + user._id).send(auth.credentials()).send({token : auth.token(user)}).expect(200).expect(function (response) {
+            var req = request(app);
+            req = req.get('/users/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
                 response.body.should.have.property('_id');
-            }).end(done);
+            });
+            req.end(done);
         });
     });
 
     describe('signin', function () {
         describe('with invalid credentials', function () {
             it('should raise error without transactionId', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.transactionId = null;
-                request(app).get('/users/me/session').send(data).expect(401).end(done);
+
+                req = req.get('/users/me/session');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
 
             it('should raise error without timestamp', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.timestamp = null;
-                request(app).get('/users/me/session').send(data).expect(401).end(done);
+
+                req = req.get('/users/me/session');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
 
             it('should raise error without signature', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.signature = null;
-                request(app).get('/users/me/session').send(data).expect(401).end(done);
+
+                req = req.get('/users/me/session');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
 
             it('should raise error with invalid signature', function (done) {
-                var data  = auth.credentials();
+                var data = auth.credentials();
+                var req  = request(app);
                 data.signature = auth.credentials().signature;
-                request(app).get('/users/me/session').send(data).expect(401).end(done);
+
+                req = req.get('/users/me/session');
+                req = req.send(data);
+                req = req.expect(401);
+                req.end(done);
             });
         });
 
         it('should signin with valid credentials', function (done) {
-            request(app).get('/users/me/session').send(auth.credentials()).send({'password' : '1234', '_id' : user._id}).expect(200).expect(function (response) {
+            var req = request(app);
+            req = req.get('/users/me/session');
+            req = req.send(auth.credentials());
+            req = req.send({'password' : '1234', '_id' : user._id});
+            req = req.expect(200);
+            req = req.expect(function (response) {
                 response.body.should.have.property('token');
-            }).end(done);
+            });
+            req.end(done);
         });
     });
 
     describe('update', function () {
-        it('should raise error with invalid user id', function (done) {
-            request(app).put('/users/invalid').send(auth.credentials()).send({token : auth.token(user)}).expect(404).end(done);
+        var id;
+
+        before(function (done) {
+            var req = request(app);
+            req = req.get('/users');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
+        it('should raise error with invalid id', function (done) {
+            var req = request(app);
+            req = req.put('/users/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({password : '1234', username : 'test'});
+            req = req.expect(404);
+            req.end(done);
         });
 
         it('should raise error without password', function (done) {
-            request(app).put('/users/' + user._id).send(auth.credentials()).send({token : auth.token(user)}).expect(500).end(done);
+            var req = request(app);
+            req = req.put('/users/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({username : 'test'});
+            req = req.expect(500);
+            req.end(done);
         });
 
         it('should update username', function (done) {
-            request(app).put('/users/' + user._id).send(auth.credentials()).send({token : auth.token(user)}).send({password : '1234', username : 'test'}).expect(200).expect(function (response) {
+            var req = request(app);
+            req = req.put('/users/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({username : 'test', password : '1234'});
+            req = req.expect(200);
+            req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('username').be.equal('test');
-            }).end(done);
+            });
+            req.end(done);
         });
     });
 });

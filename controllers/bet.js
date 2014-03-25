@@ -182,7 +182,7 @@ router.param('betId', function (request, response, next, id) {
     'use strict';
 
     var query;
-    query = Match.findOne();
+    query = Bet.findOne();
     query.where('_id').equals(id);
     query.where('match').equals(request.params.matchId);
     query.populate('match');

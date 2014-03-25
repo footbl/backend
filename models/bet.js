@@ -38,6 +38,7 @@ schema = new Schema({
     /** @property */
     'result' : {
         'type' : String,
+        'required' : true,
         'enum' : ['guest', 'visitor', 'draw']
     },
     /** @property */

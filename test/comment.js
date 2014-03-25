@@ -49,60 +49,205 @@ describe('comment controller', function () {
     });
 
     describe('create', function () {
+        it('should raise error with invalid match', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/invalid/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), message : 'good match!'});
+            req = req.expect(500);
+            req.end(done);
+        });
+
         it('should raise error without date', function (done) {
-            done();
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({message : 'good match!'});
+            req = req.expect(500);
+            req.end(done);
         });
 
         it('should raise error without message', function (done) {
-            done();
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date()});
+            req = req.expect(500);
+            req.end(done);
         });
 
-        it('should create with valid credentials, name, picture', function (done) {
-            done();
+        it('should create with valid credentials, date and message', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), message : 'good match!'});
+            req = req.expect(201);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('date');
+                response.body.should.have.property('message');
+            });
+            req.end(done);
         });
     });
 
     describe('list', function () {
         it('should list valid credentials', function (done) {
-            done();
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                    team.should.have.property('date');
+                    team.should.have.property('message');
+                    team.should.have.property('user');
+                });
+            });
+            req.end(done);
         });
     });
 
     describe('details', function () {
+        var id;
+
+        before(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
         it('should raise error with invalid id', function (done) {
-            done();
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
         });
 
         it('should return', function (done) {
-            done();
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('date');
+                response.body.should.have.property('message');
+                response.body.should.have.property('user');
+            });
+            req.end(done);
         });
     });
 
     describe('update', function () {
+        var id;
+
+        before(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
         it('should raise error without date', function (done) {
-            done();
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({message : 'good match edited!'});
+            req = req.expect(500);
+            req.end(done);
         });
 
         it('should raise error without message', function (done) {
-            done();
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date()});
+            req = req.expect(500);
+            req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            done();
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/comments/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), message : 'good match edited!'});
+            req = req.expect(404);
+            req.end(done);
         });
 
         it('should update', function (done) {
-            done();
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), message : 'good match edited!'});
+            req = req.expect(200);
+            req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('date');
+                response.body.should.have.property('message').be.equal('good match edited!');
+                response.body.should.have.property('user');
+            });
+            req.end(done);
         });
     });
 
     describe('delete', function () {
+        var id;
+
+        before(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
         it('should raise error with invalid id', function (done) {
-            done();
+            var req = request(app);
+            req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/comments/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
         });
 
         it('should delete', function (done) {
-            done();
+            var req = request(app);
+            req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req.end(done);
         });
     });
 });
