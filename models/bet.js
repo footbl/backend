@@ -50,6 +50,33 @@ schema = new Schema({
     'collection' : 'bets'
 });
 
+/**
+ * @callback
+ * @summary Ensures unique bet
+ * When saving bet, the system must ensure that the user only made one bet for a match, if a user have already meade a
+ * bet, he have to update the old bet, or delete the old one and create a new one.
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+    if (!this.isNew) {return next();}
+
+    var query;
+    query = this.constructor.findOne();
+    query.where('user').equals(this.user);
+    query.where('match').equals(this.match);
+
+    return query.exec(function (error, bet) {
+        if (error) {return next(error);}
+        if (bet) {return next(new Error('match already bet'));}
+        return next();
+    });
+});
+
 schema.plugin(require('mongoose-json-select'), {
     'user'   : 1,
     'match'  : 1,

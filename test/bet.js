@@ -123,6 +123,16 @@ describe('bet controller', function () {
             });
             req.end(done);
         });
+
+        it('should raise error with repeated bet', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), result : 'draw', bid : 50});
+            req = req.expect(500);
+            req.end(done);
+        });
     });
 
     describe('list', function () {
