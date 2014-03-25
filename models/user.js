@@ -43,6 +43,10 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
+    'language' : {
+        'type' : String
+    },
+    /** @property */
     'type' : {
         'type' : String,
         'required' : true,
@@ -69,6 +73,7 @@ schema.plugin(require('mongoose-json-select'), {
     'username' : 1,
     'password' : 0,
     'picture'  : 1,
+    'language' : 1,
     'ranking'  : 1,
     'bets'     : 0
 });

@@ -136,6 +136,7 @@ router.put('/users/:userId', function (request, response) {
     user.username = request.param('username');
     user.password = request.param('password');
     user.picture  = request.param('picture');
+    user.language = request.param('language');
 
     return user.save(function (error) {
         if (error) {return response.send(500, error);}
