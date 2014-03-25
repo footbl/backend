@@ -30,8 +30,7 @@ schema = new Schema({
     },
     /** @property */
     'username' : {
-        'type'   : String,
-        'unique' : true
+        'type' : String
     },
     /** @property */
     'password' : {
