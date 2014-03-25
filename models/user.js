@@ -41,6 +41,13 @@ schema = new Schema({
     /** @property */
     'picture' : {
         'type' : String
+    },
+    /** @property */
+    'type' : {
+        'type' : String,
+        'required' : true,
+        'default' : 'user',
+        'enum' : ['user', 'admin']
     }
 }, {
     'collection' : 'users'

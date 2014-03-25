@@ -21,8 +21,13 @@ nconf.defaults({
 app = express();
 app.use(bodyParser());
 app.use(require('./lib/auth').signature);
-app.use('/users', require('./controllers/session'));
-app.use('/users', require('./controllers/user'));
+app.use(require('./lib/auth').session);
+app.use(require('./controllers/bet'));
+app.use(require('./controllers/championship'));
+app.use(require('./controllers/comment'));
+app.use(require('./controllers/match'));
+app.use(require('./controllers/team'));
+app.use(require('./controllers/user'));
 
 if (!module.parent) {
     mongoose.connect(nconf.get('MONGOHQ_URL'));

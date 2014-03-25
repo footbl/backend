@@ -32,7 +32,8 @@ schema = new Schema({
     /** @property */
     'finished' : {
         'type' : Boolean,
-        'required' : true
+        'required' : true,
+        'default' : false
     },
     /** @property */
     'guest' : {
@@ -49,7 +50,9 @@ schema = new Schema({
     /** @property */
     'result' : {
         'type' : String,
-        'enum' : ['guest', 'visitor', 'draw']
+        'enum' : ['guest', 'visitor', 'draw'],
+        'required' : true,
+        'default' : 'draw'
     }
 }, {
     'collection' : 'matches'
