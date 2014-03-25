@@ -26,6 +26,15 @@ describe('championship controller', function () {
     });
 
     describe('create', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/championships');
+            req = req.send(auth.credentials());
+            req = req.send({name : 'test'});
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should raise error without name', function (done) {
             var req = request(app);
             req = req.post('/championships');
@@ -51,6 +60,14 @@ describe('championship controller', function () {
     });
 
     describe('list', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should list valid credentials', function (done) {
             var req = request(app);
             req = req.get('/championships');
@@ -80,6 +97,14 @@ describe('championship controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -118,6 +143,15 @@ describe('championship controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.put('/championships/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({name : 'test1'});
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -167,6 +201,14 @@ describe('championship controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/championships/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 

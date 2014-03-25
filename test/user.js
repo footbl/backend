@@ -88,6 +88,14 @@ describe('user controller', function () {
     });
 
     describe('search', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/users');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should list with valid credentials', function (done) {
             var req = request(app);
             req = req.get('/users');
@@ -116,6 +124,14 @@ describe('user controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/users/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -213,6 +229,15 @@ describe('user controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.put('/users/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({username : 'test', password : '1234'});
+            req = req.expect(401);
             req.end(done);
         });
 

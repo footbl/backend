@@ -24,6 +24,15 @@ describe('team controller', function () {
     });
 
     describe('create', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/teams');
+            req = req.send(auth.credentials());
+            req = req.send({name : 'test', picture : 'test'});
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should raise error without name', function (done) {
             var req = request(app);
             req = req.post('/teams');
@@ -61,6 +70,14 @@ describe('team controller', function () {
     });
 
     describe('list', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/teams');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should list with valid credentials', function (done) {
             var req = request(app);
             req = req.get('/teams');
@@ -91,6 +108,14 @@ describe('team controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/teams/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -130,6 +155,15 @@ describe('team controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.put('/teams/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({name : 'test1', picture : 'test1'});
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -191,6 +225,14 @@ describe('team controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/teams/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 

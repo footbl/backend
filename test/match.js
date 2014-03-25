@@ -43,6 +43,15 @@ describe('match controller', function () {
     });
 
     describe('create', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches');
+            req = req.send(auth.credentials());
+            req = req.send({guest : guest._id, visitor : visitor._id, date : new Date()});
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should raise error without date', function (done) {
             var req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
@@ -102,6 +111,14 @@ describe('match controller', function () {
     });
 
     describe('list', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should list with valid credentials', function (done) {
             var req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
@@ -137,6 +154,14 @@ describe('match controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -198,6 +223,15 @@ describe('match controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({guest : guest._id, visitor : visitor._id, date : new Date()});
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -274,6 +308,14 @@ describe('match controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/championships/' + championship._id + '/matches/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 

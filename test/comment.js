@@ -49,6 +49,15 @@ describe('comment controller', function () {
     });
 
     describe('create', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.send({date : new Date(), message : 'good match!'});
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should raise error with invalid match', function (done) {
             var req = request(app);
             req = req.post('/championships/' + championship._id + '/matches/invalid/comments');
@@ -96,6 +105,14 @@ describe('comment controller', function () {
     });
 
     describe('list', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should list valid credentials', function (done) {
             var req = request(app);
             req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments');
@@ -127,6 +144,14 @@ describe('comment controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -167,6 +192,15 @@ describe('comment controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({date : new Date(), message : 'good match edited!'});
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -229,6 +263,14 @@ describe('comment controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/comments/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 

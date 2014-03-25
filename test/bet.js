@@ -49,6 +49,15 @@ describe('bet controller', function () {
     });
 
     describe('create', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({date : new Date(), result : 'draw', bid : 50});
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should raise error with invalid match', function (done) {
             var req = request(app);
             req = req.post('/championships/' + championship._id + '/matches/invalid/bets');
@@ -117,6 +126,14 @@ describe('bet controller', function () {
     });
 
     describe('list', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should list valid credentials', function (done) {
             var req = request(app);
             req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets');
@@ -150,6 +167,14 @@ describe('bet controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -192,6 +217,15 @@ describe('bet controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({date : new Date(), result : 'visitor', bid : 25});
+            req = req.expect(401);
             req.end(done);
         });
 
@@ -276,6 +310,14 @@ describe('bet controller', function () {
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
             req.end(done);
         });
 
