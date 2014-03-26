@@ -29,6 +29,9 @@ app.use(require('./controllers/comment'));
 app.use(require('./controllers/match'));
 app.use(require('./controllers/team'));
 app.use(require('./controllers/user'));
+ap.get('/', function () {
+    response.send(200, {'pageSize' : nconf.get('PAGE_SIZE')});
+});
 
 if (!module.parent) {
     mongoose.connect(nconf.get('MONGOHQ_URL'));
