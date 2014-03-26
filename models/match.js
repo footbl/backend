@@ -48,6 +48,26 @@ schema = new Schema({
         'ref' : 'Team',
         'required' : true
     },
+    'pot' : {
+        /** @property */
+        'guest' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 0
+        },
+        /** @property */
+        'host' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 0
+        },
+        /** @property */
+        'draw' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 0
+        }
+    },
     /** @property */
     'result' : {
         /** @property */
@@ -73,6 +93,7 @@ schema.plugin(require('mongoose-json-select'), {
     'finished'     : 1,
     'guest'        : 1,
     'host'         : 1,
+    'pot'          : 1,
     'result'       : 1
 });
 
@@ -91,8 +112,8 @@ schema.plugin(require('mongoose-json-select'), {
 schema.methods.finish = function (result, callback) {
     'use strict';
 
-    var _id;
-    _id           = this._id;
+    //var _id;
+    //_id           = this._id;
     this.finished = true;
     this.result   = result;
     this.save(/*function (error) {

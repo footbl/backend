@@ -69,7 +69,7 @@ describe('bet controller', function () {
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({date : new Date(), result : 'draw', bid : 50});
-            req = req.expect(500);
+            req = req.expect(404);
             req.end(done);
         });
 
@@ -148,6 +148,18 @@ describe('bet controller', function () {
             req = req.expect(500);
             req.end(done);
         });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('pot').with.property('draw').be.equal(50);
+            });
+            req.end(done);
+        });
     });
 
     describe('list', function () {
@@ -223,99 +235,6 @@ describe('bet controller', function () {
                 response.body.should.have.property('date');
                 response.body.should.have.property('result');
                 response.body.should.have.property('bid');
-                response.body.should.have.property('match');
-                response.body.should.have.property('user');
-            });
-            req.end(done);
-        });
-    });
-
-    describe('update', function () {
-        var id;
-
-        before(function (done) {
-            var req = request(app);
-            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(200);
-            req = req.expect(function (response) {
-                id = response.body[0]._id;
-            });
-            req.end(done);
-        });
-
-        it('should raise error without token', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({date : new Date(), result : 'host', bid : 25});
-            req = req.expect(401);
-            req.end(done);
-        });
-
-        it('should raise error without date', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({result : 'host', bid : 25});
-            req = req.expect(500);
-            req.end(done);
-        });
-
-        it('should raise error without result', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), bid : 25});
-            req = req.expect(500);
-            req.end(done);
-        });
-
-        it('should raise error with invalid result', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'invalid', bid : 25});
-            req = req.expect(500);
-            req.end(done);
-        });
-
-        it('should raise error without bid', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'host'});
-            req = req.expect(500);
-            req.end(done);
-        });
-
-        it('should raise error with invalid id', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'host', bid : 25});
-            req = req.expect(404);
-            req.end(done);
-        });
-
-        it('should update', function (done) {
-            var req = request(app);
-            req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'host', bid : 25});
-            req = req.expect(200);
-            req.expect(function (response) {
-                response.body.should.have.property('_id');
-                response.body.should.have.property('date');
-                response.body.should.have.property('result').be.equal('host');
-                response.body.should.have.property('bid').be.equal(25);
                 response.body.should.have.property('match');
                 response.body.should.have.property('user');
             });

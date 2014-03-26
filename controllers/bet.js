@@ -5,11 +5,12 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Bet;
+var router, nconf, Bet, Match;
 
 router = require('express').Router();
 nconf  = require('nconf');
 Bet    = require('../models/bet');
+Match  = require('../models/match');
 
 /**
  * @method
@@ -32,8 +33,9 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
     'use strict';
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var bet;
-    bet = new Bet({
+    var bet, match;
+    match = request.match;
+    bet   = new Bet({
         'user'   : request.session._id,
         'match'  : request.params.matchId,
         'date'   : request.param('date'),
@@ -41,9 +43,15 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
         'bid'    : request.param('bid')
     });
 
+    match.pot[bet.result] += bet.bid;
+
     return bet.save(function (error) {
         if (error) {return response.send(500, error);}
-        return response.send(201, bet);
+
+        return match.save(function () {
+            if (error) {return response.send(500, error);}
+            return response.send(201, bet);
+        });
     });
 });
 
@@ -105,39 +113,6 @@ router.get('/championships/:championshipId/matches/:matchId/bets/:betId', functi
 
 /**
  * @method
- * @summary Updates bet info in database
- *
- * @param request.betId
- * @param request.date
- * @param request.result
- * @param request.bid
- * @param response
- *
- * @returns 200 bet
- * @throws 500 error
- * @throws 404 bet not found
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-router.put('/championships/:championshipId/matches/:matchId/bets/:betId', function (request, response) {
-    'use strict';
-    if (!request.session) {return response.send(401, 'invalid token');}
-
-    var bet;
-    bet = request.bet;
-    bet.date   = request.param('date');
-    bet.result = request.param('result');
-    bet.bid    = request.param('bid');
-
-    return bet.save(function (error) {
-        if (error) {return response.send(500, error);}
-        return response.send(200, bet);
-    });
-});
-
-/**
- * @method
  * @summary Removes bet from database
  *
  * @param request.betId
@@ -154,12 +129,52 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     'use strict';
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var bet;
-    bet = request.bet;
+    var bet, match;
+    match = request.match;
+    bet   = request.bet;
+
+    match.pot[bet.result] -= bet.bid;
 
     return bet.remove(function (error) {
         if (error) {return response.send(500, error);}
-        return response.send(200, bet);
+
+        return match.save(function () {
+            if (error) {return response.send(500, error);}
+            return response.send(200, bet);
+        });
+    });
+});
+
+/**
+ * @method
+ * @summary Puts requested match in request object
+ *
+ * @param request
+ * @param response
+ * @param next
+ * @param id
+ *
+ * @returns match
+ * @throws 404 match not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.param('matchId', function (request, response, next, id) {
+    'use strict';
+
+    var query;
+    query = Match.findOne();
+    query.where('_id').equals(id);
+    query.where('championship').equals(request.params.championshipId);
+    query.populate('guest');
+    query.populate('host');
+    query.exec(function (error, match) {
+        if (error) {return response.send(404, 'match not found');}
+        if (!match) {return response.send(404, 'match not found');}
+
+        request.match = match;
+        return next();
     });
 });
 
