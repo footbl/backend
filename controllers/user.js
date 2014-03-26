@@ -180,7 +180,7 @@ router.get('/users/me/session', function (request, response) {
     return query.exec(function (error, user) {
         if (error) {return response.send(500, error);}
         if (!user) {return response.send(403, 'invalid username or password');}
-        return response.send(200, {token : auth.token(user)});
+        return response.send(200, {token : auth.token(user), _id : user._id});
     });
 });
 
