@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match,
-    user, guest, visitor, championship, match, otherMatch;
+    user, guest, host, championship, match, otherMatch;
 
 require('should');
 
@@ -34,8 +34,8 @@ describe('bet controller', function () {
     });
 
     before(function (done) {
-        visitor = new Team({'name' : 'visitor', 'picture' : 'visitor_picture'});
-        visitor.save(done);
+        host = new Team({'name' : 'host', 'picture' : 'visitor_picture'});
+        host.save(done);
     });
 
     before(function (done) {
@@ -44,12 +44,12 @@ describe('bet controller', function () {
     });
 
     before(function (done) {
-        match = new Match({'guest' : guest._id, 'visitor' : visitor._id, 'date' : new Date(), 'championship' : championship._id});
+        match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id});
         match.save(done);
     });
 
     before(function (done) {
-        otherMatch = new Match({'guest' : guest._id, 'visitor' : visitor._id, 'date' : new Date(), 'championship' : championship._id});
+        otherMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id});
         otherMatch.save(done);
     });
 
@@ -249,7 +249,7 @@ describe('bet controller', function () {
             var req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
             req = req.send(auth.credentials());
-            req = req.send({date : new Date(), result : 'visitor', bid : 25});
+            req = req.send({date : new Date(), result : 'host', bid : 25});
             req = req.expect(401);
             req.end(done);
         });
@@ -259,7 +259,7 @@ describe('bet controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({result : 'visitor', bid : 25});
+            req = req.send({result : 'host', bid : 25});
             req = req.expect(500);
             req.end(done);
         });
@@ -289,7 +289,7 @@ describe('bet controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'visitor'});
+            req = req.send({date : new Date(), result : 'host'});
             req = req.expect(500);
             req.end(done);
         });
@@ -299,7 +299,7 @@ describe('bet controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/invalid');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'visitor', bid : 25});
+            req = req.send({date : new Date(), result : 'host', bid : 25});
             req = req.expect(404);
             req.end(done);
         });
@@ -309,12 +309,12 @@ describe('bet controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({date : new Date(), result : 'visitor', bid : 25});
+            req = req.send({date : new Date(), result : 'host', bid : 25});
             req = req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('date');
-                response.body.should.have.property('result').be.equal('visitor');
+                response.body.should.have.property('result').be.equal('host');
                 response.body.should.have.property('bid').be.equal(25);
                 response.body.should.have.property('match');
                 response.body.should.have.property('user');

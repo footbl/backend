@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match,
-    user, guest, visitor, championship, match;
+    user, guest, host, championship, match;
 
 require('should');
 
@@ -34,8 +34,8 @@ describe('comment controller', function () {
     });
 
     before(function (done) {
-        visitor = new Team({'name' : 'visitor', 'picture' : 'visitor_picture'});
-        visitor.save(done);
+        host = new Team({'name' : 'host', 'picture' : 'visitor_picture'});
+        host.save(done);
     });
 
     before(function (done) {
@@ -44,7 +44,7 @@ describe('comment controller', function () {
     });
 
     before(function (done) {
-        match = new Match({'guest' : guest._id, 'visitor' : visitor._id, 'date' : new Date(), 'championship' : championship._id});
+        match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id});
         match.save(done);
     });
 

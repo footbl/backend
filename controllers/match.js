@@ -36,7 +36,7 @@ router.post('/championships/:championshipId/matches', function (request, respons
         'date'         : request.param('date'),
         'championship' : request.params.championshipId,
         'guest'        : request.param('guest'),
-        'visitor'      : request.param('visitor')
+        'host'         : request.param('host')
     });
 
     return match.save(function (error) {
@@ -122,13 +122,9 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
 
     var match;
     match = request.match;
-    match.finished = true;
-    match.result   = request.param('result');
-
-    return match.save(function (error) {
+    return match.finish(function (error) {
         if (error) {return response.send(500, error);}
 
-        //todo implement walet update method
         return response.send(200, match);
     });
 });
@@ -155,9 +151,10 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
 
     var match;
     match = request.match;
-    match.date    = request.param('date');
-    match.guest   = request.param('guest');
-    match.visitor = request.param('visitor');
+    match.date   = request.param('date');
+    match.guest  = request.param('guest');
+    match.host   = request.param('host');
+    match.result = request.param('result');
 
     return match.save(function (error) {
         if (error) {return response.send(500, error);}

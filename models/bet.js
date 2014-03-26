@@ -40,7 +40,7 @@ schema = new Schema({
     'result' : {
         'type' : String,
         'required' : true,
-        'enum' : ['guest', 'visitor', 'draw']
+        'enum' : ['guest', 'host', 'draw']
     },
     /** @property */
     'bid' : {
