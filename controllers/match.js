@@ -70,7 +70,7 @@ router.get('/championships/:championshipId/matches', function (request, response
     query.where('championship').equals(request.params.championshipId);
     query.populate('championship');
     query.populate('guest');
-    query.populate('visitor');
+    query.populate('host');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, matches) {
@@ -212,7 +212,7 @@ router.param('matchId', function (request, response, next, id) {
     query.where('_id').equals(id);
     query.where('championship').equals(request.params.championshipId);
     query.populate('guest');
-    query.populate('visitor');
+    query.populate('host');
     query.exec(function (error, match) {
         if (error) {return response.send(404, 'match not found');}
         if (!match) {return response.send(404, 'match not found');}
