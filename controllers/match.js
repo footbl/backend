@@ -71,6 +71,7 @@ router.get('/championships/:championshipId/matches', function (request, response
     query.populate('championship');
     query.populate('guest');
     query.populate('host');
+    query.sort({'date' : 1});
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, matches) {
