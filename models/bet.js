@@ -112,9 +112,7 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Ensures sufficient funds
- * When saving a bet, the system must ensure that the user have enough funds to perform the bet, and appends the bet in
- * the user profile.
+ * @summary Inserts bet in user bets
  *
  * @param next
  *
@@ -133,6 +131,34 @@ schema.post('save', function (next) {
         if (!user) {return next(new Error('user not found'));}
 
         user.bets.push(this._id);
+        return user.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Removes bet from user bets
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.post('remove', function (next) {
+    'use strict';
+
+    var query;
+    query = User.findById(this.user);
+    query.populate('bets');
+
+    return query.exec(function (error, user) {
+        if (error) {return next(error);}
+        if (!user) {return next(new Error('user not found'));}
+
+        user.bets = user.bets.filter(function (bet) {
+            return bet._id !== this._id;
+        }.bind(this));
+
         return user.save(next);
     }.bind(this));
 });
