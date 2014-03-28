@@ -99,54 +99,69 @@ schema.plugin(require('mongoose-json-select'), {
 
 /**
  * @method
+ * @summary Return match winner
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.methods.winner = function () {
+    if (this.result.guest > this.result.host) {return 'guest';}
+    if (this.result.guest < this.result.host) {return 'host';}
+    return 'draw';
+};
+
+/**
+ * @method
+ * @summary Return match reward
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.methods.reward = function () {
+    switch (this.winner()) {
+        case 'guest' :
+            return (this.pot.guest + this.pot.draw + this.pot.host) / this.pot.guest;
+        case 'host' :
+            return (this.pot.guest + this.pot.draw + this.pot.host) / this.pot.host;
+        default :
+            return (this.pot.guest + this.pot.draw + this.pot.host) / this.pot.draw;
+    }
+};
+
+/**
+ * @method
  * @summary Finishes the match
  * To finish a match, the system must calculate all match bets profits, set the finished attribute to true and save the
  * match result.
  *
- * @param result
  * @param callback
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.methods.finish = function (result, callback) {
+schema.methods.finish = function (callback) {
     'use strict';
 
-    //var _id;
-    //_id           = this._id;
     this.finished = true;
-    this.result   = result;
-    this.save(/*function (error) {
+    this.save(function (error) {
         if (error) {return callback(error);}
 
         var query;
+
         query = Bet.find();
-        query.where('match').equals(_id);
+        query.where('match').equals(this._id);
+        query.where('result').equals(this.winner());
         return query.exec(function (error, bets) {
             if (error) {return callback(error);}
 
-            var amount, reward, winners;
-
-            winners = bets.filter(function (bet) {
-                return bet.result === result;
-            });
-
-            amount = bets.reduce(function (amount, bet) {
-                return amount + bet.bid;
-            }, 0);
-
-            reward = amount / winners.reduce(function (amount, bet) {
-                return amount + bet.bid;
-            }, 0);
-
-            winners.forEach(function (bet) {
-                bet.reward = bet.bid * reward;
+            bets.forEach(function (bet) {
+                bet.reward = bet.bid * this.reward();
                 bet.save();
-            });
+            }.bind(this));
 
             return callback(error);
-        });
-    }*/callback);
+        }.bind(this));
+    }.bind(this));
 };
 
 module.exports = mongoose.model('Match', schema);

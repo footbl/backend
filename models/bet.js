@@ -71,20 +71,16 @@ schema = new Schema({
 schema.pre('save', function (next) {
     'use strict';
 
-    var query, bid, _id;
-    bid   = this.bid;
-    _id   = this._id;
+    var query;
     query = User.findById(this.user);
     query.populate('bets');
 
     return query.exec(function (error, user) {
         if (error) {return next(error);}
         if (!user) {return next(new Error('user not found'));}
-        if (user.funds < bid) {return next(new Error('insufficient funds'));}
-
-        user.bets.push(_id);
-        return user.save(next);
-    });
+        if (user.funds < this.bid) {return next(new Error('insufficient funds'));}
+        return next();
+    }.bind(this));
 });
 
 /**
@@ -114,12 +110,40 @@ schema.pre('save', function (next) {
     });
 });
 
+/**
+ * @callback
+ * @summary Ensures sufficient funds
+ * When saving a bet, the system must ensure that the user have enough funds to perform the bet, and appends the bet in
+ * the user profile.
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.post('save', function (next) {
+    'use strict';
+
+    var query;
+    query = User.findById(this.user);
+    query.populate('bets');
+
+    return query.exec(function (error, user) {
+        if (error) {return next(error);}
+        if (!user) {return next(new Error('user not found'));}
+
+        user.bets.push(this._id);
+        return user.save(next);
+    }.bind(this));
+});
+
 schema.plugin(require('mongoose-json-select'), {
     'user'   : 1,
     'match'  : 1,
     'date'   : 1,
     'result' : 1,
-    'bid'    : 1
+    'bid'    : 1,
+    'reward' : 1
 });
 
 module.exports = mongoose.model('Bet', schema);

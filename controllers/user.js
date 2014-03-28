@@ -108,6 +108,29 @@ router.get('/users/:userId', function (request, response) {
 
 /**
  * @method
+ * @summary Get user bets in database
+ *
+ * @param request.userId
+ * @param response
+ *
+ * @returns 200 [bets]
+ * @throws 404 user not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/users/:userId/bets', function (request, response) {
+    'use strict';
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var user;
+    user = request.user;
+
+    return response.send(200, user.bets);
+});
+
+/**
+ * @method
  * @summary Updates user info in database
  * When updating user data if the attributes aren't defined in the request body, the old values will be lost. The
  * password will be encrypted with sha1 and digested into hex with a predefined salt.
@@ -206,6 +229,7 @@ router.param('userId', function (request, response, next, id) {
     var query;
     query = User.findOne();
     query.where('_id').equals(id);
+    query.populate('bets');
     return query.exec(function (error, user) {
         if (error) {return response.send(404, 'user not found');}
         if (!user) {return response.send(404, 'user not found');}

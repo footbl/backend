@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Team, Championship,
-    user, guest, host, championship;
+    user, otherUser, guest, host, championship;
 
 require('should');
 
@@ -25,6 +25,11 @@ describe('match controller', function () {
     before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});
         user.save(done);
+    });
+
+    before(function (done) {
+        otherUser = new User({'password' : '12345', 'type' : 'admin'});
+        otherUser.save(done);
     });
 
     before(function (done) {
@@ -202,9 +207,62 @@ describe('match controller', function () {
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
-            req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
+        before(function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), result : 'draw', bid : 50});
+            req.end(done);
+        });
+
+        before(function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(otherUser)});
+            req = req.send({date : new Date(), result : 'host', bid : 50});
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body[0].should.have.property('reward').be.equal(100);
+            });
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/users/' + otherUser._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(otherUser)});
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body[0].should.have.property('reward').be.equal(0);
+            });
+            req.end(done);
+        });
+
+        it('should finish match', function (done) {
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + id + '/finish');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('finished').be.equal(true);
             });
             req.end(done);
         });
