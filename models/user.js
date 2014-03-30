@@ -26,7 +26,8 @@ Schema   = mongoose.Schema;
 schema = new Schema({
     /** @property */
     'email' : {
-        'type' : String
+        'type' : String,
+        'match' : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
     },
     /** @property */
     'username' : {
@@ -39,7 +40,8 @@ schema = new Schema({
     },
     /** @property */
     'picture' : {
-        'type' : String
+        'type' : String,
+        'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
     /** @property */
     'language' : {
@@ -62,7 +64,15 @@ schema = new Schema({
     'bets' : [{
         'type' : Schema.Types.ObjectId,
         'ref' : 'Bet'
-    }]
+    }],
+    /** @property */
+    'createdAt' : {
+        'type' : Date
+    },
+    /** @property */
+    'updatedAt' : {
+        'type' : Date
+    }
 }, {
     'collection' : 'users'
 });
@@ -75,6 +85,24 @@ schema.plugin(require('mongoose-json-select'), {
     'language' : 1,
     'ranking'  : 1,
     'bets'     : 0
+});
+
+/**
+ * @callback
+ * @summary Setups createdAt and updatedAt
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    if (!this.createdAt) {
+        this.createdAt = this.updatedAt = new Date;
+    } else {
+        this.updatedAt = new Date;
+    }
+    next();
 });
 
 /**

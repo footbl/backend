@@ -32,13 +32,19 @@ User   = require('../models/user');
 router.post('/users', function (request, response) {
     'use strict';
 
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     var user;
+
     user = new User({
         'password' : request.param('password')
     });
 
     return user.save(function (error) {
         if (error) {return response.send(500, error);}
+        response.header('Location', '/users/' + user._id);
         return response.send(201, user);
     });
 });
@@ -64,6 +70,11 @@ router.post('/users', function (request, response) {
  */
 router.get('/users', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query, page, pageSize;
@@ -98,11 +109,17 @@ router.get('/users', function (request, response) {
  */
 router.get('/users/:userId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var user;
     user = request.user;
 
+    response.header('Last-Modified', user.updatedAt);
     return response.send(200, user);
 });
 
@@ -121,6 +138,11 @@ router.get('/users/:userId', function (request, response) {
  */
 router.get('/users/:userId/bets', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var user;
@@ -151,6 +173,11 @@ router.get('/users/:userId/bets', function (request, response) {
  */
 router.put('/users/:userId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var user;
@@ -189,6 +216,10 @@ router.put('/users/:userId', function (request, response) {
 router.get('/users/me/session', function (request, response) {
     'use strict';
 
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     var query, password, email, _id;
     email    = request.param('email');
     _id      = request.param('_id');
@@ -224,6 +255,7 @@ router.get('/users/me/session', function (request, response) {
  */
 router.param('userId', function (request, response, next, id) {
     'use strict';
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query;

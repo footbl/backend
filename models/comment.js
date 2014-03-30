@@ -39,6 +39,14 @@ schema = new Schema({
     'message' : {
         'type' : String,
         'required' : true
+    },
+    /** @property */
+    'createdAt' : {
+        'type' : Date
+    },
+    /** @property */
+    'updatedAt' : {
+        'type' : Date
     }
 }, {
     'collection' : 'comments'
@@ -49,6 +57,24 @@ schema.plugin(require('mongoose-json-select'), {
     'match'   : 1,
     'date'    : 1,
     'message' : 1
+});
+
+/**
+ * @callback
+ * @summary Setups createdAt and updatedAt
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    if (!this.createdAt) {
+        this.createdAt = this.updatedAt = new Date;
+    } else {
+        this.updatedAt = new Date;
+    }
+    next();
 });
 
 module.exports = mongoose.model('Comment', schema);

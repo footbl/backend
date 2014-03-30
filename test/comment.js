@@ -29,12 +29,12 @@ describe('comment controller', function () {
     });
 
     before(function (done) {
-        guest = new Team({'name' : 'guest', 'picture' : 'guest_picture'});
+        guest = new Team({'name' : 'guest', 'picture' : 'http://guest_picture.com'});
         guest.save(done);
     });
 
     before(function (done) {
-        host = new Team({'name' : 'host', 'picture' : 'visitor_picture'});
+        host = new Team({'name' : 'host', 'picture' : 'http://visitor_picture.com'});
         host.save(done);
     });
 

@@ -29,6 +29,11 @@ Match  = require('../models/match');
  */
 router.post('/championships/:championshipId/matches', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var match;
@@ -41,6 +46,7 @@ router.post('/championships/:championshipId/matches', function (request, respons
 
     return match.save(function (error) {
         if (error) {return response.send(500, error);}
+        response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + match._id);
         return response.send(201, match);
     });
 });
@@ -60,6 +66,11 @@ router.post('/championships/:championshipId/matches', function (request, respons
  */
 router.get('/championships/:championshipId/matches', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query, page, pageSize;
@@ -95,11 +106,17 @@ router.get('/championships/:championshipId/matches', function (request, response
  */
 router.get('/championships/:championshipId/matches/:matchId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var match;
     match = request.match;
 
+    response.header('Last-Modified', match.updatedAt);
     return response.send(200, match);
 });
 
@@ -119,6 +136,11 @@ router.get('/championships/:championshipId/matches/:matchId', function (request,
  */
 router.put('/championships/:championshipId/matches/:matchId/finish', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var match;
@@ -148,6 +170,11 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
  */
 router.put('/championships/:championshipId/matches/:matchId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var match;
@@ -179,6 +206,11 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
  */
 router.delete('/championships/:championshipId/matches/:matchId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var match;

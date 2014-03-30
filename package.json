@@ -1,5 +1,5 @@
 {
-    "name": "dac-auth",
+    "name": "footbl",
     "version": "0.0.1",
     "scripts": {
         "start": "node index.js",
@@ -16,7 +16,7 @@
         "forky": "0.0.x",
         "nconf": "0.6.x",
         "redis": "0.10.x"
-    },
+},
     "devDependencies": {
         "mocha": "~1.15.1",
         "should": "3.2.x",

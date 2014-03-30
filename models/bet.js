@@ -52,9 +52,44 @@ schema = new Schema({
         'type' : Number,
         'required' : true,
         'default' : 0
+    },
+    /** @property */
+    'createdAt' : {
+        'type' : Date
+    },
+    /** @property */
+    'updatedAt' : {
+        'type' : Date
     }
 }, {
     'collection' : 'bets'
+});
+
+schema.plugin(require('mongoose-json-select'), {
+    'user'   : 1,
+    'match'  : 1,
+    'date'   : 1,
+    'result' : 1,
+    'bid'    : 1,
+    'reward' : 1
+});
+
+/**
+ * @callback
+ * @summary Setups createdAt and updatedAt
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    if (!this.createdAt) {
+        this.createdAt = this.updatedAt = new Date;
+    } else {
+        this.updatedAt = new Date;
+    }
+    next();
 });
 
 /**
@@ -161,15 +196,6 @@ schema.post('remove', function (next) {
 
         return user.save(next);
     }.bind(this));
-});
-
-schema.plugin(require('mongoose-json-select'), {
-    'user'   : 1,
-    'match'  : 1,
-    'date'   : 1,
-    'result' : 1,
-    'bid'    : 1,
-    'reward' : 1
 });
 
 module.exports = mongoose.model('Bet', schema);

@@ -31,6 +31,11 @@ Match  = require('../models/match');
  */
 router.post('/championships/:championshipId/matches/:matchId/bets', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var bet, match;
@@ -50,6 +55,7 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
 
         return match.save(function () {
             if (error) {return response.send(500, error);}
+            response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + request.param.matchId + '/bets/' + bet._id);
             return response.send(201, bet);
         });
     });
@@ -70,6 +76,11 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
  */
 router.get('/championships/:championshipId/matches/:matchId/bets', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query, page, pageSize;
@@ -103,11 +114,17 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
  */
 router.get('/championships/:championshipId/matches/:matchId/bets/:betId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var bet;
     bet = request.bet;
 
+    response.header('Last-Modified', bet.updatedAt);
     return response.send(200, bet);
 });
 
@@ -127,6 +144,11 @@ router.get('/championships/:championshipId/matches/:matchId/bets/:betId', functi
  */
 router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var bet, match;

@@ -27,6 +27,11 @@ Team   = require('../models/team');
  */
 router.post('/teams', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var team;
@@ -37,6 +42,7 @@ router.post('/teams', function (request, response) {
 
     return team.save(function (error) {
         if (error) {return response.send(500, error);}
+        response.header('Location', '/teams/' + team._id);
         return response.send(201, team);
     });
 });
@@ -56,6 +62,11 @@ router.post('/teams', function (request, response) {
  */
 router.get('/teams', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query, page, pageSize;
@@ -86,11 +97,17 @@ router.get('/teams', function (request, response) {
  */
 router.get('/teams/:teamId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var team;
     team = request.team;
 
+    response.header('Last-Modified', team.updatedAt);
     return response.send(200, team);
 });
 
@@ -111,6 +128,11 @@ router.get('/teams/:teamId', function (request, response) {
  */
 router.put('/teams/:teamId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var team;
@@ -140,6 +162,11 @@ router.put('/teams/:teamId', function (request, response) {
  */
 router.delete('/teams/:teamId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var team;

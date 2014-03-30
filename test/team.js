@@ -58,7 +58,7 @@ describe('team controller', function () {
             req = req.post('/teams');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({name : 'test', picture : 'test'});
+            req = req.send({name : 'test', picture : 'http://test.com'});
             req = req.expect(201);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
@@ -202,12 +202,12 @@ describe('team controller', function () {
             req = req.put('/teams/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({name : 'test1', picture : 'test1'});
+            req = req.send({name : 'test1', picture : 'http://test.com/1'});
             req = req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('name').be.equal('test1');
-                response.body.should.have.property('picture').be.equal('test1');
+                response.body.should.have.property('picture').be.equal('http://test.com/1');
             });
             req.end(done);
         });

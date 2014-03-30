@@ -29,6 +29,11 @@ Comment = require('../models/comment');
  */
 router.post('/championships/:championshipId/matches/:matchId/comments', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var comment;
@@ -41,6 +46,7 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
 
     return comment.save(function (error) {
         if (error) {return response.send(500, error);}
+        response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + request.param.matchId + '/comments/' + comment._id);
         return response.send(201, comment);
     });
 });
@@ -60,6 +66,11 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
  */
 router.get('/championships/:championshipId/matches/:matchId/comments', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query, page, pageSize;
@@ -93,11 +104,17 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
  */
 router.get('/championships/:championshipId/matches/:matchId/comments/:commentId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var comment;
     comment = request.comment;
 
+    response.header('Last-Modified', comment.updatedAt);
     return response.send(200, comment);
 });
 
@@ -119,6 +136,11 @@ router.get('/championships/:championshipId/matches/:matchId/comments/:commentId'
  */
 router.put('/championships/:championshipId/matches/:matchId/comments/:commentId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var comment;
@@ -148,6 +170,11 @@ router.put('/championships/:championshipId/matches/:matchId/comments/:commentId'
  */
 router.delete('/championships/:championshipId/matches/:matchId/comments/:commentId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var comment;

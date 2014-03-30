@@ -82,6 +82,14 @@ schema = new Schema({
             'required' : true,
             'default' : 0
         }
+    },
+    /** @property */
+    'createdAt' : {
+        'type' : Date
+    },
+    /** @property */
+    'updatedAt' : {
+        'type' : Date
     }
 }, {
     'collection' : 'matches'
@@ -95,6 +103,24 @@ schema.plugin(require('mongoose-json-select'), {
     'host'         : 1,
     'pot'          : 1,
     'result'       : 1
+});
+
+/**
+ * @callback
+ * @summary Setups createdAt and updatedAt
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    if (!this.createdAt) {
+        this.createdAt = this.updatedAt = new Date;
+    } else {
+        this.updatedAt = new Date;
+    }
+    next();
 });
 
 /**

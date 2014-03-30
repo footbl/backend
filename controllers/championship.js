@@ -27,6 +27,11 @@ Championship = require('../models/championship');
  */
 router.post('/championships', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var championship;
@@ -37,6 +42,7 @@ router.post('/championships', function (request, response) {
 
     return championship.save(function (error) {
         if (error) {return response.send(500, error);}
+        response.header('Location', '/championships/' + championship._id);
         return response.send(201, championship);
     });
 });
@@ -56,6 +62,11 @@ router.post('/championships', function (request, response) {
  */
 router.get('/championships', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var query, page, pageSize;
@@ -87,11 +98,17 @@ router.get('/championships', function (request, response) {
  */
 router.get('/championships/:championshipId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session) {return response.send(401, 'invalid token');}
 
     var championship;
     championship = request.championship;
 
+    response.header('Last-Modified', championship.updatedAt);
     return response.send(200, championship);
 });
 
@@ -113,6 +130,11 @@ router.get('/championships/:championshipId', function (request, response) {
  */
 router.put('/championships/:championshipId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var championship;
@@ -142,6 +164,11 @@ router.put('/championships/:championshipId', function (request, response) {
  */
 router.delete('/championships/:championshipId', function (request, response) {
     'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
     if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
 
     var championship;
