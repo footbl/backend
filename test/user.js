@@ -1,4 +1,4 @@
-var request, app, mongoose, auth, nconf, User, user;
+var request, app, mongoose, auth, nconf, crypto, User, user;
 
 require('should');
 
@@ -6,6 +6,7 @@ request  = require('supertest');
 app      = require('../index.js');
 mongoose = require('mongoose');
 nconf    = require('nconf');
+crypto   = require('crypto');
 auth     = require('../lib/auth');
 User     = require('../models/user');
 
@@ -13,7 +14,7 @@ describe('user controller', function () {
     'use strict';
 
     before(function (done) {
-        user = new User({'password' : '1234', 'type' : 'admin'});
+        user = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});
         user.save(done);
     });
 

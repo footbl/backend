@@ -5,10 +5,9 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var mongoose, Schema, crypto, nconf, schema;
+var mongoose, Schema, nconf, schema;
 
 mongoose = require('mongoose');
-crypto   = require('crypto');
 nconf    = require('nconf');
 Schema   = mongoose.Schema;
 
@@ -103,24 +102,6 @@ schema.pre('save', function (next) {
         this.updatedAt = new Date;
     }
     next();
-});
-
-/**
- * @callback
- * @summary Manages user password
- * When saving user, the system must encrypt the password and a salt with sha1 and digest to hex to avoid atackers to
- * read users passwords.
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    this.password = crypto.createHash('sha1').update(this.password + nconf.get('PASSWORD_SALT')).digest('hex');
-    return next();
 });
 
 /**

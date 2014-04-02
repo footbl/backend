@@ -5,11 +5,12 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, auth, User;
+var router, nconf, crypto, auth, User;
 
 router = require('express').Router();
 auth   = require('../lib/auth');
 nconf  = require('nconf');
+crypto = require('crypto');
 User   = require('../models/user');
 
 /**
@@ -39,7 +40,7 @@ router.post('/users', function (request, response) {
     var user;
 
     user = new User({
-        'password' : request.param('password')
+        'password' : request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null
     });
 
     return user.save(function (error) {
@@ -184,7 +185,7 @@ router.put('/users/:userId', function (request, response) {
     user = request.user;
     user.email    = request.param('email');
     user.username = request.param('username');
-    user.password = request.param('password');
+    user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
     user.picture  = request.param('picture');
     user.language = request.param('language');
 
@@ -223,8 +224,10 @@ router.get('/users/me/session', function (request, response) {
     var query, password, email, _id;
     email    = request.param('email');
     _id      = request.param('_id');
-    password = request.param('password');
-    query    = User.findByPassword(password);
+    password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
+
+    query    = User.findOne();
+    query.where('password').equals(password);
 
     if (email) {
         query.where('email').equals(email);
