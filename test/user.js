@@ -309,6 +309,15 @@ describe('user controller', function () {
             req.end(done);
         });
 
+        it('should raise error with invalid id', function (done) {
+            var req = request(app);
+            req = req.get('/users/invalid/starred');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
+        });
+
         it('should list with valid credentials', function (done) {
             var req = request(app);
             req = req.get('/users/' + user._id + '/starred');
@@ -321,6 +330,48 @@ describe('user controller', function () {
                     team.should.have.property('_id');
                 });
             });
+            req.end(done);
+        });
+    });
+
+    describe('delete starred', function () {
+        var id;
+
+        before(function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/starred');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/users/' + user._id + '/starred/' + id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with invalid id', function (done) {
+            var req = request(app);
+            req = req.del('/users/' + user._id + '/starred/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should delete', function (done) {
+            var req = request(app);
+            req = req.del('/users/' + user._id + '/starred/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
             req.end(done);
         });
     });

@@ -311,6 +311,44 @@ router.get('/users/:userId/starred', function (request, response) {
 
 /**
  * @method
+ * @summary Removes a starred from user
+ *
+ * @param request.starredId
+ * @param request.userId
+ * @param response
+ *
+ * @returns 201 user
+ * @throws 500 error
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.delete('/users/:userId/starred/:starredId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session || request.session._id.toString() !== request.params.userId) {return response.send(401, 'invalid token');}
+
+    var user, starred;
+    user    = request.user;
+    starred = user.starred.filter(function (user) {
+        return user._id.toString() === request.params.starredId;
+    }).pop();
+
+    if (!starred) {return response.send(404, 'starred not found');}
+
+    starred.remove();
+    return user.save(function (error) {
+        if (error) {return response.send(500, error);}
+        return response.send(200, user);
+    });
+});
+
+/**
+ * @method
  * @summary Puts requested user in request object
  *
  * @param request
