@@ -227,6 +227,34 @@ router.post('/groups/:groupId/members', function (request, response) {
 
 /**
  * @method
+ * @summary Get group members in database
+ *
+ * @param request.userId
+ * @param response
+ *
+ * @returns 200 [members]
+ * @throws 404 group not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/groups/:groupId/members', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var group;
+    group = request.group;
+
+    return response.send(200, group.members)
+});
+
+/**
+ * @method
  * @summary Puts requested group in request object
  *
  * @param request
