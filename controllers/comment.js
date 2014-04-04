@@ -73,14 +73,22 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
 
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var query, page, pageSize;
-    query    = Comment.find();
-    pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
+    var query, page, pageSize, filterByFriends;
+    query           = Comment.find();
+    pageSize        = nconf.get('PAGE_SIZE');
+    page            = request.param('page', 0) * pageSize;
+    filterByFriends = request.param('filterByFriends');
 
     query.where('match').equals(request.params.matchId);
     query.populate('match');
     query.populate('user');
+
+    if (filterByFriends === true){
+        query.where('user').in(request.session.starred);
+    } else if (filterByFriends === false) {
+        query.where('user').nin(request.session.starred);
+    }
+
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, comments) {
