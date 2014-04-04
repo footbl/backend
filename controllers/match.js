@@ -19,6 +19,7 @@ Match  = require('../models/match');
  * @param request.date
  * @param request.guest
  * @param request.visitor
+ * @param request.round
  * @param response
  *
  * @returns 201 match
@@ -41,7 +42,8 @@ router.post('/championships/:championshipId/matches', function (request, respons
         'date'         : request.param('date'),
         'championship' : request.params.championshipId,
         'guest'        : request.param('guest'),
-        'host'         : request.param('host')
+        'host'         : request.param('host'),
+        'round'        : request.param('round')
     });
 
     return match.save(function (error) {
@@ -182,6 +184,7 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     match.date   = request.param('date');
     match.guest  = request.param('guest');
     match.host   = request.param('host');
+    match.round  = request.param('round');
     match.result = request.param('result');
 
     return match.save(function (error) {

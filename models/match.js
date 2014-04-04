@@ -48,6 +48,11 @@ schema = new Schema({
         'ref' : 'Team',
         'required' : true
     },
+    /** @property */
+    'round' : {
+        'type' : Number,
+        'required' : true
+    },
     'pot' : {
         /** @property */
         'guest' : {
@@ -101,6 +106,7 @@ schema.plugin(require('mongoose-json-select'), {
     'finished'     : 1,
     'guest'        : 1,
     'host'         : 1,
+    'round'        : 1,
     'pot'          : 1,
     'result'       : 1
 });

@@ -44,7 +44,7 @@ describe('comment controller', function () {
     });
 
     before(function (done) {
-        match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id});
+        match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 1});
         match.save(done);
     });
 

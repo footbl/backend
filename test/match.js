@@ -52,7 +52,7 @@ describe('match controller', function () {
             var req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());
-            req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(401);
             req.end(done);
         });
@@ -62,7 +62,7 @@ describe('match controller', function () {
             req = req.post('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, host : host._id});
+            req = req.send({guest : guest._id, host : host._id, round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -72,7 +72,7 @@ describe('match controller', function () {
             req = req.post('/championships/invalid/matches');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -82,7 +82,7 @@ describe('match controller', function () {
             req = req.post('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({host : host._id, date : new Date()});
+            req = req.send({host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -92,23 +92,34 @@ describe('match controller', function () {
             req = req.post('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, date : new Date()});
+            req = req.send({guest : guest._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
-        it('should create with valid credentials, date, championship, guest, host', function (done) {
+        it('should raise error without round', function (done) {
             var req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.expect(500);
+            req.end(done);
+        });
+
+        it('should create with valid credentials, date, championship, guest, host and round', function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(201);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('championship');
                 response.body.should.have.property('guest');
                 response.body.should.have.property('host');
+                response.body.should.have.property('round');
                 response.body.should.have.property('date');
             });
             req.end(done);
@@ -137,6 +148,7 @@ describe('match controller', function () {
                     team.should.have.property('championship');
                     team.should.have.property('guest');
                     team.should.have.property('host');
+                    team.should.have.property('round');
                     team.should.have.property('date');
                     team.should.have.property('result');
                     team.should.have.property('finished');
@@ -190,6 +202,7 @@ describe('match controller', function () {
                 response.body.should.have.property('championship');
                 response.body.should.have.property('guest');
                 response.body.should.have.property('host');
+                response.body.should.have.property('round');
                 response.body.should.have.property('date');
                 response.body.should.have.property('result');
                 response.body.should.have.property('finished');
@@ -206,7 +219,7 @@ describe('match controller', function () {
             req = req.get('/championships/' + championship._id + '/matches');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(function (response) {
                 id = response.body[0]._id;
             });
@@ -288,7 +301,7 @@ describe('match controller', function () {
             var req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
             req = req.send(auth.credentials());
-            req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(401);
             req.end(done);
         });
@@ -298,7 +311,7 @@ describe('match controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, host : host._id});
+            req = req.send({guest : guest._id, host : host._id, round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -308,7 +321,7 @@ describe('match controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({host : host._id, date : new Date()});
+            req = req.send({host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -318,7 +331,17 @@ describe('match controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, date : new Date()});
+            req = req.send({guest : guest._id, date : new Date(), round : 1});
+            req = req.expect(500);
+            req.end(done);
+        });
+
+        it('should raise error without round', function (done) {
+            var req = request(app);
+            req = req.put('/championships/' + championship._id + '/matches/' + id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(500);
             req.end(done);
         });
@@ -338,13 +361,14 @@ describe('match controller', function () {
             req = req.put('/championships/' + championship._id + '/matches/' + id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
-            req = req.send({guest : guest._id, host : host._id, date : new Date(), result : {guest : 0, host : 1}});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), result : {guest : 0, host : 1}, round : 1});
             req = req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('championship');
                 response.body.should.have.property('guest');
                 response.body.should.have.property('host');
+                response.body.should.have.property('round');
                 response.body.should.have.property('date');
                 response.body.should.have.property('result');
                 response.body.should.have.property('finished');
