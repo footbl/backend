@@ -469,4 +469,54 @@ describe('group controller', function () {
             req.end(done);
         });
     });
+
+    describe('details member', function () {});
+
+    describe('delete member', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.send(auth.credentials());
+            req = req.send({user : candidateUser._id});
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with invalid member', function (done) {
+            var req = request(app);
+            req = req.del('/groups/' + otherGroup._id + '/members/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should raise error with user that don\'t belong to the group', function (done) {
+            var req = request(app);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(otherUser)});
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should raise error with user that don\'t is owner', function (done) {
+            var req = request(app);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(memberUser)});
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should remove with valid credentials and user', function (done) {
+            var req = request(app);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({user : candidateUser._id});
+            req = req.expect(200);
+            req.end(done);
+        });
+    });
 });

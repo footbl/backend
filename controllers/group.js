@@ -229,7 +229,7 @@ router.post('/groups/:groupId/members', function (request, response) {
  * @method
  * @summary Get group members in database
  *
- * @param request.userId
+ * @param request.groupId
  * @param response
  *
  * @returns 200 [members]
@@ -251,6 +251,49 @@ router.get('/groups/:groupId/members', function (request, response) {
     group = request.group;
 
     return response.send(200, group.members)
+});
+
+/**
+ * @method
+ * @summary Removes group member from database
+ *
+ * @param request.groupId
+ * @param request.memberId
+ * @param response
+ *
+ * @returns 200 group
+ * @throws 500 error
+ * @throws 404 group not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.delete('/groups/:groupId/members/:memberId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var group, member;
+    group = request.group;
+
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {return response.send(401, 'invalid token');}
+
+    member = group.members.filter(function (member) {
+        return member.user.toString() === request.params.memberId;
+    }).pop();
+
+    if (!member) {return response.send(404, 'member not found');}
+
+    member.remove();
+
+    return group.save(function (error) {
+        if (error) {return response.send(500, error);}
+        return response.send(200, member);
+    });
 });
 
 /**
