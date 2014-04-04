@@ -470,7 +470,47 @@ describe('group controller', function () {
         });
     });
 
-    describe('details member', function () {});
+    describe('details member', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/groups/' + otherGroup._id + '/members/' + memberUser._id);
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with invalid id', function (done) {
+            var req = request(app);
+            req = req.get('/groups/' + otherGroup._id + '/members/invalid');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should raise error for users that don\'t belong to the group', function (done) {
+            var req = request(app);
+            req = req.get('/groups/' + otherGroup._id + '/members/' + memberUser._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(otherUser)});
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should list with valid credentials', function (done) {
+            var req = request(app);
+            req = req.get('/groups/' + otherGroup._id + '/members/' + memberUser._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('user');
+                response.body.should.have.property('ranking');
+            });
+            req.end(done);
+        });
+    });
 
     describe('delete member', function () {
         it('should raise error without token', function (done) {

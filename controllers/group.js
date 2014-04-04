@@ -268,6 +268,41 @@ router.get('/groups/:groupId/members', function (request, response) {
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
+router.get('/groups/:groupId/members/:memberId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var group, member;
+    group = request.group;
+    member = group.members.filter(function (member) {
+        return member.user.toString() === request.params.memberId;
+    }).pop();
+
+    if (!member) {return response.send(404, 'member not found');}
+
+    return response.send(200, member);
+});
+
+/**
+ * @method
+ * @summary Removes group member from database
+ *
+ * @param request.groupId
+ * @param request.memberId
+ * @param response
+ *
+ * @returns 200 group
+ * @throws 500 error
+ * @throws 404 group not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
 router.delete('/groups/:groupId/members/:memberId', function (request, response) {
     'use strict';
 
