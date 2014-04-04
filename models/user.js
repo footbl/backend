@@ -33,6 +33,12 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
+    'verified' : {
+        'type' : Boolean,
+        'required' : true,
+        'default' : false
+    },
+    /** @property */
     'password' : {
         'type' : String,
         'required' : true
