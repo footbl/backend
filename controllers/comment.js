@@ -82,6 +82,8 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
     query.where('match').equals(request.params.matchId);
     query.populate('match');
     query.populate('user');
+    query.skip(page);
+    query.limit(pageSize);
 
     if (filterByFriends === true){
         query.where('user').in(request.session.starred);
@@ -89,8 +91,6 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
         query.where('user').nin(request.session.starred);
     }
 
-    query.skip(page);
-    query.limit(pageSize);
     return query.exec(function (error, comments) {
         if (error) {return response.send(500, error);}
         return response.send(200, comments);

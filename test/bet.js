@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match,
-    user, guest, host, championship, otherChampionship, match, otherMatch;
+    user, otherUser, friendUser, guest, host, championship, otherChampionship, match, otherMatch;
 
 require('should');
 
@@ -25,6 +25,21 @@ describe('bet controller', function () {
 
     before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});
+        user.save(done);
+    });
+
+    before(function (done) {
+        otherUser = new User({'password' : '1234', 'type' : 'admin'});
+        otherUser.save(done);
+    });
+
+    before(function (done) {
+        friendUser = new User({'password' : '1234', 'type' : 'admin'});
+        friendUser.save(done);
+    });
+
+    before(function (done) {
+        user.starred.push(friendUser._id);
         user.save(done);
     });
 
@@ -168,6 +183,24 @@ describe('bet controller', function () {
     });
 
     describe('list', function () {
+        before(function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(otherUser)});
+            req = req.send({date : new Date(), result : 'draw', bid : 70});
+            req.end(done);
+        });
+
+        before(function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(friendUser)});
+            req = req.send({date : new Date(), result : 'draw', bid : 70});
+            req.end(done);
+        });
+
         it('should raise error without token', function (done) {
             var req = request(app);
             req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets');
@@ -183,7 +216,49 @@ describe('bet controller', function () {
             req = req.send({token : auth.token(user)});
             req = req.expect(200);
             req = req.expect(function (response) {
-                response.body.should.be.instanceOf(Array);
+                response.body.should.be.instanceOf(Array).with.lengthOf(3);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                    team.should.have.property('date');
+                    team.should.have.property('result');
+                    team.should.have.property('bid');
+                    team.should.have.property('match');
+                    team.should.have.property('user');
+                });
+            });
+            req.end(done);
+        });
+
+        it('should filter friends comments', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({filterByFriends : true});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array).with.lengthOf(1);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                    team.should.have.property('date');
+                    team.should.have.property('result');
+                    team.should.have.property('bid');
+                    team.should.have.property('match');
+                    team.should.have.property('user');
+                });
+            });
+            req.end(done);
+        });
+
+        it('should filter unknown person comments', function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({filterByFriends : false});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array).with.lengthOf(2);
                 response.body.every(function (team) {
                     team.should.have.property('_id');
                     team.should.have.property('date');

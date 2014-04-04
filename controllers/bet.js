@@ -83,16 +83,24 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
 
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var query, page, pageSize;
-    query    = Bet.find();
-    pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
+    var query, page, pageSize, filterByFriends;
+    query           = Bet.find();
+    pageSize        = nconf.get('PAGE_SIZE');
+    page            = request.param('page', 0) * pageSize;
+    filterByFriends = request.param('filterByFriends');
 
     query.where('match').equals(request.params.matchId);
     query.populate('match');
     query.populate('user');
     query.skip(page);
     query.limit(pageSize);
+
+    if (filterByFriends === true){
+        query.where('user').in(request.session.starred);
+    } else if (filterByFriends === false) {
+        query.where('user').nin(request.session.starred);
+    }
+
     return query.exec(function (error, bets) {
         if (error) {return response.send(500, error);}
         return response.send(200, bets);
