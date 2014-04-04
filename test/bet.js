@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match,
-    user, guest, host, championship, match, otherMatch;
+    user, guest, host, championship, otherChampionship, match, otherMatch;
 
 require('should');
 
@@ -44,12 +44,17 @@ describe('bet controller', function () {
     });
 
     before(function (done) {
+        otherChampionship = new Championship({'name' : 'championship'});
+        otherChampionship.save(done);
+    });
+
+    before(function (done) {
         match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 1});
         match.save(done);
     });
 
     before(function (done) {
-        otherMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 1});
+        otherMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : otherChampionship._id, round : 1});
         otherMatch.save(done);
     });
 
@@ -141,7 +146,7 @@ describe('bet controller', function () {
 
         it('should raise error with insufficient funds', function (done) {
             var req = request(app);
-            req = req.post('/championships/' + championship._id + '/matches/' + otherMatch._id + '/bets');
+            req = req.post('/championships/' + otherChampionship._id + '/matches/' + otherMatch._id + '/bets');
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({date : new Date(), result : 'draw', bid : 70});
@@ -179,6 +184,68 @@ describe('bet controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                    team.should.have.property('date');
+                    team.should.have.property('result');
+                    team.should.have.property('bid');
+                    team.should.have.property('match');
+                    team.should.have.property('user');
+                });
+            });
+            req.end(done);
+        });
+    });
+
+    describe('list user bets', function () {
+        before(function (done) {
+            var req = request(app);
+            req = req.post('/championships/' + otherChampionship._id + '/matches/' + otherMatch._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({date : new Date(), result : 'draw', bid : 10});
+            req.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should list only championship matches with filter', function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({championship : championship._id});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                    team.should.have.property('date');
+                    team.should.have.property('result');
+                    team.should.have.property('bid');
+                    team.should.have.property('match');
+                    team.should.have.property('user');
+                });
+            });
+            req.end(done);
+        });
+
+        it('should list all bets without filter', function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/bets');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(2);
                 response.body.every(function (team) {
                     team.should.have.property('_id');
                     team.should.have.property('date');

@@ -146,10 +146,17 @@ router.get('/users/:userId/bets', function (request, response) {
 
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var user;
+    var user, bets;
     user = request.user;
+    bets = user.bets;
 
-    return response.send(200, user.bets);
+    if (request.param('championship')) {
+        bets = bets.filter(function (bet) {
+            return bet.match.championship.toString() === request.param('championship');
+        });
+    }
+
+    return response.send(200, bets);
 });
 
 /**
@@ -261,7 +268,8 @@ router.param('userId', function (request, response, next, id) {
 
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var query;
+    var query, Match;
+    Match = require('../models/match');
     query = User.findOne();
     query.where('_id').equals(id);
     query.populate('bets');
@@ -269,8 +277,13 @@ router.param('userId', function (request, response, next, id) {
         if (error) {return response.send(404, 'user not found');}
         if (!user) {return response.send(404, 'user not found');}
 
-        request.user = user;
-        return next();
+        return Match.populate(user, {'path' : 'bets.match'}, function (error, user) {
+            if (error) {return response.send(404, 'user not found');}
+            if (!user) {return response.send(404, 'user not found');}
+
+            request.user = user;
+            return next();
+        });
     });
 });
 
