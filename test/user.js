@@ -1,4 +1,5 @@
-var request, app, mongoose, auth, nconf, crypto, User, user;
+var request, app, mongoose, auth, nconf, crypto, User,
+    user, otherUser;
 
 require('should');
 
@@ -16,6 +17,11 @@ describe('user controller', function () {
     before(function (done) {
         user = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});
         user.save(done);
+    });
+
+    before(function (done) {
+        otherUser = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});
+        otherUser.save(done);
     });
 
     describe('create', function () {
@@ -219,23 +225,9 @@ describe('user controller', function () {
     });
 
     describe('update', function () {
-        var id;
-
-        before(function (done) {
-            var req = request(app);
-            req = req.get('/users');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(200);
-            req = req.expect(function (response) {
-                id = response.body[0]._id;
-            });
-            req.end(done);
-        });
-
         it('should raise error without token', function (done) {
             var req = request(app);
-            req = req.put('/users/' + id);
+            req = req.put('/users/' + user._id);
             req = req.send(auth.credentials());
             req = req.send({username : 'test', password : '1234'});
             req = req.expect(401);
@@ -254,7 +246,7 @@ describe('user controller', function () {
 
         it('should raise error without password', function (done) {
             var req = request(app);
-            req = req.put('/users/' + id);
+            req = req.put('/users/' + user._id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({username : 'test'});
@@ -264,7 +256,7 @@ describe('user controller', function () {
 
         it('should update username', function (done) {
             var req = request(app);
-            req = req.put('/users/' + id);
+            req = req.put('/users/' + user._id);
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({username : 'test', password : '1234'});
@@ -273,6 +265,28 @@ describe('user controller', function () {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('username').be.equal('test');
             });
+            req.end(done);
+        });
+    });
+
+    describe('create starred', function () {
+        it('should create', function (done) {
+            var req = request(app);
+            req = req.post('/users/' + user._id + '/starred');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({user : otherUser._id});
+            req = req.expect(201);
+            req.end(done);
+        });
+
+        it('should raise error with repeated starred', function (done) {
+            var req = request(app);
+            req = req.post('/users/' + user._id + '/starred');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({user : otherUser._id});
+            req = req.expect(500);
             req.end(done);
         });
     });

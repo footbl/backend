@@ -71,6 +71,11 @@ schema = new Schema({
         'ref' : 'Bet'
     }],
     /** @property */
+    'starred' : [{
+        'type' : Schema.Types.ObjectId,
+        'ref' : 'User'
+    }],
+    /** @property */
     'createdAt' : {
         'type' : Date
     },
@@ -102,12 +107,35 @@ schema.plugin(require('mongoose-json-select'), {
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
+    'use strict';
+
     if (!this.createdAt) {
         this.createdAt = this.updatedAt = new Date;
     } else {
         this.updatedAt = new Date;
     }
     next();
+});
+
+/**
+ * @callback
+ * @summary Ensures unique starred
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    var repeated;
+
+    repeated = this.starred.some(function (user, index) {
+        return this.starred.indexOf(user) !== index;
+    }.bind(this));
+
+    next(repeated ? new Error('repeated starred') : null);
 });
 
 /**
