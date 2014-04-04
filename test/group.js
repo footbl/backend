@@ -1,6 +1,6 @@
 var request, app, mongoose, auth, nconf,
     User, Championship,
-    group, user, otherUser, memberUser, championship;
+    group, otherGroup, user, otherUser, memberUser, candidateUser, championship;
 
 require('should');
 
@@ -38,6 +38,11 @@ describe('group controller', function () {
     });
 
     before(function (done) {
+        candidateUser = new User({'password' : '12345', 'type' : 'admin'});
+        candidateUser.save(done);
+    });
+
+    before(function (done) {
         championship = new Championship({'name' : 'championship'});
         championship.save(done);
     });
@@ -50,6 +55,16 @@ describe('group controller', function () {
             'members' : [{user : user._id}, {user : memberUser._id}]
         });
         group.save(done);
+    });
+
+    before(function (done) {
+        otherGroup = new Group({
+            'name' : 'test',
+            'championship' : championship._id,
+            'owner' : user._id,
+            'members' : [{user : user._id}, {user : memberUser._id}]
+        });
+        otherGroup.save(done);
     });
 
     describe('create', function () {
@@ -351,6 +366,61 @@ describe('group controller', function () {
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.expect(200);
+            req.end(done);
+        });
+    });
+
+    describe('create member', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/groups/' + otherGroup._id + '/members');
+            req = req.send(auth.credentials());
+            req = req.send({user : candidateUser._id});
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error without user', function (done) {
+            var req = request(app);
+            req = req.post('/groups/' + otherGroup._id + '/members');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(500);
+            req.end(done);
+        });
+
+        it('should raise error with user that don\'t belong to the group', function (done) {
+            var req = request(app);
+            req = req.post('/groups/' + otherGroup._id + '/members');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(otherUser)});
+            req = req.send({user : candidateUser._id});
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should raise error with user that don\'t is owner', function (done) {
+            var req = request(app);
+            req = req.post('/groups/' + otherGroup._id + '/members');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(memberUser)});
+            req = req.send({user : candidateUser._id});
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should create with valid credentials and user', function (done) {
+            var req = request(app);
+            req = req.post('/groups/' + otherGroup._id + '/members');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.send({user : candidateUser._id});
+            req = req.expect(201);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('user');
+                response.body.should.have.property('ranking');
+            });
             req.end(done);
         });
     });

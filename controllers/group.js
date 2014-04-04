@@ -192,6 +192,41 @@ router.delete('/groups/:groupId', function (request, response) {
 
 /**
  * @method
+ * @summary Creates a new group member
+ *
+ * @param request.user
+ * @param response
+ *
+ * @returns 201 member
+ * @throws 500 error
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.post('/groups/:groupId/members', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var group;
+    group = request.group;
+
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {return response.send(401, 'invalid token');}
+
+    group.members.push({user : request.param('user')});
+
+    return group.save(function (error) {
+        if (error) {return response.send(500, error);}
+        return response.send(201, group.members.pop());
+    });
+});
+
+/**
+ * @method
  * @summary Puts requested group in request object
  *
  * @param request
