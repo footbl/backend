@@ -270,6 +270,15 @@ describe('user controller', function () {
     });
 
     describe('create starred', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.post('/users/' + user._id + '/starred');
+            req = req.send(auth.credentials());
+            req = req.send({user : otherUser._id});
+            req = req.expect(401);
+            req.end(done);
+        });
+
         it('should create', function (done) {
             var req = request(app);
             req = req.post('/users/' + user._id + '/starred');
@@ -287,6 +296,31 @@ describe('user controller', function () {
             req = req.send({token : auth.token(user)});
             req = req.send({user : otherUser._id});
             req = req.expect(500);
+            req.end(done);
+        });
+    });
+
+    describe('list starred', function () {
+        it('should raise error without token', function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/starred');
+            req = req.send(auth.credentials());
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should list with valid credentials', function (done) {
+            var req = request(app);
+            req = req.get('/users/' + user._id + '/starred');
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.every(function (team) {
+                    team.should.have.property('_id');
+                });
+            });
             req.end(done);
         });
     });

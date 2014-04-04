@@ -94,7 +94,8 @@ schema.plugin(require('mongoose-json-select'), {
     'picture'  : 1,
     'language' : 1,
     'ranking'  : 1,
-    'bets'     : 0
+    'bets'     : 0,
+    'starred'  : 0
 });
 
 /**
@@ -132,7 +133,9 @@ schema.pre('save', function (next) {
     var repeated;
 
     repeated = this.starred.some(function (user, index) {
-        return this.starred.indexOf(user) !== index;
+        return this.starred.some(function (otherUser, otherIndex) {
+            return user === user && index !== otherIndex;
+        });
     }.bind(this));
 
     next(repeated ? new Error('repeated starred') : null);

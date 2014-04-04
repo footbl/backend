@@ -283,6 +283,34 @@ router.post('/users/:userId/starred', function (request, response) {
 
 /**
  * @method
+ * @summary Get user starred in database
+ *
+ * @param request.userId
+ * @param response
+ *
+ * @returns 200 [starred]
+ * @throws 404 user not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/users/:userId/starred', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var user;
+    user = request.user;
+
+    return response.send(200, user.starred)
+});
+
+/**
+ * @method
  * @summary Puts requested user in request object
  *
  * @param request
@@ -306,6 +334,7 @@ router.param('userId', function (request, response, next, id) {
     query = User.findOne();
     query.where('_id').equals(id);
     query.populate('bets');
+    query.populate('starred');
     return query.exec(function (error, user) {
         if (error) {return response.send(404, 'user not found');}
         if (!user) {return response.send(404, 'user not found');}
