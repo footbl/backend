@@ -5,11 +5,13 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var mongoose, Schema, schema, User;
+var mongoose, Schema, schema, User, Match, scores;
 
 mongoose = require('mongoose');
 Schema   = mongoose.Schema;
 User     = require('./user');
+Match    = require('./match');
+scores   = new (require('scoreboard').Score)();
 
 /**
  * @class
@@ -29,6 +31,12 @@ schema = new Schema({
     'match' : {
         'type' : Schema.Types.ObjectId,
         'ref' : 'Match',
+        'required' : true
+    },
+    /** @property */
+    'championship' : {
+        'type' : Schema.Types.ObjectId,
+        'ref' : 'Championship',
         'required' : true
     },
     /** @property */
@@ -84,6 +92,8 @@ schema.plugin(require('mongoose-json-select'), {
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
+    'use strict';
+
     if (!this.createdAt) {
         this.createdAt = this.updatedAt = new Date;
     } else {
@@ -95,8 +105,7 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Ensures sufficient funds
- * When saving a bet, the system must ensure that the user have enough funds to perform the bet, and appends the bet in
- * the user profile.
+ * When saving a bet, the system must ensure that the user have enough funds to perform the bet.
  *
  * @param next
  *
@@ -108,21 +117,24 @@ schema.pre('save', function (next) {
 
     var query;
     query = User.findById(this.user);
-    query.populate('bets');
+    query.exec(function (error, user) {
+        var wallet;
 
-    return query.exec(function (error, user) {
         if (error) {return next(error);}
-        if (!user) {return next(new Error('user not found'));}
-        if (user.funds < this.bid) {return next(new Error('insufficient funds'));}
-        return next();
+
+        wallet = user.findWallet(this.championship);
+        if (wallet.available < this.bid) {
+            return next(new Error('insufficient funds'));
+        } else {
+            return next();
+        }
     }.bind(this));
 });
 
 /**
  * @callback
  * @summary Ensures unique bet
- * When saving bet, the system must ensure that the user only made one bet for a match, if a user have already meade a
- * bet, he have to update the old bet, or delete the old one and create a new one.
+ * When saving a bet, the system must ensure that the user dont have any other bet in the same match.
  *
  * @param next
  *
@@ -131,6 +143,7 @@ schema.pre('save', function (next) {
  */
 schema.pre('save', function (next) {
     'use strict';
+
     if (!this.isNew) {return next();}
 
     var query;
@@ -142,60 +155,151 @@ schema.pre('save', function (next) {
         if (error) {return next(error);}
         if (bet) {return next(new Error('match already bet'));}
         return next();
-    });
+    }.bind(this));
 });
 
 /**
  * @callback
- * @summary Inserts bet in user bets
+ * @summary Updates user wallet and ranking
+ * After saving a new bet, the user wallet corresponding to match's championship must be updated, decreasing the
+ * available funds and increasing the stake money.
  *
  * @param next
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.post('save', function (next) {
+schema.post('save', function () {
     'use strict';
 
     var query;
     query = User.findById(this.user);
-    query.populate('bets');
+    query.exec(function (error, user) {
+        var wallet;
 
-    return query.exec(function (error, user) {
-        if (error) {return next(error);}
-        if (!user) {return next(new Error('user not found'));}
+        if (error) { return; }
 
-        user.bets.push(this._id);
-        return user.save(next);
+        wallet = user.findWallet(this.championship);
+        wallet.stake     += this.bid;
+        wallet.available -= this.bid;
+        //scores.index(this.championship, -1 * this.bid, user._id);
+
+        user.save();
     }.bind(this));
 });
 
 /**
  * @callback
- * @summary Removes bet from user bets
+ * @summary Updates user wallet and ranking
+ * After removing a bet, the user wallet corresponding to match's championship must be updated, increasing the available
+ * funds and decreasing the stake money.
  *
  * @param next
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.post('remove', function (next) {
+schema.post('remove', function () {
     'use strict';
 
     var query;
     query = User.findById(this.user);
-    query.populate('bets');
+    query.exec(function (error, user) {
+        var wallet;
 
-    return query.exec(function (error, user) {
-        if (error) {return next(error);}
-        if (!user) {return next(new Error('user not found'));}
+        if (error) { return; }
 
-        user.bets = user.bets.filter(function (bet) {
-            return bet._id !== this._id;
-        }.bind(this));
+        wallet = user.findWallet(this.championship);
+        wallet.stake     -= this.bid;
+        wallet.available += this.bid;
+        //scores.index(this.championship, this.bid, user._id);
 
-        return user.save(next);
+        user.save();
     }.bind(this));
 });
+
+/**
+ * @callback
+ * @summary Updates match pot
+ * After saving a new bet, the match pot corresponding to the bet's result must be updated, increasing the pot.
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.post('save', function () {
+    'use strict';
+
+    var query;
+    query = Match.findById(this.match);
+    query.exec(function (error, match) {
+        if (error) { return; }
+
+        match.pot[this.result] += this.bid;
+        match.save();
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Updates match pot
+ * After saving a new bet, the match pot corresponding to the bet's result must be updated, decreasing the pot.
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.post('remove', function () {
+    'use strict';
+
+    var query;
+    query = Match.findById(this.match);
+    query.exec(function (error, match) {
+        if (error) { return; }
+
+        match.pot[this.result] -= this.bid;
+        match.save();
+    }.bind(this));
+});
+
+/**
+ * @method
+ * @summary Finishes the bet
+ * To finish a bet, the ranking and user's wallet corresponding to the match's championship must be updated, decreasing
+ * the wallet stake and if the the user won the bet, the available must be increased with the bet bid times the match
+ * reward.
+ *
+ * @param match
+ * @param callback
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.methods.finish = function (match, callback) {
+    'use strict';
+
+    var query;
+    query = User.findById(this.user);
+    query.exec(function (error, user) {
+        var wallet;
+
+        if (error) {return next(error);}
+
+        callback = callback || function () {};
+        wallet   = user.findWallet(this.championship);
+        wallet.stake     -= this.bid;
+        wallet.available += this.result === match.winner ?this.reward : 0;
+
+        if (this.result === match.winner) {
+            this.reward = this.bid * match.reward;
+            //scores.index(this.championship, this.reward, this.user._id);
+        }
+
+        user.save();
+        return this.save(callback);
+    }.bind(this));
+};
 
 module.exports = mongoose.model('Bet', schema);

@@ -5,13 +5,14 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, crypto, auth, User;
+var router, nconf, crypto, auth, User, Bet;
 
 router = require('express').Router();
 auth   = require('../lib/auth');
 nconf  = require('nconf');
 crypto = require('crypto');
 User   = require('../models/user');
+Bet    = require('../models/bet');
 
 /**
  * @method
@@ -235,17 +236,49 @@ router.get('/users/:userId/bets', function (request, response) {
 
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var user, bets;
-    user = request.user;
-    bets = user.bets;
+    var user, query, championship;
+    user         = request.user;
+    query        = Bet.find();
+    championship = request.param('championship');
+    query.where('user').equals(user._id);
 
-    if (request.param('championship')) {
-        bets = bets.filter(function (bet) {
-            return bet.match.championship.toString() === request.param('championship');
-        });
+    if (championship) {
+        query.where('championship').equals(championship);
     }
 
-    return response.send(200, bets);
+    return query.exec(function (error, bets) {
+        if (error) {return response.send(500, error);}
+        return response.send(200, bets);
+    });
+});
+
+/**
+ * @method
+ * @summary Get user wallets in database
+ *
+ * @param request.userId
+ * @param response
+ *
+ * @returns 200 [wallets]
+ * @throws 404 user not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/users/:userId/wallets', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var user;
+    user = request.user;
+
+    response.header('Last-Modified', user.updatedAt);
+    return response.send(200, user.wallets);
 });
 
 /**

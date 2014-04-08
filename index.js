@@ -1,10 +1,11 @@
-var express, mongoose, nconf, bodyParser,
+var express, mongoose, nconf, bodyParser, scoreboard,
     app;
 
 express    = require('express');
 mongoose   = require('mongoose');
 nconf      = require('nconf');
 bodyParser = require('body-parser');
+scoreboard = require('scoreboard');
 
 nconf.argv().env();
 nconf.defaults({
@@ -37,6 +38,10 @@ app.get('/', function (request, response) {
 if (!module.parent) {
     mongoose.connect(nconf.get('MONGOHQ_URL'));
 }
+
+scoreboard.redis.createClient = function () {
+    return require('./lib/redis');
+};
 
 app.listen(nconf.get('PORT'));
 module.exports = app;

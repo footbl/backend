@@ -121,6 +121,8 @@ schema.plugin(require('mongoose-json-select'), {
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
+    'use strict';
+
     if (!this.createdAt) {
         this.createdAt = this.updatedAt = new Date;
     } else {
@@ -136,11 +138,26 @@ schema.pre('save', function (next) {
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.methods.winner = function () {
+schema.virtual('winner').get(function () {
+    'use strict';
+
     if (this.result.guest > this.result.host) {return 'guest';}
     if (this.result.guest < this.result.host) {return 'host';}
     return 'draw';
-};
+});
+
+/**
+ * @method
+ * @summary Return match total pot
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.virtual('jackpot').get(function () {
+    'use strict';
+
+    return this.pot.guest + this.pot.draw + this.pot.host;
+});
 
 /**
  * @method
@@ -149,16 +166,15 @@ schema.methods.winner = function () {
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.methods.reward = function () {
-    switch (this.winner()) {
-        case 'guest' :
-            return (this.pot.guest + this.pot.draw + this.pot.host) / this.pot.guest;
-        case 'host' :
-            return (this.pot.guest + this.pot.draw + this.pot.host) / this.pot.host;
-        default :
-            return (this.pot.guest + this.pot.draw + this.pot.host) / this.pot.draw;
+schema.virtual('reward').get(function () {
+    'use strict';
+
+    switch (this.winner) {
+        case 'guest' : {return this.jackpot / this.pot.guest;}
+        case 'host'  : {return this.jackpot / this.pot.host;}
+        default      : {return this.jackpot / this.pot.draw;}
     }
-};
+});
 
 /**
  * @method
@@ -174,25 +190,19 @@ schema.methods.reward = function () {
 schema.methods.finish = function (callback) {
     'use strict';
 
-    this.finished = true;
-    this.save(function (error) {
+    var query;
+
+    query = require('./bet').find();
+    query.where('match').equals(this._id);
+    query.exec(function (error, bets) {
         if (error) {return callback(error);}
 
-        var query;
-
-        query = Bet.find();
-        query.where('match').equals(this._id);
-        query.where('result').equals(this.winner());
-        return query.exec(function (error, bets) {
-            if (error) {return callback(error);}
-
-            bets.forEach(function (bet) {
-                bet.reward = bet.bid * this.reward();
-                bet.save();
-            }.bind(this));
-
-            return callback(error);
+        bets.forEach(function (bet) {
+            bet.finish(this);
         }.bind(this));
+
+        this.finished = true;
+        return this.save(callback);
     }.bind(this));
 };
 

@@ -149,10 +149,11 @@ router.put('/championships/:championshipId/matches/:matchId/comments/:commentId'
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
-
     var comment;
     comment = request.comment;
+
+    if (!request.session || request.session._id.toString() !== comment.user._id.toString()) {return response.send(401, 'invalid token');}
+
     comment.date    = request.param('date');
     comment.message = request.param('message');
 
@@ -183,10 +184,10 @@ router.delete('/championships/:championshipId/matches/:matchId/comments/:comment
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
-
     var comment;
     comment = request.comment;
+
+    if (!request.session || request.session._id.toString() !== comment.user._id.toString()) {return response.send(401, 'invalid token');}
 
     return comment.remove(function (error) {
         if (error) {return response.send(500, error);}

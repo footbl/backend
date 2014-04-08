@@ -56,6 +56,8 @@ schema.plugin(require('mongoose-json-select'), {
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
+    'use strict';
+
     if (!this.createdAt) {
         this.createdAt = this.updatedAt = new Date;
     } else {

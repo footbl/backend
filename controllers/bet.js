@@ -38,26 +38,20 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
 
     if (!request.session) {return response.send(401, 'invalid token');}
 
-    var bet, match;
-    match = request.match;
+    var bet;
     bet   = new Bet({
-        'user'   : request.session._id,
-        'match'  : request.params.matchId,
-        'date'   : request.param('date'),
-        'result' : request.param('result'),
-        'bid'    : request.param('bid')
+        'user'         : request.session._id,
+        'match'        : request.params.matchId,
+        'championship' : request.params.championshipId,
+        'date'         : request.param('date'),
+        'result'       : request.param('result'),
+        'bid'          : request.param('bid')
     });
-
-    match.pot[bet.result] += bet.bid;
 
     return bet.save(function (error) {
         if (error) {return response.send(500, error);}
-
-        return match.save(function () {
-            if (error) {return response.send(500, error);}
-            response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + request.param.matchId + '/bets/' + bet._id);
-            return response.send(201, bet);
-        });
+        response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + request.param.matchId + '/bets/' + bet._id);
+        return response.send(201, bet);
     });
 });
 
@@ -157,21 +151,14 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    var bet;
+    bet = request.bet;
 
-    var bet, match;
-    match = request.match;
-    bet   = request.bet;
-
-    match.pot[bet.result] -= bet.bid;
+    if (!request.session || request.session._id.toString() !== bet.user._id.toString()) {return response.send(401, 'invalid token');}
 
     return bet.remove(function (error) {
         if (error) {return response.send(500, error);}
-
-        return match.save(function () {
-            if (error) {return response.send(500, error);}
-            return response.send(200, bet);
-        });
+        return response.send(200, bet);
     });
 });
 
