@@ -244,30 +244,6 @@ describe('match controller', function () {
             req.end(done);
         });
 
-        after(function (done) {
-            var req = request(app);
-            req = req.get('/users/' + user._id + '/bets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(function (response) {
-                response.body.should.be.instanceOf(Array);
-                response.body[0].should.have.property('reward').be.equal(100);
-            });
-            req.end(done);
-        });
-
-        after(function (done) {
-            var req = request(app);
-            req = req.get('/users/' + otherUser._id + '/bets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(otherUser)});
-            req = req.expect(function (response) {
-                response.body.should.be.instanceOf(Array);
-                response.body[0].should.have.property('reward').be.equal(0);
-            });
-            req.end(done);
-        });
-
         it('should finish match', function (done) {
             var req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id + '/finish');

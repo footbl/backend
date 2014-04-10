@@ -269,110 +269,112 @@ describe('user controller', function () {
         });
     });
 
-    describe('create starred', function () {
-        it('should raise error without token', function (done) {
-            var req = request(app);
-            req = req.post('/users/' + user._id + '/starred');
-            req = req.send(auth.credentials());
-            req = req.send({user : otherUser._id});
-            req = req.expect(401);
-            req.end(done);
+    describe('starred', function () {
+        describe('create', function () {
+            it('should raise error without token', function (done) {
+                var req = request(app);
+                req = req.post('/users/' + user._id + '/starred');
+                req = req.send(auth.credentials());
+                req = req.send({user : otherUser._id});
+                req = req.expect(401);
+                req.end(done);
+            });
+
+            it('should create', function (done) {
+                var req = request(app);
+                req = req.post('/users/' + user._id + '/starred');
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.send({user : otherUser._id});
+                req = req.expect(201);
+                req.end(done);
+            });
+
+            it('should raise error with repeated starred', function (done) {
+                var req = request(app);
+                req = req.post('/users/' + user._id + '/starred');
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.send({user : otherUser._id});
+                req = req.expect(500);
+                req.end(done);
+            });
         });
 
-        it('should create', function (done) {
-            var req = request(app);
-            req = req.post('/users/' + user._id + '/starred');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({user : otherUser._id});
-            req = req.expect(201);
-            req.end(done);
-        });
+        describe('list', function () {
+            it('should raise error without token', function (done) {
+                var req = request(app);
+                req = req.get('/users/' + user._id + '/starred');
+                req = req.send(auth.credentials());
+                req = req.expect(401);
+                req.end(done);
+            });
 
-        it('should raise error with repeated starred', function (done) {
-            var req = request(app);
-            req = req.post('/users/' + user._id + '/starred');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({user : otherUser._id});
-            req = req.expect(500);
-            req.end(done);
-        });
-    });
+            it('should raise error with invalid id', function (done) {
+                var req = request(app);
+                req = req.get('/users/invalid/starred');
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.expect(404);
+                req.end(done);
+            });
 
-    describe('list starred', function () {
-        it('should raise error without token', function (done) {
-            var req = request(app);
-            req = req.get('/users/' + user._id + '/starred');
-            req = req.send(auth.credentials());
-            req = req.expect(401);
-            req.end(done);
-        });
-
-        it('should raise error with invalid id', function (done) {
-            var req = request(app);
-            req = req.get('/users/invalid/starred');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(404);
-            req.end(done);
-        });
-
-        it('should list with valid credentials', function (done) {
-            var req = request(app);
-            req = req.get('/users/' + user._id + '/starred');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(200);
-            req = req.expect(function (response) {
-                response.body.should.be.instanceOf(Array);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
+            it('should list with valid credentials', function (done) {
+                var req = request(app);
+                req = req.get('/users/' + user._id + '/starred');
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.expect(200);
+                req = req.expect(function (response) {
+                    response.body.should.be.instanceOf(Array);
+                    response.body.every(function (team) {
+                        team.should.have.property('_id');
+                    });
                 });
+                req.end(done);
             });
-            req.end(done);
         });
-    });
 
-    describe('delete starred', function () {
-        var id;
+        describe('delete', function () {
+            var id;
 
-        before(function (done) {
-            var req = request(app);
-            req = req.get('/users/' + user._id + '/starred');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(200);
-            req = req.expect(function (response) {
-                id = response.body[0]._id;
+            before(function (done) {
+                var req = request(app);
+                req = req.get('/users/' + user._id + '/starred');
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.expect(200);
+                req = req.expect(function (response) {
+                    id = response.body[0]._id;
+                });
+                req.end(done);
             });
-            req.end(done);
-        });
 
-        it('should raise error without token', function (done) {
-            var req = request(app);
-            req = req.del('/users/' + user._id + '/starred/' + id);
-            req = req.send(auth.credentials());
-            req = req.expect(401);
-            req.end(done);
-        });
+            it('should raise error without token', function (done) {
+                var req = request(app);
+                req = req.del('/users/' + user._id + '/starred/' + id);
+                req = req.send(auth.credentials());
+                req = req.expect(401);
+                req.end(done);
+            });
 
-        it('should raise error with invalid id', function (done) {
-            var req = request(app);
-            req = req.del('/users/' + user._id + '/starred/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(404);
-            req.end(done);
-        });
+            it('should raise error with invalid id', function (done) {
+                var req = request(app);
+                req = req.del('/users/' + user._id + '/starred/invalid');
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.expect(404);
+                req.end(done);
+            });
 
-        it('should delete', function (done) {
-            var req = request(app);
-            req = req.del('/users/' + user._id + '/starred/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.expect(200);
-            req.end(done);
+            it('should delete', function (done) {
+                var req = request(app);
+                req = req.del('/users/' + user._id + '/starred/' + id);
+                req = req.send(auth.credentials());
+                req = req.send({token : auth.token(user)});
+                req = req.expect(200);
+                req.end(done);
+            });
         });
     });
 });

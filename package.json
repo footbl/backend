@@ -16,7 +16,7 @@
     "forky": "0.0.x",
     "nconf": "0.6.x",
     "redis": "0.10.x",
-    "scoreboard": "0.0.5"
+    "async": "^0.7.0"
   },
   "devDependencies": {
     "mocha": "~1.15.1",

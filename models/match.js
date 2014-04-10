@@ -5,11 +5,11 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var mongoose, Schema, schema, Bet;
+var mongoose, Schema, schema, async;
 
 mongoose = require('mongoose');
 Schema   = mongoose.Schema;
-Bet      = require('./bet');
+async    = require('async');
 
 /**
  * @class
@@ -53,6 +53,7 @@ schema = new Schema({
         'type' : Number,
         'required' : true
     },
+    /** @property */
     'pot' : {
         /** @property */
         'guest' : {
@@ -132,6 +133,39 @@ schema.pre('save', function (next) {
 });
 
 /**
+ * @callback
+ * @summary Updates user wallets
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.finished) {return next();}
+
+    var query;
+    query = require('./wallet').find();
+    query.where('championship').equals(this.championship);
+    return query.exec(function (error, wallets) {
+        if (error) {return next(error);}
+        return async.each(wallets, function (wallet, next) {
+            return async.each(wallet.bets, function (bet, next) {
+                if (bet.match.toString() === this._id.toString()) {
+                    bet.finished = true;
+                    bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
+                }
+                next();
+            }.bind(this), function () {
+                wallet.save(next);
+            });
+        }.bind(this), next);
+    }.bind(this));
+});
+
+/**
  * @method
  * @summary Return match winner
  *
@@ -175,35 +209,5 @@ schema.virtual('reward').get(function () {
         default      : {return this.jackpot / this.pot.draw;}
     }
 });
-
-/**
- * @method
- * @summary Finishes the match
- * To finish a match, the system must calculate all match bets profits, set the finished attribute to true and save the
- * match result.
- *
- * @param callback
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.methods.finish = function (callback) {
-    'use strict';
-
-    var query;
-
-    query = require('./bet').find();
-    query.where('match').equals(this._id);
-    query.exec(function (error, bets) {
-        if (error) {return callback(error);}
-
-        bets.forEach(function (bet) {
-            bet.finish(this);
-        }.bind(this));
-
-        this.finished = true;
-        return this.save(callback);
-    }.bind(this));
-};
 
 module.exports = mongoose.model('Match', schema);

@@ -60,31 +60,25 @@ schema = new Schema({
         'enum' : ['user', 'admin']
     },
     /** @property */
-    'wallets' : [{
-        /** @property */
-        'championship' : {
-            'type' : Schema.Types.ObjectId,
-            'ref' : 'Championship',
-            'required' : true
-        },
-        /** @property */
-        'stake' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        },
-        /** @property */
-        'available' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 100
-        }
-    }],
-    /** @property */
     'starred' : [{
         'type' : Schema.Types.ObjectId,
         'ref' : 'User'
     }],
+    /** @property */
+    'leaderboard' : {
+        /** @property */
+        'worldwide' : {
+            'type' : Number,
+            'required' : true,
+            'default' : Infinity
+        },
+        /** @property */
+        'national' : {
+            'type' : Number,
+            'required' : true,
+            'default' : Infinity
+        }
+    },
     /** @property */
     'createdAt' : {
         'type' : Date
@@ -98,15 +92,15 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    'email'    : 1,
-    'username' : 1,
-    'verified' : 1,
-    'password' : 0,
-    'picture'  : 1,
-    'language' : 1,
-    'ranking'  : 1,
-    'wallets'  : 0,
-    'starred'  : 0
+    'email'       : 1,
+    'username'    : 1,
+    'verified'    : 1,
+    'password'    : 0,
+    'picture'     : 1,
+    'language'    : 1,
+    'type'        : 0,
+    'starred'     : 0,
+    'leaderboard' : 1
 });
 
 /**
@@ -131,30 +125,6 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Ensures unique wallet
- * For each championship, the user must have only one or none wallet.
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    var repeated;
-
-    repeated = this.wallets.some(function (wallet, index) {
-        return this.wallets.some(function (otherWallet, otherIndex) {
-            return wallet.championship.toString() === otherWallet.championship.toString() && index !== otherIndex;
-        }.bind(this));
-    }.bind(this));
-
-    next(repeated ? new Error('repeated starred') : null);
-});
-
-/**
- * @callback
  * @summary Ensures unique starred
  *
  * @param next
@@ -175,36 +145,5 @@ schema.pre('save', function (next) {
 
     next(repeated ? new Error('repeated starred') : null);
 });
-
-/**
- * @method
- * @summary Return wallet for a given championship
- * If no wallet was found for a given championship, a new wallet must be created to the championship.
- *
- * @param championship
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.methods.findWallet = function (championship) {
-    'use strict';
-
-    var wallet;
-
-    wallet = this.wallets.filter(function (wallet) {
-        return wallet.championship.toString() === championship.toString();
-    }.bind(this))[0];
-
-    if (!wallet) {
-        this.wallets.push({
-            'championship' : championship,
-            'stake' : 0,
-            'available' : 100
-        });
-        return this.findWallet(championship);
-    }
-
-    return wallet;
-};
 
 module.exports = mongoose.model('User', schema);

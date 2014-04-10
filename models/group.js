@@ -5,11 +5,10 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var mongoose, Schema, schema, Bet;
+var mongoose, Schema, schema;
 
 mongoose = require('mongoose');
 Schema   = mongoose.Schema;
-Bet      = require('./bet');
 
 /**
  * @class

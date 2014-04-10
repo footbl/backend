@@ -147,9 +147,9 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
 
     var match;
     match = request.match;
-    return match.finish(function (error) {
+    match.finished = true;
+    return match.save(function (error) {
         if (error) {return response.send(500, error);}
-
         return response.send(200, match);
     });
 });

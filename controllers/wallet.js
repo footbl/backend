@@ -1,0 +1,213 @@
+/**
+ * @module
+ * Manages bet resource
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+var router, nconf, Wallet;
+
+router = require('express').Router();
+nconf  = require('nconf');
+Wallet = require('../models/wallet');
+
+/**
+ * @method
+ * @summary Creates a new wallet in database
+ *
+ * @param request.championship
+ * @param response
+ *
+ * @returns 201 wallet
+ * @throws 500 error
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.post('/wallets', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var wallet;
+    wallet = new Wallet({
+        'championship' : request.param('championship'),
+        'user'         : request.session._id
+    });
+
+    return wallet.save(function (error) {
+        if (error) {return response.send(500, error);}
+        response.header('Location', '/wallets/' + wallet._id);
+        return response.send(201, wallet);
+    });
+});
+
+/**
+ * @method
+ * @summary List all wallets in database
+ *
+ * @param request
+ * @param response
+ *
+ * @returns 200 [wallet]
+ * @throws 500 error
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/wallets', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    if (!request.session) {return response.send(401, 'invalid token');}
+
+    var query, page, pageSize;
+    query    = Wallet.find();
+    pageSize = nconf.get('PAGE_SIZE');
+    page     = request.param('page', 0) * pageSize;
+
+    query.where('user').equals(request.session._id);
+    query.skip(page);
+    query.limit(pageSize);
+    return query.exec(function (error, wallets) {
+        if (error) {return response.send(500, error);}
+        return response.send(200, wallets);
+    });
+});
+
+/**
+ * @method
+ * @summary Get wallet info in database
+ *
+ * @param request.walletId
+ * @param response
+ *
+ * @returns 200 wallet
+ * @throws 404 wallet not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/wallets/:walletId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    var wallet;
+    wallet = request.wallet;
+
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+
+    response.header('Last-Modified', wallet.updatedAt);
+    return response.send(200, wallet);
+});
+
+/**
+ * @method
+ * @summary Updates wallet info in database
+ *
+ * @param request.active
+ * @param response
+ *
+ * @returns 200 wallet
+ * @throws 500 error
+ * @throws 404 wallet not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.put('/wallets/:walletId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    var wallet;
+    wallet = request.wallet;
+
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+
+    wallet.active = request.param('active');
+
+    return wallet.save(function (error) {
+        if (error) {return response.send(500, error);}
+        return response.send(200, wallet);
+    });
+});
+
+/**
+ * @method
+ * @summary Removes wallet from database
+ *
+ * @param request.walletId
+ * @param response
+ *
+ * @returns 200 wallet
+ * @throws 500 error
+ * @throws 404 wallet not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.delete('/wallets/:walletId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    var wallet;
+    wallet = request.wallet;
+
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+
+    return wallet.remove(function (error) {
+        if (error) {return response.send(500, error);}
+        return response.send(200, wallet);
+    });
+});
+
+/**
+ * @method
+ * @summary Puts requested bet in request object
+ *
+ * @param request
+ * @param response
+ * @param next
+ * @param id
+ *
+ * @returns wallet
+ * @throws 404 wallet not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.param('walletId', function (request, response, next, id) {
+    'use strict';
+
+    var query;
+    query = Wallet.findOne();
+    query.where('_id').equals(id);
+    query.populate('championship');
+    query.populate('user');
+    query.populate('bets.match');
+    query.exec(function (error, wallet) {
+        if (error) {return response.send(404, 'wallet not found');}
+        if (!wallet) {return response.send(404, 'wallet not found');}
+
+        request.wallet = wallet;
+        return next();
+    });
+});
+
+module.exports = router;
