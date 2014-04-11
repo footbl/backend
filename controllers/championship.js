@@ -32,7 +32,7 @@ router.post('/championships', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var championship;
     championship = new Championship({
@@ -43,7 +43,7 @@ router.post('/championships', function (request, response) {
     });
 
     return championship.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/championships/' + championship._id);
         return response.send(201, championship);
     });
@@ -69,7 +69,7 @@ router.get('/championships', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize;
     query    = Championship.find();
@@ -80,7 +80,7 @@ router.get('/championships', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, championships) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, championships);
     });
 });
@@ -105,7 +105,7 @@ router.get('/championships/:championshipId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var championship;
     championship = request.championship;
@@ -137,7 +137,7 @@ router.put('/championships/:championshipId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var championship;
     championship = request.championship;
@@ -147,7 +147,7 @@ router.put('/championships/:championshipId', function (request, response) {
     championship.country     = request.param('country');
 
     return championship.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, championship);
     });
 });
@@ -173,13 +173,13 @@ router.delete('/championships/:championshipId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var championship;
     championship = request.championship;
 
     return championship.remove(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, championship);
     });
 });
@@ -207,8 +207,8 @@ router.param('championshipId', function (request, response, next, id) {
     query.where('_id').equals(id);
     query.populate('competitors');
     query.exec(function (error, championship) {
-        if (error) {return response.send(404, 'championship not found');}
-        if (!championship) {return response.send(404, 'championship not found');}
+        if (error) { return response.send(404, 'championship not found'); }
+        if (!championship) { return response.send(404, 'championship not found'); }
 
         request.championship = championship;
         return next();

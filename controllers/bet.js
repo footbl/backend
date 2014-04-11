@@ -38,7 +38,7 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
     var wallet;
     wallet = request.wallet;
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     wallet.bets.push({
         'match'        : request.params.matchId,
@@ -48,7 +48,7 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
     });
 
     return wallet.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
 
         var bet;
         bet = wallet.bets.pop();
@@ -77,7 +77,7 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var page, pageSize, query;
     query     = Wallet.find();
@@ -89,7 +89,7 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
     query.populate('user');
     query.populate('bets.match');
     return query.exec(function (error, wallets) {
-        if (error) {response.send(500, error);}
+        if (error) { response.send(500, error); }
 
         var bets;
         bets = wallets.map(function (wallet) {
@@ -124,13 +124,13 @@ router.get('/championships/:championshipId/matches/:matchId/bets/:betId', functi
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var wallet, bet;
     wallet = request.wallet;
     bet    = wallet.bets.id(request.params.betId);
 
-    if (!bet) {return response.send(404, 'bet not found');}
+    if (!bet) { return response.send(404, 'bet not found'); }
     response.header('Last-Modified', wallet.updatedAt);
     return response.send(200, bet);
 });
@@ -160,15 +160,15 @@ router.put('/championships/:championshipId/matches/:matchId/bets/:betId', functi
     wallet = request.wallet;
     bet    = wallet.bets.id(request.params.betId);
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
-    if (!bet) {return response.send(404, 'bet not found');}
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
+    if (!bet) { return response.send(404, 'bet not found'); }
 
     bet.date   = request.param('date');
     bet.result = request.param('result');
     bet.bid    = request.param('bid');
 
     return wallet.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, bet);
     });
 });
@@ -198,12 +198,12 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     wallet = request.wallet;
     bet    = wallet.bets.id(request.params.betId);
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
-    if (!bet) {return response.send(404, 'bet not found');}
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
+    if (!bet) { return response.send(404, 'bet not found'); }
 
     bet.remove();
     return wallet.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, bet);
     });
 });
@@ -236,8 +236,8 @@ router.param('championshipId', function (request, response, next, id) {
     query.populate('user');
     query.populate('bets.match');
     query.exec(function (error, wallet) {
-        if (error) {return response.send(404, 'wallet not found');}
-        if (!wallet) {return response.send(404, 'wallet not found');}
+        if (error) { return response.send(404, 'wallet not found'); }
+        if (!wallet) { return response.send(404, 'wallet not found'); }
 
         request.wallet = wallet;
         return next();

@@ -1,3 +1,4 @@
+/*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User,
     user;
@@ -12,6 +13,8 @@ auth     = require('../lib/auth');
 User     = require('../models/user');
 
 before(function (done) {
+    'use strict';
+
     mongoose.connect(nconf.get('MONGOHQ_URL'), function () {
         mongoose.connection.db.dropDatabase(done);
     });

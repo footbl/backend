@@ -1,3 +1,4 @@
+/*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet,
     user, guest, host, championship, otherChampionship, match, otherMatch, otherMatchSameChampionship, wallet, otherWallet;
@@ -17,6 +18,7 @@ Wallet       = require('../models/wallet');
 
 
 describe('bet', function () {
+    'use strict';
 
     before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});

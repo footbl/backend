@@ -31,7 +31,7 @@ router.post('/wallets', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var wallet;
     wallet = new Wallet({
@@ -40,7 +40,7 @@ router.post('/wallets', function (request, response) {
     });
 
     return wallet.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/wallets/' + wallet._id);
         return response.send(201, wallet);
     });
@@ -66,7 +66,7 @@ router.get('/wallets', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize;
     query    = Wallet.find();
@@ -77,7 +77,7 @@ router.get('/wallets', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, wallets) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, wallets);
     });
 });
@@ -105,7 +105,7 @@ router.get('/wallets/:walletId', function (request, response) {
     var wallet;
     wallet = request.wallet;
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     response.header('Last-Modified', wallet.updatedAt);
     return response.send(200, wallet);
@@ -135,12 +135,12 @@ router.put('/wallets/:walletId', function (request, response) {
     var wallet;
     wallet = request.wallet;
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     wallet.active = request.param('active');
 
     return wallet.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, wallet);
     });
 });
@@ -169,10 +169,10 @@ router.delete('/wallets/:walletId', function (request, response) {
     var wallet;
     wallet = request.wallet;
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     return wallet.remove(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, wallet);
     });
 });
@@ -202,8 +202,8 @@ router.param('walletId', function (request, response, next, id) {
     query.populate('user');
     query.populate('bets.match');
     query.exec(function (error, wallet) {
-        if (error) {return response.send(404, 'wallet not found');}
-        if (!wallet) {return response.send(404, 'wallet not found');}
+        if (error) { return response.send(404, 'wallet not found'); }
+        if (!wallet) { return response.send(404, 'wallet not found'); }
 
         request.wallet = wallet;
         return next();

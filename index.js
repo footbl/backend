@@ -33,6 +33,8 @@ app.use(require('./controllers/team'));
 app.use(require('./controllers/user'));
 app.use(require('./controllers/group'));
 app.get('/', function (request, response) {
+    'use strict';
+
     response.send(200, {'pageSize' : nconf.get('PAGE_SIZE')});
 });
 

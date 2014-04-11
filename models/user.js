@@ -123,9 +123,9 @@ schema.pre('save', function (next) {
     'use strict';
 
     if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date;
+        this.createdAt = this.updatedAt = new Date();
     } else {
-        this.updatedAt = new Date;
+        this.updatedAt = new Date();
     }
     next();
 });
@@ -142,7 +142,7 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
-    if (!this.isNew) {return next();}
+    if (!this.isNew) { return next(); }
 
     var query, Championship, Wallet;
 
@@ -152,8 +152,8 @@ schema.pre('save', function (next) {
     query        = Championship.findOne();
     query.where('type').equals('world cup');
     return query.exec(function (error, championship) {
-        if (error) {return next(error);}
-        if (!championship) {return next();}
+        if (error) { return next(error); }
+        if (!championship) { return next(); }
 
         var wallet;
         wallet = new Wallet({
@@ -177,7 +177,7 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
-    if (!this.isNew) {return next();}
+    if (!this.isNew) { return next(); }
 
     var query, Championship, Wallet;
 
@@ -188,8 +188,8 @@ schema.pre('save', function (next) {
     query.where('type').equals('national league');
     query.where('country').equals(this.country);
     return query.exec(function (error, championship) {
-        if (error) {return next(error);}
-        if (!championship) {return next();}
+        if (error) { return next(error); }
+        if (!championship) { return next(); }
 
         var wallet;
         wallet = new Wallet({

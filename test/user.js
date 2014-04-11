@@ -1,3 +1,4 @@
+/*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf, crypto, User,
     user, otherUser;
 
@@ -27,8 +28,9 @@ describe('user controller', function () {
     describe('create', function () {
         describe('with invalid credentials', function () {
             it('should raise error without transactionId', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.transactionId = null;
 
                 req = req.post('/users');
@@ -38,8 +40,9 @@ describe('user controller', function () {
             });
 
             it('should raise error without timestamp', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.timestamp = null;
 
                 req = req.post('/users');
@@ -49,8 +52,9 @@ describe('user controller', function () {
             });
 
             it('should raise error without signature', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.signature = null;
 
                 req = req.post('/users');
@@ -60,8 +64,9 @@ describe('user controller', function () {
             });
 
             it('should raise error with invalid signature', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.signature = auth.credentials().signature;
 
                 req = req.post('/users');
@@ -167,8 +172,9 @@ describe('user controller', function () {
     describe('signin', function () {
         describe('with invalid credentials', function () {
             it('should raise error without transactionId', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.transactionId = null;
 
                 req = req.get('/users/me/session');
@@ -178,8 +184,9 @@ describe('user controller', function () {
             });
 
             it('should raise error without timestamp', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.timestamp = null;
 
                 req = req.get('/users/me/session');
@@ -189,8 +196,9 @@ describe('user controller', function () {
             });
 
             it('should raise error without signature', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.signature = null;
 
                 req = req.get('/users/me/session');
@@ -200,8 +208,9 @@ describe('user controller', function () {
             });
 
             it('should raise error with invalid signature', function (done) {
-                var data = auth.credentials();
-                var req  = request(app);
+                var data, req;
+                data = auth.credentials();
+                req  = request(app);
                 data.signature = auth.credentials().signature;
 
                 req = req.get('/users/me/session');

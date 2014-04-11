@@ -111,9 +111,9 @@ schema.pre('save', function (next) {
     'use strict';
 
     if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date;
+        this.createdAt = this.updatedAt = new Date();
     } else {
-        this.updatedAt = new Date;
+        this.updatedAt = new Date();
     }
     next();
 });
@@ -131,7 +131,7 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
-    if (!this.isNew) {return next();}
+    if (!this.isNew) { return next(); }
 
     var query;
     query = this.constructor.findOne();
@@ -139,8 +139,8 @@ schema.pre('save', function (next) {
     query.where('championship').equals(this.championship);
 
     return query.exec(function (error, wallet) {
-        if (error) {return next(error);}
-        if (wallet) {return next(new Error('wallet already exists'));}
+        if (error) { return next(error); }
+        if (wallet) { return next(new Error('wallet already exists')); }
         return next();
     }.bind(this));
 });
@@ -181,14 +181,14 @@ schema.paths.bets.schema.post('save', function () {
     var query;
     query = require('./match').findById(this.match);
     query.exec(function (error, match) {
-        if (error) {return;}
-        if (!match) {return;}
+        if (error) { return; }
+        if (!match) { return; }
 
         var query;
         query = this.parent().constructor.findOne();
         query.where('_id').equals(this.parent()._id);
         query.exec(function (error, wallet) {
-            if (error) {return;}
+            if (error) { return; }
             if (wallet) {
                 var bet = wallet.bets.id(this._id);
                 if (bet) {
@@ -217,14 +217,14 @@ schema.paths.bets.schema.post('remove', function () {
     var query;
     query = require('./match').findById(this.match);
     query.exec(function (error, match) {
-        if (error) {return;}
-        if (!match) {return;}
+        if (error) { return; }
+        if (!match) { return; }
 
         var query;
         query = this.parent().constructor.findOne();
         query.where('_id').equals(this.parent()._id);
         query.exec(function (error, wallet) {
-            if (error) {return;}
+            if (error) { return; }
             if (wallet) {
                 var bet = wallet.bets.id(this._id);
                 if (bet) {

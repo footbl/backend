@@ -125,9 +125,9 @@ schema.pre('save', function (next) {
     'use strict';
 
     if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date;
+        this.createdAt = this.updatedAt = new Date();
     } else {
-        this.updatedAt = new Date;
+        this.updatedAt = new Date();
     }
     next();
 });
@@ -144,13 +144,13 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
-    if (!this.finished) {return next();}
+    if (!this.finished) { return next(); }
 
     var query;
     query = require('./wallet').find();
     query.where('championship').equals(this.championship);
     return query.exec(function (error, wallets) {
-        if (error) {return next(error);}
+        if (error) { return next(error); }
         return async.each(wallets, function (wallet, next) {
             return async.each(wallet.bets, function (bet, next) {
                 if (bet.match.toString() === this._id.toString()) {
@@ -175,8 +175,8 @@ schema.pre('save', function (next) {
 schema.virtual('winner').get(function () {
     'use strict';
 
-    if (this.result.guest > this.result.host) {return 'guest';}
-    if (this.result.guest < this.result.host) {return 'host';}
+    if (this.result.guest > this.result.host) { return 'guest'; }
+    if (this.result.guest < this.result.host) { return 'host'; }
     return 'draw';
 });
 
@@ -204,9 +204,9 @@ schema.virtual('reward').get(function () {
     'use strict';
 
     switch (this.winner) {
-        case 'guest' : {return this.jackpot / this.pot.guest;}
-        case 'host'  : {return this.jackpot / this.pot.host;}
-        default      : {return this.jackpot / this.pot.draw;}
+        case 'guest' : { return this.jackpot / this.pot.guest; }
+        case 'host'  : { return this.jackpot / this.pot.host; }
+        default      : { return this.jackpot / this.pot.draw; }
     }
 });
 

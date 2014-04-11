@@ -35,7 +35,7 @@ router.post('/championships/:championshipId/matches', function (request, respons
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var match;
     match = new Match({
@@ -47,7 +47,7 @@ router.post('/championships/:championshipId/matches', function (request, respons
     });
 
     return match.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + match._id);
         return response.send(201, match);
     });
@@ -73,7 +73,7 @@ router.get('/championships/:championshipId/matches', function (request, response
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize;
     query    = Match.find();
@@ -88,7 +88,7 @@ router.get('/championships/:championshipId/matches', function (request, response
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, matches) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, matches);
     });
 });
@@ -113,7 +113,7 @@ router.get('/championships/:championshipId/matches/:matchId', function (request,
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var match;
     match = request.match;
@@ -143,13 +143,13 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var match;
     match = request.match;
     match.finished = true;
     return match.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, match);
     });
 });
@@ -177,7 +177,7 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var match;
     match = request.match;
@@ -188,7 +188,7 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     match.result = request.param('result');
 
     return match.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, match);
     });
 });
@@ -214,13 +214,13 @@ router.delete('/championships/:championshipId/matches/:matchId', function (reque
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var match;
     match = request.match;
 
     return match.remove(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, match);
     });
 });
@@ -250,8 +250,8 @@ router.param('matchId', function (request, response, next, id) {
     query.populate('guest');
     query.populate('host');
     query.exec(function (error, match) {
-        if (error) {return response.send(404, 'match not found');}
-        if (!match) {return response.send(404, 'match not found');}
+        if (error) { return response.send(404, 'match not found'); }
+        if (!match) { return response.send(404, 'match not found'); }
 
         request.match = match;
         return next();

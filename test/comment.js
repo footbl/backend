@@ -1,3 +1,4 @@
+/*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match,
     user, otherUser, friendUser, guest, host, championship, match;
@@ -15,6 +16,8 @@ Championship = require('../models/championship');
 Match        = require('../models/match');
 
 before(function (done) {
+    'use strict';
+
     mongoose.connect(nconf.get('MONGOHQ_URL'), function () {
         mongoose.connection.db.dropDatabase(done);
     });

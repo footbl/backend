@@ -32,7 +32,7 @@ router.post('/teams', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var team;
     team = new Team({
@@ -41,7 +41,7 @@ router.post('/teams', function (request, response) {
     });
 
     return team.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/teams/' + team._id);
         return response.send(201, team);
     });
@@ -67,7 +67,7 @@ router.get('/teams', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize;
     query    = Team.find();
@@ -77,7 +77,7 @@ router.get('/teams', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, teams) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, teams);
     });
 });
@@ -102,7 +102,7 @@ router.get('/teams/:teamId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var team;
     team = request.team;
@@ -133,7 +133,7 @@ router.put('/teams/:teamId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var team;
     team = request.team;
@@ -141,7 +141,7 @@ router.put('/teams/:teamId', function (request, response) {
     team.picture = request.param('picture');
 
     return team.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, team);
     });
 });
@@ -167,13 +167,13 @@ router.delete('/teams/:teamId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') {return response.send(401, 'invalid token');}
+    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
     var team;
     team = request.team;
 
     return team.remove(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, team);
     });
 });
@@ -200,8 +200,8 @@ router.param('teamId', function (request, response, next, id) {
     query = Team.findOne();
     query.where('_id').equals(id);
     query.exec(function (error, team) {
-        if (error) {return response.send(404, 'team not found');}
-        if (!team) {return response.send(404, 'team not found');}
+        if (error) { return response.send(404, 'team not found'); }
+        if (!team) { return response.send(404, 'team not found'); }
 
         request.team = team;
         return next();

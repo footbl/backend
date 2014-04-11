@@ -32,7 +32,7 @@ router.post('/groups', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group;
     group = new Group({
@@ -43,7 +43,7 @@ router.post('/groups', function (request, response) {
     });
 
     return group.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/groups/' + group._id);
         return response.send(201, group);
     });
@@ -69,7 +69,7 @@ router.get('/groups', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize;
     query    = Group.find();
@@ -82,7 +82,7 @@ router.get('/groups', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, groups) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, groups);
     });
 });
@@ -107,7 +107,7 @@ router.get('/groups/:groupId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group;
     group = request.group;
@@ -138,12 +138,12 @@ router.put('/groups/:groupId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group;
     group = request.group;
 
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {return response.send(401, 'invalid token');}
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     group.name = request.param('name');
     if (request.session._id.toString() === group.owner._id.toString()) {
@@ -151,7 +151,7 @@ router.put('/groups/:groupId', function (request, response) {
     }
 
     return group.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, group);
     });
 });
@@ -177,15 +177,15 @@ router.delete('/groups/:groupId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group;
     group = request.group;
 
-    if (request.session._id.toString() !== group.owner._id.toString()) {return response.send(401, 'invalid token');}
+    if (request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     return group.remove(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, group);
     });
 });
@@ -210,17 +210,17 @@ router.post('/groups/:groupId/members', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group;
     group = request.group;
 
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {return response.send(401, 'invalid token');}
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     group.members.push({user : request.param('user')});
 
     return group.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(201, group.members.pop());
     });
 });
@@ -245,12 +245,12 @@ router.get('/groups/:groupId/members', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group;
     group = request.group;
 
-    return response.send(200, group.members)
+    return response.send(200, group.members);
 });
 
 /**
@@ -275,7 +275,7 @@ router.get('/groups/:groupId/members/:memberId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group, member;
     group = request.group;
@@ -283,7 +283,7 @@ router.get('/groups/:groupId/members/:memberId', function (request, response) {
         return member.user.toString() === request.params.memberId;
     }).pop();
 
-    if (!member) {return response.send(404, 'member not found');}
+    if (!member) { return response.send(404, 'member not found'); }
 
     return response.send(200, member);
 });
@@ -310,23 +310,23 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var group, member;
     group = request.group;
 
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {return response.send(401, 'invalid token');}
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     member = group.members.filter(function (member) {
         return member.user.toString() === request.params.memberId;
     }).pop();
 
-    if (!member) {return response.send(404, 'member not found');}
+    if (!member) { return response.send(404, 'member not found'); }
 
     member.remove();
 
     return group.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, member);
     });
 });
@@ -358,8 +358,8 @@ router.param('groupId', function (request, response, next, id) {
     query.populate('championship');
     query.populate('owner');
     query.exec(function (error, group) {
-        if (error) {return response.send(404, 'group not found');}
-        if (!group) {return response.send(404, 'group not found');}
+        if (error) { return response.send(404, 'group not found'); }
+        if (!group) { return response.send(404, 'group not found'); }
 
         request.group = group;
         return next();

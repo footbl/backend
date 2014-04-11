@@ -34,7 +34,7 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var comment;
     comment = new Comment({
@@ -45,7 +45,7 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
     });
 
     return comment.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + request.param.matchId + '/comments/' + comment._id);
         return response.send(201, comment);
     });
@@ -71,7 +71,7 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize, filterByFriends;
     query           = Comment.find();
@@ -85,14 +85,14 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
     query.skip(page);
     query.limit(pageSize);
 
-    if (filterByFriends === true){
+    if (filterByFriends === true) {
         query.where('user').in(request.session.starred);
     } else if (filterByFriends === false) {
         query.where('user').nin(request.session.starred);
     }
 
     return query.exec(function (error, comments) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, comments);
     });
 });
@@ -117,7 +117,7 @@ router.get('/championships/:championshipId/matches/:matchId/comments/:commentId'
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var comment;
     comment = request.comment;
@@ -152,13 +152,13 @@ router.put('/championships/:championshipId/matches/:matchId/comments/:commentId'
     var comment;
     comment = request.comment;
 
-    if (!request.session || request.session._id.toString() !== comment.user._id.toString()) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== comment.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     comment.date    = request.param('date');
     comment.message = request.param('message');
 
     return comment.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, comment);
     });
 });
@@ -187,10 +187,10 @@ router.delete('/championships/:championshipId/matches/:matchId/comments/:comment
     var comment;
     comment = request.comment;
 
-    if (!request.session || request.session._id.toString() !== comment.user._id.toString()) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== comment.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     return comment.remove(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, comment);
     });
 });
@@ -220,8 +220,8 @@ router.param('commentId', function (request, response, next, id) {
     query.populate('match');
     query.populate('user');
     query.exec(function (error, comment) {
-        if (error) {return response.send(404, 'comment not found');}
-        if (!comment) {return response.send(404, 'comment not found');}
+        if (error) { return response.send(404, 'comment not found'); }
+        if (!comment) { return response.send(404, 'comment not found'); }
 
         request.comment = comment;
         return next();

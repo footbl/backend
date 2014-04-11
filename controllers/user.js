@@ -45,7 +45,7 @@ router.post('/users', function (request, response) {
     });
 
     return user.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         response.header('Location', '/users/' + user._id);
         return response.send(201, user);
     });
@@ -77,21 +77,21 @@ router.get('/users', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query, page, pageSize;
     query    = User.find();
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
-    if (request.param('emails'))    {query.where('email').in(request.param('emails'));}
-    if (request.param('usernames')) {query.where('username').in(request.param('usernames'));}
-    if (request.param('ids'))       {query.where('_id').in(request.param('ids'));}
+    if (request.param('emails'))    { query.where('email').in(request.param('emails')); }
+    if (request.param('usernames')) { query.where('username').in(request.param('usernames')); }
+    if (request.param('ids'))       { query.where('_id').in(request.param('ids')); }
 
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, users) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, users);
     });
 });
@@ -116,7 +116,7 @@ router.get('/users/:userId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var user;
     user = request.user;
@@ -152,7 +152,7 @@ router.put('/users/:userId', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session._id.toString() !== request.params.userId) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== request.params.userId) { return response.send(401, 'invalid token'); }
 
     var user;
     user = request.user;
@@ -164,7 +164,7 @@ router.put('/users/:userId', function (request, response) {
     user.country  = request.param('country', 'BR');
 
     return user.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, user);
     });
 });
@@ -209,8 +209,8 @@ router.get('/users/me/session', function (request, response) {
         query.where('_id').equals(_id);
     }
     return query.exec(function (error, user) {
-        if (error) {return response.send(500, error);}
-        if (!user) {return response.send(403, 'invalid username or password');}
+        if (error) { return response.send(500, error); }
+        if (!user) { return response.send(403, 'invalid username or password'); }
         return response.send(200, {token : auth.token(user), _id : user._id});
     });
 });
@@ -236,14 +236,14 @@ router.post('/users/:userId/starred', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session._id.toString() !== request.params.userId) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== request.params.userId) { return response.send(401, 'invalid token'); }
 
     var user;
     user = request.user;
     user.starred.push(request.param('user'));
 
     return user.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(201, user);
     });
 });
@@ -268,12 +268,12 @@ router.get('/users/:userId/starred', function (request, response) {
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var user;
     user = request.user;
 
-    return response.send(200, user.starred)
+    return response.send(200, user.starred);
 });
 
 /**
@@ -297,7 +297,7 @@ router.delete('/users/:userId/starred/:starredId', function (request, response) 
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session._id.toString() !== request.params.userId) {return response.send(401, 'invalid token');}
+    if (!request.session || request.session._id.toString() !== request.params.userId) { return response.send(401, 'invalid token'); }
 
     var user, starred;
     user    = request.user;
@@ -305,11 +305,11 @@ router.delete('/users/:userId/starred/:starredId', function (request, response) 
         return user._id.toString() === request.params.starredId;
     }).pop();
 
-    if (!starred) {return response.send(404, 'starred not found');}
+    if (!starred) { return response.send(404, 'starred not found'); }
 
     starred.remove();
     return user.save(function (error) {
-        if (error) {return response.send(500, error);}
+        if (error) { return response.send(500, error); }
         return response.send(200, user);
     });
 });
@@ -332,15 +332,15 @@ router.delete('/users/:userId/starred/:starredId', function (request, response) 
 router.param('userId', function (request, response, next, id) {
     'use strict';
 
-    if (!request.session) {return response.send(401, 'invalid token');}
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     var query;
     query = User.findOne();
     query.where('_id').equals(id);
     query.populate('starred');
     return query.exec(function (error, user) {
-        if (error) {return response.send(404, 'user not found');}
-        if (!user) {return response.send(404, 'user not found');}
+        if (error) { return response.send(404, 'user not found'); }
+        if (!user) { return response.send(404, 'user not found'); }
 
         request.user = user;
         return next();

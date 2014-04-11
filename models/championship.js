@@ -71,9 +71,9 @@ schema.pre('save', function (next) {
     'use strict';
 
     if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date;
+        this.createdAt = this.updatedAt = new Date();
     } else {
-        this.updatedAt = new Date;
+        this.updatedAt = new Date();
     }
     next();
 });
