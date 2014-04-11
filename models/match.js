@@ -135,6 +135,9 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Updates user wallets
+ * When a match is finished all bets of that match should be updated, this procedure will update the bet reward if the
+ * bet was right with the match reward times the user bid, if the bet was wrong, the reward will be 0. This procedure
+ * is nil potent, which means that all calls after the first one should not change the bet status.
  *
  * @param next
  *
@@ -168,6 +171,8 @@ schema.pre('save', function (next) {
 /**
  * @method
  * @summary Return match winner
+ * This method should compare the match score and see which team has won the match, the team with higher number of gols,
+ * should be the winner and if the gols are equal, then the result is draw.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
@@ -183,6 +188,8 @@ schema.virtual('winner').get(function () {
 /**
  * @method
  * @summary Return match total pot
+ * This method should return the match total bets bids, this is calculated summing the total bets in host plus the guest
+ * and the draw.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
@@ -196,6 +203,8 @@ schema.virtual('jackpot').get(function () {
 /**
  * @method
  * @summary Return match reward
+ * This method should return how much the system will pay for each point spent in the bet, this is calculated dividing
+ * the entire match jackpot by the match winner result pot.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano

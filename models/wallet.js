@@ -121,7 +121,7 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Ensures unique wallet
- * When saving a wallet, the system must ensure that the user dont have any other wallet in the same championship.
+ * When saving a wallet, the system must ensure that the user don't have any other wallet in the same championship.
  *
  * @param next
  *
@@ -239,6 +239,7 @@ schema.paths.bets.schema.post('remove', function () {
 /**
  * @method
  * @summary Return wallet available funds
+ * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
@@ -256,6 +257,8 @@ schema.virtual('funds').get(function () {
 /**
  * @method
  * @summary Return wallet stake
+ * This method should return the wallets funds at stake, this is calculated by summing all bets bid in the wallet which
+ * the bet isn't finished yet.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
@@ -263,7 +266,9 @@ schema.virtual('funds').get(function () {
 schema.virtual('stake').get(function () {
     'use strict';
 
-    return this.bets.map(function (bet) {
+    return this.bets.filter(function (bet) {
+        return !bet.finished;
+    }.bind(this)).map(function (bet) {
         return bet.bid;
     }.bind(this)).reduce(function (funds, bet) {
         return funds + bet;

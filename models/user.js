@@ -133,6 +133,8 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Register user in the world cup
+ * All the users in the system must be beating by default in the world cup, so when the user is created the system must
+ * create a wallet for the user in the world cup championship.
  *
  * @param next
  *
@@ -168,6 +170,8 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Register user in the national league
+ * All the users in the system must be beating by default in the user's country championship, so when the user is
+ * created the system must create a wallet for the user in the user's country championship.
  *
  * @param next
  *
@@ -204,6 +208,7 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Ensures unique starred
+ * When saving a user, the system must ensure that the user don't have any repeated starred.
  *
  * @param next
  *
