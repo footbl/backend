@@ -24,6 +24,17 @@ schema = new Schema({
         'required' : true
     },
     /** @property */
+    'type' : {
+        'type' : String,
+        'required' : true,
+        'enum' : ['national league', 'world cup', 'normal'],
+        'default' : 'normal'
+    },
+    /** @property */
+    'country' : {
+        'type' : String
+    },
+    /** @property */
     'competitors' : [{
         'type' : Schema.Types.ObjectId,
         'ref' : 'Team'
@@ -42,7 +53,9 @@ schema = new Schema({
 
 schema.plugin(require('mongoose-json-select'), {
     'name'        : 1,
-    'competitors' : 1
+    'competitors' : 1,
+    'type'        : 1,
+    'country'     : 1
 });
 
 /**

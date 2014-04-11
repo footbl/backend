@@ -40,7 +40,8 @@ router.post('/users', function (request, response) {
     var user;
 
     user = new User({
-        'password' : request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null
+        'password' : request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null,
+        'country'  : request.param('country', 'BR')
     });
 
     return user.save(function (error) {
@@ -160,6 +161,7 @@ router.put('/users/:userId', function (request, response) {
     user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
     user.picture  = request.param('picture');
     user.language = request.param('language');
+    user.country  = request.param('country', 'BR');
 
     return user.save(function (error) {
         if (error) {return response.send(500, error);}
