@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
-    User, Championship, Group,
-    group, otherGroup, user, otherUser, memberUser, candidateUser, championship;
+    User, Championship, Group, Wallet,
+    group, otherGroup, user, otherUser, memberUser, candidateUser, championship, wallet, otherWallet, memberWallet, candidateWallet;
 
 require('should');
 
@@ -13,6 +13,7 @@ auth         = require('../lib/auth');
 User         = require('../models/user');
 Championship = require('../models/championship');
 Group        = require('../models/group');
+Wallet       = require('../models/wallet');
 
 before(function (done) {
     'use strict';
@@ -48,6 +49,26 @@ describe('group controller', function () {
     before(function (done) {
         championship = new Championship({'name' : 'championship'});
         championship.save(done);
+    });
+
+    before(function (done) {
+        wallet = new Wallet({user : user._id, championship : championship._id});
+        wallet.save(done);
+    });
+
+    before(function (done) {
+        otherWallet = new Wallet({user : otherUser._id, championship : championship._id});
+        otherWallet.save(done);
+    });
+
+    before(function (done) {
+        memberWallet = new Wallet({user : memberUser._id, championship : championship._id});
+        memberWallet.save(done);
+    });
+
+    before(function (done) {
+        candidateWallet = new Wallet({user : candidateUser._id, championship : championship._id});
+        candidateWallet.save(done);
     });
 
     before(function (done) {

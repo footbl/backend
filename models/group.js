@@ -54,6 +54,11 @@ schema = new Schema({
             'type' : Number,
             'required' : true,
             'default' : Infinity
+        },
+        'initialFunds' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 100
         }
     }],
     /** @property */
@@ -94,6 +99,34 @@ schema.pre('save', function (next) {
         this.updatedAt = new Date();
     }
     next();
+});
+
+/**
+ * @callback
+ * @summary Sets member initial funds
+ * When a user become a group member the system must save the user wallet at the championship when the user entered at
+ * the group to normalize the user wallet funds to calculate the ranking.
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.paths.members.schema.pre('save', function (next) {
+    'use strict';
+
+    var Wallet, query;
+    Wallet = require('./wallet');
+    query  = Wallet.findOne();
+    query.where('championship').equals(this.parent().championship);
+    query.where('user').equals(this.user);
+    return query.exec(function (error, wallet) {
+        if (error) { return next(error); }
+        if (!wallet) { return next(new Error('Wallet not found.')); }
+
+        this.initialFunds = wallet.funds;
+        return next();
+    }.bind(this));
 });
 
 module.exports = mongoose.model('Group', schema);
