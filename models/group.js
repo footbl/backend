@@ -65,6 +65,12 @@ schema = new Schema({
             'type' : Number,
             'required' : true,
             'default' : 100
+        },
+        /** @property */
+        'points' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 100
         }
     }],
     /** @property */
