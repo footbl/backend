@@ -95,6 +95,7 @@ schema.plugin(require('mongoose-json-select'), {
     'active'       : 1,
     'funds'        : 1,
     'stake'        : 1,
+    'profit'       : 1,
     'bets'         : 0
 });
 
@@ -239,7 +240,8 @@ schema.paths.bets.schema.post('remove', function () {
 /**
  * @method
  * @summary Return wallet available funds
- * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet.
+ * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet
+ * which the bet is finished.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
@@ -247,7 +249,9 @@ schema.paths.bets.schema.post('remove', function () {
 schema.virtual('funds').get(function () {
     'use strict';
 
-    return this.bets.map(function (bet) {
+    return this.bets.filter(function (bet) {
+        return !!bet.finished;
+    }.bind(this)).map(function (bet) {
         return bet.reward - bet.bid;
     }.bind(this)).reduce(function (funds, bet) {
         return funds + bet;
@@ -264,6 +268,27 @@ schema.virtual('funds').get(function () {
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('stake').get(function () {
+    'use strict';
+
+    return this.bets.filter(function (bet) {
+        return !bet.finished;
+    }.bind(this)).map(function (bet) {
+        return bet.bid;
+    }.bind(this)).reduce(function (funds, bet) {
+        return funds + bet;
+    }.bind(this), 0);
+});
+
+/**
+ * @method
+ * @summary Return wallet profit
+ * This method should return the wallets possible profit, this is calculated by summing all bets reward in the wallet
+ * which the bet isn't finished yet.
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.virtual('profit').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {

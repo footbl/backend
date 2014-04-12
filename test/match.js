@@ -146,15 +146,15 @@ describe('match controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
-                    team.should.have.property('championship');
-                    team.should.have.property('guest');
-                    team.should.have.property('host');
-                    team.should.have.property('round');
-                    team.should.have.property('date');
-                    team.should.have.property('result');
-                    team.should.have.property('finished');
+                response.body.every(function (match) {
+                    match.should.have.property('_id');
+                    match.should.have.property('championship');
+                    match.should.have.property('guest');
+                    match.should.have.property('host');
+                    match.should.have.property('round');
+                    match.should.have.property('date');
+                    match.should.have.property('result');
+                    match.should.have.property('finished');
                 });
             });
             req.end(done);

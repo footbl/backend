@@ -116,8 +116,8 @@ describe('user controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
+                response.body.every(function (user) {
+                    user.should.have.property('_id');
                 });
             });
             req.end(done);
@@ -336,8 +336,8 @@ describe('user controller', function () {
                 req = req.expect(200);
                 req = req.expect(function (response) {
                     response.body.should.be.instanceOf(Array);
-                    response.body.every(function (team) {
-                        team.should.have.property('_id');
+                    response.body.every(function (starred) {
+                        starred.should.have.property('_id');
                     });
                 });
                 req.end(done);

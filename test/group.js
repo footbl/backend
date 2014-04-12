@@ -178,12 +178,12 @@ describe('group controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
-                    team.should.have.property('championship');
-                    team.should.have.property('name');
-                    team.should.have.property('owner');
-                    team.should.have.property('freeToEdit');
+                response.body.every(function (group) {
+                    group.should.have.property('_id');
+                    group.should.have.property('championship');
+                    group.should.have.property('name');
+                    group.should.have.property('owner');
+                    group.should.have.property('freeToEdit');
                 });
             });
             req.end(done);

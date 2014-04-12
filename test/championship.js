@@ -79,9 +79,9 @@ describe('championship controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
-                    team.should.have.property('name');
+                response.body.every(function (championship) {
+                    championship.should.have.property('_id');
+                    championship.should.have.property('name');
                 });
             });
             req.end(done);

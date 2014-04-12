@@ -100,6 +100,7 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active');
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
+                response.body.should.have.property('profit');
             });
             req.end(done);
         });
@@ -141,13 +142,14 @@ describe('wallet controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
-                    team.should.have.property('championship');
-                    team.should.have.property('user');
-                    team.should.have.property('active');
-                    team.should.have.property('funds');
-                    team.should.have.property('stake');
+                response.body.every(function (wallet) {
+                    wallet.should.have.property('_id');
+                    wallet.should.have.property('championship');
+                    wallet.should.have.property('user');
+                    wallet.should.have.property('active');
+                    wallet.should.have.property('funds');
+                    wallet.should.have.property('stake');
+                    wallet.should.have.property('profit');
                 });
             });
             req.end(done);
@@ -199,6 +201,7 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active');
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
+                response.body.should.have.property('profit');
             });
             req.end(done);
         });
@@ -261,6 +264,7 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active').be.equal(false);
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
+                response.body.should.have.property('profit');
             });
             req.end(done);
         });

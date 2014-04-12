@@ -157,11 +157,11 @@ describe('comment controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array).with.lengthOf(3);
-                response.body.every(function (team) {
-                    team.should.have.property('_id');
-                    team.should.have.property('date');
-                    team.should.have.property('message');
-                    team.should.have.property('user');
+                response.body.every(function (comment) {
+                    comment.should.have.property('_id');
+                    comment.should.have.property('date');
+                    comment.should.have.property('message');
+                    comment.should.have.property('user');
                 });
             });
             req.end(done);

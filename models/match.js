@@ -144,27 +144,29 @@ schema.pre('save', function (next) {
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.pre('save', function (next) {
+schema.post('save', function () {
     'use strict';
-
-    if (!this.finished) { return next(); }
 
     var query;
     query = require('./wallet').find();
     query.where('championship').equals(this.championship);
     return query.exec(function (error, wallets) {
-        if (error) { return next(error); }
-        return async.each(wallets, function (wallet, next) {
-            return async.each(wallet.bets, function (bet, next) {
-                if (bet.match.toString() === this._id.toString()) {
-                    bet.finished = true;
-                    bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
-                }
-                next();
-            }.bind(this), function () {
-                wallet.save(next);
-            });
-        }.bind(this), next);
+        if (error) { return; }
+        async.each(wallets, function (wallet, next) {
+            return async.detect(wallet.bets, function (bet, next) {
+                next(bet.match.toString() !== this._id.toString());
+            }.bind(this), function (bet) {
+                if (!bet) { return next(); }
+
+                var oldReward;
+                oldReward    = bet.reward;
+                bet.finished = this.finished;
+                bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
+
+                if (oldReward === bet.reward) { return next(); }
+                return wallet.save(next);
+            }.bind(this));
+        }.bind(this));
     }.bind(this));
 });
 
@@ -204,13 +206,15 @@ schema.virtual('jackpot').get(function () {
  * @method
  * @summary Return match reward
  * This method should return how much the system will pay for each point spent in the bet, this is calculated dividing
- * the entire match jackpot by the match winner result pot.
+ * the entire match jackpot by the winner resu
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('reward').get(function () {
     'use strict';
+
+    if (!this.jackpot) { return 0; }
 
     switch (this.winner) {
         case 'guest' : { return this.jackpot / this.pot.guest; }
