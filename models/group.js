@@ -71,6 +71,11 @@ schema = new Schema({
             'type' : Number,
             'required' : true,
             'default' : 100
+        },
+        /** @property */
+        'createdAt' : {
+            'type' : Date,
+            'default' : Date.now
         }
     }],
     /** @property */

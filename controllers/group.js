@@ -85,6 +85,20 @@ router.get('/groups', function (request, response) {
     query.limit(pageSize);
     return query.exec(function (error, groups) {
         if (error) { return response.send(500, error); }
+
+        groups = groups.sort(function (a, b) {
+            var dateA, dateB;
+
+            dateA = a.members.filter(function (member) {
+                return member.user.toString() === request.session._id.toString();
+            }).pop().date;
+
+            dateB = b.members.filter(function (member) {
+                return member.user.toString() === request.session._id.toString();
+            }).pop().date;
+
+            return dateA - dateB;
+        });
         return response.send(200, groups);
     });
 });
