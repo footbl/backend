@@ -24,6 +24,11 @@ schema = new Schema({
         'required' : true
     },
     /** @property */
+    'picture' : {
+        'type' : String,
+        'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+    },
+    /** @property */
     'freeToEdit' : {
         'type' : Boolean,
         'required' : true,
@@ -75,6 +80,7 @@ schema = new Schema({
 
 schema.plugin(require('mongoose-json-select'), {
     'name'         : 1,
+    'picture'      : 1,
     'freeToEdit'   : 1,
     'championship' : 1,
     'owner'        : 1,

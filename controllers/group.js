@@ -17,6 +17,7 @@ Group  = require('../models/group');
  *
  * @param request.name
  * @param request.championship
+ * @param request.picture
  * @param response
  *
  * @returns 201 group
@@ -39,6 +40,7 @@ router.post('/groups', function (request, response) {
         'name'         : request.param('name'),
         'championship' : request.param('championship'),
         'owner'        : request.session._id,
+        'picture'      : request.param('picture'),
         'members'      : [{'user' : request.session._id}]
     });
 
@@ -145,7 +147,8 @@ router.put('/groups/:groupId', function (request, response) {
 
     if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
-    group.name = request.param('name');
+    group.name    = request.param('name');
+    group.picture = request.param('picture');
     if (request.session._id.toString() === group.owner._id.toString()) {
         group.freeToEdit = request.param('freeToEdit');
     }
