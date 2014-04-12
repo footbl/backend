@@ -16,6 +16,7 @@ Wallet = require('../models/wallet');
  * @summary Creates a new wallet in database
  *
  * @param request.championship
+ * @param request.notifications
  * @param response
  *
  * @returns 201 wallet
@@ -35,8 +36,9 @@ router.post('/wallets', function (request, response) {
 
     var wallet;
     wallet = new Wallet({
-        'championship' : request.param('championship'),
-        'user'         : request.session._id
+        'championship'  : request.param('championship'),
+        'user'          : request.session._id,
+        'notifications' : request.param('notifications')
     });
 
     return wallet.save(function (error) {
@@ -116,6 +118,7 @@ router.get('/wallets/:walletId', function (request, response) {
  * @summary Updates wallet info in database
  *
  * @param request.active
+ * @param request.notifications
  * @param response
  *
  * @returns 200 wallet
@@ -137,7 +140,8 @@ router.put('/wallets/:walletId', function (request, response) {
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    wallet.active = request.param('active');
+    wallet.active        = request.param('active');
+    wallet.notifications = request.param('notifications');
 
     return wallet.save(function (error) {
         if (error) { return response.send(500, error); }

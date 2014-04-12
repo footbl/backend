@@ -38,6 +38,11 @@ schema = new Schema({
         'default' : true
     },
     /** @property */
+    'notifications' : {
+        'type' : Boolean,
+        'default' : true
+    },
+    /** @property */
     'bets' : [{
         /** @property */
         'match' : {
@@ -90,13 +95,14 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    'championship' : 1,
-    'user'         : 1,
-    'active'       : 1,
-    'funds'        : 1,
-    'stake'        : 1,
-    'toReturn'     : 1,
-    'bets'         : 0
+    'championship'  : 1,
+    'user'          : 1,
+    'active'        : 1,
+    'notifications' : 1,
+    'funds'         : 1,
+    'stake'         : 1,
+    'toReturn'      : 1,
+    'bets'          : 0
 });
 
 /**
