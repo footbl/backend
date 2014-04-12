@@ -15,12 +15,10 @@ Championship = require('../models/championship');
 Group        = require('../models/group');
 Wallet       = require('../models/wallet');
 
-before(function (done) {
+after(function (done) {
     'use strict';
 
-    mongoose.connect(nconf.get('MONGOHQ_URL'), function () {
-        mongoose.connection.db.dropDatabase(done);
-    });
+    mongoose.connection.db.dropDatabase(done);
 });
 
 describe('group controller', function () {

@@ -16,12 +16,10 @@ Championship = require('../models/championship');
 Match        = require('../models/match');
 Wallet       = require('../models/wallet');
 
-before(function (done) {
+after(function (done) {
     'use strict';
 
-    mongoose.connect(nconf.get('MONGOHQ_URL'), function () {
-        mongoose.connection.db.dropDatabase(done);
-    });
+    mongoose.connection.db.dropDatabase(done);
 });
 
 describe('wallet controller', function () {

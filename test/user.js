@@ -12,6 +12,12 @@ crypto   = require('crypto');
 auth     = require('../lib/auth');
 User     = require('../models/user');
 
+after(function (done) {
+    'use strict';
+
+    mongoose.connection.db.dropDatabase(done);
+});
+
 describe('user controller', function () {
     'use strict';
 

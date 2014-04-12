@@ -14,12 +14,10 @@ User         = require('../models/user');
 Team         = require('../models/team');
 Championship = require('../models/championship');
 
-before(function (done) {
+after(function (done) {
     'use strict';
 
-    mongoose.connect(nconf.get('MONGOHQ_URL'), function () {
-        mongoose.connection.db.dropDatabase(done);
-    });
+    mongoose.connection.db.dropDatabase(done);
 });
 
 describe('match controller', function () {

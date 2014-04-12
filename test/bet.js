@@ -16,6 +16,11 @@ Championship = require('../models/championship');
 Match        = require('../models/match');
 Wallet       = require('../models/wallet');
 
+after(function (done) {
+    'use strict';
+
+    mongoose.connection.db.dropDatabase(done);
+});
 
 describe('bet', function () {
     'use strict';
