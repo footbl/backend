@@ -136,6 +136,9 @@ router.get('/users/:userId', function (request, response) {
  * @param request.username
  * @param request.password
  * @param request.picture
+ * @param request.language
+ * @param request.country
+ * @param request.notifications
  * @param response
  *
  * @returns 200 user
