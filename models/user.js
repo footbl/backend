@@ -71,6 +71,19 @@ schema = new Schema({
         'ref' : 'User'
     }],
     /** @property */
+    'notifications' : {
+        /** @property */
+        'newGroups' : {
+            'type' : Boolean,
+            'default' : true
+        },
+        /** @property */
+        'championshipEnding' : {
+            'type' : Boolean,
+            'default' : true
+        }
+    },
+    /** @property */
     'leaderboard' : {
         /** @property */
         'worldwide' : {
@@ -98,16 +111,17 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    'email'       : 1,
-    'username'    : 1,
-    'verified'    : 1,
-    'password'    : 0,
-    'picture'     : 1,
-    'language'    : 1,
-    'type'        : 0,
-    'starred'     : 0,
-    'leaderboard' : 1,
-    'country'     : 1
+    'email'         : 1,
+    'username'      : 1,
+    'verified'      : 1,
+    'password'      : 0,
+    'picture'       : 1,
+    'language'      : 1,
+    'type'          : 0,
+    'starred'       : 0,
+    'leaderboard'   : 1,
+    'country'       : 1,
+    'notifications' : 1
 });
 
 /**

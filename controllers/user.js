@@ -156,12 +156,13 @@ router.put('/users/:userId', function (request, response) {
 
     var user;
     user = request.user;
-    user.email    = request.param('email');
-    user.username = request.param('username');
-    user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
-    user.picture  = request.param('picture');
-    user.language = request.param('language');
-    user.country  = request.param('country', 'BR');
+    user.email         = request.param('email');
+    user.username      = request.param('username');
+    user.password      = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
+    user.picture       = request.param('picture');
+    user.language      = request.param('language');
+    user.country       = request.param('country', 'BR');
+    user.notifications = request.param('notifications');
 
     return user.save(function (error) {
         if (error) { return response.send(500, error); }
