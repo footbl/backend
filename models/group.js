@@ -60,6 +60,7 @@ schema = new Schema({
             'required' : true,
             'default' : Infinity
         },
+        /** @property */
         'initialFunds' : {
             'type' : Number,
             'required' : true,
