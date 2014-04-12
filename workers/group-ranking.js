@@ -21,7 +21,7 @@ Group.find(function (error, groups) {
             query = Wallet.findOne();
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
-            query.exec(function (error, wallet) { next(error, wallet.funds * -1); });
+            query.exec(function (error, wallet) { next(error, (wallet.funds - member.initialFunds) * -1); });
         }, function (error, members) {
             var oldMD5, currentMD5;
             members.forEach(function (member, index) { member.ranking = index + 1; });
