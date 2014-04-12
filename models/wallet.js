@@ -95,7 +95,7 @@ schema.plugin(require('mongoose-json-select'), {
     'active'       : 1,
     'funds'        : 1,
     'stake'        : 1,
-    'profit'       : 1,
+    'toReturn'     : 1,
     'bets'         : 0
 });
 
@@ -253,8 +253,8 @@ schema.virtual('funds').get(function () {
         return !!bet.finished;
     }.bind(this)).map(function (bet) {
         return bet.reward - bet.bid;
-    }.bind(this)).reduce(function (funds, bet) {
-        return funds + bet;
+    }.bind(this)).reduce(function (funds, profit) {
+        return funds + profit;
     }.bind(this), 100);
 });
 
@@ -274,29 +274,29 @@ schema.virtual('stake').get(function () {
         return !bet.finished;
     }.bind(this)).map(function (bet) {
         return bet.bid;
-    }.bind(this)).reduce(function (funds, bet) {
-        return funds + bet;
+    }.bind(this)).reduce(function (stake, bid) {
+        return stake + bid;
     }.bind(this), 0);
 });
 
 /**
  * @method
- * @summary Return wallet profit
+ * @summary Return wallet to possible return
  * This method should return the wallets possible profit, this is calculated by summing all bets reward in the wallet
  * which the bet isn't finished yet.
  *
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-schema.virtual('profit').get(function () {
+schema.virtual('toReturn').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
         return !bet.finished;
     }.bind(this)).map(function (bet) {
-        return bet.bid;
-    }.bind(this)).reduce(function (funds, bet) {
-        return funds + bet;
+        return bet.reward;
+    }.bind(this)).reduce(function (toReturn, reward) {
+        return toReturn + reward;
     }.bind(this), 0);
 });
 
