@@ -5,10 +5,11 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Wallet;
+var router, nconf, iap, Wallet;
 
 router = require('express').Router();
 nconf  = require('nconf');
+iap    = require('iap');
 Wallet = require('../models/wallet');
 
 /**
@@ -146,6 +147,58 @@ router.put('/wallets/:walletId', function (request, response) {
     return wallet.save(function (error) {
         if (error) { return response.send(500, error); }
         return response.send(200, wallet);
+    });
+});
+
+/**
+ * @method
+ * @summary Sets wallet value to 100
+ *
+ * @param request.platform
+ * @param request.receipt
+ * @param request.productId
+ * @param request.packageName
+ * @param response
+ *
+ * @returns 200 wallet
+ * @throws 500 error
+ * @throws 404 wallet not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.post('/wallets/:walletId/recharge', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+
+    var wallet;
+    wallet   = request.wallet;
+
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
+
+    iap.verifyPayment(request.param('platform'), {
+        'receipt'     : request.param('receipt'),
+        'productId'   : request.param('productId'),
+        'packageName' : request.param('packageName')
+    }, function (error, response) {
+        if (error) { return response.send(500, error); }
+        if (!response.receipt) { return response.send(500, new Error('invalid purchase')); }
+
+        wallet.iaps.push({
+            'platform'    : request.param('platform'),
+            'productId'   : request.param('productId'),
+            'receipt'     : request.param('receipt'),
+            'packageName' : request.param('packageName'),
+            'date'        : new Date(response.receipt.purchase_date_ms)
+        });
+
+        return wallet.save(function (error) {
+            if (error) { return response.send(500, error); }
+            return response.send(200, wallet);
+        });
     });
 });
 

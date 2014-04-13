@@ -43,6 +43,29 @@ schema = new Schema({
         'default' : true
     },
     /** @property */
+    'iaps' : [{
+        'platform' : {
+            'type' : String,
+            'required' : true
+        },
+        'productId' : {
+            'type' : String,
+            'required' : true
+        },
+        'receipt' : {
+            'type' : String,
+            'required' : true
+        },
+        'packageName' : {
+            'type' : String,
+            'required' : true
+        },
+        'date' : {
+            'type' : Date,
+            'required' : true
+        }
+    }],
+    /** @property */
     'bets' : [{
         /** @property */
         'match' : {
@@ -102,6 +125,7 @@ schema.plugin(require('mongoose-json-select'), {
     'funds'         : 1,
     'stake'         : 1,
     'toReturn'      : 1,
+    'iaps'          : 0,
     'bets'          : 0
 });
 
@@ -245,6 +269,31 @@ schema.paths.bets.schema.post('remove', function () {
 
 /**
  * @method
+ * @summary Return wallet last iap date
+ * The wallet status must be calculated with all bets that happened after the iap, so this method should return the last
+ * iap and if none iap exists, this method should return the created date.
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.virtual('lastDate').get(function () {
+    'use strict';
+
+    if (!this.iaps.length) { return this.createdAt; }
+
+    var lastIap;
+
+    lastIap = this.iaps.sort(function (a, b) {
+        if (a.date > b.date) { return +1; }
+        if (a.date < b.date) { return -1; }
+        return 0;
+    }).pop();
+
+    return lastIap.date;
+});
+
+/**
+ * @method
  * @summary Return wallet available funds
  * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet
  * which the bet is finished.
@@ -256,6 +305,8 @@ schema.virtual('funds').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
+        return bet.date > this.lastDate;
+    }.bind(this)).filter(function (bet) {
         return !!bet.finished;
     }.bind(this)).map(function (bet) {
         return bet.reward - bet.bid;
@@ -277,6 +328,8 @@ schema.virtual('stake').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
+        return bet.date > this.lastDate;
+    }.bind(this)).filter(function (bet) {
         return !bet.finished;
     }.bind(this)).map(function (bet) {
         return bet.bid;
@@ -298,6 +351,8 @@ schema.virtual('toReturn').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
+        return bet.date > this.lastDate;
+    }.bind(this)).filter(function (bet) {
         return !bet.finished;
     }.bind(this)).map(function (bet) {
         return bet.reward;
