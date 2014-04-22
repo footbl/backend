@@ -1,7 +1,6 @@
 'use strict';
 var mongoose, nconf, async, cheerio, request, querystring,
-    Team, Championship, Match,
-    query, championships, matches;
+    Team, Championship, Match;
 
 mongoose     = require('mongoose');
 nconf        = require('nconf');
@@ -18,43 +17,190 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-query         = querystring.encode({'showLeagues' : 'all', 'd' : '0'});
-championships = [];
-matches       = [];
+function championshipName(title) {
+    return title.split(' grp. ')[0];
+}
 
-request(nconf.get('CRAWLER_URI') + '?' + query, function (error, response, body) {
-    var $;
+function loadPage(next) {
+    var query = querystring.encode({'showLeagues' : 'all', 'd' : '0'});
+    request(nconf.get('CRAWLER_URI') + '?' + query, function (error, response, body) {
+        var $, result;
+        $      = cheerio.load(body);
+        result = [];
+        $('tr').each(function () {
+            result.push($(this));
+        });
+        next(error, result);
+    });
+}
 
-    $ = cheerio.load(body);
-    $('tr').each(function () {
-        var tr, heading,
-            date, time, title;
+function parseChampionships(records, next) {
+    async.map(records.filter(function (record) {
+        return record.children().first().hasClass('Heading');
+    }), function (record, next) {
+        var championship, title;
+        title        = record.children().first().text().split(' - ');
+        championship = new Championship({
+            'name'    : championshipName(title[1]),
+            'country' : title[0]
+        });
+        next(null, championship);
+    }, next.bind({}));
+}
 
-        tr      = $(this);
-        heading = tr.children().first().hasClass('Heading');
+function saveChampionships(championships, next) {
+    async.each(championships, function (championship, next) {
+        var query;
+        query = Championship.findOne();
+        query.where('name').equals(championship.name);
+        query.where('country').equals(championship.country);
+        query.exec(function (error, found) {
+            if (error) { return next(error); }
+            if (found) { return next(); }
+            return championship.save(next);
+        });
+    }, next.bind({}));
+}
 
+function parseHostTeams(records, next) {
+    async.map(records.filter(function (record) {
+        return !record.children().first().hasClass('Heading');
+    }), function (record, next) {
+        var team = new Team({
+            'name'    : record.children().first().next().text(),
+            'picture' : 'http://www.missingpersoninvestigators.com/images/sldMissing2.jpg'
+        });
+        next(null, team);
+    }, next.bind({}));
+}
+
+function parseGuestTeams(records, next) {
+    async.map(records.filter(function (record) {
+        return !record.children().first().hasClass('Heading');
+    }), function (record, next) {
+        var team = new Team({
+            'name'    : record.children().first().next().next().next().text(),
+            'picture' : 'http://www.missingpersoninvestigators.com/images/sldMissing2.jpg'
+        });
+        next(null, team);
+    }, next.bind({}));
+}
+
+function saveTeams(teams, next) {
+    async.each(teams, function (team, next) {
+        var query;
+        query = Team.findOne();
+        query.where('name').equals(team.name);
+        query.exec(function (error, found) {
+            if (error) { return next(error); }
+            if (found) { return next(); }
+            return team.save(next);
+        });
+    }, next.bind({}));
+}
+
+function parseMatches(records, next) {
+    var championship, matches;
+
+    matches = [];
+    records.forEach(function (record) {
+        var heading, date, time, score;
+        heading = record.children().first().hasClass('Heading');
         if (heading) {
-            title = tr.children().first().text().split(' - ');
-
-            championships.push({
-                'name'    : title[1],
-                'country' : title[0]
-            });
-        } else if (tr.children().first().text() !== 'FT') {
-            date = new Date();
-            time = tr.children().first().text().split(':');
-            date.setSeconds(0);
-            date.setUTCHours(time[0]);
-            date.setUTCMinutes(time[1]);
-
+            championship = championshipName(record.children().first().text().split(' - ')[1]);
+        } else {
+            if (record.children().first().text().indexOf(':') > -1) {
+                date = new Date();
+                time = record.children().first().text().split(':');
+                date.setSeconds(0);
+                date.setUTCHours(time[0]);
+                date.setUTCMinutes(time[1]);
+            }
+            score = record.children().first().next().next().text().split(' - ');
             matches.push({
+                'round'        : 1,
+                'championship' : championship,
                 'date'         : date,
-                'championship' : championships[championships.length - 1],
-                'guest'        : tr.children().first().next().text(),
-                'host'         : tr.children().first().next().next().next().text()
+                'guest'        : record.children().first().next().text(),
+                'host'         : record.children().first().next().next().next().text(),
+                'finished'     : record.children().first().text() === 'FT',
+                'result'       : {
+                    'guest' : Number(score[0]) || 0,
+                    'host'  : Number(score[1]) || 0
+                }
             });
         }
     });
+    next(null, matches);
+}
 
-    console.log(matches);
-});
+function retrieveHost(matches, next) {
+    async.map(matches, function (match, next) {
+        var query;
+        query = Team.findOne();
+        query.where('name').equals(match.host);
+        query.exec(function (error, team) {
+            if (error) { return next(error); }
+            if (!team) { return next('host not found'); }
+            match.host = team._id;
+            return next(null, match);
+        });
+    }, next.bind({}));
+}
+
+function retrieveGuest(matches, next) {
+    async.map(matches, function (match, next) {
+        var query;
+        query = Team.findOne();
+        query.where('name').equals(match.guest);
+        query.exec(function (error, team) {
+            if (error) { return next(error); }
+            if (!team) { return next('guest not found'); }
+            match.guest = team._id;
+            return next(null, match);
+        });
+    }, next.bind({}));
+}
+
+function retrieveChampionship(matches, next) {
+    async.map(matches, function (match, next) {
+        var query;
+        query = Championship.findOne();
+        query.where('name').equals(match.championship);
+        query.exec(function (error, championship) {
+            if (error) { return next(error); }
+            if (!championship) { return next('championship not found'); }
+            match.championship = championship._id;
+            return next(null, match);
+        });
+    }, next.bind({}));
+}
+
+function saveMatches(matches, next) {
+    async.each(matches, function (data, next) {
+        var query;
+        query = Match.findOne();
+        query.where('host').equals(data.host);
+        query.where('guest').equals(data.guest);
+        query.where('championship').equals(data.championship);
+        query.exec(function (error, match) {
+            if (error) { return next(error); }
+            if (!match) { match = new Match(data); }
+
+            match.result = data.result;
+            match.finished = data.finished;
+            if (!match.date) { return next(); }
+            return match.save(function (error) {
+                next(error);
+            });
+        });
+    }, next.bind({}));
+}
+
+async.seq(
+    async.seq(loadPage, parseChampionships, saveChampionships),
+    async.seq(loadPage, parseHostTeams, saveTeams),
+    async.seq(loadPage, parseGuestTeams, saveTeams),
+    async.seq(loadPage, parseMatches, retrieveHost, retrieveGuest, retrieveChampionship, saveMatches),
+    process.exit.bind({})
+)();
