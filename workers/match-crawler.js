@@ -70,8 +70,7 @@ function parseHostTeams(records, next) {
         return !record.children().first().hasClass('Heading');
     }), function (record, next) {
         var team = new Team({
-            'name'    : record.children().first().next().text(),
-            'picture' : 'http://www.missingpersoninvestigators.com/images/sldMissing2.jpg'
+            'name' : record.children().first().next().text()
         });
         next(null, team);
     }, next.bind({}));
@@ -82,8 +81,7 @@ function parseGuestTeams(records, next) {
         return !record.children().first().hasClass('Heading');
     }), function (record, next) {
         var team = new Team({
-            'name'    : record.children().first().next().next().next().text(),
-            'picture' : 'http://www.missingpersoninvestigators.com/images/sldMissing2.jpg'
+            'name' : record.children().first().next().next().next().text()
         });
         next(null, team);
     }, next.bind({}));

@@ -27,8 +27,7 @@ schema = new Schema({
     /** @property */
     'picture' : {
         'type' : String,
-        'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/,
-        'required' : true
+        'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
     /** @property */
     'createdAt' : {

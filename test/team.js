@@ -75,16 +75,6 @@ describe('team controller', function () {
             req.end(done);
         });
 
-        it('should raise error without picture', function (done) {
-            var req = request(app);
-            req = req.post('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({name : 'test'});
-            req = req.expect(500);
-            req.end(done);
-        });
-
         it('should create with valid credentials, name, picture', function (done) {
             var req = request(app);
             req = req.post('/teams');
@@ -205,16 +195,6 @@ describe('team controller', function () {
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.send({picture : 'test'});
-            req = req.expect(500);
-            req.end(done);
-        });
-
-        it('should raise error without picture', function (done) {
-            var req = request(app);
-            req = req.put('/teams/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
-            req = req.send({name : 'test'});
             req = req.expect(500);
             req.end(done);
         });
