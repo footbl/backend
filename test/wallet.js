@@ -1,6 +1,6 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
-    User, Team, Championship, Match, Wallet,
+    User, Team, Championship, Match, Wallet, Group, Comment,
     user, guest, host, championship, otherChampionship, match, otherMatch, otherMatchSameChampionship;
 
 require('should');
@@ -10,20 +10,45 @@ app          = require('../index.js');
 mongoose     = require('mongoose');
 nconf        = require('nconf');
 auth         = require('../lib/auth');
+
 User         = require('../models/user');
 Team         = require('../models/team');
 Championship = require('../models/championship');
 Match        = require('../models/match');
 Wallet       = require('../models/wallet');
-
-after(function (done) {
-    'use strict';
-
-    mongoose.connection.db.dropDatabase(done);
-});
+Group        = require('../models/group');
+Comment      = require('../models/comment');
 
 describe('wallet controller', function () {
     'use strict';
+
+    before(function (done) {
+        User.remove(done);
+    });
+
+    before(function (done) {
+        Team.remove(done);
+    });
+
+    before(function (done) {
+        Championship.remove(done);
+    });
+
+    before(function (done) {
+        Match.remove(done);
+    });
+
+    before(function (done) {
+        Wallet.remove(done);
+    });
+
+    before(function (done) {
+        Group.remove(done);
+    });
+
+    before(function (done) {
+        Comment.remove(done);
+    });
 
     before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});
@@ -46,7 +71,7 @@ describe('wallet controller', function () {
     });
 
     before(function (done) {
-        otherChampionship = new Championship({'name' : 'championship'});
+        otherChampionship = new Championship({'name' : 'other championship'});
         otherChampionship.save(done);
     });
 

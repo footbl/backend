@@ -1,5 +1,6 @@
 /*globals describe, before, it, after*/
-var request, app, mongoose, auth, nconf, crypto, User,
+var request, app, mongoose, auth, nconf, crypto,
+    User, Team, Championship, Match, Wallet, Group, Comment,
     user, otherUser;
 
 require('should');
@@ -10,16 +11,45 @@ mongoose = require('mongoose');
 nconf    = require('nconf');
 crypto   = require('crypto');
 auth     = require('../lib/auth');
-User     = require('../models/user');
 
-after(function (done) {
-    'use strict';
-
-    mongoose.connection.db.dropDatabase(done);
-});
+User         = require('../models/user');
+Team         = require('../models/team');
+Championship = require('../models/championship');
+Match        = require('../models/match');
+Wallet       = require('../models/wallet');
+Group        = require('../models/group');
+Comment      = require('../models/comment');
 
 describe('user controller', function () {
     'use strict';
+
+    before(function (done) {
+        User.remove(done);
+    });
+
+    before(function (done) {
+        Team.remove(done);
+    });
+
+    before(function (done) {
+        Championship.remove(done);
+    });
+
+    before(function (done) {
+        Match.remove(done);
+    });
+
+    before(function (done) {
+        Wallet.remove(done);
+    });
+
+    before(function (done) {
+        Group.remove(done);
+    });
+
+    before(function (done) {
+        Comment.remove(done);
+    });
 
     before(function (done) {
         user = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});

@@ -58,6 +58,8 @@ schema.plugin(require('mongoose-json-select'), {
     'country'     : 1
 });
 
+schema.index({'name' : 1, 'country' : 1}, {'unique' : true});
+
 /**
  * @callback
  * @summary Setups createdAt and updatedAt

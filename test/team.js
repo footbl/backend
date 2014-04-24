@@ -1,5 +1,7 @@
 /*globals describe, before, it, after*/
-var request, app, mongoose, auth, nconf, User, user;
+var request, app, mongoose, auth, nconf,
+    User, Team, Championship, Match, Wallet, Group, Comment,
+    user;
 
 require('should');
 
@@ -8,16 +10,45 @@ app      = require('../index.js');
 mongoose = require('mongoose');
 nconf    = require('nconf');
 auth     = require('../lib/auth');
-User     = require('../models/user');
 
-after(function (done) {
-    'use strict';
-
-    mongoose.connection.db.dropDatabase(done);
-});
+User         = require('../models/user');
+Team         = require('../models/team');
+Championship = require('../models/championship');
+Match        = require('../models/match');
+Wallet       = require('../models/wallet');
+Group        = require('../models/group');
+Comment      = require('../models/comment');
 
 describe('team controller', function () {
     'use strict';
+
+    before(function (done) {
+        User.remove(done);
+    });
+
+    before(function (done) {
+        Team.remove(done);
+    });
+
+    before(function (done) {
+        Championship.remove(done);
+    });
+
+    before(function (done) {
+        Match.remove(done);
+    });
+
+    before(function (done) {
+        Wallet.remove(done);
+    });
+
+    before(function (done) {
+        Group.remove(done);
+    });
+
+    before(function (done) {
+        Comment.remove(done);
+    });
 
     before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});

@@ -37,7 +37,7 @@ function loadPage(day, next) {
 function loadPages(next) {
     async.times(60, loadPage, function (error, pages) {
         if (error) { return next(error); }
-        next(null, pages.reduce(function (pages, page) {
+        return next(null, pages.reduce(function (pages, page) {
             return pages.concat(page);
         }, []));
     });
@@ -59,14 +59,8 @@ function parseChampionships(records, next) {
 
 function saveChampionships(championships, next) {
     async.each(championships, function (championship, next) {
-        var query;
-        query = Championship.findOne();
-        query.where('name').equals(championship.name);
-        query.where('country').equals(championship.country);
-        query.exec(function (error, found) {
-            if (error) { return next(error); }
-            if (found) { return next(); }
-            return championship.save(next);
+        return championship.save(function () {
+            next();
         });
     }, next.bind({}));
 }
@@ -97,26 +91,22 @@ function parseGuestTeams(records, next) {
 
 function saveTeams(teams, next) {
     async.each(teams, function (team, next) {
-        var query;
-        query = Team.findOne();
-        query.where('name').equals(team.name);
-        query.exec(function (error, found) {
-            if (error) { return next(error); }
-            if (found) { return next(); }
-            return team.save(next);
+        return team.save(function () {
+            next();
         });
     }, next.bind({}));
 }
 
 function parseMatches(records, next) {
-    var championship, matches;
+    var name, country, matches;
 
     matches = [];
     records.forEach(function (record) {
         var heading, date, time;
         heading = record.children().first().hasClass('Heading');
         if (heading) {
-            championship = championshipName(record.children().first().text().split(' - ')[1]);
+            name    = championshipName(record.children().first().text().split(' - ')[1]);
+            country = record.children().first().text().split(' - ')[0];
         } else if (record.children().first().text().indexOf(':') > -1) {
             date = new Date();
             time = record.children().first().text().split(':');
@@ -125,7 +115,10 @@ function parseMatches(records, next) {
             date.setUTCMinutes(time[1]);
             matches.push({
                 'round'        : 1,
-                'championship' : championship,
+                'championship' : {
+                    'name'    : name,
+                    'country' : country
+                },
                 'date'         : date,
                 'guest'        : record.children().first().next().text(),
                 'host'         : record.children().first().next().next().next().text()
@@ -167,7 +160,8 @@ function retrieveChampionship(matches, next) {
     async.map(matches, function (match, next) {
         var query;
         query = Championship.findOne();
-        query.where('name').equals(match.championship);
+        query.where('name').equals(match.championship.name);
+        query.where('country').equals(match.championship.country);
         query.exec(function (error, championship) {
             if (error) { return next(error); }
             if (!championship) { return next('championship not found'); }

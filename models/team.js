@@ -21,7 +21,8 @@ schema = new Schema({
     /** @property */
     'name' : {
         'type' : String,
-        'required' : true
+        'required' : true,
+        'unique' : true
     },
     /** @property */
     'picture' : {
