@@ -257,6 +257,38 @@ router.delete('/wallets/:walletId', function (request, response) {
 
 /**
  * @method
+ * @summary Get all wallets bets
+ *
+ * @param request.walletId
+ * @param response
+ *
+ * @returns 200 [bet]
+ * @throws 404 wallet not found
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.get('/wallets/:walletId/bets', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    var wallet;
+    wallet = request.wallet;
+
+    if (!request.session) { return response.send(401, 'invalid token'); }
+
+    response.header('Last-Modified', wallet.updatedAt);
+    return response.send(200, wallet.bets);
+});
+
+/**
+ * @method
  * @summary Puts requested bet in request object
  *
  * @param request
