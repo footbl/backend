@@ -206,7 +206,9 @@
     });
 
     app.controller('LoginController', function ($scope, SecretService, $http) {
-        $scope.user = {};
+        $scope.user   = {};
+        $scope.active = SecretService.token;
+
         $scope.login = function () {
             $scope.user.timestamp = SecretService.timestamp();
             $scope.user.transactionId = SecretService.transactionId();
@@ -217,9 +219,11 @@
         };
     });
 
-    app.controller('TeamListController', function ($scope, TeamService) {
-        var page = 0;
-        $scope.teams = [];
+    app.controller('TeamListController', function ($scope, SecretService, TeamService) {
+        var page;
+        page          = 0;
+        $scope.teams  = [];
+        $scope.active = SecretService.token;
 
         $scope.load = function () {
             TeamService.query({'page' : page}, function (teams) {
@@ -229,9 +233,11 @@
         }
     });
 
-    app.controller('ChampionshipListController', function ($scope, ChampionshipService) {
-        var page = 0;
-        $scope.championships = [];
+    app.controller('ChampionshipListController', function ($scope, SecretService, ChampionshipService) {
+        var page;
+        page                  = 0;
+        $scope.championships  = [];
+        $scope.active         = SecretService.token;
 
         $scope.load = function () {
             ChampionshipService.query({'page' : page}, function (championships) {
@@ -241,9 +247,11 @@
         }
     });
 
-    app.controller('MatchListController', function ($scope, MatchService) {
-        var page = 0;
+    app.controller('MatchListController', function ($scope, SecretService, MatchService) {
+        var page;
+        page           = 0;
         $scope.matches = [];
+        $scope.active  = SecretService.token;
 
         $scope.load = function () {
             MatchService.query({'championship' : $scope.championship._id, 'page' : page}, function (matches) {
@@ -256,7 +264,7 @@
 </script>
 </head>
 <body>
-    <div ng-controller="LoginController">
+    <div ng-controller="LoginController" ng-hide="active()">
         <form ng-submit="login()">
             <div>
                 Email <input type="text" ng-model="user.email">
@@ -269,7 +277,7 @@
             </div>
         </form>
     </div>
-    <div ng-controller="TeamListController">
+    <div ng-controller="TeamListController" ng-show="active()">
         <h2>
             Times
         </h2>
@@ -291,7 +299,7 @@
         </ul>
         <span ng-click="load()">carregar +</span>
     </div>
-    <div ng-controller="ChampionshipListController">
+    <div ng-controller="ChampionshipListController" ng-show="active()">
         <h2>
             Campeonatos
         </h2>
