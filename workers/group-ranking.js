@@ -1,3 +1,10 @@
+/**
+ * @module
+ * Updates groups rankings
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
 'use strict';
 var mongoose, nconf, async, crypto,
     Group, Wallet;

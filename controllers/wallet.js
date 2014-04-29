@@ -83,6 +83,9 @@ router.get('/wallets', function (request, response) {
     page     = request.param('page', 0) * pageSize;
 
     query.where('user').equals(request.session._id);
+    query.populate('championship');
+    query.populate('user');
+    query.populate('bets.match');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, wallets) {

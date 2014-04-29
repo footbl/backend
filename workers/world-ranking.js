@@ -1,3 +1,10 @@
+/**
+ * @module
+ * Updates world ranking
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
 'use strict';
 var mongoose, nconf, async, crypto,
     User, Wallet, Championship;

@@ -1,3 +1,10 @@
+/**
+ * @module
+ * Populates database with championships, teams and matches
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
 'use strict';
 var mongoose, nconf, async, cheerio, request, querystring,
     Team, Championship, Match;
@@ -17,10 +24,31 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
+/**
+ * @method
+ * @summary Removes garbage from championship name
+ *
+ * @param title
+ *
+ * @returns String championshipName
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function championshipName(title) {
     return title.split(' grp. ')[0];
 }
 
+/**
+ * @method
+ * @summary Loads HTML page from crawled website
+ *
+ * @param day
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function loadPage(day, next) {
     var query = querystring.encode({'showLeagues' : 'all', 'd' : day});
     request(nconf.get('CRAWLER_URI') + '?' + query, function (error, response, body) {
@@ -36,6 +64,15 @@ function loadPage(day, next) {
     });
 }
 
+/**
+ * @method
+ * @summary Loads all HTML pages from the next 2 months
+ *
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function loadPages(next) {
     async.times(60, loadPage, function (error, pages) {
         if (error) { return next(error); }
@@ -45,6 +82,16 @@ function loadPages(next) {
     });
 }
 
+/**
+ * @method
+ * @summary Parse crawled table rows of chamionships into championship objects
+ *
+ * @param records
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function parseChampionships(records, next) {
     async.map(records.filter(function (record) {
         return record.children().first().hasClass('Heading');
@@ -59,6 +106,16 @@ function parseChampionships(records, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Save all championships into database
+ *
+ * @param championships
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function saveChampionships(championships, next) {
     async.each(championships, function (championship, next) {
         return championship.save(function () {
@@ -67,6 +124,16 @@ function saveChampionships(championships, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Parse crawled table rows of matches into team objects of the host team
+ *
+ * @param records
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function parseHostTeams(records, next) {
     async.map(records.filter(function (record) {
         return !record.children().first().hasClass('Heading');
@@ -78,6 +145,16 @@ function parseHostTeams(records, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Parse crawled table rows of matches into team objects of the guest team
+ *
+ * @param records
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function parseGuestTeams(records, next) {
     async.map(records.filter(function (record) {
         return !record.children().first().hasClass('Heading');
@@ -89,6 +166,16 @@ function parseGuestTeams(records, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Save all teams into database
+ *
+ * @param teams
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function saveTeams(teams, next) {
     async.each(teams, function (team, next) {
         return team.save(function () {
@@ -97,6 +184,18 @@ function saveTeams(teams, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Parse crawled table rows of matches into match objects
+ * When crawling system matches, the crawler don't care for the match result, only the matches which haven't started are
+ * crawled in this fase. Another crawler will take care of the result.
+ *
+ * @param records
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function parseMatches(records, next) {
     var name, country, matches;
 
@@ -128,6 +227,16 @@ function parseMatches(records, next) {
     next(null, matches);
 }
 
+/**
+ * @method
+ * @summary Takes all matches host objectIds
+ *
+ * @param matches
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function retrieveHost(matches, next) {
     async.map(matches, function (match, next) {
         var query;
@@ -142,6 +251,16 @@ function retrieveHost(matches, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Takes all matches guest objectIds
+ *
+ * @param matches
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function retrieveGuest(matches, next) {
     async.map(matches, function (match, next) {
         var query;
@@ -156,6 +275,16 @@ function retrieveGuest(matches, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Takes all matches championship objectIds
+ *
+ * @param matches
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function retrieveChampionship(matches, next) {
     async.map(matches, function (match, next) {
         var query;
@@ -171,6 +300,16 @@ function retrieveChampionship(matches, next) {
     }, next.bind({}));
 }
 
+/**
+ * @method
+ * @summary Save all matches into database
+ *
+ * @param matches
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 function saveMatches(matches, next) {
     async.each(matches, function (data, next) {
         var query;
