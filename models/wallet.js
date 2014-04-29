@@ -306,8 +306,6 @@ schema.virtual('funds').get(function () {
 
     return this.bets.filter(function (bet) {
         return bet.date > this.lastDate;
-    }.bind(this)).filter(function (bet) {
-        return !!bet.finished;
     }.bind(this)).map(function (bet) {
         return bet.reward - bet.bid;
     }.bind(this)).reduce(function (funds, profit) {

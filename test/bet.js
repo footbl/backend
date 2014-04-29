@@ -185,6 +185,18 @@ describe('bet', function () {
             req = req.expect(500);
             req.end(done);
         });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/wallets/' + wallet._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.have.property('stake').be.equal(50);
+                response.body.should.have.property('funds').be.equal(50);
+            });
+            req.end(done);
+        });
     });
 
     describe('list', function () {
@@ -359,6 +371,18 @@ describe('bet', function () {
             });
             req.end(done);
         });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/wallets/' + wallet._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.have.property('stake').be.equal(5);
+                response.body.should.have.property('funds').be.equal(95);
+            });
+            req.end(done);
+        });
     });
 
     describe('delete', function () {
@@ -398,6 +422,18 @@ describe('bet', function () {
             req = req.send(auth.credentials());
             req = req.send({token : auth.token(user)});
             req = req.expect(200);
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/wallets/' + wallet._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.have.property('stake').be.equal(0);
+                response.body.should.have.property('funds').be.equal(100);
+            });
             req.end(done);
         });
     });
