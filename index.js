@@ -1,11 +1,12 @@
 'use strict';
-var express, mongoose, nconf, bodyParser,
+var express, mongoose, nconf, bodyParser, methodOverride,
     app;
 
-express    = require('express');
-mongoose   = require('mongoose');
-nconf      = require('nconf');
-bodyParser = require('body-parser');
+express        = require('express');
+mongoose       = require('mongoose');
+nconf          = require('nconf');
+bodyParser     = require('body-parser');
+methodOverride = require('method-override');
 
 nconf.argv();
 nconf.env();
@@ -14,6 +15,13 @@ mongoose.connect(nconf.get('MONGOHQ_URL'));
 
 app = express();
 app.use(bodyParser());
+app.use(methodOverride());
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Headers', 'x-http-method-override');
+    next();
+});
 app.use(require('./lib/auth').signature);
 app.use(require('./lib/auth').session);
 app.use(require('./controllers/wallet'));

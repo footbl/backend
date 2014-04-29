@@ -34,6 +34,9 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet;
     wallet = request.wallet;
@@ -76,6 +79,9 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -123,6 +129,9 @@ router.get('/championships/:championshipId/matches/:matchId/bets/:betId', functi
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -155,6 +164,9 @@ router.put('/championships/:championshipId/matches/:matchId/bets/:betId', functi
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet, bet;
     wallet = request.wallet;
@@ -193,6 +205,9 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet, bet;
     wallet = request.wallet;

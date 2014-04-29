@@ -33,6 +33,9 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -70,6 +73,9 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -116,6 +122,9 @@ router.get('/championships/:championshipId/matches/:matchId/comments/:commentId'
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -148,6 +157,9 @@ router.put('/championships/:championshipId/matches/:matchId/comments/:commentId'
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var comment;
     comment = request.comment;
@@ -183,6 +195,9 @@ router.delete('/championships/:championshipId/matches/:matchId/comments/:comment
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var comment;
     comment = request.comment;

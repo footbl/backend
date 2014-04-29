@@ -34,6 +34,9 @@ router.post('/championships/:championshipId/matches', function (request, respons
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
@@ -71,7 +74,10 @@ router.get('/championships/:championshipId/matches', function (request, response
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
+    response.header('Content-Language', 'en')
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -112,6 +118,9 @@ router.get('/championships/:championshipId/matches/:matchId', function (request,
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -142,6 +151,9 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
@@ -176,6 +188,9 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 
@@ -213,6 +228,9 @@ router.delete('/championships/:championshipId/matches/:matchId', function (reque
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
 

@@ -32,6 +32,9 @@ router.post('/wallets', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -68,6 +71,9 @@ router.get('/wallets', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -104,6 +110,9 @@ router.get('/wallets/:walletId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet;
     wallet = request.wallet;
@@ -135,6 +144,9 @@ router.put('/wallets/:walletId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet;
     wallet = request.wallet;
@@ -173,13 +185,16 @@ router.post('/wallets/:walletId/recharge', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet;
     wallet   = request.wallet;
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    iap.verifyPayment(request.param('platform'), {
+    return iap.verifyPayment(request.param('platform'), {
         'receipt'     : request.param('receipt'),
         'productId'   : request.param('productId'),
         'packageName' : request.param('packageName')
@@ -222,6 +237,9 @@ router.delete('/wallets/:walletId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet;
     wallet = request.wallet;

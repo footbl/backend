@@ -32,6 +32,9 @@ router.post('/groups', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -70,6 +73,9 @@ router.get('/groups', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -122,6 +128,9 @@ router.get('/groups/:groupId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -153,6 +162,9 @@ router.put('/groups/:groupId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -193,6 +205,9 @@ router.delete('/groups/:groupId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -226,6 +241,9 @@ router.post('/groups/:groupId/members', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -261,6 +279,9 @@ router.get('/groups/:groupId/members', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -291,6 +312,9 @@ router.get('/groups/:groupId/members/:memberId', function (request, response) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
@@ -326,6 +350,9 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
