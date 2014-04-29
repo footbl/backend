@@ -218,20 +218,38 @@
     });
 
     app.controller('TeamListController', function ($scope, TeamService) {
+        var page = 0;
+        $scope.teams = [];
+
         $scope.load = function () {
-            $scope.teams = TeamService.query();
+            TeamService.query({'page' : page}, function (teams) {
+                $scope.teams = $scope.teams.concat(teams);
+            });
+            page += 1;
         }
     });
 
     app.controller('ChampionshipListController', function ($scope, ChampionshipService) {
+        var page = 0;
+        $scope.championships = [];
+
         $scope.load = function () {
-            $scope.championships = ChampionshipService.query();
+            ChampionshipService.query({'page' : page}, function (championships) {
+                $scope.championships = $scope.championships.concat(championships);
+            });
+            page += 1;
         }
     });
 
     app.controller('MatchListController', function ($scope, MatchService) {
+        var page = 0;
+        $scope.matches = [];
+
         $scope.load = function () {
-            $scope.matches = MatchService.query({'championship' : $scope.championship._id});
+            MatchService.query({'championship' : $scope.championship._id, 'page' : page}, function (matches) {
+                $scope.matches = $scope.matches.concat(matches);
+            });
+            page += 1;
         }
     });
 })(angular)
@@ -254,11 +272,11 @@
     <div ng-controller="TeamListController">
         <h2>
             Times
-            <span ng-click="load()">recarregar</span>
         </h2>
         <ul>
             <li ng-repeat="team in teams">
                 <form ng-submit="team.$update(team);">
+                    <hr>
                     <div>
                         {{team.name}}
                     </div>
@@ -271,15 +289,16 @@
                 </form>
             </li>
         </ul>
+        <span ng-click="load()">carregar +</span>
     </div>
     <div ng-controller="ChampionshipListController">
         <h2>
             Campeonatos
-            <span ng-click="load()">recarregar</span>
         </h2>
         <ul>
             <li ng-repeat="championship in championships">
                 <form ng-submit="championship.$update(championship);">
+                    <hr>
                     <div>
                         {{championship.name}}
                     </div>
@@ -300,27 +319,28 @@
                 <div ng-controller="MatchListController">
                     <h3>
                         Partidas
-                        <span ng-click="load()">recarregar</span>
                     </h3>
                     <ul>
                         <li ng-repeat="match in matches">
                             <div>
-                                {{match.date}}
-                            </div>
-                            <div>
-                                {{match.host.name}}
-                            </div>
-                            <div>
-                                {{match.guest.name}}
+                                {{match.guest.name}} <input type="text" ng-model="match.result.guest"> x <input type="text" ng-model="match.result.host"> {{match.host.name}}
                             </div>
                             <div>
                                 Rodada: <input type="text" ng-model="match.round">
                             </div>
+                            <div>
+                                {{match.date}}
+                            </div>
+                            <div>
+                                <input type="checkbox" ng-model="match.finished"> Terminou
+                            </div>
                         </li>
                     </ul>
+                    <span ng-click="load()">carregar +</span>
                 </div>
             </li>
         </ul>
+        <span ng-click="load()">carregar +</span>
     </div>
 </body>
 </html>

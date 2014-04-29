@@ -28,7 +28,9 @@ function loadPage(day, next) {
         $      = cheerio.load(body);
         result = [];
         $('tr').each(function () {
-            result.push($(this));
+            var row = $(this);
+            row.day = day;
+            result.push(row);
         });
         next(error, result);
     });
@@ -108,7 +110,7 @@ function parseMatches(records, next) {
         } else if (record.children().first().text().indexOf(':') > -1) {
             date = new Date();
             time = record.children().first().text().split(':');
-            date.setSeconds(0);
+            date.setDate(date.getDate() + record.day);
             date.setUTCHours(time[0]);
             date.setUTCMinutes(time[1]);
             matches.push({
