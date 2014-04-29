@@ -112,6 +112,7 @@ schema = new Schema({
     }
 }, {
     'collection' : 'wallets',
+    'strict' : true,
     'toJSON' : {
         'virtuals' : true
     }
@@ -198,6 +199,22 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
+ * @summary Stores old BID in case of update
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.paths.bets.schema.post('init', function () {
+    'use strict';
+
+    this.oldBid = this.bid;
+    this.oldResult = this.result;
+});
+
+/**
+ * @callback
  * @summary Updates match pot
  * After saving a new bet, the match pot corresponding to the bet's result must be updated, increasing the pot.
  *
@@ -215,20 +232,11 @@ schema.paths.bets.schema.post('save', function () {
         if (error) { return; }
         if (!match) { return; }
 
-        var query;
-        query = this.parent().constructor.findOne();
-        query.where('_id').equals(this.parent()._id);
-        query.exec(function (error, wallet) {
-            if (error) { return; }
-            if (wallet) {
-                var bet = wallet.bets.id(this._id);
-                if (bet) {
-                    match.pot[bet.result] -= bet.bid;
-                }
-            }
-            match.pot[this.result] += this.bid;
-            match.save();
-        }.bind(this));
+        if (this.oldBid) {
+            match.pot[this.oldResult] -= this.oldBid;
+        }
+        match.pot[this.result] += this.bid;
+        match.save();
     }.bind(this));
 });
 
@@ -251,19 +259,10 @@ schema.paths.bets.schema.post('remove', function () {
         if (error) { return; }
         if (!match) { return; }
 
-        var query;
-        query = this.parent().constructor.findOne();
-        query.where('_id').equals(this.parent()._id);
-        query.exec(function (error, wallet) {
-            if (error) { return; }
-            if (wallet) {
-                var bet = wallet.bets.id(this._id);
-                if (bet) {
-                    match.pot[bet.result] -= bet.bid;
-                }
-            }
-            match.save();
-        }.bind(this));
+        if (this.oldBid) {
+            match.pot[this.oldResult] -= this.oldBid;
+        }
+        match.save();
     }.bind(this));
 });
 

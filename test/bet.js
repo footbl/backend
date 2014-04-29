@@ -197,6 +197,19 @@ describe('bet', function () {
             });
             req.end(done);
         });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.have.property('pot').with.property('draw').be.equal(50);
+                response.body.should.have.property('pot').with.property('guest').be.equal(0);
+                response.body.should.have.property('pot').with.property('host').be.equal(0);
+            });
+            req.end(done);
+        });
     });
 
     describe('list', function () {
@@ -383,6 +396,19 @@ describe('bet', function () {
             });
             req.end(done);
         });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.have.property('pot').with.property('draw').be.equal(0);
+                response.body.should.have.property('pot').with.property('guest').be.equal(0);
+                response.body.should.have.property('pot').with.property('host').be.equal(5);
+            });
+            req.end(done);
+        });
     });
 
     describe('delete', function () {
@@ -433,6 +459,19 @@ describe('bet', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('stake').be.equal(0);
                 response.body.should.have.property('funds').be.equal(100);
+            });
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req = request(app);
+            req = req.get('/championships/' + championship._id + '/matches/' + match._id);
+            req = req.send(auth.credentials());
+            req = req.send({token : auth.token(user)});
+            req = req.expect(function (response) {
+                response.body.should.have.property('pot').with.property('draw').be.equal(0);
+                response.body.should.have.property('pot').with.property('guest').be.equal(0);
+                response.body.should.have.property('pot').with.property('host').be.equal(0);
             });
             req.end(done);
         });
