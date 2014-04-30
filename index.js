@@ -17,9 +17,9 @@ app = express();
 app.use(bodyParser());
 app.use(methodOverride());
 app.options('/*', function (request, response) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET');
-    res.header('Access-Control-Allow-Headers', '*');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET');
+    response.header('Access-Control-Allow-Headers', '*');
     response.end();
 });
 app.use(require('./lib/auth').signature);
