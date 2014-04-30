@@ -98,7 +98,11 @@ schema = new Schema({
         'type' : Date
     }
 }, {
-    'collection' : 'matches'
+    'collection' : 'matches',
+    'strict' : true,
+    'toJSON' : {
+        'virtuals' : true
+    }
 });
 
 schema.plugin(require('mongoose-json-select'), {

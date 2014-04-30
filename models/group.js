@@ -87,7 +87,11 @@ schema = new Schema({
         'type' : Date
     }
 }, {
-    'collection' : 'groups'
+    'collection' : 'groups',
+    'strict' : true,
+    'toJSON' : {
+        'virtuals' : true
+    }
 });
 
 schema.plugin(require('mongoose-json-select'), {

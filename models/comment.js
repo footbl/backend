@@ -49,7 +49,11 @@ schema = new Schema({
         'type' : Date
     }
 }, {
-    'collection' : 'comments'
+    'collection' : 'comments',
+    'strict' : true,
+    'toJSON' : {
+        'virtuals' : true
+    }
 });
 
 schema.plugin(require('mongoose-json-select'), {
