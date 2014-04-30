@@ -66,12 +66,10 @@ describe('user controller', function () {
             it('should raise error without transactionId', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.transactionId = null;
                 req = request(app);
                 req = req.post('/users');
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
                 req.end(done);
             });
@@ -79,11 +77,9 @@ describe('user controller', function () {
             it('should raise error without timestamp', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.timestamp = null;
                 req = request(app);
                 req = req.post('/users');
                 req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
                 req.end(done);
@@ -92,10 +88,8 @@ describe('user controller', function () {
             it('should raise error without signature', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.signature = null;
                 req = request(app);
                 req = req.post('/users');
-                req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
@@ -105,10 +99,9 @@ describe('user controller', function () {
             it('should raise error with invalid signature', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.signature = auth.credentials().signature;
                 req = request(app);
                 req = req.post('/users');
-                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-signature', auth.credentials().signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
@@ -246,10 +239,10 @@ describe('user controller', function () {
             it('should raise error without transactionId', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.transactionId = null;
                 req = request(app);
                 req = req.get('/users/me/session');
-                req = req.send(credentials);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.expect(401);
                 req.end(done);
             });
@@ -257,11 +250,9 @@ describe('user controller', function () {
             it('should raise error without timestamp', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.timestamp = null;
                 req = request(app);
                 req = req.get('/users/me/session');
                 req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
                 req.end(done);
@@ -270,10 +261,8 @@ describe('user controller', function () {
             it('should raise error without signature', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.signature = null;
                 req = request(app);
                 req = req.get('/users/me/session');
-                req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
@@ -283,10 +272,9 @@ describe('user controller', function () {
             it('should raise error with invalid signature', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
-                credentials.signature = auth.credentials().signature;
                 req = request(app);
                 req = req.get('/users/me/session');
-                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-signature', auth.credentials().signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.expect(401);
