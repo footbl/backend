@@ -154,16 +154,17 @@ schema.post('save', function () {
         if (error) { return; }
         async.each(wallets, function (wallet, next) {
             return async.detect(wallet.bets, function (bet, next) {
-                next(bet.match.toString() !== this._id.toString());
+                next(bet.match.toString() === this._id.toString());
             }.bind(this), function (bet) {
                 if (!bet) { return next(); }
 
-                var oldReward;
+                var oldReward, oldStatus;
                 oldReward    = bet.reward;
+                oldStatus    = bet.finished;
                 bet.finished = this.finished;
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
 
-                if (oldReward === bet.reward) { return next(); }
+                if (oldReward === bet.reward && oldStatus === bet.finished) { return next(); }
                 return wallet.save(next);
             }.bind(this));
         }.bind(this));

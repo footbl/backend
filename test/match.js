@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    user, otherUser, guest, host, championship;
+    user, otherUser, guest, host, championship, wallet, otherWallet;
 
 require('should');
 
@@ -73,6 +73,16 @@ describe('match controller', function () {
     before(function (done) {
         championship = new Championship({'name' : 'championship'});
         championship.save(done);
+    });
+
+    before(function (done) {
+        wallet = new Wallet({user : user._id, championship : championship._id});
+        wallet.save(done);
+    });
+
+    before(function (done) {
+        otherWallet = new Wallet({user : otherUser._id, championship : championship._id});
+        otherWallet.save(done);
     });
 
     describe('create', function () {
@@ -331,7 +341,7 @@ describe('match controller', function () {
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
+            req = req.set('auth-token', auth.token(otherUser));
             req = req.send({date : new Date(), result : 'host', bid : 50});
             req.end(done);
         });
@@ -348,6 +358,40 @@ describe('match controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('finished').be.equal(true);
+            });
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/wallets/' + wallet._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('funds').be.equal(150);
+                response.body.should.have.property('stake').be.equal(0);
+            });
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/wallets/' + otherWallet._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('funds').be.equal(50);
+                response.body.should.have.property('stake').be.equal(0);
             });
             req.end(done);
         });
