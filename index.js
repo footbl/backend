@@ -19,7 +19,7 @@ app.use(methodOverride());
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET');
-    res.header('Access-Control-Allow-Headers', 'x-http-method-override,auth-signature,auth-timestamp,auth-transactionid');
+    res.header('Access-Control-Allow-Headers', '*');
     next();
 });
 app.use(require('./lib/auth').signature);
