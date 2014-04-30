@@ -57,29 +57,41 @@ describe('team controller', function () {
 
     describe('create', function () {
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/teams');
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({name : 'test', picture : 'test'});
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error without name', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({picture : 'test'});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should create with valid credentials, name, picture', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({name : 'test', picture : 'http://test.com'});
             req = req.expect(201);
             req = req.expect(function (response) {
@@ -93,18 +105,26 @@ describe('team controller', function () {
 
     describe('list', function () {
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams');
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should list with valid credentials', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
@@ -122,10 +142,14 @@ describe('team controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -134,27 +158,39 @@ describe('team controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
         });
 
         it('should return', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
@@ -169,10 +205,14 @@ describe('team controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -181,39 +221,55 @@ describe('team controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/teams/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({name : 'test1', picture : 'test1'});
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error without name', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/teams/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({picture : 'test'});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/teams/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({name : 'test1', picture : 'test1'});
             req = req.expect(404);
             req.end(done);
         });
 
         it('should update', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/teams/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({name : 'test1', picture : 'http://test.com/1'});
             req = req.expect(200);
             req.expect(function (response) {
@@ -229,10 +285,14 @@ describe('team controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/teams');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -241,27 +301,39 @@ describe('team controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/teams/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/teams/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
         });
 
         it('should delete', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/teams/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req.end(done);
         });

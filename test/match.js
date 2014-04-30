@@ -77,69 +77,97 @@ describe('match controller', function () {
 
     describe('create', function () {
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error without date', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error with invalid championship', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/invalid/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error without guest', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error without host', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error without round', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should create with valid credentials, date, championship, guest, host and round', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(201);
             req = req.expect(function (response) {
@@ -156,18 +184,26 @@ describe('match controller', function () {
 
     describe('list', function () {
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should list with valid credentials', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
@@ -190,10 +226,14 @@ describe('match controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(200);
             req = req.expect(function (response) {
@@ -203,27 +243,39 @@ describe('match controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
         });
 
         it('should return', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
@@ -243,10 +295,14 @@ describe('match controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -255,28 +311,40 @@ describe('match controller', function () {
         });
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches/' + id + '/bets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), result : 'draw', bid : 50});
             req.end(done);
         });
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/championships/' + championship._id + '/matches/' + id + '/bets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(otherUser)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), result : 'host', bid : 50});
             req.end(done);
         });
 
         it('should finish match', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id + '/finish');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('finished').be.equal(true);
@@ -289,10 +357,14 @@ describe('match controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(200);
             req = req.expect(function (response) {
@@ -302,69 +374,97 @@ describe('match controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error without date', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error without guest', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error without host', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, date : new Date(), round : 1});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error without round', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(404);
             req.end(done);
         });
 
         it('should update', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date(), result : {guest : 0, host : 1}, round : 1});
             req = req.expect(200);
             req.expect(function (response) {
@@ -385,10 +485,14 @@ describe('match controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/championships/' + championship._id + '/matches');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(200);
             req = req.expect(function (response) {
@@ -398,27 +502,39 @@ describe('match controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/championships/' + championship._id + '/matches/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
         });
 
         it('should delete', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/championships/' + championship._id + '/matches/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req.end(done);
         });

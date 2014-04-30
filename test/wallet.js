@@ -92,28 +92,40 @@ describe('wallet controller', function () {
 
     describe('create', function () {
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/wallets');
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({championship : championship._id});
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error without championship', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
             req.end(done);
         });
 
         it('should create with valid credentials and championship', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({championship : championship._id});
             req = req.expect(201);
             req = req.expect(function (response) {
@@ -129,10 +141,14 @@ describe('wallet controller', function () {
         });
 
         it('should raise error with repeated wallet', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({championship : championship._id});
             req = req.expect(500);
             req.end(done);
@@ -141,27 +157,39 @@ describe('wallet controller', function () {
 
     describe('list', function () {
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.post('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({championship : championship._id});
             req.end(done);
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets');
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should list valid credentials', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
@@ -183,10 +211,14 @@ describe('wallet controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -195,27 +227,39 @@ describe('wallet controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
         });
 
         it('should return', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
@@ -234,10 +278,14 @@ describe('wallet controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -246,38 +294,54 @@ describe('wallet controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/wallets/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({active : false});
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error without active', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/wallets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/wallets/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.send({name : 'test1', picture : 'test1'});
             req = req.expect(404);
             req.end(done);
         });
 
         it('should update', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.put('/wallets/' + id);
-            req = req.send({token : auth.token(user)});
-            req = req.send(auth.credentials());
+            req = req.set('auth-token', auth.token(user));
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({active : false});
             req = req.expect(200);
             req.expect(function (response) {
@@ -297,10 +361,14 @@ describe('wallet controller', function () {
         var id;
 
         before(function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.get('/wallets');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req = req.expect(function (response) {
                 id = response.body[0]._id;
@@ -309,27 +377,39 @@ describe('wallet controller', function () {
         });
 
         it('should raise error without token', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/wallets/' + id);
-            req = req.send(auth.credentials());
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
             req = req.expect(401);
             req.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/wallets/invalid');
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
         });
 
         it('should delete', function (done) {
-            var req = request(app);
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
             req = req.del('/wallets/' + id);
-            req = req.send(auth.credentials());
-            req = req.send({token : auth.token(user)});
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
             req.end(done);
         });

@@ -44,22 +44,27 @@ schema = new Schema({
     },
     /** @property */
     'iaps' : [{
+        /** @property */
         'platform' : {
             'type' : String,
             'required' : true
         },
+        /** @property */
         'productId' : {
             'type' : String,
             'required' : true
         },
+        /** @property */
         'receipt' : {
             'type' : String,
             'required' : true
         },
+        /** @property */
         'packageName' : {
             'type' : String,
             'required' : true
         },
+        /** @property */
         'date' : {
             'type' : Date,
             'required' : true
