@@ -157,39 +157,48 @@
 (function (angular) {
     var app = angular.module('admin', ['ngResource']);
 
-    app.factory('SecretService', function () {
-        var key, _timestamp, _transactionId, _token;
-        key = '-f-Z~Nyhq!3&oSP:Do@E(/pj>K)Tza%})Qh= pxJ{o9j)F2.*$+#n}XJ(iSKQnXf';
-        function timestamp () { return _timestamp = new Date().getTime(); }
-        function transactionId () { return _transactionId = Math.floor(Math.random() * 1000000000); }
-        function signature () { return sha1(_timestamp.toString() + _transactionId.toString() + key.toString()); }
-        function token () { return _token; }
-        return {
-            'timestamp' : timestamp,
-            'transactionId' : transactionId,
-            'signature' : signature,
-            'token' : token,
-            'setCredentials' : function (token) { if (token) {_token = token;} }
+    app.run(function ($http, auth) {
+        $http.defaults.transformRequest = function (data, headersGetter) {
+            var key, timestamp, transactionId, signature;
+
+            key           = '-f-Z~Nyhq!3&oSP:Do@E(/pj>K)Tza%})Qh= pxJ{o9j)F2.*$+#n}XJ(iSKQnXf';
+            timestamp     = new Date().getTime();
+            transactionId = Math.floor(Math.random() * 1000000000);
+            signature     = sha1(timestamp.toString() + transactionId.toString() + key.toString());
+
+            headersGetter()['auth-signature']     = signature;
+            headersGetter()['auth-timestamp']     = timestamp;
+            headersGetter()['auth-transactionId'] = transactionId;
+            headersGetter()['auth-token']         = auth.getCredentials();
+            return JSON.stringify(data);
         };
     });
 
-    app.factory('methodOverride', function () {
-        return function (method) {
+    app.service('auth', function () {
+        var token;
+        this.setCredentials = function (val) {
+            token = val;
+        };
+        this.getCredentials = function () {
+            return token;
+        };
+    });
+
+    app.factory('defaultResource', function () {
+        var methodOverride = function (method) {
             return function (data, headersGetter) {
                 if (method) { headersGetter()['x-http-method-override'] = method; }
                 return JSON.stringify(data);
             }
-        }
-    });
+        };
 
-    app.factory('defaultResource', function (methodOverride, SecretService) {
         return {
-            'get'    : {'method' : 'GET', 'params' : SecretService, 'transformRequest' : methodOverride('get')},
-            'save'   : {'method' : 'GET', 'params' : SecretService, 'transformRequest' : methodOverride('post')},
-            'query'  : {'method' : 'GET', 'params' : SecretService, 'transformRequest' : methodOverride('get'), 'isArray' : true},
-            'remove' : {'method' : 'GET', 'params' : SecretService, 'transformRequest' : methodOverride('delete')},
-            'delete' : {'method' : 'GET', 'params' : SecretService, 'transformRequest' : methodOverride('delete')},
-            'update' : {'method' : 'GET', 'params' : SecretService, 'transformRequest' : methodOverride('put')}
+            'get'    : {'method' : 'GET', 'transformRequest' : methodOverride('get')},
+            'save'   : {'method' : 'GET', 'transformRequest' : methodOverride('post')},
+            'query'  : {'method' : 'GET', 'transformRequest' : methodOverride('get'), 'isArray' : true},
+            'remove' : {'method' : 'GET', 'transformRequest' : methodOverride('delete')},
+            'delete' : {'method' : 'GET', 'transformRequest' : methodOverride('delete')},
+            'update' : {'method' : 'GET', 'transformRequest' : methodOverride('put')}
         };
     });
 
@@ -205,25 +214,22 @@
         return $resource('http://footbl-development.herokuapp.com/championships/:championship/matches/:_id', {'_id' : '@_id'}, defaultResource);
     });
 
-    app.controller('LoginController', function ($scope, SecretService, $http) {
+    app.controller('LoginController', function ($scope, auth, $http) {
         $scope.user   = {};
-        $scope.active = SecretService.token;
+        $scope.active = auth.getCredentials;
 
         $scope.login = function () {
-            $scope.user.timestamp = SecretService.timestamp();
-            $scope.user.transactionId = SecretService.transactionId();
-            $scope.user.signature = SecretService.signature();
             $http.get('http://footbl-development.herokuapp.com/users/me/session', {'params' :$scope.user}).success(function (data) {
-                SecretService.setCredentials(data.token);
+                auth.setCredentials(data.token);
             });
         };
     });
 
-    app.controller('TeamListController', function ($scope, SecretService, TeamService) {
+    app.controller('TeamListController', function ($scope, auth, TeamService) {
         var page;
         page          = 0;
         $scope.teams  = [];
-        $scope.active = SecretService.token;
+        $scope.active = auth.getCredentials;
 
         $scope.load = function () {
             TeamService.query({'page' : page}, function (teams) {
@@ -233,11 +239,11 @@
         }
     });
 
-    app.controller('ChampionshipListController', function ($scope, SecretService, ChampionshipService) {
+    app.controller('ChampionshipListController', function ($scope, auth, ChampionshipService) {
         var page;
         page                  = 0;
         $scope.championships  = [];
-        $scope.active         = SecretService.token;
+        $scope.active = auth.getCredentials;
 
         $scope.load = function () {
             ChampionshipService.query({'page' : page}, function (championships) {
@@ -247,11 +253,11 @@
         }
     });
 
-    app.controller('MatchListController', function ($scope, SecretService, MatchService) {
+    app.controller('MatchListController', function ($scope, auth, MatchService) {
         var page;
         page           = 0;
         $scope.matches = [];
-        $scope.active  = SecretService.token;
+        $scope.active = auth.getCredentials;
 
         $scope.load = function () {
             MatchService.query({'championship' : $scope.championship._id, 'page' : page}, function (matches) {
