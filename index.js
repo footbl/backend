@@ -16,11 +16,11 @@ mongoose.connect(nconf.get('MONGOHQ_URL'));
 app = express();
 app.use(bodyParser());
 app.use(methodOverride());
-app.use(function (req, res, next) {
+app.options('/*', function (request, response) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET');
     res.header('Access-Control-Allow-Headers', '*');
-    next();
+    response.end();
 });
 app.use(require('./lib/auth').signature);
 app.use(require('./lib/auth').session);
