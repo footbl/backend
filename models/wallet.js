@@ -174,7 +174,6 @@ schema.pre('save', function (next) {
     query = this.constructor.findOne();
     query.where('user').equals(this.user);
     query.where('championship').equals(this.championship);
-
     return query.exec(function (error, wallet) {
         if (error) { return next(error); }
         if (wallet) { return next(new Error('wallet already exists')); }
@@ -205,6 +204,8 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Sets possible reward for the bet
+ * If the bet result is equals to the current match result, the toReturn field which indicates the possible reward of a
+ * bet must be updated to the corresponding bet status.
  *
  * @param next
  *
@@ -228,6 +229,8 @@ schema.paths.bets.schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Stores old BID in case of update
+ * After saving or removing a bet, the match pot corresponding to the bet's result must be updated, increasing the pot.
+ * To do that, we must know the old bet value and result to decrease it from the correct pot.
  *
  * @param next
  *
@@ -244,7 +247,8 @@ schema.paths.bets.schema.post('init', function () {
 /**
  * @callback
  * @summary Updates match pot
- * After saving a new bet, the match pot corresponding to the bet's result must be updated, increasing the pot.
+ * After saving a new bet, the match pot corresponding to the bet's result must be updated, increasing the pot with the
+ * bet new value and decreasing with the bet old value..
  *
  * @param next
  *
@@ -259,10 +263,7 @@ schema.paths.bets.schema.post('save', function () {
     query.exec(function (error, match) {
         if (error) { return; }
         if (!match) { return; }
-
-        if (this.oldBid) {
-            match.pot[this.oldResult] -= this.oldBid;
-        }
+        if (this.oldBid) { match.pot[this.oldResult] -= this.oldBid; }
         match.pot[this.result] += this.bid;
         match.save();
     }.bind(this));
@@ -271,7 +272,8 @@ schema.paths.bets.schema.post('save', function () {
 /**
  * @callback
  * @summary Updates match pot
- * After saving a new bet, the match pot corresponding to the bet's result must be updated, decreasing the pot.
+ * After saving a new bet, the match pot corresponding to the bet's result must be updated, decreasing the pot with the
+ * bet old value..
  *
  * @param next
  *
@@ -286,10 +288,7 @@ schema.paths.bets.schema.post('remove', function () {
     query.exec(function (error, match) {
         if (error) { return; }
         if (!match) { return; }
-
-        if (this.oldBid) {
-            match.pot[this.oldResult] -= this.oldBid;
-        }
+        if (this.oldBid) { match.pot[this.oldResult] -= this.oldBid; }
         match.save();
     }.bind(this));
 });
@@ -307,16 +306,11 @@ schema.virtual('lastDate').get(function () {
     'use strict';
 
     if (!this.iaps.length) { return this.createdAt; }
-
-    var lastIap;
-
-    lastIap = this.iaps.sort(function (a, b) {
+    return this.iaps.sort(function (a, b) {
         if (a.date > b.date) { return +1; }
         if (a.date < b.date) { return -1; }
         return 0;
-    }).pop();
-
-    return lastIap.date;
+    }).pop().date;
 });
 
 /**
