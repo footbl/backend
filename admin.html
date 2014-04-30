@@ -202,16 +202,18 @@
         };
     });
 
+    var environment = 'localhost:8080';
+
     app.factory('TeamService', function ($resource, defaultResource) {
-        return $resource('http://footbl-development.herokuapp.com/teams/:_id', {'_id' : '@_id'}, defaultResource);
+        return $resource('http://' + environment + '/teams/:_id', {'_id' : '@_id'});
     });
 
     app.factory('ChampionshipService', function ($resource, defaultResource) {
-        return $resource('http://footbl-development.herokuapp.com/championships/:_id', {'_id' : '@_id'}, defaultResource);
+        return $resource('http://' + environment + '/championships/:_id', {'_id' : '@_id'});
     });
 
     app.factory('MatchService', function ($resource, defaultResource) {
-        return $resource('http://footbl-development.herokuapp.com/championships/:championship/matches/:_id', {'_id' : '@_id'}, defaultResource);
+        return $resource('http://' + environment + '/championships/:championship/matches/:_id', {'_id' : '@_id'});
     });
 
     app.controller('LoginController', function ($scope, auth, $http) {
@@ -219,7 +221,7 @@
         $scope.active = auth.getCredentials;
 
         $scope.login = function () {
-            $http.get('http://footbl-development.herokuapp.com/users/me/session', {'params' :$scope.user}).success(function (data) {
+            $http.get('http://' + environment + '/users/me/session', {'params' :$scope.user}).success(function (data) {
                 auth.setCredentials(data.token);
             });
         };
