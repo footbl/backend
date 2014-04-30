@@ -204,6 +204,29 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
+ * @summary Sets possible reward for the bet
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.paths.bets.schema.pre('save', function (next) {
+    'use strict';
+
+    var query;
+    query = require('./match').findOne();
+    query.where('_id').equals(this.match);
+    query.exec(function (error, match) {
+        if (error) { return next(error); }
+        if (!match) { return next(new Error('match not found')); }
+        this.reward = this.result === match.winner ? this.bid * match.reward : 0;
+        return next();
+    }.bind(this));
+});
+
+/**
+ * @callback
  * @summary Stores old BID in case of update
  *
  * @param next
