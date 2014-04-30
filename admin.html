@@ -157,63 +157,67 @@
 (function (angular) {
     var app = angular.module('admin', ['ngResource']);
 
-    app.run(function ($http, auth) {
-        $http.defaults.transformRequest = function (data, headersGetter) {
-            var key, timestamp, transactionId, signature;
-
-            key           = '-f-Z~Nyhq!3&oSP:Do@E(/pj>K)Tza%})Qh= pxJ{o9j)F2.*$+#n}XJ(iSKQnXf';
-            timestamp     = new Date().getTime();
-            transactionId = Math.floor(Math.random() * 1000000000);
-            signature     = sha1(timestamp.toString() + transactionId.toString() + key.toString());
-
-            headersGetter()['auth-signature']     = signature;
-            headersGetter()['auth-timestamp']     = timestamp;
-            headersGetter()['auth-transactionId'] = transactionId;
-            headersGetter()['auth-token']         = auth.getCredentials();
-            return JSON.stringify(data);
-        };
-    });
-
     app.service('auth', function () {
         var token;
+
         this.setCredentials = function (val) {
             token = val;
         };
+
         this.getCredentials = function () {
             return token;
         };
-    });
 
-    app.factory('defaultResource', function () {
-        var methodOverride = function (method) {
+        this.methodOverride = function (method) {
             return function (data, headersGetter) {
+                var key, timestamp, transactionId, signature;
+
+                key           = '-f-Z~Nyhq!3&oSP:Do@E(/pj>K)Tza%})Qh= pxJ{o9j)F2.*$+#n}XJ(iSKQnXf';
+                timestamp     = new Date().getTime();
+                transactionId = Math.floor(Math.random() * 1000000000);
+                signature     = sha1(timestamp.toString() + transactionId.toString() + key.toString());
+
+                headersGetter()['auth-signature']     = signature;
+                headersGetter()['auth-timestamp']     = timestamp;
+                headersGetter()['auth-transactionId'] = transactionId;
+                headersGetter()['auth-token']         = token;
                 if (method) { headersGetter()['x-http-method-override'] = method; }
                 return JSON.stringify(data);
-            }
-        };
-
-        return {
-            'get'    : {'method' : 'GET', 'transformRequest' : methodOverride('get')},
-            'save'   : {'method' : 'GET', 'transformRequest' : methodOverride('post')},
-            'query'  : {'method' : 'GET', 'transformRequest' : methodOverride('get'), 'isArray' : true},
-            'remove' : {'method' : 'GET', 'transformRequest' : methodOverride('delete')},
-            'delete' : {'method' : 'GET', 'transformRequest' : methodOverride('delete')},
-            'update' : {'method' : 'GET', 'transformRequest' : methodOverride('put')}
-        };
+            };
+        }
     });
 
-    var environment = 'localhost:8080';
-
-    app.factory('TeamService', function ($resource, defaultResource) {
-        return $resource('http://' + environment + '/teams/:_id', {'_id' : '@_id'});
+    app.factory('TeamService', function ($resource, auth) {
+        return $resource('http://footbl-development.herokuapp.com/teams/:_id', {'_id' : '@_id'}, {
+            'get'    : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get')},
+            'save'   : {'method' : 'GET', 'transformRequest' : auth.methodOverride('post')},
+            'query'  : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get'), 'isArray' : true},
+            'remove' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
+            'delete' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
+            'update' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('put')}
+        });
     });
 
-    app.factory('ChampionshipService', function ($resource, defaultResource) {
-        return $resource('http://' + environment + '/championships/:_id', {'_id' : '@_id'});
+    app.factory('ChampionshipService', function ($resource, auth) {
+        return $resource('http://footbl-development.herokuapp.com/championships/:_id', {'_id' : '@_id'}, {
+            'get'    : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get')},
+            'save'   : {'method' : 'GET', 'transformRequest' : auth.methodOverride('post')},
+            'query'  : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get'), 'isArray' : true},
+            'remove' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
+            'delete' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
+            'update' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('put')}
+        });
     });
 
-    app.factory('MatchService', function ($resource, defaultResource) {
-        return $resource('http://' + environment + '/championships/:championship/matches/:_id', {'_id' : '@_id'});
+    app.factory('MatchService', function ($resource, auth) {
+        return $resource('http://footbl-development.herokuapp.com/championships/:championship/matches/:_id', {'_id' : '@_id'}, {
+            'get'    : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get')},
+            'save'   : {'method' : 'GET', 'transformRequest' : auth.methodOverride('post')},
+            'query'  : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get'), 'isArray' : true},
+            'remove' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
+            'delete' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
+            'update' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('put')}
+        });
     });
 
     app.controller('LoginController', function ($scope, auth, $http) {
@@ -221,7 +225,7 @@
         $scope.active = auth.getCredentials;
 
         $scope.login = function () {
-            $http.get('http://' + environment + '/users/me/session', {'params' :$scope.user}).success(function (data) {
+            $http.get('http://footbl-development.herokuapp.com/users/me/session', {'params' :$scope.user, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
                 auth.setCredentials(data.token);
             });
         };
@@ -236,6 +240,7 @@
         $scope.load = function () {
             TeamService.query({'page' : page}, function (teams) {
                 $scope.teams = $scope.teams.concat(teams);
+                console.log($scope.teams)
             });
             page += 1;
         }
