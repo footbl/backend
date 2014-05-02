@@ -42,7 +42,8 @@ router.post('/wallets', function (request, response) {
     wallet = new Wallet({
         'championship'  : request.param('championship'),
         'user'          : request.session._id,
-        'notifications' : request.param('notifications')
+        'notifications' : request.param('notifications'),
+        'priority'      : request.param('priority')
     });
 
     return wallet.save(function (error) {
@@ -86,6 +87,7 @@ router.get('/wallets', function (request, response) {
     query.populate('championship');
     query.populate('user');
     query.populate('bets.match');
+    query.sort({'priority' : 1});
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, wallets) {
@@ -158,6 +160,7 @@ router.put('/wallets/:walletId', function (request, response) {
 
     wallet.active        = request.param('active');
     wallet.notifications = request.param('notifications');
+    wallet.priority      = request.param('priority');
 
     return wallet.save(function (error) {
         if (error) { return response.send(500, error); }

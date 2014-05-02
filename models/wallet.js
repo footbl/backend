@@ -43,6 +43,11 @@ schema = new Schema({
         'default' : true
     },
     /** @property */
+    'priority' : {
+        'type' : Number,
+        'default' : 1
+    },
+    /** @property */
     'iaps' : [{
         /** @property */
         'platform' : {
@@ -128,6 +133,7 @@ schema.plugin(require('mongoose-json-select'), {
     'user'          : 1,
     'active'        : 1,
     'notifications' : 1,
+    'priority'      : 1,
     'funds'         : 1,
     'stake'         : 1,
     'toReturn'      : 1,
