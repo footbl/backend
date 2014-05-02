@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    user, guest, host, championship, otherChampionship, match, otherMatch, otherMatchSameChampionship, wallet, otherWallet;
+    user, guest, host, championship, otherChampionship, match, otherMatch, otherMatchSameChampionship, yesterdayMatch, wallet, otherWallet, tomorrow;
 
 require('should');
 
@@ -51,6 +51,12 @@ describe('bet', function () {
     });
 
     before(function (done) {
+        tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        done();
+    });
+
+    before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});
         user.save(done);
     });
@@ -76,18 +82,26 @@ describe('bet', function () {
     });
 
     before(function (done) {
-        match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 1});
+        match = new Match({'guest' : guest._id, 'host' : host._id, 'date' : tomorrow, 'championship' : championship._id, round : 1});
         match.save(done);
     });
 
     before(function (done) {
-        otherMatchSameChampionship = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 1});
+        otherMatchSameChampionship = new Match({'guest' : guest._id, 'host' : host._id, 'date' : tomorrow, 'championship' : championship._id, round : 1});
         otherMatchSameChampionship.save(done);
     });
 
     before(function (done) {
-        otherMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : otherChampionship._id, round : 1});
+        otherMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : tomorrow, 'championship' : otherChampionship._id, round : 1});
         otherMatch.save(done);
+    });
+
+    before(function (done) {
+        var yesterday;
+        yesterday = new Date();
+        yesterday.setDate(tomorrow.getDate() - 1);
+        yesterdayMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : yesterday, 'championship' : otherChampionship._id, round : 1});
+        yesterdayMatch.save(done);
     });
 
     before(function (done) {
@@ -138,6 +152,20 @@ describe('bet', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({result : 'draw', bid : 50});
+            req = req.expect(500);
+            req.end(done);
+        });
+
+        it('should raise error with finished match', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/championships/' + championship._id + '/matches/' + yesterdayMatch._id + '/bets');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.send({date : new Date(), result : 'draw', bid : 50});
             req = req.expect(500);
             req.end(done);
         });

@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    user, otherUser, guest, host, championship, wallet, otherWallet;
+    user, otherUser, guest, host, championship, wallet, otherWallet, tomorrow;
 
 require('should');
 
@@ -51,6 +51,12 @@ describe('match controller', function () {
     });
 
     before(function (done) {
+        tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        done();
+    });
+
+    before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin'});
         user.save(done);
     });
@@ -94,7 +100,7 @@ describe('match controller', function () {
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
+            req = req.send({guest : guest._id, host : host._id, date : tomorrow, round : 1});
             req = req.expect(401);
             req.end(done);
         });
@@ -122,7 +128,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
+            req = req.send({guest : guest._id, host : host._id, date : tomorrow, round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -136,7 +142,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({host : host._id, date : new Date(), round : 1});
+            req = req.send({host : host._id, date : tomorrow, round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -150,7 +156,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({guest : guest._id, date : new Date(), round : 1});
+            req = req.send({guest : guest._id, date : tomorrow, round : 1});
             req = req.expect(500);
             req.end(done);
         });
@@ -164,7 +170,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({guest : guest._id, host : host._id, date : tomorrow});
             req = req.expect(500);
             req.end(done);
         });
@@ -178,7 +184,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
+            req = req.send({guest : guest._id, host : host._id, date : tomorrow, round : 1});
             req = req.expect(201);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
