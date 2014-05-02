@@ -104,9 +104,23 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
             return bets.concat(wallet);
         }, []).filter(function (bet) {
             return bet.match._id.toString() === request.params.matchId;
-        }).slice(page, page + pageSize);
+        });
 
-        return response.send(200, bets);
+        if (request.param('filterByFriends') === true) {
+            bets = bets.filter(function (bet) {
+                return request.session.starred.some(function (starred) {
+                    return starred.toString() === bet.parent().user.toString();
+                });
+            });
+        } else if (request.param('filterByFriends') === false) {
+            bets = bets.filter(function (bet) {
+                return request.session.starred.every(function (starred) {
+                    return starred.toString() !== bet.parent().user.toString();
+                });
+            });
+        }
+
+        return response.send(200, bets.slice(page, page + pageSize));
     });
 });
 
