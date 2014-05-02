@@ -438,6 +438,32 @@ describe('bet', function () {
             req.end(done);
         });
 
+        describe('finished match', function () {
+            before(function (done) {
+                match.date = yesterdayMatch.date;
+                match.save(done);
+            });
+
+            it('should raise error with finished match', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
+                req = req.set('auth-token', auth.token(user));
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({date : new Date(), result : 'host', bid : 15});
+                req = req.expect(500);
+                req.end(done);
+            });
+
+            after(function (done) {
+                match.date = tomorrow;
+                match.save(done);
+            });
+        });
+
         it('should raise error without result', function (done) {
             var req, credentials;
             credentials = auth.credentials();
@@ -592,51 +618,78 @@ describe('bet', function () {
             req.end(done);
         });
 
-        it('should delete', function (done) {
-            var req, credentials;
-            credentials = auth.credentials();
-            req = request(app);
-            req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.expect(200);
-            req.end(done);
+        describe('finished match', function () {
+            before(function (done) {
+                match.date = yesterdayMatch.date;
+                match.save(done);
+            });
+
+            it('should raise error with finished match', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(500);
+                req.end(done);
+            });
+
+            after(function (done) {
+                match.date = tomorrow;
+                match.save(done);
+            });
         });
 
-        after(function (done) {
-            var req, credentials;
-            credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/wallets/' + wallet._id);
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.expect(function (response) {
-                response.body.should.have.property('stake').be.equal(0);
-                response.body.should.have.property('funds').be.equal(100);
-                response.body.should.have.property('toReturn').be.equal(0);
+        describe('valid match', function () {
+            it('should delete', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(200);
+                req.end(done);
             });
-            req.end(done);
-        });
 
-        after(function (done) {
-            var req, credentials;
-            credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/' + championship._id + '/matches/' + match._id);
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.expect(function (response) {
-                response.body.should.have.property('pot').with.property('draw').be.equal(0);
-                response.body.should.have.property('pot').with.property('guest').be.equal(0);
-                response.body.should.have.property('pot').with.property('host').be.equal(0);
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/wallets/' + wallet._id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(function (response) {
+                    response.body.should.have.property('stake').be.equal(0);
+                    response.body.should.have.property('funds').be.equal(100);
+                    response.body.should.have.property('toReturn').be.equal(0);
+                });
+                req.end(done);
             });
-            req.end(done);
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/championships/' + championship._id + '/matches/' + match._id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(function (response) {
+                    response.body.should.have.property('pot').with.property('draw').be.equal(0);
+                    response.body.should.have.property('pot').with.property('guest').be.equal(0);
+                    response.body.should.have.property('pot').with.property('host').be.equal(0);
+                });
+                req.end(done);
+            });
         });
     });
 });

@@ -216,10 +216,12 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
     if (!bet) { return response.send(404, 'bet not found'); }
 
-    bet.remove();
-    return wallet.save(function (error) {
+    return bet.remove(function (error) {
         if (error) { return response.send(500, error); }
-        return response.send(200, bet);
+        return wallet.save(function (error) {
+            if (error) { return response.send(500, error); }
+            return response.send(200, bet);
+        });
     });
 });
 
