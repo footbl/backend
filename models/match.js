@@ -113,7 +113,8 @@ schema.plugin(require('mongoose-json-select'), {
     'host'         : 1,
     'round'        : 1,
     'pot'          : 1,
-    'result'       : 1
+    'result'       : 1,
+    'elapsed'      : 1
 });
 
 /**
@@ -226,6 +227,27 @@ schema.virtual('reward').get(function () {
         case 'host'  : { return this.jackpot / this.pot.host; }
         default      : { return this.jackpot / this.pot.draw; }
     }
+});
+
+/**
+ * @method
+ * @summary Return match elapsed time
+ * This method should return the match elapsed time, but, only if the match have already started and haven't finished
+ * yet, on the other hand, the method should return null.
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.virtual('elapsed').get(function () {
+    'use strict';
+
+    var elapsed;
+    elapsed = Math.floor((new Date() - this.date) / 100);
+
+    if (this.finished) { return null; }
+    if (elapsed < 0) { return null; }
+    return elapsed;
+
 });
 
 module.exports = mongoose.model('Match', schema);
