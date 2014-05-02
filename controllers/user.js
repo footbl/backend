@@ -143,6 +143,7 @@ router.get('/users/:userId', function (request, response) {
  * @param request.userId
  * @param request.email
  * @param request.username
+ * @param request.about
  * @param request.password
  * @param request.picture
  * @param request.language
@@ -173,6 +174,7 @@ router.put('/users/:userId', function (request, response) {
     user = request.user;
     user.email         = request.param('email');
     user.username      = request.param('username');
+    user.about         = request.param('about');
     user.password      = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
     user.picture       = request.param('picture');
     user.language      = request.param('language');

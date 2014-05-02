@@ -33,6 +33,10 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
+    'about' : {
+        'type' : String
+    },
+    /** @property */
     'verified' : {
         'type' : Boolean,
         'required' : true,
@@ -117,6 +121,7 @@ schema = new Schema({
 schema.plugin(require('mongoose-json-select'), {
     'email'         : 1,
     'username'      : 1,
+    'about'         : 1,
     'verified'      : 1,
     'password'      : 0,
     'picture'       : 1,
