@@ -96,11 +96,13 @@ function parseChampionships(records, next) {
     async.map(records.filter(function (record) {
         return record.children().first().hasClass('Heading');
     }), function (record, next) {
-        var championship, title;
+        var championship, title, date;
+        date         = new Date();
         title        = record.children().first().text().split(' - ');
         championship = new Championship({
             'name'    : championshipName(title[1]),
-            'country' : title[0]
+            'country' : title[0],
+            'year'    : date.getFullYear()
         });
         next(null, championship);
     }, next.bind({}));

@@ -37,6 +37,8 @@ router.post('/championships', function (request, response) {
     var championship;
     championship = new Championship({
         'name'        : request.param('name'),
+        'picture'     : request.param('picture'),
+        'year'        : request.param('year'),
         'competitors' : request.param('competitors'),
         'type'        : request.param('type', 'normal'),
         'country'     : request.param('country')
@@ -151,6 +153,8 @@ router.put('/championships/:championshipId', function (request, response) {
     var championship;
     championship = request.championship;
     championship.name        = request.param('name');
+    championship.picture     = request.param('picture');
+    championship.year        = request.param('year');
     championship.competitors = request.param('competitors');
     championship.type        = request.param('type', 'normal');
     championship.country     = request.param('country');
