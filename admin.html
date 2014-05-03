@@ -266,6 +266,21 @@
         $scope.matches = [];
         $scope.active = auth.getCredentials;
 
+        $scope.saveMatch = function (match) {
+            MatchService.update({
+                '_id' : match._id,
+                'championship' : match.championship._id,
+                'guest' : match.guest._id,
+                'host' : match.host._id,
+                'round' : match.round,
+                'date' : match.date,
+                'result' : {
+                    'guest' : match.result.guest,
+                    'host' : match.result.host
+                }
+            });
+        };
+
         $scope.load = function () {
             MatchService.query({'championship' : $scope.championship._id, 'page' : page}, function (matches) {
                 $scope.matches = $scope.matches.concat(matches);
@@ -349,18 +364,23 @@
                     </h3>
                     <ul>
                         <li ng-repeat="match in matches">
-                            <div>
-                                {{match.guest.name}} match.result.guest x match.result.host {{match.host.name}}
-                            </div>
-                            <div>
-                                Rodada: <input type="text" ng-model="match.round">
-                            </div>
-                            <div>
-                                {{match.date}}
-                            </div>
-                            <div ng-show="match.finished">
-                                Terminou
-                            </div>
+                            <form ng-submit="saveMatch(match);">
+                                <div>
+                                    {{match.guest.name}} match.result.guest x match.result.host {{match.host.name}}
+                                </div>
+                                <div>
+                                    Rodada: <input type="text" ng-model="match.round">
+                                </div>
+                                <div>
+                                    Data <input type="text" ng-model="match.date">
+                                </div>
+                                <div ng-show="match.finished">
+                                    Terminou
+                                </div>
+                                <div>
+                                    <input type="submit">
+                                </div>
+                            </form>
                         </li>
                     </ul>
                     <span ng-click="load()">carregar +</span>
