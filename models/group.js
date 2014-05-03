@@ -144,8 +144,15 @@ schema.paths.members.schema.pre('save', function (next) {
     query.where('user').equals(this.user);
     return query.exec(function (error, wallet) {
         if (error) { return next(error); }
-        if (!wallet) { return next(new Error('Wallet not found.')); }
-
+        if (!wallet) {
+            wallet = new (require('./wallet'))({
+                'championship'  : this.parent().championship,
+                'user'          : this.user,
+                'active'        : false
+            });
+            this.initialFunds = wallet.funds;
+            return wallet.save(next);
+        }
         this.initialFunds = wallet.funds;
         return next();
     }.bind(this));
