@@ -130,11 +130,11 @@ schema.pre('save', function (next) {
 schema.virtual('rounds').get(function () {
     'use strict';
 
-    if (!this.matches) { return 1; }
+    if (!this.matches || this.matches.length === 0) { return 1; }
 
     return this.matches.map(function (match) {
         return match.round;
-    }).sort().pop();
+    }).sort().pop() + 1;
 });
 
 /**
@@ -147,13 +147,13 @@ schema.virtual('rounds').get(function () {
 schema.virtual('currentRound').get(function () {
     'use strict';
 
-    if (!this.matches) { return 1; }
+    if (!this.matches || this.matches.length === 0) { return 1; }
 
     return this.matches.filter(function (match) {
         return match.finished;
     }).map(function (match) {
         return match.round;
-    }).sort().pop();
+    }).sort().pop() + 1;
 });
 
 module.exports = mongoose.model('Championship', schema);
