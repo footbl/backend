@@ -242,7 +242,7 @@ schema.virtual('elapsed').get(function () {
     'use strict';
 
     var elapsed;
-    elapsed = Math.floor((new Date() - this.date) / (100 * 60));
+    elapsed = Math.floor((new Date() - this.date) / (1000 * 60));
 
     if (this.finished) { return null; }
     if (elapsed < 0) { return null; }
