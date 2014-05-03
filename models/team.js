@@ -25,6 +25,10 @@ schema = new Schema({
         'unique' : true
     },
     /** @property */
+    'acronym' : {
+        'type' : String
+    },
+    /** @property */
     'picture' : {
         'type' : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
@@ -47,6 +51,7 @@ schema = new Schema({
 
 schema.plugin(require('mongoose-json-select'), {
     'name'    : 1,
+    'acronym' : 1,
     'picture' : 1
 });
 

@@ -16,6 +16,7 @@ Team   = require('../models/team');
  * @summary Creates a new team in database
  *
  * @param request.name
+ * @param request.acronym
  * @param request.picture
  * @param response
  *
@@ -40,6 +41,7 @@ router.post('/teams', function (request, response) {
     var team;
     team = new Team({
         'name'    : request.param('name'),
+        'acronym' : request.param('acronym'),
         'picture' : request.param('picture')
     });
 
@@ -125,6 +127,7 @@ router.get('/teams/:teamId', function (request, response) {
  * @summary Updates team info in database
  *
  * @param request.name
+ * @param request.acronym
  * @param request.picture
  * @param response
  *
@@ -150,6 +153,7 @@ router.put('/teams/:teamId', function (request, response) {
     var team;
     team = request.team;
     team.name    = request.param('name');
+    team.acronym = request.param('acronym');
     team.picture = request.param('picture');
 
     return team.save(function (error) {
