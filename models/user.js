@@ -33,6 +33,10 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
+    'apnsToken' : {
+        'type' : String
+    },
+    /** @property */
     'about' : {
         'type' : String
     },
@@ -121,6 +125,7 @@ schema = new Schema({
 schema.plugin(require('mongoose-json-select'), {
     'email'         : 1,
     'username'      : 1,
+    'apnsToken'     : 1,
     'about'         : 1,
     'verified'      : 1,
     'password'      : 0,

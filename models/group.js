@@ -158,4 +158,51 @@ schema.paths.members.schema.pre('save', function (next) {
     }.bind(this));
 });
 
+/**
+ * @callback
+ * @summary Sends push notification
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.paths.members.schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.isNew) { return next(); }
+
+    var query;
+    query = require('./user').findOne();
+    query.where('_id').equals(this.user);
+    return query.exec(function (error, user) {
+        if (error) { return next(error); }
+        if (!user) { return next(new Error('user not found')); }
+        if (!user.notifications.newGroups) { return next(); }
+        if (!user.apnsToken) { return next(); }
+
+        var query;
+        query = require('./user').findOne();
+        query.where('_id').equals(this.parent().owner);
+        return query.exec(function (error, owner) {
+            if (error) { return next(error); }
+            if (!owner) { return next(new Error('owner not found')); }
+
+            var query;
+            query = require('./championship').findOne();
+            query.where('_id').equals(this.parent().championship);
+            return query.exec(function (error, championship) {
+                if (error) { return next(error); }
+                if (!championship) { return next(new Error('championship not found')); }
+
+                require('../lib/apn').push(user.apnsToken, {
+                    'loc-key' : 'GROUP_ADDED',
+                    'loc-args' : [owner.username, this.parent().name, championship.name]
+                });
+                return next();
+            }.bind(this));
+        }.bind(this));
+    }.bind(this));
+});
+
 module.exports = mongoose.model('Group', schema);
