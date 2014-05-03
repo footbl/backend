@@ -49,6 +49,11 @@ schema = new Schema({
         'ref' : 'Team'
     }],
     /** @property */
+    'matches' : [{
+        'type' : Schema.Types.ObjectId,
+        'ref' : 'Match'
+    }],
+    /** @property */
     'createdAt' : {
         'type' : Date
     },
@@ -72,33 +77,11 @@ schema.plugin(require('mongoose-json-select'), {
     'type'         : 1,
     'country'      : 1,
     'rounds'       : 1,
-    'currentRound' : 1
+    'currentRound' : 1,
+    'matches'      : 0
 });
 
 schema.index({'name' : 1, 'country' : 1}, {'unique' : true});
-
-/**
- * @callback
- * @summary Setups createdAt and updatedAt
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('init', function (next) {
-    'use strict';
-
-    var query;
-    query = require('./match').find();
-    query.where('championship').equals(this._id);
-    query.populate('guest');
-    query.populate('host');
-    query.exec(function (error, matches) {
-        this.matches = matches || [];
-        next(error);
-    }.bind(this));
-});
 
 /**
  * @callback
@@ -134,7 +117,7 @@ schema.virtual('rounds').get(function () {
 
     return this.matches.map(function (match) {
         return match.round;
-    }).sort().pop() + 1;
+    }).sort().pop();
 });
 
 /**
@@ -149,11 +132,15 @@ schema.virtual('currentRound').get(function () {
 
     if (!this.matches || this.matches.length === 0) { return 1; }
 
-    return this.matches.filter(function (match) {
+    var lastMatch;
+    lastMatch = this.matches.filter(function (match) {
         return match.finished;
     }).map(function (match) {
         return match.round;
-    }).sort().pop() + 1;
+    }).sort().pop();
+
+    if (!lastMatch) { return 1; }
+    return lastMatch + 1;
 });
 
 module.exports = mongoose.model('Championship', schema);

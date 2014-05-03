@@ -139,6 +139,54 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
+ * @summary insert match in championship matches array
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.isNew) { return next(); }
+
+    var query;
+    query = require('./championship').findOne();
+    query.where('_id').equals(this.championship);
+    return query.exec(function (error, championship) {
+        if (error) { return next(error); }
+        if (!championship) { return next(new Error('championship not found')); }
+        championship.matches.push(this._id);
+        return championship.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Insert match in championship matches array
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('remove', function (next) {
+    'use strict';
+
+    var query;
+    query = require('./championship').findOne();
+    query.where('_id').equals(this.championship);
+    return query.exec(function (error, championship) {
+        if (error) { return next(error); }
+        if (!championship) { return next(new Error('championship not found')); }
+        championship.matches.splice(championship.matches.indexOf(this._id), 1);
+        return championship.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
  * @summary Updates user wallets
  * When a match is finished all bets of that match should be updated, this procedure will update the bet reward if the
  * bet was right with the match reward times the user bid, if the bet was wrong, the reward will be 0. This procedure
@@ -247,7 +295,6 @@ schema.virtual('elapsed').get(function () {
     if (this.finished) { return null; }
     if (elapsed < 0) { return null; }
     return elapsed;
-
 });
 
 module.exports = mongoose.model('Match', schema);

@@ -184,7 +184,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({guest : guest._id, host : host._id, date : tomorrow, round : 1});
+            req = req.send({guest : guest._id, host : host._id, date : tomorrow, round : 3});
             req = req.expect(201);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
@@ -193,6 +193,25 @@ describe('match controller', function () {
                 response.body.should.have.property('host');
                 response.body.should.have.property('round');
                 response.body.should.have.property('date');
+            });
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/championships/' + championship._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('name');
+                response.body.should.have.property('rounds').be.equal(3);
+                response.body.should.have.property('currentRound').be.equal(1);
             });
             req.end(done);
         });
@@ -364,6 +383,25 @@ describe('match controller', function () {
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('finished').be.equal(true);
+            });
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/championships/' + championship._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('name');
+                response.body.should.have.property('rounds').be.equal(3);
+                response.body.should.have.property('currentRound').be.equal(4);
             });
             req.end(done);
         });

@@ -82,6 +82,7 @@ router.get('/championships', function (request, response) {
     page     = request.param('page', 0) * pageSize;
 
     query.populate('competitors');
+    query.populate('matches');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, championships) {
@@ -222,6 +223,7 @@ router.param('championshipId', function (request, response, next, id) {
     query = Championship.findOne();
     query.where('_id').equals(id);
     query.populate('competitors');
+    query.populate('matches');
     query.exec(function (error, championship) {
         if (error) { return response.send(404, 'championship not found'); }
         if (!championship) { return response.send(404, 'championship not found'); }
