@@ -21,27 +21,31 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-Group.find(function (error, groups) {
+var query;
+query = Group.find();
+query.populate('championship');
+query.exec(function (error, groups) {
     async.each(groups, function (group, next) {
-        async.sortBy(group.members, function (member, next) {
+        var round;
+
+        if (!group.championship.roundFinished) { return next(); }
+        round = group.championship.currentRound;
+
+        return async.sortBy(group.members, function (member, next) {
             var query;
             query = Wallet.findOne();
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
             query.exec(function (error, wallet) {
-                member.points = wallet ? (wallet.funds / member.initialFunds) * 100 : 100;
-                next(error, member.points * -1);
+                member.rounds[round].points = wallet ? (wallet.funds / member.initialFunds) * 100 : 100;
+                next(error, member.rounds[round].points * -1);
             });
         }, function (error, members) {
-            var oldMD5, currentMD5;
             members.forEach(function (member, index) {
-                member.ranking = index + 1;
+                member.rounds[round].ranking = index + 1;
             });
-            oldMD5        = crypto.createHash('md5').update(JSON.stringify(group.members)).digest('hex');
-            currentMD5    = crypto.createHash('md5').update(JSON.stringify(members)).digest('hex');
             group.members = members;
-            if (oldMD5 !== currentMD5) { group.save(); }
-            next(error);
+            group.save(next);
         });
     }, process.exit);
 });

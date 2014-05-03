@@ -596,7 +596,6 @@ describe('group controller', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('user');
-                response.body.should.have.property('ranking');
             });
             req.end(done);
         });
@@ -616,7 +615,6 @@ describe('group controller', function () {
                 req = req.expect(function (response) {
                     response.body.should.have.property('_id');
                     response.body.should.have.property('user');
-                    response.body.should.have.property('ranking');
                 });
                 req.end(done);
             });
@@ -700,7 +698,6 @@ describe('group controller', function () {
                 response.body.every(function (member) {
                     member.should.have.property('_id');
                     member.should.have.property('user');
-                    member.should.have.property('ranking');
                 });
             });
             req.end(done);
@@ -759,7 +756,6 @@ describe('group controller', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('user');
-                response.body.should.have.property('ranking');
             });
             req.end(done);
         });

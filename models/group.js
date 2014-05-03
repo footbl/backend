@@ -55,19 +55,22 @@ schema = new Schema({
             'required' : true
         },
         /** @property */
-        'ranking' : {
-            'type' : Number,
-            'required' : true,
-            'default' : Infinity
-        },
+        'rounds' : [{
+            /** @property */
+            'ranking' : {
+                'type' : Number,
+                'required' : true,
+                'default' : Infinity
+            },
+            /** @property */
+            'points' : {
+                'type' : Number,
+                'required' : true,
+                'default' : 100
+            }
+        }],
         /** @property */
         'initialFunds' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 100
-        },
-        /** @property */
-        'points' : {
             'type' : Number,
             'required' : true,
             'default' : 100
@@ -131,7 +134,7 @@ schema.pre('save', function (next) {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2013-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.members.schema.pre('save', function (next) {
@@ -164,7 +167,7 @@ schema.paths.members.schema.pre('save', function (next) {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2013-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.members.schema.pre('save', function (next) {
