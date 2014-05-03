@@ -196,7 +196,7 @@ schema.paths.members.schema.pre('save', function (next) {
                 if (!championship) { return next(new Error('championship not found')); }
 
                 require('../lib/apn').push(user.apnsToken, {
-                    'loc-key' : 'GROUP_ADDED',
+                    'loc-key' : 'NOTIFICATION_GROUP_ADDED',
                     'loc-args' : [owner.username, this.parent().name, championship.name]
                 });
                 return next();
