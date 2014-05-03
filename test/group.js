@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    group, otherGroup, user, otherUser, memberUser, candidateUser, championship, wallet, otherWallet, memberWallet, candidateWallet;
+    group, otherGroup, user, otherUser, memberUser, userWithoutWallet, candidateUser, championship, wallet, otherWallet, memberWallet, candidateWallet;
 
 require('should');
 
@@ -68,6 +68,11 @@ describe('group controller', function () {
     before(function (done) {
         candidateUser = new User({'password' : '12345', 'type' : 'admin'});
         candidateUser.save(done);
+    });
+
+    before(function (done) {
+        userWithoutWallet = new User({'password' : '12345', 'type' : 'admin'});
+        userWithoutWallet.save(done);
     });
 
     before(function (done) {
@@ -594,6 +599,50 @@ describe('group controller', function () {
                 response.body.should.have.property('ranking');
             });
             req.end(done);
+        });
+
+        describe('adding user without wallet', function () {
+            it('should create', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + otherGroup._id + '/members');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.send({user : userWithoutWallet._id});
+                req = req.expect(201);
+                req = req.expect(function (response) {
+                    response.body.should.have.property('_id');
+                    response.body.should.have.property('user');
+                    response.body.should.have.property('ranking');
+                });
+                req.end(done);
+            });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/wallets');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(userWithoutWallet));
+                req = req.expect(200);
+                req = req.expect(function (response) {
+                    response.body.should.be.instanceOf(Array);
+                    response.body[0].should.have.property('_id');
+                    response.body[0].should.have.property('championship').with.property('_id').be.equal(championship._id.toString());
+                    response.body[0].should.have.property('user');
+                    response.body[0].should.have.property('active').be.equal(false);
+                    response.body[0].should.have.property('funds').be.equal(100);
+                    response.body[0].should.have.property('stake').be.equal(0);
+                    response.body[0].should.have.property('toReturn').be.equal(0);
+                });
+                req.end(done);
+            });
         });
     });
 
