@@ -212,6 +212,7 @@ describe('match controller', function () {
                 response.body.should.have.property('name');
                 response.body.should.have.property('rounds').be.equal(3);
                 response.body.should.have.property('currentRound').be.equal(1);
+                response.body.should.have.property('roundFinished').be.equal(true);
             });
             req.end(done);
         });
@@ -401,7 +402,8 @@ describe('match controller', function () {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('name');
                 response.body.should.have.property('rounds').be.equal(3);
-                response.body.should.have.property('currentRound').be.equal(4);
+                response.body.should.have.property('currentRound').be.equal(3);
+                response.body.should.have.property('roundFinished').be.equal(true);
             });
             req.end(done);
         });
