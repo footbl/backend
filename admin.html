@@ -366,7 +366,7 @@
                         <li ng-repeat="match in matches">
                             <form ng-submit="saveMatch(match);">
                                 <div>
-                                    {{match.guest.name}} match.result.guest x match.result.host {{match.host.name}}
+                                    {{match.guest.name}} {{match.result.guest}} x {{match.result.host}} {{match.host.name}}
                                 </div>
                                 <div>
                                     Rodada: <input type="text" ng-model="match.round">
