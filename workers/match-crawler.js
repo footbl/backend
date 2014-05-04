@@ -7,7 +7,8 @@
  */
 'use strict';
 var mongoose, nconf, async, cheerio, request, querystring,
-    Team, Championship, Match;
+    Team, Championship, Match,
+    championships, months;
 
 mongoose     = require('mongoose');
 nconf        = require('nconf');
@@ -24,19 +25,19 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-var championships = [
-    /*
-     {'acronym' : 'UY', 'name' : 'Primera División', 'country' : 'Uruguay', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'CL', 'name' : 'Primera División', 'country' : 'Chile', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'ES', 'name' : 'Primera División', 'country' : 'Spain', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'AU', 'name' : 'Bundesliga', 'country' : 'Austria', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'GR', 'name' : 'Superleague', 'country' : 'Greece', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     {'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-     */
+championships = [
+    /*{'acronym' : 'UY', 'name' : 'Primera División', 'country' : 'Uruguay', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+    {'acronym' : 'CL', 'name' : 'Primera División', 'country' : 'Chile', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+    {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+    {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},*/
     {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
+    /*{'type' : 'continental league', 'acronym' : 'International', 'name' : 'Libertadores', 'country' : 'International', 'ttFK' : '45'},*/
+    {'type' : 'continental league', 'acronym' : 'International', 'name' : 'Champions League', 'country' : 'International', 'ttFK' : '42'},
+    {'type' : 'national league', 'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'ttFK' : '113'},
+    {'type' : 'national league', 'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'ttFK' : '59'},
+    {'type' : 'national league', 'acronym' : 'GR', 'name' : 'Superleague', 'country' : 'Greece', 'ttFK' : '135'},
+    {'type' : 'national league', 'acronym' : 'AU', 'name' : 'Bundesliga', 'country' : 'Austria', 'ttFK' : '38'},
+    {'type' : 'national league', 'acronym' : 'ES', 'name' : 'Primera División', 'country' : 'Spain', 'ttFK' : '87'},
     {'type' : 'national league', 'acronym' : 'GB', 'name' : 'Premier League', 'country' : 'England', 'ttFK' : '47'},
     {'type' : 'national league', 'acronym' : 'IT', 'name' : 'Serie A', 'country' : 'Italy', 'ttFK' : '55'},
     {'type' : 'national league', 'acronym' : 'DE', 'name' : 'Bundesliga', 'country' : 'Germany', 'ttFK' : '54'},
@@ -60,7 +61,7 @@ var championships = [
     {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'}
 ];
 
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function parseDate(string) {
     var slices, day, month, year;
     slices = string.split(' ');
@@ -285,9 +286,21 @@ function retrieveGuest(matches, next) {
  */
 function saveMatches(matches, next) {
     async.each(matches, function (data, next) {
-        var match;
-        match = new Match(data);
-        match.save(function () { next(); });
+        var query;
+        query = Match.findOne();
+        query.where('guest').equals(data.guest);
+        query.where('host').equals(data.host);
+        query.where('round').equals(data.round);
+        query.where('championship').equals(data.championship);
+        query.exec(function (error, match) {
+            if (error) { return next(error); }
+            if (!match) {
+                match = new Match(data);
+            }
+            match.finished = data.finished;
+            match.score    = data.score;
+            return match.save(function () { next(); });
+        });
     }, next);
 }
 

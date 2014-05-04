@@ -117,6 +117,93 @@ schema.plugin(require('mongoose-json-select'), {
 
 /**
  * @callback
+ * @summary Creates user world cup wallet
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    var query;
+    query = require('./championship').findOne();
+    query.where('type').equals('world cup');
+    query.exec(function (error, championship) {
+        if (error) { return next(error); }
+        if (!championship) { return next(); }
+        if (!championship.active) { return next(); }
+
+        var wallet;
+        wallet = new (require('./wallet'))({
+            'championship'  : championship._id,
+            'user'          : this._id
+        });
+        return wallet.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Creates user national league wallet
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    var query;
+    query = require('./championship').findOne();
+    query.where('country').equals(this.country);
+    query.exec(function (error, championship) {
+        if (error) { return next(error); }
+        if (!championship) { return next(); }
+        if (!championship.active) { return next(); }
+
+        var wallet;
+        wallet = new (require('./wallet'))({
+            'championship'  : championship._id,
+            'user'          : this._id
+        });
+        return wallet.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Creates user continental league wallet
+ *
+ * @param next
+ *
+ * @since 2013-03
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    var query;
+    query = require('./championship').findOne();
+    query.where('type').equals('continental league');
+    query.exec(function (error, championship) {
+        if (error) { return next(error); }
+        if (!championship) { return next(); }
+        if (!championship.active) { return next(); }
+
+        var wallet;
+        wallet = new (require('./wallet'))({
+            'championship'  : championship._id,
+            'user'          : this._id
+        });
+        return wallet.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
  * @summary Setups createdAt and updatedAt
  *
  * @param next
