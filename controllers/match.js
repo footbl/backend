@@ -2,7 +2,7 @@
  * @module
  * Manages match resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, Match;
@@ -18,14 +18,15 @@ Match  = require('../models/match');
  * @param request.championshipId
  * @param request.date
  * @param request.guest
- * @param request.visitor
+ * @param request.host
  * @param request.round
  * @param response
  *
  * @returns 201 match
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/championships/:championshipId/matches', function (request, response) {
@@ -60,13 +61,15 @@ router.post('/championships/:championshipId/matches', function (request, respons
  * @method
  * @summary List all matches in database
  *
- * @param request
+ * @param request.championshipId
+ * @param request.page
  * @param response
  *
  * @returns 200 [match]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId/matches', function (request, response) {
@@ -103,13 +106,15 @@ router.get('/championships/:championshipId/matches', function (request, response
  * @method
  * @summary Get match info in database
  *
+ * @param request.championshipId
  * @param request.matchId
  * @param response
  *
  * @returns 200 match
  * @throws 404 match not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId/matches/:matchId', function (request, response) {
@@ -135,14 +140,16 @@ router.get('/championships/:championshipId/matches/:matchId', function (request,
  * @method
  * @summary Finishes a match
  *
+ * @param request.championshipId
  * @param request.matchId
  * @param request.result
  * @param response
  *
  * @returns 200 match
  * @throws 404 match not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/championships/:championshipId/matches/:matchId/finish', function (request, response) {
@@ -170,16 +177,20 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
  * @method
  * @summary Updates match info in database
  *
+ * @param request.championshipId
+ * @param request.matchId
  * @param request.date
  * @param request.guest
  * @param request.visitor
+ * @param request.round
  * @param response
  *
  * @returns 200 match
  * @throws 500 error
  * @throws 404 match not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/championships/:championshipId/matches/:matchId', function (request, response) {
@@ -212,13 +223,15 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
  * @summary Removes match from database
  *
  * @param request.championshipId
+ * @param request.matchId
  * @param response
  *
  * @returns 200 match
  * @throws 500 error
  * @throws 404 match not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/championships/:championshipId/matches/:matchId', function (request, response) {
@@ -254,7 +267,7 @@ router.delete('/championships/:championshipId/matches/:matchId', function (reque
  * @returns match
  * @throws 404 match not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('matchId', function (request, response, next, id) {

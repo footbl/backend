@@ -2,7 +2,7 @@
  * @module
  * Manages championship model resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var mongoose, Schema, schema;
@@ -14,8 +14,8 @@ Schema   = mongoose.Schema;
  * @class
  * @summary System championship entity
  *
- * @since: 2013-03
- * @author: Rafael Almeida Erthal Hermano
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
  */
 schema = new Schema({
     /** @property */
@@ -86,7 +86,7 @@ schema.index({'name' : 1, 'country' : 1}, {'unique' : true});
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -103,8 +103,10 @@ schema.pre('save', function (next) {
 /**
  * @method
  * @summary Return championship rounds
+ * To calculate the number of round in a championship, this method should return the highest round value in the matches
+ * array. And if the championship don't have any match the default number of rounds is 1.
  *
- * @since 2013-05
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('rounds').get(function () {
@@ -120,8 +122,10 @@ schema.virtual('rounds').get(function () {
 /**
  * @method
  * @summary Return championship current round
+ * To calculate the championship current round, this method should return the highest round values in the matches that
+ * have already finished. And if no match has finished, the default current round is 1.
  *
- * @since 2013-05
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('currentRound').get(function () {
@@ -143,8 +147,10 @@ schema.virtual('currentRound').get(function () {
 /**
  * @method
  * @summary Checks if championship round is finished
+ * To calculate if the championship current round have finished, this method should see if all matches in the current
+ * round have already finished.
  *
- * @since 2013-05
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('roundFinished').get(function () {
@@ -163,8 +169,10 @@ schema.virtual('roundFinished').get(function () {
 /**
  * @method
  * @summary Checks if championship is active
+ * To see if the championship is still active, this method should see if thecurrent round is finished and the current
+ * round is the last round.
  *
- * @since 2013-05
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('active').get(function () {

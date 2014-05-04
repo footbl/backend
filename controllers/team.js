@@ -2,7 +2,7 @@
  * @module
  * Manages team resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, Team;
@@ -22,8 +22,9 @@ Team   = require('../models/team');
  *
  * @returns 201 team
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/teams', function (request, response) {
@@ -56,13 +57,14 @@ router.post('/teams', function (request, response) {
  * @method
  * @summary List all teams in database
  *
- * @param request
+ * @param request.page
  * @param response
  *
  * @returns 200 [team]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/teams', function (request, response) {
@@ -99,8 +101,9 @@ router.get('/teams', function (request, response) {
  *
  * @returns 200 team
  * @throws 404 team not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/teams/:teamId', function (request, response) {
@@ -126,6 +129,7 @@ router.get('/teams/:teamId', function (request, response) {
  * @method
  * @summary Updates team info in database
  *
+ * @param request.teamId
  * @param request.name
  * @param request.acronym
  * @param request.picture
@@ -134,8 +138,9 @@ router.get('/teams/:teamId', function (request, response) {
  * @returns 200 team
  * @throws 500 error
  * @throws 404 team not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/teams/:teamId', function (request, response) {
@@ -166,14 +171,15 @@ router.put('/teams/:teamId', function (request, response) {
  * @method
  * @summary Removes team from database
  *
- * @param request.championshipId
+ * @param request.teamId
  * @param response
  *
  * @returns 200 team
  * @throws 500 error
  * @throws 404 team not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/teams/:teamId', function (request, response) {
@@ -209,7 +215,7 @@ router.delete('/teams/:teamId', function (request, response) {
  * @returns team
  * @throws 404 team not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('teamId', function (request, response, next, id) {

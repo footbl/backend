@@ -2,7 +2,7 @@
  * @module
  * Manages match model resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var mongoose, Schema, schema, async;
@@ -15,8 +15,8 @@ async    = require('async');
  * @class
  * @summary System match entity
  *
- * @since: 2013-03
- * @author: Rafael Almeida Erthal Hermano
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
  */
 schema = new Schema({
     /** @property */
@@ -52,10 +52,6 @@ schema = new Schema({
     'round' : {
         'type' : Number,
         'required' : true
-    },
-    /** @property */
-    'edition' : {
-        'type' : Number
     },
     /** @property */
     'pot' : {
@@ -116,9 +112,11 @@ schema.plugin(require('mongoose-json-select'), {
     'guest'        : 1,
     'host'         : 1,
     'round'        : 1,
-    'edition'      : 1,
     'pot'          : 1,
     'result'       : 1,
+    'winner'       : 1,
+    'jackpot'      : 1,
+    'reward'       : 1,
     'elapsed'      : 1
 });
 
@@ -130,7 +128,7 @@ schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'round' : 1}, {'uniqu
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -150,7 +148,7 @@ schema.pre('save', function (next) {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -171,11 +169,11 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Insert match in championship matches array
+ * @summary Remove match from championship matches array
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('remove', function (next) {
@@ -196,12 +194,11 @@ schema.pre('remove', function (next) {
  * @callback
  * @summary Updates user wallets
  * When a match is finished all bets of that match should be updated, this procedure will update the bet reward if the
- * bet was right with the match reward times the user bid, if the bet was wrong, the reward will be 0. This procedure
- * is nil potent, which means that all calls after the first one should not change the bet status.
+ * bet was right with the match reward times the user bid, if the bet was wrong, the reward will be 0.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.post('save', function () {
@@ -237,7 +234,7 @@ schema.post('save', function () {
  * This method should compare the match score and see which team has won the match, the team with higher number of gols,
  * should be the winner and if the gols are equal, then the result is draw.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('winner').get(function () {
@@ -254,7 +251,7 @@ schema.virtual('winner').get(function () {
  * This method should return the match total bets bids, this is calculated summing the total bets in host plus the guest
  * and the draw.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('jackpot').get(function () {
@@ -267,9 +264,9 @@ schema.virtual('jackpot').get(function () {
  * @method
  * @summary Return match reward
  * This method should return how much the system will pay for each point spent in the bet, this is calculated dividing
- * the entire match jackpot by the winner resu
+ * the entire match jackpot by the winner result.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('reward').get(function () {
@@ -290,7 +287,7 @@ schema.virtual('reward').get(function () {
  * This method should return the match elapsed time, but, only if the match have already started and haven't finished
  * yet, on the other hand, the method should return null.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('elapsed').get(function () {

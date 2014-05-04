@@ -2,7 +2,7 @@
  * @module
  * Manages comment model resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var mongoose, Schema, schema;
@@ -14,8 +14,8 @@ Schema   = mongoose.Schema;
  * @class
  * @summary System comment entity
  *
- * @since: 2013-03
- * @author: Rafael Almeida Erthal Hermano
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
  */
 schema = new Schema({
     /** @property */
@@ -69,7 +69,7 @@ schema.plugin(require('mongoose-json-select'), {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {

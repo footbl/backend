@@ -2,7 +2,7 @@
  * @module
  * Manages group model resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var mongoose, Schema, schema;
@@ -14,8 +14,8 @@ Schema   = mongoose.Schema;
  * @class
  * @summary System group entity
  *
- * @since: 2013-03
- * @author: Rafael Almeida Erthal Hermano
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
  */
 schema = new Schema({
     /** @property */
@@ -112,7 +112,7 @@ schema.plugin(require('mongoose-json-select'), {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -134,7 +134,7 @@ schema.pre('save', function (next) {
  *
  * @param next
  *
- * @since 2013-05
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.members.schema.pre('save', function (next) {

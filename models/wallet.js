@@ -2,7 +2,7 @@
  * @module
  * Manages user wallet model resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var mongoose, Schema, nconf, schema;
@@ -14,9 +14,12 @@ Schema   = mongoose.Schema;
 /**
  * @class
  * @summary System wallet entity
+ * A user can only have one wallet for each championship, the priority field controls the sorting for the list method
+ * and the notifications object should control if the user wants to receive notifications when the rounds in the
+ * championship starts and ends.
  *
- * @since: 2013-03
- * @author: Rafael Almeida Erthal Hermano
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
  */
 schema = new Schema({
     /** @property */
@@ -39,8 +42,16 @@ schema = new Schema({
     },
     /** @property */
     'notifications' : {
-        'type' : Boolean,
-        'default' : true
+        /** @property */
+        'roundStart' : {
+            'type' : Boolean,
+            'default' : true
+        },
+        /** @property */
+        'roundEnd' : {
+            'type' : Boolean,
+            'default' : true
+        }
     },
     /** @property */
     'priority' : {
@@ -134,17 +145,21 @@ schema = new Schema({
     }
 });
 
+schema.index({'user' : 1, 'championship' : 1}, {'unique' : true});
+
 schema.plugin(require('mongoose-json-select'), {
     'championship'  : 1,
     'user'          : 1,
     'active'        : 1,
     'notifications' : 1,
     'priority'      : 1,
+    'ranking'       : 1,
+    'iaps'          : 0,
+    'bets'          : 0,
+    'lastDate'      : 1,
     'funds'         : 1,
     'stake'         : 1,
-    'toReturn'      : 1,
-    'iaps'          : 0,
-    'bets'          : 0
+    'toReturn'      : 1
 });
 
 /**
@@ -153,7 +168,7 @@ schema.plugin(require('mongoose-json-select'), {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -169,38 +184,13 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Ensures unique wallet
- * When saving a wallet, the system must ensure that the user don't have any other wallet in the same championship.
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.isNew) { return next(); }
-
-    var query;
-    query = this.constructor.findOne();
-    query.where('user').equals(this.user);
-    query.where('championship').equals(this.championship);
-    return query.exec(function (error, wallet) {
-        if (error) { return next(error); }
-        if (wallet) { return next(new Error('wallet already exists')); }
-        return next();
-    }.bind(this));
-});
-
-/**
- * @callback
  * @summary Ensures sufficient funds
- * When saving a bet, the system must ensure that the user have enough funds to perform the bet.
+ * When saving a bet, the system must ensure that the user have enough funds to perform the bet. So, before saving, the
+ * system must compare the available funds in the wallet with the wallet stake and see if the funds are sufficient.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -216,11 +206,12 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Checks if the match already started
- * If the bet's match have already started, the bet cannot be changed, and a error must be raised.
+ * If the bet's match have already started, the bet cannot be changed, and a error must be raised. So, before saving the
+ * bet, the system must get the match and see if the match start date is lower than the current date.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.bets.schema.pre('save', function (next) {
@@ -240,11 +231,12 @@ schema.paths.bets.schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Checks if the match already started
- * If the bet's match have already started, the bet cannot be removed, and a error must be raised.
+ * If the bet's match have already started, the bet cannot be removed, and a error must be raised. So, before removing
+ * the bet, the system must get the match and see if the match start date is lower than the current date.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.bets.schema.pre('remove', function (next) {
@@ -269,7 +261,7 @@ schema.paths.bets.schema.pre('remove', function (next) {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.bets.schema.pre('save', function (next) {
@@ -294,7 +286,7 @@ schema.paths.bets.schema.pre('save', function (next) {
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.bets.schema.post('init', function () {
@@ -308,11 +300,11 @@ schema.paths.bets.schema.post('init', function () {
  * @callback
  * @summary Updates match pot
  * After saving a new bet, the match pot corresponding to the bet's result must be updated, increasing the pot with the
- * bet new value and decreasing with the bet old value..
+ * bet new value and decreasing with the bet old value.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.bets.schema.post('save', function () {
@@ -333,11 +325,11 @@ schema.paths.bets.schema.post('save', function () {
  * @callback
  * @summary Updates match pot
  * After saving a new bet, the match pot corresponding to the bet's result must be updated, decreasing the pot with the
- * bet old value..
+ * bet old value.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.paths.bets.schema.post('remove', function () {
@@ -359,7 +351,7 @@ schema.paths.bets.schema.post('remove', function () {
  * The wallet status must be calculated with all bets that happened after the iap, so this method should return the last
  * iap and if none iap exists, this method should return the created date.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('lastDate').get(function () {
@@ -379,7 +371,7 @@ schema.virtual('lastDate').get(function () {
  * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet
  * which the bet is finished.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('funds').get(function () {
@@ -402,7 +394,7 @@ schema.virtual('funds').get(function () {
  * This method should return the wallets funds at stake, this is calculated by summing all bets bid in the wallet which
  * the bet isn't finished yet.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('stake').get(function () {
@@ -427,7 +419,7 @@ schema.virtual('stake').get(function () {
  * This method should return the wallets possible profit, this is calculated by summing all bets reward in the wallet
  * which the bet isn't finished yet.
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('toReturn').get(function () {

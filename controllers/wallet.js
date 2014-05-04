@@ -1,8 +1,8 @@
 /**
  * @module
- * Manages bet resource
+ * Manages wallet resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, iap, Wallet;
@@ -18,12 +18,16 @@ Wallet = require('../models/wallet');
  *
  * @param request.championship
  * @param request.notifications
+ * @param request.notifications.roundStart
+ * @param request.notifications.roundEnd
+ * @param request.priority
  * @param response
  *
  * @returns 201 wallet
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/wallets', function (request, response) {
@@ -57,13 +61,14 @@ router.post('/wallets', function (request, response) {
  * @method
  * @summary List all wallets in database
  *
- * @param request
+ * @param request.page
  * @param response
  *
  * @returns 200 [wallet]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/wallets', function (request, response) {
@@ -104,9 +109,10 @@ router.get('/wallets', function (request, response) {
  * @param response
  *
  * @returns 200 wallet
+ * @throws 401 invalid token
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/wallets/:walletId', function (request, response) {
@@ -132,15 +138,18 @@ router.get('/wallets/:walletId', function (request, response) {
  * @method
  * @summary Updates wallet info in database
  *
+ * @param request.walletId
  * @param request.active
  * @param request.notifications
+ * @param request.priority
  * @param response
  *
  * @returns 200 wallet
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/wallets/:walletId', function (request, response) {
@@ -172,6 +181,7 @@ router.put('/wallets/:walletId', function (request, response) {
  * @method
  * @summary Sets wallet value to 100
  *
+ * @param request.walletId
  * @param request.platform
  * @param request.receipt
  * @param request.productId
@@ -180,9 +190,10 @@ router.put('/wallets/:walletId', function (request, response) {
  *
  * @returns 200 wallet
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/wallets/:walletId/recharge', function (request, response) {
@@ -232,9 +243,10 @@ router.post('/wallets/:walletId/recharge', function (request, response) {
  *
  * @returns 200 wallet
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/wallets/:walletId', function (request, response) {
@@ -266,9 +278,10 @@ router.delete('/wallets/:walletId', function (request, response) {
  * @param response
  *
  * @returns 200 [bet]
+ * @throws 401 invalid token
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/wallets/:walletId/bets', function (request, response) {
@@ -302,7 +315,7 @@ router.get('/wallets/:walletId/bets', function (request, response) {
  * @returns wallet
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('walletId', function (request, response, next, id) {

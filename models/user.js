@@ -2,7 +2,7 @@
  * @module
  * Manages user model resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var mongoose, Schema, nconf, schema;
@@ -19,8 +19,8 @@ Schema   = mongoose.Schema;
  * information the system keeps is the user id and a automatic generated password. The facebook registered user have all
  * account info retrieved from the facebook sdk.
  *
- * @since: 2013-03
- * @author: Rafael Almeida Erthal Hermano
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
  */
 schema = new Schema({
     /** @property */
@@ -109,19 +109,41 @@ schema.plugin(require('mongoose-json-select'), {
     'password'      : 0,
     'picture'       : 1,
     'language'      : 1,
-    'type'          : 0,
-    'starred'       : 0,
     'country'       : 1,
+    'type'          : 1,
+    'starred'       : 0,
     'notifications' : 1
 });
 
 /**
  * @callback
- * @summary Creates user world cup wallet
+ * @summary Setups createdAt and updatedAt
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.createdAt) {
+        this.createdAt = this.updatedAt = new Date();
+    } else {
+        this.updatedAt = new Date();
+    }
+    next();
+});
+
+/**
+ * @callback
+ * @summary Creates user world cup wallet
+ * All system users must have a wallet in the current world cup if some is available. Se, before saving each user, a new
+ * wallet must be created for the user in the championship.
+ *
+ * @param next
+ *
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -147,10 +169,12 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Creates user national league wallet
+ * All system users must have a wallet in the user's country national league if the league of the users country is
+ * active. So, before saving each system user, a new wallet must be created for the user in the championship.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -176,10 +200,12 @@ schema.pre('save', function (next) {
 /**
  * @callback
  * @summary Creates user continental league wallet
+ * All system users must have a wallet in the current continental league if some is available. Se, before saving each
+ * user, a new wallet must be created for the user in the championship.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {
@@ -204,32 +230,13 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Setups createdAt and updatedAt
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date();
-    } else {
-        this.updatedAt = new Date();
-    }
-    next();
-});
-
-/**
- * @callback
  * @summary Ensures unique starred
- * When saving a user, the system must ensure that the user don't have any repeated starred.
+ * When saving a user, the system must ensure that the user don't have any repeated starred. So, before saving, the
+ * system must look into all starred to see if anyone is repeated.
  *
  * @param next
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('save', function (next) {

@@ -2,7 +2,7 @@
  * @module
  * Manages championship resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, Championship, Wallet;
@@ -17,13 +17,17 @@ Wallet       = require('../models/wallet');
  * @summary Creates a new championship in database
  *
  * @param request.name
- * @param request.competitors
+ * @param request.picture
+ * @param request.edition
+ * @param request.type
+ * @param request.country
  * @param response
  *
  * @returns 201 championship
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/championships', function (request, response) {
@@ -39,8 +43,7 @@ router.post('/championships', function (request, response) {
     championship = new Championship({
         'name'        : request.param('name'),
         'picture'     : request.param('picture'),
-        'year'        : request.param('year'),
-        'competitors' : request.param('competitors'),
+        'edition'     : request.param('edition'),
         'type'        : request.param('type', 'national league'),
         'country'     : request.param('country')
     });
@@ -56,13 +59,14 @@ router.post('/championships', function (request, response) {
  * @method
  * @summary List all championships in database
  *
- * @param request
+ * @param request.page
  * @param response
  *
  * @returns 200 [championship]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships', function (request, response) {
@@ -100,9 +104,10 @@ router.get('/championships', function (request, response) {
  * @param response
  *
  * @returns 200 championship
+ * @throws 401 invalid token
  * @throws 404 championship not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId', function (request, response) {
@@ -130,14 +135,18 @@ router.get('/championships/:championshipId', function (request, response) {
  *
  * @param request.championshipId
  * @param request.name
- * @param request.competitors
+ * @param request.picture
+ * @param request.edition
+ * @param request.type
+ * @param request.country
  * @param response
  *
  * @returns 200 championship
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 championship not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/championships/:championshipId', function (request, response) {
@@ -176,9 +185,10 @@ router.put('/championships/:championshipId', function (request, response) {
  *
  * @returns 200 championship
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 championship not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/championships/:championshipId', function (request, response) {
@@ -202,6 +212,21 @@ router.delete('/championships/:championshipId', function (request, response) {
     });
 });
 
+/**
+ * @method
+ * @summary List championship wallets ordered by ranking
+ *
+ * @param request.championshipId
+ * @param response
+ *
+ * @returns 200 championship
+ * @throws 500 error
+ * @throws 401 invalid token
+ * @throws 404 championship not found
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
 router.get('/championships/:championshipId/ranking', function (request, response) {
     'use strict';
 
@@ -237,7 +262,7 @@ router.get('/championships/:championshipId/ranking', function (request, response
  * @returns championship
  * @throws 404 championship not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('championshipId', function (request, response, next, id) {

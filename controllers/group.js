@@ -2,7 +2,7 @@
  * @module
  * Manages group resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, Group;
@@ -22,8 +22,9 @@ Group  = require('../models/group');
  *
  * @returns 201 group
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/groups', function (request, response) {
@@ -58,13 +59,14 @@ router.post('/groups', function (request, response) {
  * @method
  * @summary List all groups user belongs
  *
- * @param request
+ * @param request.page
  * @param response
  *
  * @returns 200 [group]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/groups', function (request, response) {
@@ -117,9 +119,10 @@ router.get('/groups', function (request, response) {
  * @param response
  *
  * @returns 200 group
+ * @throws 401 invalid token
  * @throws 404 group not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/groups/:groupId', function (request, response) {
@@ -145,15 +148,18 @@ router.get('/groups/:groupId', function (request, response) {
  * @method
  * @summary Updates group info in database
  *
+ * @param request.groupId
  * @param request.name
+ * @param request.picture
  * @param request.freeToEdit
  * @param response
  *
  * @returns 200 group
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 group not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/groups/:groupId', function (request, response) {
@@ -189,14 +195,15 @@ router.put('/groups/:groupId', function (request, response) {
  * @method
  * @summary Removes group from database
  *
- * @param request.championshipId
+ * @param request.groupId
  * @param response
  *
  * @returns 200 group
  * @throws 500 error
  * @throws 404 group not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/groups/:groupId', function (request, response) {
@@ -226,13 +233,16 @@ router.delete('/groups/:groupId', function (request, response) {
  * @method
  * @summary Creates a new group member
  *
+ * @param request.groupId
  * @param request.user
  * @param response
  *
  * @returns 201 member
  * @throws 500 error
+ * @throws 404 group not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/groups/:groupId/members', function (request, response) {
@@ -269,8 +279,9 @@ router.post('/groups/:groupId/members', function (request, response) {
  *
  * @returns 200 [members]
  * @throws 404 group not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/groups/:groupId/members', function (request, response) {
@@ -302,8 +313,10 @@ router.get('/groups/:groupId/members', function (request, response) {
  * @returns 200 group
  * @throws 500 error
  * @throws 404 group not found
+ * @throws 404 member not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/groups/:groupId/members/:memberId', function (request, response) {
@@ -340,8 +353,10 @@ router.get('/groups/:groupId/members/:memberId', function (request, response) {
  * @returns 200 group
  * @throws 500 error
  * @throws 404 group not found
+ * @throws 404 member not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/groups/:groupId/members/:memberId', function (request, response) {
@@ -368,7 +383,6 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
     if (!member) { return response.send(404, 'member not found'); }
 
     member.remove();
-
     return group.save(function (error) {
         if (error) { return response.send(500, error); }
         return response.send(200, member);
@@ -387,7 +401,7 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
  * @returns group
  * @throws 404 group not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('groupId', function (request, response, next, id) {

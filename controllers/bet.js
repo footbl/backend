@@ -2,7 +2,7 @@
  * @module
  * Manages bet resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, Wallet;
@@ -15,7 +15,8 @@ Wallet = require('../models/wallet');
  * @method
  * @summary Creates a new bet in database
  *
- * @param request.walletId
+ * @param request.championshipId
+ * @param request.matchId
  * @param request.match
  * @param request.date
  * @param request.result
@@ -24,8 +25,9 @@ Wallet = require('../models/wallet');
  *
  * @returns 201 bet
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/championships/:championshipId/matches/:matchId/bets', function (request, response) {
@@ -64,13 +66,16 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
  * @method
  * @summary List all bets in database
  *
- * @param request.walletId
+ * @param request.championshipId
+ * @param request.matchId
+ * @param request.page
  * @param response
  *
  * @returns 200 [bet]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId/matches/:matchId/bets', function (request, response) {
@@ -128,13 +133,16 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
  * @method
  * @summary Get bet info in database
  *
+ * @param request.championshipId
+ * @param request.matchId
  * @param request.betId
  * @param response
  *
  * @returns 200 bet
  * @throws 404 bet not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId/matches/:matchId/bets/:betId', function (request, response) {
@@ -162,14 +170,20 @@ router.get('/championships/:championshipId/matches/:matchId/bets/:betId', functi
  * @method
  * @summary Updates bet in database
  *
+ * @param request.championshipId
+ * @param request.matchId
  * @param request.betId
+ * @param request.date
+ * @param request.result
+ * @param request.bid
  * @param response
  *
  * @returns 200 bet
  * @throws 500 error
  * @throws 404 bet not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/championships/:championshipId/matches/:matchId/bets/:betId', function (request, response) {
@@ -203,14 +217,17 @@ router.put('/championships/:championshipId/matches/:matchId/bets/:betId', functi
  * @method
  * @summary Removes bet from database
  *
+ * @param request.championshipId
+ * @param request.matchId
  * @param request.betId
  * @param response
  *
  * @returns 200 bet
  * @throws 500 error
  * @throws 404 bet not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', function (request, response) {
@@ -251,7 +268,7 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
  * @returns wallet
  * @throws 404 wallet not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('championshipId', function (request, response, next, id) {

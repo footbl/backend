@@ -2,7 +2,7 @@
  * @module
  * Manages comment resource
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 var router, nconf, Comment;
@@ -15,7 +15,7 @@ Comment = require('../models/comment');
  * @method
  * @summary Creates a new comment in database
  *
- * @param request.user
+ * @param request.championshipId
  * @param request.matchId
  * @param request.date
  * @param request.message
@@ -23,8 +23,9 @@ Comment = require('../models/comment');
  *
  * @returns 201 comment
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.post('/championships/:championshipId/matches/:matchId/comments', function (request, response) {
@@ -58,13 +59,16 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
  * @method
  * @summary List all comments in database
  *
+ * @param request.championshipId
  * @param request.matchId
+ * @param request.page
  * @param response
  *
  * @returns 200 [comment]
  * @throws 500 error
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId/matches/:matchId/comments', function (request, response) {
@@ -107,13 +111,15 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
  * @method
  * @summary Get comment info in database
  *
- * @param request.commentId
+ * @param request.championshipId
+ * @param request.matchId
  * @param response
  *
  * @returns 200 comment
  * @throws 404 comment not found
+ * @throws 401 invalid token
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.get('/championships/:championshipId/matches/:matchId/comments/:commentId', function (request, response) {
@@ -139,16 +145,18 @@ router.get('/championships/:championshipId/matches/:matchId/comments/:commentId'
  * @method
  * @summary Updates comment info in database
  *
- * @param request.commentId
+ * @param request.championshipId
+ * @param request.matchId
  * @param request.date
  * @param request.message
  * @param response
  *
  * @returns 200 comment
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 comment not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.put('/championships/:championshipId/matches/:matchId/comments/:commentId', function (request, response) {
@@ -179,14 +187,16 @@ router.put('/championships/:championshipId/matches/:matchId/comments/:commentId'
  * @method
  * @summary Removes comment from database
  *
- * @param request.commentId
+ * @param request.championshipId
+ * @param request.matchId
  * @param response
  *
  * @returns 200 comment
  * @throws 500 error
+ * @throws 401 invalid token
  * @throws 404 comment not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.delete('/championships/:championshipId/matches/:matchId/comments/:commentId', function (request, response) {
@@ -222,7 +232,7 @@ router.delete('/championships/:championshipId/matches/:matchId/comments/:comment
  * @returns comment
  * @throws 404 comment not found
  *
- * @since 2013-03
+ * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
 router.param('commentId', function (request, response, next, id) {
