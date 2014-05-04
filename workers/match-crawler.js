@@ -24,93 +24,88 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-/**
- * @method
- * @summary Removes garbage from championship name
- *
- * @param title
- *
- * @returns String championshipName
- *
- * @since 2013-05
- * @author Rafael Almeida Erthal Hermano
- */
-function championshipName(title) {
-    return title.split(' grp. ')[0];
+var championships = [
+    /*
+     {'acronym' : 'UY', 'name' : 'Primera División', 'country' : 'Uruguay', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'CL', 'name' : 'Primera División', 'country' : 'Chile', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'ES', 'name' : 'Primera División', 'country' : 'Spain', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'AU', 'name' : 'Bundesliga', 'country' : 'Austria', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'GR', 'name' : 'Superleague', 'country' : 'Greece', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     */
+    {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
+    {'type' : 'national league', 'acronym' : 'GB', 'name' : 'Premier League', 'country' : 'England', 'ttFK' : '47'},
+    {'type' : 'national league', 'acronym' : 'IT', 'name' : 'Serie A', 'country' : 'Italy', 'ttFK' : '55'},
+    {'type' : 'national league', 'acronym' : 'DE', 'name' : 'Bundesliga', 'country' : 'Germany', 'ttFK' : '54'},
+    {'type' : 'national league', 'acronym' : 'FR', 'name' : 'Ligue 1', 'country' : 'France', 'ttFK' : '53'},
+    {'type' : 'national league', 'acronym' : 'RU', 'name' : 'Premier Liga', 'country' : 'Russia', 'ttFK' : '63'},
+    {'type' : 'national league', 'acronym' : 'PT', 'name' : 'Liga ZON Sagres', 'country' : 'Portugal', 'ttFK' : '61'},
+    {'type' : 'national league', 'acronym' : 'NL', 'name' : 'Eredivisie', 'country' : 'Netherlands', 'ttFK' : '57'},
+    {'type' : 'national league', 'acronym' : 'AR', 'name' : 'Primera División', 'country' : 'Argentina', 'ttFK' : '112'},
+    {'type' : 'national league', 'acronym' : 'MX', 'name' : 'Primera División', 'country' : 'Mexico', 'ttFK' : '230'},
+    {'type' : 'national league', 'acronym' : 'US', 'name' : 'Major League Soccer', 'country' : 'USA', 'ttFK' : '130'},
+    {'type' : 'national league', 'acronym' : 'JP', 'name' : 'J.League', 'country' : 'Japan', 'ttFK' : '223'},
+    {'type' : 'national league', 'acronym' : 'CN', 'name' : 'Chinese Super League', 'country' : 'China', 'ttFK' : '120'},
+    {'type' : 'national league', 'acronym' : 'BE', 'name' : 'Jupiler Pro League', 'country' : 'Belgium', 'ttFK' : '40'},
+    {'type' : 'national league', 'acronym' : 'DK', 'name' : 'Superligaen', 'country' : 'Denmark', 'ttFK' : '46'},
+    {'type' : 'national league', 'acronym' : 'PL', 'name' : 'Ekstraklasa', 'country' : 'Poland', 'ttFK' : '196'},
+    {'type' : 'national league', 'acronym' : 'RO', 'name' : 'Liga 1', 'country' : 'Romania', 'ttFK' : '189'},
+    {'type' : 'national league', 'acronym' : 'SE', 'name' : 'Allsvenskan', 'country' : 'Sweden', 'ttFK' : '67'},
+    {'type' : 'national league', 'acronym' : 'CH', 'name' : 'Super League', 'country' : 'Switzerland', 'ttFK' : '69'},
+    {'type' : 'national league', 'acronym' : 'TR', 'name' : 'Super Lig', 'country' : 'Turkey', 'ttFK' : '71'},
+    {'type' : 'national league', 'acronym' : 'UA', 'name' : 'Premyer Liga', 'country' : 'Ukraine', 'ttFK' : '441'},
+    {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'}
+];
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function parseDate(string) {
+    var slices, day, month, year;
+    slices = string.split(' ');
+    day    = slices[0].replace(',', '') * 1;
+    month  = months.indexOf(slices[1]);
+    year   = 2000 + (slices[2] * 1);
+    return new Date(year, month, day);
 }
 
 /**
  * @method
- * @summary Loads HTML page from crawled website
+ * @summary Checks if championship is already saved and save it
  *
- * @param day
  * @param next
  *
  * @since 2013-05
  * @author Rafael Almeida Erthal Hermano
  */
-function loadPage(day, next) {
-    var query = querystring.encode({'showLeagues' : 'all', 'd' : day});
-    request(nconf.get('CRAWLER_URI') + '?' + query, function (error, response, body) {
-        var $, result;
-        $      = cheerio.load(body);
-        result = [];
-        $('tr').each(function () {
-            var row = $(this);
-            row.day = day;
-            result.push(row);
+function parseChampionships(next) {
+    async.map(championships, function (data, next) {
+        var query;
+        query = Championship.findOne();
+        query.where('name').equals(data.name);
+        query.where('country').equals(data.acronym);
+        query.exec(function (error, championship) {
+            if (error) { return next(error); }
+            if (!championship) {
+                championship = new Championship({
+                    'name'    : data.name,
+                    'country' : data.acronym
+                });
+            }
+            championship.edition = new Date().getFullYear();
+            return championship.save(function (error) {
+                if (error) { return next(error); }
+                data._id = championship._id;
+                return next(null, data);
+            });
         });
-        next(error, result);
-    });
+    }, next);
 }
 
 /**
  * @method
- * @summary Loads all HTML pages from the next 2 months
- *
- * @param next
- *
- * @since 2013-05
- * @author Rafael Almeida Erthal Hermano
- */
-function loadPages(next) {
-    async.times(60, loadPage, function (error, pages) {
-        if (error) { return next(error); }
-        return next(null, pages.reduce(function (pages, page) {
-            return pages.concat(page);
-        }, []));
-    });
-}
-
-/**
- * @method
- * @summary Parse crawled table rows of chamionships into championship objects
- *
- * @param records
- * @param next
- *
- * @since 2013-05
- * @author Rafael Almeida Erthal Hermano
- */
-function parseChampionships(records, next) {
-    async.map(records.filter(function (record) {
-        return record.children().first().hasClass('Heading');
-    }), function (record, next) {
-        var championship, title, date;
-        date         = new Date();
-        title        = record.children().first().text().split(' - ');
-        championship = new Championship({
-            'name'    : championshipName(title[1]),
-            'country' : title[0],
-            'year'    : date.getFullYear()
-        });
-        next(null, championship);
-    }, next.bind({}));
-}
-
-/**
- * @method
- * @summary Save all championships into database
+ * @summary Detects championship rounds
  *
  * @param championships
  * @param next
@@ -118,79 +113,76 @@ function parseChampionships(records, next) {
  * @since 2013-05
  * @author Rafael Almeida Erthal Hermano
  */
-function saveChampionships(championships, next) {
-    async.each(championships, function (championship, next) {
-        return championship.save(function () {
-            next();
+function parseRounds(championships, next) {
+    async.map(championships, function (championship, next) {
+        request('http://football-data.enetpulse.com/standings.php?ttFK=' + championship.ttFK, function (error, response, body) {
+            var $, iterable, scanType;
+            $      = cheerio.load(body);
+            championship.rounds = [];
+
+            $('select').each(function () {
+                var select = $(this);
+                if (select.attr('onchange').indexOf('round') > -1) {
+                    scanType = 'round';
+                    iterable = select;
+                }
+                if (select.children().first().text().indexOf('grp.') > -1) {
+                    scanType = 'oFK';
+                    iterable = select;
+                }
+            });
+
+            if (iterable) {
+                iterable.children().each(function () {
+                    var row = $(this);
+                    championship.rounds.push({round : row.val(), scanType : scanType});
+                });
+            }
+            next(error, championship);
         });
-    }, next.bind({}));
+    }, next);
 }
 
 /**
  * @method
- * @summary Parse crawled table rows of matches into team objects of the host team
+ * @summary Loads all matches from all rounds from all championships
  *
- * @param records
+ * @param championships
  * @param next
  *
  * @since 2013-05
  * @author Rafael Almeida Erthal Hermano
  */
-function parseHostTeams(records, next) {
-    async.map(records.filter(function (record) {
-        return !record.children().first().hasClass('Heading');
-    }), function (record, next) {
-        var team = new Team({
-            'name' : record.children().first().next().text()
+function loadRounds(championships, next) {
+    async.map(championships, function (championship, next) {
+        async.map(championship.rounds, function (round, next) {
+            request('http://football-data.enetpulse.com/standings.php?ttFK=' + championship.ttFK + '&' + round.scanType + '=' + round.round, function (error, response, body) {
+                var $, result;
+                $      = cheerio.load(body);
+                result = [];
+                $('.livetableA tr').each(function () {
+                    var row = $(this);
+                    row.championship = championship._id;
+                    row.round = round.round * 1;
+                    result.push(row);
+                });
+                next(error, result);
+            });
+        }, function (error, pages) {
+            async.reduce(pages, [], function (matches, page, next) {
+                next(null, matches.concat(page));
+            }, next);
         });
-        next(null, team);
-    }, next.bind({}));
+    }, function (error, championships) {
+        async.reduce(championships, [], function (matches, championship, next) {
+            next(null, matches.concat(championship));
+        }, next);
+    });
 }
 
 /**
  * @method
- * @summary Parse crawled table rows of matches into team objects of the guest team
- *
- * @param records
- * @param next
- *
- * @since 2013-05
- * @author Rafael Almeida Erthal Hermano
- */
-function parseGuestTeams(records, next) {
-    async.map(records.filter(function (record) {
-        return !record.children().first().hasClass('Heading');
-    }), function (record, next) {
-        var team = new Team({
-            'name' : record.children().first().next().next().next().text()
-        });
-        next(null, team);
-    }, next.bind({}));
-}
-
-/**
- * @method
- * @summary Save all teams into database
- *
- * @param teams
- * @param next
- *
- * @since 2013-05
- * @author Rafael Almeida Erthal Hermano
- */
-function saveTeams(teams, next) {
-    async.each(teams, function (team, next) {
-        return team.save(function () {
-            next();
-        });
-    }, next.bind({}));
-}
-
-/**
- * @method
- * @summary Parse crawled table rows of matches into match objects
- * When crawling system matches, the crawler don't care for the match result, only the matches which haven't started are
- * crawled in this fase. Another crawler will take care of the result.
+ * @summary
  *
  * @param records
  * @param next
@@ -199,30 +191,28 @@ function saveTeams(teams, next) {
  * @author Rafael Almeida Erthal Hermano
  */
 function parseMatches(records, next) {
-    var name, country, matches;
-
+    var date, matches;
     matches = [];
     records.forEach(function (record) {
-        var heading, date, time;
-        heading = record.children().first().hasClass('Heading');
-        if (heading) {
-            name    = championshipName(record.children().first().text().split(' - ')[1]);
-            country = record.children().first().text().split(' - ')[0];
-        } else if (record.children().first().text().indexOf(':') > -1) {
-            date = new Date();
-            time = record.children().first().text().split(':');
-            date.setDate(date.getDate() + record.day);
-            date.setUTCHours(time[0]);
-            date.setUTCMinutes(time[1]);
+        if (record.children().length === 2) {
+            date = parseDate(record.children().next().text());
+        } else if (record.children().length > 2) {
+            var time, score;
+            time  = record.children().first().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split(':');
+            score = record.children().first().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split(' - ');
+            record.date = new Date(date);
+            if (time.length > 1) {
+                record.date.setUTCHours((time[0] * 1) - 2);
+                record.date.setUTCMinutes(time[1] * 1);
+            }
             matches.push({
-                'round'        : 1,
-                'championship' : {
-                    'name'    : name,
-                    'country' : country
-                },
-                'date'         : date,
-                'guest'        : record.children().first().next().text(),
-                'host'         : record.children().first().next().next().next().text()
+                championship : record.championship,
+                round        : record.round,
+                date         : record.date,
+                guest        : record.children().first().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, ''),
+                host         : record.children().first().next().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, ''),
+                score        : {guest : !isNaN(score[0]) ? score[0] * 1 : 0, host  : !isNaN(score[1]) ? score[1] * 1 : 0},
+                finished     : time.length === 1
             });
         }
     });
@@ -246,7 +236,10 @@ function retrieveHost(matches, next) {
         query.where('name').equals(match.host);
         query.exec(function (error, team) {
             if (error) { return next(error); }
-            if (!team) { return next('host not found'); }
+            if (!team) {
+                team = new Team({'name' : match.host});
+                team.save();
+            }
             match.host = team._id;
             return next(null, match);
         });
@@ -270,7 +263,10 @@ function retrieveGuest(matches, next) {
         query.where('name').equals(match.guest);
         query.exec(function (error, team) {
             if (error) { return next(error); }
-            if (!team) { return next('guest not found'); }
+            if (!team) {
+                team = new Team({'name' : match.guest});
+                team.save();
+            }
             match.guest = team._id;
             return next(null, match);
         });
@@ -279,32 +275,7 @@ function retrieveGuest(matches, next) {
 
 /**
  * @method
- * @summary Takes all matches championship objectIds
- *
- * @param matches
- * @param next
- *
- * @since 2013-05
- * @author Rafael Almeida Erthal Hermano
- */
-function retrieveChampionship(matches, next) {
-    async.map(matches, function (match, next) {
-        var query;
-        query = Championship.findOne();
-        query.where('name').equals(match.championship.name);
-        query.where('country').equals(match.championship.country);
-        query.exec(function (error, championship) {
-            if (error) { return next(error); }
-            if (!championship) { return next('championship not found'); }
-            match.championship = championship._id;
-            return next(null, match);
-        });
-    }, next.bind({}));
-}
-
-/**
- * @method
- * @summary Save all matches into database
+ * @summary
  *
  * @param matches
  * @param next
@@ -314,26 +285,10 @@ function retrieveChampionship(matches, next) {
  */
 function saveMatches(matches, next) {
     async.each(matches, function (data, next) {
-        var query;
-        query = Match.findOne();
-        query.where('host').equals(data.host);
-        query.where('guest').equals(data.guest);
-        query.where('championship').equals(data.championship);
-        query.exec(function (error, match) {
-            if (error || match) { return next(error); }
-
-            match = new Match(data);
-            return match.save(function (error) {
-                next(error);
-            });
-        });
-    }, next.bind({}));
+        var match;
+        match = new Match(data);
+        match.save(function () { next(); });
+    }, next);
 }
 
-async.seq(
-    async.seq(loadPages, parseChampionships, saveChampionships),
-    async.seq(loadPages, parseHostTeams, saveTeams),
-    async.seq(loadPages, parseGuestTeams, saveTeams),
-    async.seq(loadPages, parseMatches, retrieveHost, retrieveGuest, retrieveChampionship, saveMatches),
-    process.exit.bind({})
-)();
+async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, saveMatches, process.exit)();

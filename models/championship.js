@@ -29,25 +29,20 @@ schema = new Schema({
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
     /** @property */
-    'year' : {
+    'edition' : {
         'type' : Number
     },
     /** @property */
     'type' : {
         'type' : String,
         'required' : true,
-        'enum' : ['national league', 'world cup', 'normal'],
-        'default' : 'normal'
+        'enum' : ['national league', 'continental league', 'world cup'],
+        'default' : 'national league'
     },
     /** @property */
     'country' : {
         'type' : String
     },
-    /** @property */
-    'competitors' : [{
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'Team'
-    }],
     /** @property */
     'matches' : [{
         'type' : Schema.Types.ObjectId,
@@ -72,14 +67,15 @@ schema = new Schema({
 schema.plugin(require('mongoose-json-select'), {
     'name'          : 1,
     'picture'       : 1,
-    'year'          : 1,
-    'competitors'   : 1,
+    'edition'       : 1,
     'type'          : 1,
     'country'       : 1,
+    'defaultGroup'  : 1,
     'rounds'        : 1,
     'currentRound'  : 1,
-    'matches'       : 0,
-    'roundFinished' : 1
+    'roundFinished' : 1,
+    'active'        : 1,
+    'matches'       : 0
 });
 
 schema.index({'name' : 1, 'country' : 1}, {'unique' : true});
@@ -123,7 +119,7 @@ schema.virtual('rounds').get(function () {
 
 /**
  * @method
- * @summary Return championship rounds
+ * @summary Return championship current round
  *
  * @since 2013-05
  * @author Rafael Almeida Erthal Hermano
@@ -162,6 +158,19 @@ schema.virtual('roundFinished').get(function () {
     }).every(function (match) {
         return match.finished;
     });
+});
+
+/**
+ * @method
+ * @summary Checks if championship is active
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.virtual('active').get(function () {
+    'use strict';
+
+    return !(this.roundFinished && this.currentRound === this.rounds);
 });
 
 module.exports = mongoose.model('Championship', schema);

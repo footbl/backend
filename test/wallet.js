@@ -81,7 +81,7 @@ describe('wallet controller', function () {
     });
 
     before(function (done) {
-        otherMatchSameChampionship = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 1});
+        otherMatchSameChampionship = new Match({'guest' : guest._id, 'host' : host._id, 'date' : new Date(), 'championship' : championship._id, round : 2});
         otherMatchSameChampionship.save(done);
     });
 

@@ -33,10 +33,6 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
-    'apnsToken' : {
-        'type' : String
-    },
-    /** @property */
     'about' : {
         'type' : String
     },
@@ -62,9 +58,7 @@ schema = new Schema({
     },
     /** @property */
     'country' : {
-        'type' : String,
-        'required' : true,
-        'default' : 'BR'
+        'type' : String
     },
     /** @property */
     'type' : {
@@ -92,21 +86,6 @@ schema = new Schema({
         }
     },
     /** @property */
-    'leaderboard' : {
-        /** @property */
-        'worldwide' : {
-            'type' : Number,
-            'required' : true,
-            'default' : Infinity
-        },
-        /** @property */
-        'national' : {
-            'type' : Number,
-            'required' : true,
-            'default' : Infinity
-        }
-    },
-    /** @property */
     'createdAt' : {
         'type' : Date
     },
@@ -125,7 +104,6 @@ schema = new Schema({
 schema.plugin(require('mongoose-json-select'), {
     'email'         : 1,
     'username'      : 1,
-    'apnsToken'     : 1,
     'about'         : 1,
     'verified'      : 1,
     'password'      : 0,
@@ -133,7 +111,6 @@ schema.plugin(require('mongoose-json-select'), {
     'language'      : 1,
     'type'          : 0,
     'starred'       : 0,
-    'leaderboard'   : 1,
     'country'       : 1,
     'notifications' : 1
 });
@@ -156,81 +133,6 @@ schema.pre('save', function (next) {
         this.updatedAt = new Date();
     }
     next();
-});
-
-/**
- * @callback
- * @summary Register user in the world cup
- * All the users in the system must be beating by default in the world cup, so when the user is created the system must
- * create a wallet for the user in the world cup championship.
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.isNew) { return next(); }
-
-    var query, Championship, Wallet;
-
-    Championship = require('./championship');
-    Wallet       = require('./wallet');
-
-    query        = Championship.findOne();
-    query.where('type').equals('world cup');
-    return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(); }
-
-        var wallet;
-        wallet = new Wallet({
-            'championship' : championship._id,
-            'user'         : this._id
-        });
-
-        return wallet.save(next);
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Register user in the national league
- * All the users in the system must be beating by default in the user's country championship, so when the user is
- * created the system must create a wallet for the user in the user's country championship.
- *
- * @param next
- *
- * @since 2013-03
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.isNew) { return next(); }
-
-    var query, Championship, Wallet;
-
-    Championship = require('./championship');
-    Wallet       = require('./wallet');
-
-    query        = Championship.findOne();
-    query.where('type').equals('national league');
-    query.where('country').equals(this.country);
-    return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(); }
-
-        var wallet;
-        wallet = new Wallet({
-            'championship' : championship._id,
-            'user'         : this._id
-        });
-
-        return wallet.save(next);
-    }.bind(this));
 });
 
 /**

@@ -5,12 +5,13 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, crypto, auth, User;
+var router, nconf, crypto, geo, auth, User;
 
 router = require('express').Router();
 auth   = require('../lib/auth');
 nconf  = require('nconf');
 crypto = require('crypto');
+geo    = require('geoip-lite');
 User   = require('../models/user');
 
 /**
@@ -40,11 +41,12 @@ router.post('/users', function (request, response) {
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var user;
+    var user, geoip;
 
-    user = new User({
+    geoip = geo.lookup(request.ip);
+    user  = new User({
         'password' : request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null,
-        'country'  : request.param('country', 'BR')
+        'country'  : geoip ? geoip.country : null
     });
 
     return user.save(function (error) {

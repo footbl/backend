@@ -87,7 +87,7 @@ describe('bet', function () {
     });
 
     before(function (done) {
-        otherMatchSameChampionship = new Match({'guest' : guest._id, 'host' : host._id, 'date' : tomorrow, 'championship' : championship._id, round : 1});
+        otherMatchSameChampionship = new Match({'guest' : guest._id, 'host' : host._id, 'date' : tomorrow, 'championship' : championship._id, round : 2});
         otherMatchSameChampionship.save(done);
     });
 
@@ -100,7 +100,7 @@ describe('bet', function () {
         var yesterday;
         yesterday = new Date();
         yesterday.setDate(tomorrow.getDate() - 1);
-        yesterdayMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : yesterday, 'championship' : otherChampionship._id, round : 1});
+        yesterdayMatch = new Match({'guest' : guest._id, 'host' : host._id, 'date' : yesterday, 'championship' : otherChampionship._id, round : 2});
         yesterdayMatch.save(done);
     });
 

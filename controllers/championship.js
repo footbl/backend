@@ -5,11 +5,12 @@
  * @since 2013-03
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Championship;
+var router, nconf, Championship, Wallet;
 
 router       = require('express').Router();
 nconf        = require('nconf');
 Championship = require('../models/championship');
+Wallet       = require('../models/wallet');
 
 /**
  * @method
@@ -40,7 +41,7 @@ router.post('/championships', function (request, response) {
         'picture'     : request.param('picture'),
         'year'        : request.param('year'),
         'competitors' : request.param('competitors'),
-        'type'        : request.param('type', 'normal'),
+        'type'        : request.param('type', 'national league'),
         'country'     : request.param('country')
     });
 
@@ -157,7 +158,7 @@ router.put('/championships/:championshipId', function (request, response) {
     championship.picture     = request.param('picture');
     championship.year        = request.param('year');
     championship.competitors = request.param('competitors');
-    championship.type        = request.param('type', 'normal');
+    championship.type        = request.param('type', 'national league');
     championship.country     = request.param('country');
 
     return championship.save(function (error) {
@@ -198,6 +199,29 @@ router.delete('/championships/:championshipId', function (request, response) {
     return championship.remove(function (error) {
         if (error) { return response.send(500, error); }
         return response.send(200, championship);
+    });
+});
+
+router.get('/championships/:championshipId/ranking', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (!request.session) { return response.send(401, 'invalid token'); }
+
+    var query;
+    query = Wallet.find();
+    query.where('championship').equals(request.params.championshipId);
+    query.populate('user');
+    query.sort('-ranking');
+    return query.exec(function (error, wallets) {
+        if (error) { return response.send(500, error); }
+        return response.send(200, wallets);
     });
 });
 

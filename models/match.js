@@ -54,6 +54,10 @@ schema = new Schema({
         'required' : true
     },
     /** @property */
+    'edition' : {
+        'type' : Number
+    },
+    /** @property */
     'pot' : {
         /** @property */
         'guest' : {
@@ -112,10 +116,13 @@ schema.plugin(require('mongoose-json-select'), {
     'guest'        : 1,
     'host'         : 1,
     'round'        : 1,
+    'edition'      : 1,
     'pot'          : 1,
     'result'       : 1,
     'elapsed'      : 1
 });
+
+schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'round' : 1}, {'unique' : true});
 
 /**
  * @callback
