@@ -30,8 +30,8 @@ championships = [
     {'acronym' : 'CL', 'name' : 'Primera División', 'country' : 'Chile', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
     {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
     {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},*/
-    {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
     /*{'type' : 'continental league', 'acronym' : 'International', 'name' : 'Libertadores', 'country' : 'International', 'ttFK' : '45'},*/
+    {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
     {'type' : 'continental league', 'acronym' : 'International', 'name' : 'Champions League', 'country' : 'International', 'ttFK' : '42'},
     {'type' : 'national league', 'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'ttFK' : '113'},
     {'type' : 'national league', 'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'ttFK' : '59'},
@@ -91,7 +91,8 @@ function parseChampionships(next) {
             if (!championship) {
                 championship = new Championship({
                     'name'    : data.name,
-                    'country' : data.acronym
+                    'country' : data.acronym,
+                    'type'    : data.type
                 });
             }
             championship.edition = new Date().getFullYear();
@@ -299,9 +300,13 @@ function saveMatches(matches, next) {
             }
             match.finished = data.finished;
             match.score    = data.score;
-            return match.save(function () { next(); });
+            return match.save(function () {
+                next();
+            });
         });
     }, next);
 }
 
-async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, saveMatches, process.exit)();
+async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, saveMatches, function () {
+    setTimeout(process.exit, 5000);
+})();

@@ -146,24 +146,25 @@ schema.pre('save', function (next) {
  * @callback
  * @summary insert match in championship matches array
  *
- * @param next
- *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-schema.pre('save', function (next) {
+schema.post('save', function () {
     'use strict';
-
-    if (!this.isNew) { return next(); }
 
     var query;
     query = require('./championship').findOne();
     query.where('_id').equals(this.championship);
-    return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(new Error('championship not found')); }
-        championship.matches.push(this._id);
-        return championship.save(next);
+    query.exec(function (error, championship) {
+        if (error) { return; }
+        if (!championship) { return; }
+
+        var index;
+        index = championship.matches.indexOf(this._id);
+        if (index === -1) {
+            championship.matches.push(this._id);
+        }
+        championship.save();
     }.bind(this));
 });
 
@@ -171,22 +172,25 @@ schema.pre('save', function (next) {
  * @callback
  * @summary Remove match from championship matches array
  *
- * @param next
- *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-schema.pre('remove', function (next) {
+schema.post('remove', function () {
     'use strict';
 
     var query;
     query = require('./championship').findOne();
     query.where('_id').equals(this.championship);
     return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(new Error('championship not found')); }
-        championship.matches.splice(championship.matches.indexOf(this._id), 1);
-        return championship.save(next);
+        if (error) { return; }
+        if (!championship) { return; }
+
+        var index;
+        index = championship.matches.indexOf(this._id);
+        if (index > -1) {
+            championship.matches.splice(index, 1);
+        }
+        championship.save();
     }.bind(this));
 });
 
