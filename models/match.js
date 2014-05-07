@@ -144,58 +144,6 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary insert match in championship matches array
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.post('save', function () {
-    'use strict';
-
-    var query;
-    query = require('./championship').findOne();
-    query.where('_id').equals(this.championship);
-    query.exec(function (error, championship) {
-        if (error) { return; }
-        if (!championship) { return; }
-
-        var index;
-        index = championship.matches.indexOf(this._id);
-        if (index === -1) {
-            championship.matches.push(this._id);
-        }
-        championship.save();
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Remove match from championship matches array
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.post('remove', function () {
-    'use strict';
-
-    var query;
-    query = require('./championship').findOne();
-    query.where('_id').equals(this.championship);
-    return query.exec(function (error, championship) {
-        if (error) { return; }
-        if (!championship) { return; }
-
-        var index;
-        index = championship.matches.indexOf(this._id);
-        if (index > -1) {
-            championship.matches.splice(index, 1);
-        }
-        championship.save();
-    }.bind(this));
-});
-
-/**
- * @callback
  * @summary Updates user wallets
  * When a match is finished all bets of that match should be updated, this procedure will update the bet reward if the
  * bet was right with the match reward times the user bid, if the bet was wrong, the reward will be 0.

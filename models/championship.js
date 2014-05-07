@@ -44,11 +44,6 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
-    'matches' : [{
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'Match'
-    }],
-    /** @property */
     'createdAt' : {
         'type' : Date
     },
@@ -74,8 +69,7 @@ schema.plugin(require('mongoose-json-select'), {
     'rounds'        : 1,
     'currentRound'  : 1,
     'roundFinished' : 1,
-    'active'        : 1,
-    'matches'       : 0
+    'active'        : 1
 });
 
 schema.index({'name' : 1, 'country' : 1}, {'unique' : true});
@@ -101,6 +95,27 @@ schema.pre('save', function (next) {
 });
 
 /**
+ * @callback
+ * @summary Setups createdAt and updatedAt
+ *
+ * @param next
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('init', function (next, data) {
+    'use strict';
+
+    var query;
+    query = require('./match').find();
+    query.where('championship').equals(data._id);
+    query.exec(function  (error, matches) {
+        this.matches = matches;
+        next();
+    }.bind(this));
+});
+
+/**
  * @method
  * @summary Return championship rounds
  * To calculate the number of round in a championship, this method should return the highest round value in the matches
@@ -112,9 +127,12 @@ schema.pre('save', function (next) {
 schema.virtual('rounds').get(function () {
     'use strict';
 
-    if (!this.matches || this.matches.length === 0) { return 1; }
+    var matches;
+    matches = this.matches || [];
 
-    return this.matches.map(function (match) {
+    if (matches.length === 0) { return 1; }
+
+    return matches.map(function (match) {
         return match.round;
     }).sort().pop();
 });
@@ -131,10 +149,12 @@ schema.virtual('rounds').get(function () {
 schema.virtual('currentRound').get(function () {
     'use strict';
 
-    if (this.matches.length === 0) { return 1; }
+    var matches, lastMatch;
+    matches = this.matches || [];
 
-    var lastMatch;
-    lastMatch = this.matches.filter(function (match) {
+    if (matches.length === 0) { return 1; }
+
+    lastMatch = matches.filter(function (match) {
         return match.finished;
     }).map(function (match) {
         return match.round;
@@ -156,10 +176,13 @@ schema.virtual('currentRound').get(function () {
 schema.virtual('roundFinished').get(function () {
     'use strict';
 
-    var currentRound;
+    var matches, currentRound;
+    matches = this.matches || [];
     currentRound = this.currentRound;
 
-    return this.matches.filter(function (match) {
+    if (matches.length === 0) { return 1; }
+
+    return matches.filter(function (match) {
         return match.round === currentRound;
     }).every(function (match) {
         return match.finished;
