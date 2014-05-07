@@ -109,6 +109,7 @@ schema.pre('init', function (next, data) {
     var query;
     query = require('./match').find();
     query.where('championship').equals(data._id);
+    query.limit(500);
     query.exec(function  (error, matches) {
         this.matches = matches;
         next();
