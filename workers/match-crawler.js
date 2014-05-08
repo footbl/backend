@@ -88,7 +88,8 @@ function parseChampionships(next) {
         }, {'$set' : {
             'name' : data.name,
             'country' : data.acronym,
-            'type' : data.type
+            'type' : data.type,
+            'edition' : new Date().getFullYear()
         }}, {'upsert' : true}, function (error, championship) {
             if (error) {
                 next(error);
