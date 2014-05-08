@@ -82,25 +82,21 @@ function parseDate(string) {
  */
 function parseChampionships(next) {
     async.map(championships, function (data, next) {
-        var query;
-        query = Championship.findOne();
-        query.where('name').equals(data.name);
-        query.where('country').equals(data.acronym);
-        query.exec(function (error, championship) {
-            if (error) { return next(error); }
-            if (!championship) {
-                championship = new Championship({
-                    'name'    : data.name,
-                    'country' : data.acronym,
-                    'type'    : data.type
-                });
-            }
-            championship.edition = new Date().getFullYear();
-            return championship.save(function (error) {
-                if (error) { return next(error); }
+        Championship.findOneAndUpdate({
+            'name' : data.name,
+            'country' : data.acronym
+        }, {'set' : {
+            'name' : data.name,
+            'country' : data.acronym
+        }}, {'upsert' : true}, function (error, championship) {
+            if (error) {
+                next(error);
+            } else if (!championship) {
+                next(new Error('championship not found'));
+            } else {
                 data._id = championship._id;
-                return next(null, data);
-            });
+                next(null, data);
+            }
         });
     }, next);
 }
@@ -119,9 +115,8 @@ function parseRounds(championships, next) {
     async.map(championships, function (championship, next) {
         request('http://football-data.enetpulse.com/standings.php?ttFK=' + championship.ttFK, function (error, response, body) {
             var $, iterable, scanType;
-            $      = cheerio.load(body);
+            $ = cheerio.load(body);
             championship.rounds = [];
-
             $('select').each(function () {
                 var select = $(this);
                 if (select.attr('onchange').indexOf('round') > -1) {
@@ -133,7 +128,6 @@ function parseRounds(championships, next) {
                     iterable = select;
                 }
             });
-
             if (iterable) {
                 iterable.children().each(function () {
                     var row = $(this);
@@ -233,17 +227,15 @@ function parseMatches(records, next) {
  */
 function retrieveHost(matches, next) {
     async.map(matches, function (match, next) {
-        var query;
-        query = Team.findOne();
-        query.where('name').equals(match.host);
-        query.exec(function (error, team) {
-            if (error) { return next(error); }
-            if (!team) {
-                team = new Team({'name' : match.host});
-                team.save();
+        Team.findOneAndUpdate({'name' : match.host}, {'set' : {'name' : match.host}}, {'upsert' : true}, function (error, team) {
+            if (error) {
+                next(error);
+            } else if (!team) {
+                next(new Error('team not found'));
+            } else {
+                match.host = team._id;
+                next(null, match);
             }
-            match.host = team._id;
-            return next(null, match);
         });
     }, next.bind({}));
 }
@@ -260,17 +252,15 @@ function retrieveHost(matches, next) {
  */
 function retrieveGuest(matches, next) {
     async.map(matches, function (match, next) {
-        var query;
-        query = Team.findOne();
-        query.where('name').equals(match.guest);
-        query.exec(function (error, team) {
-            if (error) { return next(error); }
-            if (!team) {
-                team = new Team({'name' : match.guest});
-                team.save();
+        Team.findOneAndUpdate({'name' : match.guest}, {'set' : {'name' : match.guest}}, {'upsert' : true}, function (error, team) {
+            if (error) {
+                next(error);
+            } else if (!team) {
+                next(new Error('team not found'));
+            } else {
+                match.guest = team._id;
+                next(null, match);
             }
-            match.guest = team._id;
-            return next(null, match);
         });
     }, next.bind({}));
 }
@@ -287,26 +277,20 @@ function retrieveGuest(matches, next) {
  */
 function saveMatches(matches, next) {
     async.each(matches, function (data, next) {
-        var query;
-        query = Match.findOne();
-        query.where('guest').equals(data.guest);
-        query.where('host').equals(data.host);
-        query.where('round').equals(data.round);
-        query.where('championship').equals(data.championship);
-        query.exec(function (error, match) {
-            if (error) { return next(error); }
-            if (!match) {
-                match = new Match(data);
-            }
-            match.finished = data.finished;
-            match.score    = data.score;
-            return match.save(function () {
-                next();
-            });
-        });
+        Match.findOneAndUpdate({
+            'guest' : data.guest,
+            'host' : data.host,
+            'round' : data.round,
+            'championship' : data.championship
+        }, {'set' : {
+            'guest' : data.guest,
+            'host' : data.host,
+            'round' : data.round,
+            'championship' : data.championship,
+            'finished' : data.finished,
+            'score' : data.score
+        }}, {'upsert' : true}, next);
     }, next);
 }
 
-async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, saveMatches, function () {
-    setTimeout(process.exit, 5000);
-})();
+async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, saveMatches, process.exit)();
