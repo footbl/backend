@@ -87,7 +87,8 @@ function parseChampionships(next) {
             'country' : data.acronym
         }, {'$set' : {
             'name' : data.name,
-            'country' : data.acronym
+            'country' : data.acronym,
+            'type' : data.type
         }}, {'upsert' : true}, function (error, championship) {
             if (error) {
                 next(error);
