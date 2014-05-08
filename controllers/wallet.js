@@ -128,7 +128,7 @@ router.get('/wallets/:walletId', function (request, response) {
     var wallet;
     wallet = request.wallet;
 
-    //if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     response.header('Last-Modified', wallet.updatedAt);
     return response.send(200, wallet);
