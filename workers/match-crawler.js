@@ -288,6 +288,7 @@ function saveMatches(matches, next) {
             'host' : data.host,
             'round' : data.round,
             'championship' : data.championship,
+            'date' : data.date,
             'finished' : data.finished,
             'result' : data.score
         }, {'upsert' : true}, next);
