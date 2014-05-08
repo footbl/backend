@@ -149,10 +149,12 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
+    if (!this.isNew) { return next(); }
+
     var query;
     query = require('./championship').findOne();
     query.where('type').equals('world cup');
-    query.exec(function (error, championship) {
+    return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
         if (!championship.active) { return next(); }
@@ -180,10 +182,12 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
+    if (!this.isNew) { return next(); }
+
     var query;
     query = require('./championship').findOne();
     query.where('country').equals(this.country);
-    query.exec(function (error, championship) {
+    return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
         if (!championship.active) { return next(); }
@@ -211,10 +215,12 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
+    if (!this.isNew) { return next(); }
+
     var query;
     query = require('./championship').findOne();
     query.where('type').equals('continental league');
-    query.exec(function (error, championship) {
+    return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
         if (!championship.active) { return next(); }
