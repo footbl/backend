@@ -85,7 +85,7 @@ function parseChampionships(next) {
         Championship.findOneAndUpdate({
             'name' : data.name,
             'country' : data.acronym
-        }, {'set' : {
+        }, {'$set' : {
             'name' : data.name,
             'country' : data.acronym
         }}, {'upsert' : true}, function (error, championship) {
@@ -227,7 +227,7 @@ function parseMatches(records, next) {
  */
 function retrieveHost(matches, next) {
     async.map(matches, function (match, next) {
-        Team.findOneAndUpdate({'name' : match.host}, {'set' : {'name' : match.host}}, {'upsert' : true}, function (error, team) {
+        Team.findOneAndUpdate({'name' : match.host}, {'$set' : {'name' : match.host}}, {'upsert' : true}, function (error, team) {
             if (error) {
                 next(error);
             } else if (!team) {
@@ -252,7 +252,7 @@ function retrieveHost(matches, next) {
  */
 function retrieveGuest(matches, next) {
     async.map(matches, function (match, next) {
-        Team.findOneAndUpdate({'name' : match.guest}, {'set' : {'name' : match.guest}}, {'upsert' : true}, function (error, team) {
+        Team.findOneAndUpdate({'name' : match.guest}, {'$set' : {'name' : match.guest}}, {'upsert' : true}, function (error, team) {
             if (error) {
                 next(error);
             } else if (!team) {
@@ -282,7 +282,7 @@ function saveMatches(matches, next) {
             'host' : data.host,
             'round' : data.round,
             'championship' : data.championship
-        }, {'set' : {
+        }, {'$set' : {
             'guest' : data.guest,
             'host' : data.host,
             'round' : data.round,
