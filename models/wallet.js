@@ -378,8 +378,6 @@ schema.virtual('funds').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
-        return bet.match.edition === this.championship.edition;
-    }.bind(this)).filter(function (bet) {
         return bet.date > this.lastDate;
     }.bind(this)).map(function (bet) {
         return (bet.finished ? bet.reward : 0) - bet.bid;
@@ -401,8 +399,6 @@ schema.virtual('stake').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
-        return bet.match.edition === this.championship.edition;
-    }.bind(this)).filter(function (bet) {
         return bet.date > this.lastDate;
     }.bind(this)).filter(function (bet) {
         return !bet.finished;
@@ -426,8 +422,6 @@ schema.virtual('toReturn').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
-        return bet.match.edition === this.championship.edition;
-    }.bind(this)).filter(function (bet) {
         return bet.date > this.lastDate;
     }.bind(this)).filter(function (bet) {
         return !bet.finished;
