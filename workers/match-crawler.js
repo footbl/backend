@@ -31,7 +31,7 @@ championships = [
     {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
     {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},*/
     /*{'type' : 'continental league', 'acronym' : 'International', 'name' : 'Libertadores', 'country' : 'International', 'ttFK' : '45'},*/
-    {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
+    /*{'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
     {'type' : 'continental league', 'acronym' : 'International', 'name' : 'Champions League', 'country' : 'International', 'ttFK' : '42'},
     {'type' : 'national league', 'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'ttFK' : '113'},
     {'type' : 'national league', 'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'ttFK' : '59'},
@@ -57,7 +57,7 @@ championships = [
     {'type' : 'national league', 'acronym' : 'SE', 'name' : 'Allsvenskan', 'country' : 'Sweden', 'ttFK' : '67'},
     {'type' : 'national league', 'acronym' : 'CH', 'name' : 'Super League', 'country' : 'Switzerland', 'ttFK' : '69'},
     {'type' : 'national league', 'acronym' : 'TR', 'name' : 'Super Lig', 'country' : 'Turkey', 'ttFK' : '71'},
-    {'type' : 'national league', 'acronym' : 'UA', 'name' : 'Premyer Liga', 'country' : 'Ukraine', 'ttFK' : '441'},
+    {'type' : 'national league', 'acronym' : 'UA', 'name' : 'Premyer Liga', 'country' : 'Ukraine', 'ttFK' : '441'},*/
     {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'}
 ];
 
@@ -277,19 +277,19 @@ function retrieveGuest(matches, next) {
  */
 function saveMatches(matches, next) {
     async.each(matches, function (data, next) {
-        Match.findOneAndUpdate({
+        Match.update({
             'guest' : data.guest,
             'host' : data.host,
             'round' : data.round,
             'championship' : data.championship
-        }, {'$set' : {
+        }, {
             'guest' : data.guest,
             'host' : data.host,
             'round' : data.round,
             'championship' : data.championship,
             'finished' : data.finished,
-            'score' : data.score
-        }}, {'upsert' : true}, next);
+            'result' : data.score
+        }, {'upsert' : true}, next);
     }, next);
 }
 
