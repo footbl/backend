@@ -33,6 +33,10 @@ schema = new Schema({
         'type' : String
     },
     /** @property */
+    'facebookId' : {
+        'type' : String
+    },
+    /** @property */
     'about' : {
         'type' : String
     },

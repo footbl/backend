@@ -66,6 +66,7 @@ router.post('/users', function (request, response) {
  * @param request.emails
  * @param request.usernames
  * @param request.ids
+ * @param request.facebookIds
  * @param request.page
  * @param response
  *
@@ -93,9 +94,10 @@ router.get('/users', function (request, response) {
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
-    if (request.param('emails'))    { query.where('email').in(request.param('emails')); }
-    if (request.param('usernames')) { query.where('username').in(request.param('usernames')); }
-    if (request.param('ids'))       { query.where('_id').in(request.param('ids')); }
+    if (request.param('emails'))      { query.where('email').in(request.param('emails')); }
+    if (request.param('usernames'))   { query.where('username').in(request.param('usernames')); }
+    if (request.param('facebookIds')) { query.where('facebookId').in(request.param('facebookIds')); }
+    if (request.param('ids'))         { query.where('_id').in(request.param('ids')); }
 
     query.skip(page);
     query.limit(pageSize);
@@ -154,6 +156,7 @@ router.get('/users/:userId', function (request, response) {
  * @param request.country
  * @param request.notifications
  * @param request.apnsToken
+ * @param request.facebookId
  * @param response
  *
  * @returns 200 user
@@ -187,6 +190,7 @@ router.put('/users/:userId', function (request, response) {
     user.country       = request.param('country', 'BR');
     user.notifications = request.param('notifications');
     user.apnsToken     = request.param('apnsToken');
+    user.facebookId    = request.param('facebookId');
 
     return user.save(function (error) {
         if (error) { return response.send(500, error); }
