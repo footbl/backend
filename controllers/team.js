@@ -5,11 +5,12 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Team;
+var router, nconf, errorParser, Team;
 
-router = require('express').Router();
-nconf  = require('nconf');
-Team   = require('../models/team');
+router      = require('express').Router();
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+Team        = require('../models/team');
 
 /**
  * @method
@@ -47,7 +48,7 @@ router.post('/teams', function (request, response) {
     });
 
     return team.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/teams/' + team._id);
         return response.send(201, team);
     });
@@ -87,7 +88,7 @@ router.get('/teams', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, teams) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, teams);
     });
 });
@@ -162,7 +163,7 @@ router.put('/teams/:teamId', function (request, response) {
     team.picture = request.param('picture');
 
     return team.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, team);
     });
 });
@@ -198,7 +199,7 @@ router.delete('/teams/:teamId', function (request, response) {
     team = request.team;
 
     return team.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, team);
     });
 });

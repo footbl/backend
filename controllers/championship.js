@@ -5,10 +5,11 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Championship, Wallet;
+var router, nconf, errorParser, Championship, Wallet;
 
 router       = require('express').Router();
 nconf        = require('nconf');
+errorParser  = require('../lib/error-parser');
 Championship = require('../models/championship');
 Wallet       = require('../models/wallet');
 
@@ -49,7 +50,7 @@ router.post('/championships', function (request, response) {
     });
 
     return championship.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/championships/' + championship._id);
         return response.send(201, championship);
     });
@@ -91,7 +92,7 @@ router.get('/championships', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, championships) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, championships);
     });
 });
@@ -171,7 +172,7 @@ router.put('/championships/:championshipId', function (request, response) {
     championship.country     = request.param('country');
 
     return championship.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, championship);
     });
 });
@@ -207,7 +208,7 @@ router.delete('/championships/:championshipId', function (request, response) {
     championship = request.championship;
 
     return championship.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, championship);
     });
 });
@@ -245,7 +246,7 @@ router.get('/championships/:championshipId/ranking', function (request, response
     query.populate('user');
     query.sort('-ranking');
     return query.exec(function (error, wallets) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallets);
     });
 });

@@ -5,11 +5,12 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Wallet;
+var router, nconf, errorParser, Wallet;
 
-router = require('express').Router();
-nconf  = require('nconf');
-Wallet = require('../models/wallet');
+router      = require('express').Router();
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+Wallet      = require('../models/wallet');
 
 /**
  * @method
@@ -53,7 +54,7 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
     });
 
     return wallet.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
 
         var bet;
         bet = wallet.bets.pop();
@@ -100,7 +101,7 @@ router.get('/championships/:championshipId/matches/:matchId/bets', function (req
     query.populate('user');
     query.populate('bets.match');
     return query.exec(function (error, wallets) {
-        if (error) { response.send(500, error); }
+        if (error) { response.send(500, errorParser(error)); }
 
         var bets;
         bets = wallets.map(function (wallet) {
@@ -208,7 +209,7 @@ router.put('/championships/:championshipId/matches/:matchId/bets/:betId', functi
     bet.bid    = request.param('bid');
 
     return wallet.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, bet);
     });
 });
@@ -248,9 +249,9 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     if (!bet) { return response.send(404, 'bet not found'); }
 
     return bet.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return wallet.save(function (error) {
-            if (error) { return response.send(500, error); }
+            if (error) { return response.send(500, errorParser(error)); }
             return response.send(200, bet);
         });
     });

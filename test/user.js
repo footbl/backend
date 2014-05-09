@@ -119,6 +119,9 @@ describe('user controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('password is required');
+            });
             req.end(done);
         });
 
@@ -338,6 +341,9 @@ describe('user controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({username : 'test'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('password is required');
+            });
             req.end(done);
         });
 
@@ -400,6 +406,9 @@ describe('user controller', function () {
                 req = req.set('auth-token', auth.token(user));
                 req = req.send({user : otherUser._id});
                 req = req.expect(500);
+                req = req.expect(function (response) {
+                    response.body[0].should.be.equal('duplicated');
+                });
                 req.end(done);
             });
         });

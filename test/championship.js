@@ -79,6 +79,9 @@ describe('championship controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('name is required');
+            });
             req.end(done);
         });
 
@@ -239,6 +242,9 @@ describe('championship controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('name is required');
+            });
             req.end(done);
         });
 

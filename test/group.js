@@ -145,6 +145,9 @@ describe('group controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({championship : 'invalid', name : 'test'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('championship is required');
+            });
             req.end(done);
         });
 
@@ -159,6 +162,9 @@ describe('group controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({name : 'test'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('championship is required');
+            });
             req.end(done);
         });
 
@@ -173,6 +179,9 @@ describe('group controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({championship : championship._id});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('name is required');
+            });
             req.end(done);
         });
 
@@ -354,6 +363,9 @@ describe('group controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({freeToEdit : false});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('name is required');
+            });
             req.end(done);
         });
 
@@ -368,6 +380,9 @@ describe('group controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({name : 'name'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('freeToEdit is required');
+            });
             req.end(done);
         });
 

@@ -5,12 +5,13 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, iap, Wallet;
+var router, nconf, errorParser, iap, Wallet;
 
-router = require('express').Router();
-nconf  = require('nconf');
-iap    = require('iap');
-Wallet = require('../models/wallet');
+router      = require('express').Router();
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+iap         = require('iap');
+Wallet      = require('../models/wallet');
 
 /**
  * @method
@@ -51,7 +52,7 @@ router.post('/wallets', function (request, response) {
     });
 
     return wallet.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/wallets/' + wallet._id);
         return response.send(201, wallet);
     });
@@ -96,7 +97,7 @@ router.get('/wallets', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, wallets) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallets);
     });
 });
@@ -172,7 +173,7 @@ router.put('/wallets/:walletId', function (request, response) {
     wallet.priority      = request.param('priority');
 
     return wallet.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallet);
     });
 });
@@ -216,8 +217,8 @@ router.post('/wallets/:walletId/recharge', function (request, response) {
         'productId'   : request.param('productId'),
         'packageName' : request.param('packageName')
     }, function (error, response) {
-        if (error) { return response.send(500, error); }
-        if (!response.receipt) { return response.send(500, new Error('invalid purchase')); }
+        if (error) { return response.send(500, errorParser(error)); }
+        if (!response.receipt) { return response.send(500, ['invalid purchase']); }
 
         wallet.iaps.push({
             'platform'    : request.param('platform'),
@@ -228,7 +229,7 @@ router.post('/wallets/:walletId/recharge', function (request, response) {
         });
 
         return wallet.save(function (error) {
-            if (error) { return response.send(500, error); }
+            if (error) { return response.send(500, errorParser(error)); }
             return response.send(200, wallet);
         });
     });
@@ -265,7 +266,7 @@ router.delete('/wallets/:walletId', function (request, response) {
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     return wallet.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallet);
     });
 });

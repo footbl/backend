@@ -129,6 +129,9 @@ describe('comment controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({message : 'good match!'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('date is required');
+            });
             req.end(done);
         });
 
@@ -143,6 +146,9 @@ describe('comment controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date()});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('message is required');
+            });
             req.end(done);
         });
 
@@ -381,6 +387,9 @@ describe('comment controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({message : 'good match edited!'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('date is required');
+            });
             req.end(done);
         });
 
@@ -395,6 +404,9 @@ describe('comment controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date()});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('message is required');
+            });
             req.end(done);
         });
 

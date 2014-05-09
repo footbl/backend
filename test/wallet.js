@@ -114,6 +114,9 @@ describe('wallet controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('championship is required');
+            });
             req.end(done);
         });
 
@@ -151,6 +154,9 @@ describe('wallet controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({championship : championship._id});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('duplicated');
+            });
             req.end(done);
         });
     });
@@ -316,6 +322,9 @@ describe('wallet controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('active is required');
+            });
             req.end(done);
         });
 

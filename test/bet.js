@@ -153,6 +153,9 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({result : 'draw', bid : 50});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('date is required');
+            });
             req.end(done);
         });
 
@@ -167,6 +170,9 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), result : 'draw', bid : 50});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('match already started');
+            });
             req.end(done);
         });
 
@@ -181,6 +187,9 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), bid : 50});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('result is required');
+            });
             req.end(done);
         });
 
@@ -195,6 +204,9 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), result : 'invalid', bid : 50});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('invalid result');
+            });
             req.end(done);
         });
 
@@ -209,6 +221,9 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), result : 'draw'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('bid is required');
+            });
             req.end(done);
         });
 
@@ -243,6 +258,9 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({date : new Date(), result : 'draw', bid : 70});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('insufficient funds');
+            });
             req.end(done);
         });
 
@@ -435,6 +453,9 @@ describe('bet', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({result : 'host', bid : 5});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('date is required');
+            });
             req.end(done);
         });
 
@@ -455,6 +476,9 @@ describe('bet', function () {
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.send({date : new Date(), result : 'host', bid : 15});
                 req = req.expect(500);
+                req = req.expect(function (response) {
+                    response.body[0].should.be.equal('match already started');
+                });
                 req.end(done);
             });
 
@@ -475,6 +499,9 @@ describe('bet', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({date : new Date(), bid : 5});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('result is required');
+            });
             req.end(done);
         });
 
@@ -489,6 +516,9 @@ describe('bet', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({date : new Date(), result : 'invalid', bid : 5});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('invalid result');
+            });
             req.end(done);
         });
 
@@ -503,6 +533,9 @@ describe('bet', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({date : new Date(), result : 'host'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('bid is required');
+            });
             req.end(done);
         });
 
@@ -517,6 +550,9 @@ describe('bet', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({date : new Date(), result : 'host', bid : 110});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('insufficient funds');
+            });
             req.end(done);
         });
 
@@ -634,6 +670,9 @@ describe('bet', function () {
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.set('auth-token', auth.token(user));
                 req = req.expect(500);
+                req = req.expect(function (response) {
+                    response.body[0].should.be.equal('match already started');
+                });
                 req.end(done);
             });
 

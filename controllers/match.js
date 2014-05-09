@@ -5,11 +5,12 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Match;
+var router, nconf, errorParser, Match;
 
-router = require('express').Router();
-nconf  = require('nconf');
-Match  = require('../models/match');
+router      = require('express').Router();
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+Match       = require('../models/match');
 
 /**
  * @method
@@ -51,7 +52,7 @@ router.post('/championships/:championshipId/matches', function (request, respons
     });
 
     return match.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + match._id);
         return response.send(201, match);
     });
@@ -97,7 +98,7 @@ router.get('/championships/:championshipId/matches', function (request, response
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, matches) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, matches);
     });
 });
@@ -168,7 +169,7 @@ router.put('/championships/:championshipId/matches/:matchId/finish', function (r
     match = request.match;
     match.finished = true;
     return match.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, match);
     });
 });
@@ -213,7 +214,7 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     match.round  = request.param('round');
 
     return match.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, match);
     });
 });
@@ -250,7 +251,7 @@ router.delete('/championships/:championshipId/matches/:matchId', function (reque
     match = request.match;
 
     return match.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, match);
     });
 });

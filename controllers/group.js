@@ -5,11 +5,12 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Group;
+var router, nconf, errorParser, Group;
 
-router = require('express').Router();
-nconf  = require('nconf');
-Group  = require('../models/group');
+router      = require('express').Router();
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+Group       = require('../models/group');
 
 /**
  * @method
@@ -49,7 +50,7 @@ router.post('/groups', function (request, response) {
     });
 
     return group.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/groups/' + group._id);
         return response.send(201, group);
     });
@@ -92,7 +93,7 @@ router.get('/groups', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, groups) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
 
         groups = groups.sort(function (a, b) {
             var dateA, dateB;
@@ -186,7 +187,7 @@ router.put('/groups/:groupId', function (request, response) {
     }
 
     return group.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, group);
     });
 });
@@ -224,7 +225,7 @@ router.delete('/groups/:groupId', function (request, response) {
     if (request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     return group.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, group);
     });
 });
@@ -265,7 +266,7 @@ router.post('/groups/:groupId/members', function (request, response) {
     group.members.push({user : request.param('user')});
 
     return group.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(201, group.members.pop());
     });
 });
@@ -384,7 +385,7 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
 
     member.remove();
     return group.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, member);
     });
 });

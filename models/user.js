@@ -264,7 +264,7 @@ schema.pre('save', function (next) {
         }.bind(this));
     }.bind(this));
 
-    next(repeated ? new Error('repeated starred') : null);
+    next(repeated ? new Error('duplicated') : null);
 });
 
 module.exports = mongoose.model('User', schema);

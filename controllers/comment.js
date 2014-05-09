@@ -5,11 +5,12 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, Comment;
+var router, nconf, errorParser, Comment;
 
-router  = require('express').Router();
-nconf   = require('nconf');
-Comment = require('../models/comment');
+router      = require('express').Router();
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+Comment     = require('../models/comment');
 
 /**
  * @method
@@ -49,7 +50,7 @@ router.post('/championships/:championshipId/matches/:matchId/comments', function
     });
 
     return comment.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + request.param.matchId + '/comments/' + comment._id);
         return response.send(201, comment);
     });
@@ -102,7 +103,7 @@ router.get('/championships/:championshipId/matches/:matchId/comments', function 
     }
 
     return query.exec(function (error, comments) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, comments);
     });
 });
@@ -178,7 +179,7 @@ router.put('/championships/:championshipId/matches/:matchId/comments/:commentId'
     comment.message = request.param('message');
 
     return comment.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, comment);
     });
 });
@@ -215,7 +216,7 @@ router.delete('/championships/:championshipId/matches/:matchId/comments/:comment
     if (!request.session || request.session._id.toString() !== comment.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     return comment.remove(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, comment);
     });
 });

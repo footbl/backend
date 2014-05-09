@@ -5,14 +5,15 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, crypto, geo, auth, User;
+var router, nconf, errorParser, crypto, geo, auth, User;
 
-router = require('express').Router();
-auth   = require('../lib/auth');
-nconf  = require('nconf');
-crypto = require('crypto');
-geo    = require('geoip-lite');
-User   = require('../models/user');
+router      = require('express').Router();
+auth        = require('../lib/auth');
+nconf       = require('nconf');
+errorParser = require('../lib/error-parser');
+crypto      = require('crypto');
+geo         = require('geoip-lite');
+User        = require('../models/user');
 
 /**
  * @method
@@ -49,7 +50,7 @@ router.post('/users', function (request, response) {
     });
 
     return user.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/users/' + user._id);
         return response.send(201, user);
     });
@@ -102,7 +103,7 @@ router.get('/users', function (request, response) {
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, users) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, users);
     });
 });
@@ -193,7 +194,7 @@ router.put('/users/:userId', function (request, response) {
     user.facebookId    = request.param('facebookId');
 
     return user.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, user);
     });
 });
@@ -241,7 +242,7 @@ router.get('/users/me/session', function (request, response) {
         query.where('_id').equals(_id);
     }
     return query.exec(function (error, user) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         if (!user) { return response.send(403, 'invalid username or password'); }
         return response.send(200, {token : auth.token(user), _id : user._id});
     });
@@ -279,7 +280,7 @@ router.post('/users/:userId/starred', function (request, response) {
     user.starred.push(request.param('user'));
 
     return user.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(201, user);
     });
 });
@@ -355,7 +356,7 @@ router.delete('/users/:userId/starred/:starredId', function (request, response) 
 
     starred.remove();
     return user.save(function (error) {
-        if (error) { return response.send(500, error); }
+        if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, user);
     });
 });

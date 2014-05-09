@@ -80,6 +80,9 @@ describe('team controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({picture : 'test'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('name is required');
+            });
             req.end(done);
         });
 
@@ -244,6 +247,9 @@ describe('team controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({picture : 'test'});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('name is required');
+            });
             req.end(done);
         });
 

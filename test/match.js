@@ -130,6 +130,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : tomorrow, round : 1});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('invalid championship');
+            });
             req.end(done);
         });
 
@@ -144,6 +147,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({host : host._id, date : tomorrow, round : 1});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('guest is required');
+            });
             req.end(done);
         });
 
@@ -158,6 +164,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, date : tomorrow, round : 1});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('host is required');
+            });
             req.end(done);
         });
 
@@ -172,6 +181,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : tomorrow});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('round is required');
+            });
             req.end(done);
         });
 
@@ -488,6 +500,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, round : 1});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('date is required');
+            });
             req.end(done);
         });
 
@@ -502,6 +517,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({host : host._id, date : new Date(), round : 1});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('guest is required');
+            });
             req.end(done);
         });
 
@@ -516,6 +534,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, date : new Date(), round : 1});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('host is required');
+            });
             req.end(done);
         });
 
@@ -530,6 +551,9 @@ describe('match controller', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
             req = req.expect(500);
+            req = req.expect(function (response) {
+                response.body[0].should.be.equal('round is required');
+            });
             req.end(done);
         });
 
