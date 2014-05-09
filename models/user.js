@@ -73,6 +73,10 @@ schema = new Schema({
         'ref' : 'User'
     }],
     /** @property */
+    'apnsToken' : {
+        'type' : String
+    },
+    /** @property */
     'notifications' : {
         /** @property */
         'newGroups' : {

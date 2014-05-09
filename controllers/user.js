@@ -153,6 +153,7 @@ router.get('/users/:userId', function (request, response) {
  * @param request.language
  * @param request.country
  * @param request.notifications
+ * @param request.apnsToken
  * @param response
  *
  * @returns 200 user
@@ -185,6 +186,7 @@ router.put('/users/:userId', function (request, response) {
     user.language      = request.param('language');
     user.country       = request.param('country', 'BR');
     user.notifications = request.param('notifications');
+    user.apnsToken     = request.param('apnsToken');
 
     return user.save(function (error) {
         if (error) { return response.send(500, error); }
