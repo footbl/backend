@@ -240,11 +240,16 @@ router.get('/championships/:championshipId/ranking', function (request, response
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
-    var query;
-    query = Wallet.find();
+    var query, page, pageSize;
+    query    = Wallet.find();
+    pageSize = nconf.get('PAGE_SIZE');
+    page     = request.param('page', 0) * pageSize;
+
     query.where('championship').equals(request.params.championshipId);
     query.populate('user');
     query.sort('-ranking');
+    query.skip(page);
+    query.limit(pageSize);
     return query.exec(function (error, wallets) {
         if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallets);
