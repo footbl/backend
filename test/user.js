@@ -356,13 +356,57 @@ describe('user controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({username : 'test', password : '1234'});
+            req = req.send({username : 'test', email : 'teste@teste.com', facebookId : '1234', password : '1234'});
             req = req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('_id');
                 response.body.should.have.property('username').be.equal('test');
             });
             req.end(done);
+        });
+
+        describe('with created user', function () {
+            it('should raise error with repeated username', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.put('/users/' + otherUser._id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(otherUser));
+                req = req.send({username : 'test', password : '1234'});
+                req = req.expect(500);
+                req.end(done);
+            });
+
+            it('should raise error with repeated email', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.put('/users/' + otherUser._id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(otherUser));
+                req = req.send({email : 'teste@teste.com', password : '1234'});
+                req = req.expect(500);
+                req.end(done);
+            });
+
+            it('should raise error with repeated facebookId', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.put('/users/' + otherUser._id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(otherUser));
+                req = req.send({facebookId : '1234', password : '1234'});
+                req = req.expect(500);
+                req.end(done);
+            });
         });
     });
 

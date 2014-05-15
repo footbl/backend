@@ -26,15 +26,21 @@ schema = new Schema({
     /** @property */
     'email' : {
         'type' : String,
-        'match' : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+        'match' : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+        'unique' : true,
+        'sparse' : true
     },
     /** @property */
     'username' : {
-        'type' : String
+        'type' : String,
+        'unique' : true,
+        'sparse' : true
     },
     /** @property */
     'facebookId' : {
-        'type' : String
+        'type' : String,
+        'unique' : true,
+        'sparse' : true
     },
     /** @property */
     'about' : {
