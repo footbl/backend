@@ -23,8 +23,10 @@ mongoose.connect(nconf.get('MONGOHQ_URL'));
 
 Championship.find(function (error, championships) {
     async.each(championships, function (championship, next) {
-        Wallet.find({'championship' : championship._id}, function (error, wallets) {
-            async.sortBy(wallets, function (wallet, next) {
+        Wallet.find({'championship' : championship._id}).populate('user').exec(function (error, wallets) {
+            async.sortBy(wallets.filter(function (wallet) {
+                return wallet.user.username || wallet.user.facebookId || wallet.user.email;
+            }), function (wallet, next) {
                 next(error, -1 * wallet.funds);
             }, function (error, wallets) {
                 wallets.forEach(function (wallet, index) {

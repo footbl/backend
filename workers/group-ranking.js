@@ -24,6 +24,7 @@ mongoose.connect(nconf.get('MONGOHQ_URL'));
 var query;
 query = Group.find();
 query.populate('championship');
+query.populate('members.user');
 query.exec(function (error, groups) {
     async.each(groups, function (group, next) {
         var round;
@@ -31,7 +32,9 @@ query.exec(function (error, groups) {
         if (!group.championship.roundFinished) { return next(); }
         round = group.championship.currentRound;
 
-        return async.sortBy(group.members, function (member, next) {
+        return async.sortBy(group.members.filter(function (member) {
+            return member.username || member.facebookId || member.email;
+        }), function (member, next) {
             var query;
             query = Wallet.findOne();
             query.where('championship').equals(group.championship);
