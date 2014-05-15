@@ -8,7 +8,7 @@
 'use strict';
 var mongoose, nconf, async, cheerio, request, querystring,
     Team, Championship, Match,
-    invalidTeams, championships, months;
+    championships, worldCup, championsLeague, months;
 
 mongoose     = require('mongoose');
 nconf        = require('nconf');
@@ -25,15 +25,14 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-invalidTeams = ['2B', '2D', '2A', '2C', '2F', '2H', '2E', '2G', 'Winner 1G/2H', 'Winner 1C/2D', 'Winner 1H/2G', 'Winner 1D/2C', 'Winner QF 2', 'Winner QF 4', 'Loser SF 2', 'Winner SF 2', '1A', '1C', '1B', '1D', '1E', '1G', '1F', '1H', 'Winner 1E/2F', 'Winner 1A/2B', 'Winner 1F/2E', 'Winner 1B/2A', 'Winner QF 1', 'Winner QF 3', 'Loser SF 1', 'Winner SF 1'];
 championships = [
     /*{'acronym' : 'UY', 'name' : 'Primera División', 'country' : 'Uruguay', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-    {'acronym' : 'CL', 'name' : 'Primera División', 'country' : 'Chile', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-    {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
-    {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},*/
+     {'acronym' : 'CL', 'name' : 'Primera División', 'country' : 'Chile', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
+     {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},*/
     /*{'type' : 'continental league', 'acronym' : 'International', 'name' : 'Libertadores', 'country' : 'International', 'ttFK' : '45'},*/
-    {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'}/*,
-    {'type' : 'continental league', 'acronym' : 'International', 'name' : 'Champions League', 'country' : 'International', 'ttFK' : '42'},
+    worldCup = {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
+    championsLeague = {'type' : 'continental league', 'acronym' : 'International', 'name' : 'Champions League', 'country' : 'International', 'ttFK' : '42'},
     {'type' : 'national league', 'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'ttFK' : '113'},
     {'type' : 'national league', 'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'ttFK' : '59'},
     {'type' : 'national league', 'acronym' : 'GR', 'name' : 'Superleague', 'country' : 'Greece', 'ttFK' : '135'},
@@ -59,7 +58,7 @@ championships = [
     {'type' : 'national league', 'acronym' : 'CH', 'name' : 'Super League', 'country' : 'Switzerland', 'ttFK' : '69'},
     {'type' : 'national league', 'acronym' : 'TR', 'name' : 'Super Lig', 'country' : 'Turkey', 'ttFK' : '71'},
     {'type' : 'national league', 'acronym' : 'UA', 'name' : 'Premyer Liga', 'country' : 'Ukraine', 'ttFK' : '441'},
-    {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'}*/
+    {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'}
 ];
 
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -215,9 +214,7 @@ function parseMatches(records, next) {
             });
         }
     });
-    next(null, matches.filter(function (match) {
-        return invalidTeams.indexOf(match.guest) === -1 && invalidTeams.indexOf(match.host) === -1;
-    }));
+    next(null, matches);
 }
 
 /**
@@ -272,6 +269,42 @@ function retrieveGuest(matches, next) {
 
 /**
  * @method
+ * @summary Completes all matches rounds
+ *
+ * @param matches
+ * @param next
+ *
+ * @since 2013-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+function retrieveRounds(matches, next) {
+    async.seq(function (next) {
+        async.filter(matches, function (match, next) {
+            next(match.championship.toString() === worldCup._id.toString());
+        }, function (matches) {
+            next(null, matches);
+        });
+    }, function (matches, next) {
+        async.sortBy(matches, function (match, next) {
+            next(null, match.date);
+        }, next);
+    }, function (matches, next) {
+        var guestRound = {};
+        matches.forEach(function (match) {
+            if (!guestRound[match.guest]) { guestRound[match.guest] = 0; }
+            if (!guestRound[match.host]) { guestRound[match.host] = 0; }
+            guestRound[match.guest] += 1;
+            guestRound[match.host] += 1;
+            match.round = guestRound[match.guest > match.host ? match.guest : match.host];
+        });
+        next();
+    }, function () {
+        next(null, matches);
+    })();
+}
+
+/**
+ * @method
  * @summary
  *
  * @param matches
@@ -299,4 +332,4 @@ function saveMatches(matches, next) {
     }, next);
 }
 
-async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, saveMatches, process.exit)();
+async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches, process.exit)();
