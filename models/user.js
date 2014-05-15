@@ -37,6 +37,10 @@ schema = new Schema({
         'sparse' : true
     },
     /** @property */
+    'name' : {
+        'type' : String
+    },
+    /** @property */
     'facebookId' : {
         'type' : String,
         'unique' : true,
