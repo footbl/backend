@@ -7,7 +7,7 @@
  */
 'use strict';
 var mongoose, nconf, async, crypto,
-    Group, Wallet;
+    User, Group, Wallet;
 
 mongoose = require('mongoose');
 nconf    = require('nconf');
@@ -15,6 +15,7 @@ async    = require('async');
 crypto   = require('crypto');
 Group    = require('../models/group');
 Wallet   = require('../models/wallet');
+User     = require('../models/user');
 
 nconf.argv();
 nconf.env();

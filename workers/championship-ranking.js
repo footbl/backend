@@ -15,6 +15,7 @@ async        = require('async');
 crypto       = require('crypto');
 Wallet       = require('../models/wallet');
 Championship = require('../models/championship');
+User         = require('../models/user');
 
 nconf.argv();
 nconf.env();
