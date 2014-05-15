@@ -161,7 +161,6 @@ router.get('/users/:userId', function (request, response) {
  * @param request.country
  * @param request.notifications
  * @param request.apnsToken
- * @param request.facebookId
  * @param response
  *
  * @returns 200 user
@@ -196,7 +195,7 @@ router.put('/users/:userId', function (request, response) {
     user.country       = request.param('country', 'BR');
     user.notifications = request.param('notifications');
     user.apnsToken     = request.param('apnsToken');
-    user.facebookId    = request.param('facebookId');
+    user.facebookId    = request.facebook;
 
     return user.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
@@ -207,9 +206,10 @@ router.put('/users/:userId', function (request, response) {
 /**
  * @method
  * @summary Login user
- * There are two forms of login, anonymous user login and registered user login. If is an anonymous user login the API
- * call should contain the _id and password of the user, and if is a registered user login the API call should contain
- * the email and the password of the user.
+ * There are three forms of login, anonymous user login, registered user login and registered facebook user login. If is
+ * an anonymous user login the API call should contain the _id and password of the user, if is a registered user login
+ * the API call should contain the email and the password of the user and if is facebook registered user the api call
+ * should contain the facebook token wich will be converted into facebook id.
  *
  * @param request
  * @param request.password
@@ -233,18 +233,22 @@ router.get('/users/me/session', function (request, response) {
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var query, password, email, _id;
+    var query, facebook, password, email, _id;
+    facebook = request.facebook;
     email    = request.param('email');
     _id      = request.param('_id');
     password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
 
     query    = User.findOne();
-    query.where('password').equals(password);
 
-    if (email) {
+    if (request.facebook) {
+        query.where('facebookId').equals(facebook);
+    } else if (email) {
         query.where('email').equals(email);
+        query.where('password').equals(password);
     } else {
         query.where('_id').equals(_id);
+        query.where('password').equals(password);
     }
     return query.exec(function (error, user) {
         if (error) { return response.send(500, errorParser(error)); }
