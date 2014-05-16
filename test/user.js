@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
-var request, app, mongoose, auth, nconf, crypto,
+var request, app, mongoose, auth, nconf, crypto, nock,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    user, otherUser;
+    user, otherUser, facebook;
 
 require('should');
 
@@ -10,6 +10,7 @@ app      = require('../index.js');
 mongoose = require('mongoose');
 nconf    = require('nconf');
 crypto   = require('crypto');
+nock     = require('nock');
 auth     = require('../lib/auth');
 
 User         = require('../models/user');
@@ -19,6 +20,10 @@ Match        = require('../models/match');
 Wallet       = require('../models/wallet');
 Group        = require('../models/group');
 Comment      = require('../models/comment');
+facebook     = nock('https://graph.facebook.com');
+
+facebook.get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '1234'});
+facebook.get('/me?access_token=12345').times(Infinity).reply(401, {});
 
 describe('user controller', function () {
     'use strict';
@@ -52,7 +57,7 @@ describe('user controller', function () {
     });
 
     before(function (done) {
-        user = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});
+        user = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin', 'facebookId' : '1234'});
         user.save(done);
     });
 
@@ -283,6 +288,48 @@ describe('user controller', function () {
                 req = req.expect(401);
                 req.end(done);
             });
+        });
+
+        it('should raise with invalid password', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/me/session');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.send({'password' : '12345', '_id' : user._id});
+            req = req.expect(403);
+            req.end(done);
+        });
+
+        it('should raise with invalid facebook token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/me/session');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('facebook-token', '12345');
+            req = req.expect(403);
+            req.end(done);
+        });
+
+        it('should signin with valid facebook token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/me/session');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('facebook-token', '1234');
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('token');
+            });
+            req.end(done);
         });
 
         it('should signin with valid credentials', function (done) {

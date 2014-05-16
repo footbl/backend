@@ -23,6 +23,7 @@ app.options('/*', function (request, response) {
     response.end();
 });
 app.use(require('./lib/auth').signature);
+app.use(require('./lib/auth').facebook);
 app.use(require('./lib/auth').session);
 app.use(require('./controllers/wallet'));
 app.use(require('./controllers/bet'));
