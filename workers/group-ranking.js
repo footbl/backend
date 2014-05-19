@@ -41,7 +41,7 @@ query.exec(function (error, groups) {
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
             query.exec(function (error, wallet) {
-                member.rounds[round].points = wallet ? (wallet.funds / member.initialFunds) * 100 : 100;
+                member.rounds[round].points = wallet ? wallet.funds : 100;
                 next(error, member.rounds[round].points * -1);
             });
         }, function (error, members) {
