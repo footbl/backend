@@ -122,6 +122,7 @@ schema = new Schema({
 schema.plugin(require('mongoose-json-select'), {
     'email'         : 1,
     'username'      : 1,
+    'name'          : 1,
     'about'         : 1,
     'verified'      : 1,
     'password'      : 0,
