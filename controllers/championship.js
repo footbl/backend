@@ -240,14 +240,16 @@ router.get('/championships/:championshipId/ranking', function (request, response
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
-    var query, page, pageSize;
-    query    = Wallet.find();
-    pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
+    var query, page, pageSize, championship, round;
+    query        = Wallet.find();
+    pageSize     = nconf.get('PAGE_SIZE');
+    page         = request.param('page', 0) * pageSize;
+    championship = request.championship;
+    round        = championship.currentRound;
 
-    query.where('championship').equals(request.params.championshipId);
+    query.where('championship').equals(championship._id);
     query.populate('user');
-    query.sort('-ranking');
+    query.sort('-ranking.' + round + '.ranking');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, wallets) {

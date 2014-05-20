@@ -59,11 +59,20 @@ schema = new Schema({
         'default' : 1
     },
     /** @property */
-    'ranking' : {
-        'type' : Number,
-        'required' : true,
-        'default' : Infinity
-    },
+    'rounds' : [{
+        /** @property */
+        'ranking' : {
+            'type' : Number,
+            'required' : true,
+            'default' : Infinity
+        },
+        /** @property */
+        'funds' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 100
+        }
+    }],
     /** @property */
     'iaps' : [{
         /** @property */
@@ -153,7 +162,7 @@ schema.plugin(require('mongoose-json-select'), {
     'active'        : 1,
     'notifications' : 1,
     'priority'      : 1,
-    'ranking'       : 1,
+    'rounds'        : 1,
     'iaps'          : 0,
     'bets'          : 0,
     'lastDate'      : 1,

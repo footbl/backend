@@ -63,7 +63,7 @@ schema = new Schema({
                 'default' : Infinity
             },
             /** @property */
-            'points' : {
+            'funds' : {
                 'type' : Number,
                 'required' : true,
                 'default' : 100

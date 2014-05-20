@@ -41,8 +41,9 @@ query.exec(function (error, groups) {
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
             query.exec(function (error, wallet) {
-                member.rounds[round].points = wallet ? wallet.funds : 100;
-                next(error, member.rounds[round].points * -1);
+                if (!wallet.rounds[round]) { wallet.rounds[round] = {}; }
+                member.rounds[round].funds = wallet ? wallet.funds : 100;
+                next(error, member.rounds[round].funds * -1);
             });
         }, function (error, members) {
             members.forEach(function (member, index) {

@@ -22,16 +22,28 @@ nconf.env();
 nconf.defaults(require('../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-Championship.find(function (error, championships) {
+var query;
+query = Championship.find();
+query.exec(function (error, championships) {
     async.each(championships, function (championship, next) {
-        Wallet.find({'championship' : championship._id}).populate('user').exec(function (error, wallets) {
+        var round, query;
+
+        if (!championship.roundFinished) { return next(); }
+        round = championship.currentRound;
+
+        query = Wallet.find();
+        query.where('championship').equals(championship._id);
+        query.populate('user');
+        return query.exec(function (error, wallets) {
             async.sortBy(wallets.filter(function (wallet) {
                 return wallet.user.username || wallet.user.facebookId || wallet.user.email;
             }), function (wallet, next) {
-                next(error, -1 * wallet.funds);
+                if (!wallet.rounds[round]) { wallet.rounds[round] = {}; }
+                wallet.rounds[round].funds = wallet ? wallet.funds : 100;
+                next(error, wallet.rounds[round].funds * -1);
             }, function (error, wallets) {
                 wallets.forEach(function (wallet, index) {
-                    wallet.ranking = index + 1;
+                    wallet.rounds[round].ranking = index + 1;
                 });
                 async.each(wallets, function (wallet, next) {
                     wallet.save(next);
