@@ -377,23 +377,6 @@ describe('user controller', function () {
             req.end(done);
         });
 
-        it('should raise error without password', function (done) {
-            var req, credentials;
-            credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/users/' + user._id);
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({username : 'test'});
-            req = req.expect(500);
-            req = req.expect(function (response) {
-                response.body[0].should.be.equal('password is required');
-            });
-            req.end(done);
-        });
-
         it('should update username', function (done) {
             var req, credentials;
             credentials = auth.credentials();

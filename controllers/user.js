@@ -189,13 +189,17 @@ router.put('/users/:userId', function (request, response) {
     user.username      = request.param('username');
     user.name          = request.param('name');
     user.about         = request.param('about');
-    user.password      = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
     user.picture       = request.param('picture');
     user.language      = request.param('language');
     user.country       = request.param('country', 'BR');
     user.notifications = request.param('notifications');
     user.apnsToken     = request.param('apnsToken');
-    user.facebookId    = request.facebook;
+    if (request.param('password')) {
+        user.password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+    }
+    if (request.facebook) {
+        user.facebookId    = request.facebook;
+    }
 
     return user.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
