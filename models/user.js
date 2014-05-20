@@ -166,7 +166,6 @@ schema.pre('save', function (next) {
  *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
- */
 schema.pre('save', function (next) {
     'use strict';
 
@@ -188,6 +187,7 @@ schema.pre('save', function (next) {
         return wallet.save(next);
     }.bind(this));
 });
+ */
 
 /**
  * @callback
