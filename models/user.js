@@ -207,7 +207,7 @@ schema.pre('save', function (next) {
 
     var query;
     query = require('./championship').findOne();
-    query.where('country').equals(this.country);
+    query.where('country').equals(/*this.country*/'BR');
     return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
