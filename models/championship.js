@@ -69,7 +69,9 @@ schema.plugin(require('mongoose-json-select'), {
     'rounds'        : 1,
     'currentRound'  : 1,
     'roundFinished' : 1,
-    'active'        : 1
+    'active'        : 1,
+    'createdAt'     : 1,
+    'updatedAt'     : 1
 });
 
 schema.index({'name' : 1, 'country' : 1}, {'unique' : true});

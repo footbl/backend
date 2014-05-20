@@ -48,7 +48,7 @@ describe('user controller', function () {
         Wallet.remove(done);
     });
 
-        before(function (done) {
+    before(function (done) {
         Group.remove(done);
     });
 

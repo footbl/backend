@@ -57,10 +57,12 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    'user'    : 1,
-    'match'   : 1,
-    'date'    : 1,
-    'message' : 1
+    'user'      : 1,
+    'match'     : 1,
+    'date'      : 1,
+    'message'   : 1,
+    'createdAt' : 1,
+    'updatedAt' : 1
 });
 
 /**

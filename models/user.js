@@ -131,7 +131,9 @@ schema.plugin(require('mongoose-json-select'), {
     'country'       : 1,
     'type'          : 1,
     'starred'       : 0,
-    'notifications' : 1
+    'notifications' : 1,
+    'createdAt'     : 1,
+    'updatedAt'     : 1
 });
 
 /**

@@ -50,9 +50,11 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    'name'    : 1,
-    'acronym' : 1,
-    'picture' : 1
+    'name'      : 1,
+    'acronym'   : 1,
+    'picture'   : 1,
+    'createdAt' : 1,
+    'updatedAt' : 1
 });
 
 /**

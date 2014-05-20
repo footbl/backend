@@ -117,7 +117,9 @@ schema.plugin(require('mongoose-json-select'), {
     'winner'       : 1,
     'jackpot'      : 1,
     'reward'       : 1,
-    'elapsed'      : 1
+    'elapsed'      : 1,
+    'createdAt'    : 1,
+    'updatedAt'    : 1
 });
 
 schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'round' : 1}, {'unique' : true});

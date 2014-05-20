@@ -103,7 +103,9 @@ schema.plugin(require('mongoose-json-select'), {
     'freeToEdit'   : 1,
     'championship' : 1,
     'owner'        : 1,
-    'members'      : 0
+    'members'      : 0,
+    'createdAt'    : 1,
+    'updatedAt'    : 1
 });
 
 /**

@@ -159,7 +159,9 @@ schema.plugin(require('mongoose-json-select'), {
     'lastDate'      : 1,
     'funds'         : 1,
     'stake'         : 1,
-    'toReturn'      : 1
+    'toReturn'      : 1,
+    'createdAt'     : 1,
+    'updatedAt'     : 1
 });
 
 /**
