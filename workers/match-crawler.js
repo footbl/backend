@@ -8,7 +8,7 @@
 'use strict';
 var mongoose, nconf, async, cheerio, request, querystring,
     Team, Championship, Match,
-    championships, worldCup, championsLeague, months;
+    championships, worldCup, months, invalidNames;
 
 mongoose     = require('mongoose');
 nconf        = require('nconf');
@@ -60,8 +60,9 @@ championships = [
     {'type' : 'national league', 'acronym' : 'TR', 'name' : 'Super Lig', 'country' : 'Turkey', 'ttFK' : '71'},
     {'type' : 'national league', 'acronym' : 'UA', 'name' : 'Premyer Liga', 'country' : 'Ukraine', 'ttFK' : '441'}*/
 ];
-
+invalidNames = ["2F", "2B", "2H", "Winner 1H/2G", "Winner SF 2", "2D", "2C", "Winner 1G/2H", "2E", "Winner 1C/2D", "Loser SF 2", "Winner 1D/2C", "Winner QF 4", "2A", "2G", "Winner QF 2", "1A", "1G", "1B", "1H", "1D", "Winner 1F/2E", "1C", "1F", "Winner 1B/2A", "Winner QF 1", "1E", "Winner 1E/2F", "Winner SF 1", "Winner QF 3", "Winner 1A/2B", "Loser SF 1"];
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 function parseDate(string) {
     var slices, day, month, year;
     slices = string.split(' ');
@@ -214,7 +215,9 @@ function parseMatches(records, next) {
             });
         }
     });
-    next(null, matches);
+    next(null, matches.filter(function (match) {
+        return invalidNames.indexOf(match.guest) === -1 && invalidNames.indexOf(match.host);
+    }));
 }
 
 /**
