@@ -210,7 +210,7 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    return iap.verifyReceipt('apple', JSON.stringify(request.param('receipt')), function (error, data) {
+    return iap.verifyReceipt('apple', request.param('receipt'), function (error, data) {
         console.log(error, data)
         if (error) { return response.send(500, ['invalid purchase']); }
         if (!response.receipt) { return response.send(500, ['invalid purchase']); }
