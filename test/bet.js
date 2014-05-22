@@ -588,7 +588,7 @@ describe('bet', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('stake').be.equal(5);
                 response.body.should.have.property('funds').be.equal(95);
-                response.body.should.have.property('toReturn').be.equal(0);
+                response.body.should.have.property('toReturn').be.equal(5);
             });
             req.end(done);
         });

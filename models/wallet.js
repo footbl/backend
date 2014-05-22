@@ -437,7 +437,7 @@ schema.virtual('toReturn').get(function () {
     }.bind(this)).filter(function (bet) {
         return !bet.finished;
     }.bind(this)).map(function (bet) {
-        return bet.reward;
+        return bet.bid * bet.match.jackpot / bet.match.pot[bet.result];
     }.bind(this)).reduce(function (toReturn, reward) {
         return toReturn + reward;
     }.bind(this), 0);
