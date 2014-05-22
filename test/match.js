@@ -451,6 +451,7 @@ describe('match controller', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('funds').be.equal(50);
                 response.body.should.have.property('stake').be.equal(0);
+                response.body.should.have.property('toReturn').be.equal(0);
             });
             req.end(done);
         });

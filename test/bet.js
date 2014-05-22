@@ -243,6 +243,7 @@ describe('bet', function () {
                 response.body.should.have.property('date');
                 response.body.should.have.property('result');
                 response.body.should.have.property('bid');
+                response.body.should.have.property('toReturn');
             });
             req.end(done);
         });
@@ -428,7 +429,6 @@ describe('bet', function () {
             });
             req.end(done);
         });
-
         it('should raise error without token', function (done) {
             var req, credentials;
             credentials = auth.credentials();
@@ -457,35 +457,6 @@ describe('bet', function () {
                 response.body[0].should.be.equal('date is required');
             });
             req.end(done);
-        });
-
-        describe('finished match', function () {
-            before(function (done) {
-                match.date = yesterdayMatch.date;
-                match.save(done);
-            });
-
-            it('should raise error with finished match', function (done) {
-                var req, credentials;
-                credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-                req = req.set('auth-token', auth.token(user));
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.send({date : new Date(), result : 'host', bid : 15});
-                req = req.expect(500);
-                req = req.expect(function (response) {
-                    response.body[0].should.be.equal('match already started');
-                });
-                req.end(done);
-            });
-
-            after(function (done) {
-                match.date = tomorrow;
-                match.save(done);
-            });
         });
 
         it('should raise error without result', function (done) {

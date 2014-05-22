@@ -132,6 +132,12 @@ schema = new Schema({
             'default' : 0
         },
         /** @property */
+        'toReturn' : {
+            'type' : Number,
+            'required' : true,
+            'default' : 0
+        },
+        /** @property */
         'finished' : {
             'type' : Boolean,
             'required' : true,
@@ -260,31 +266,6 @@ schema.paths.bets.schema.pre('remove', function (next) {
         if (error) { return next(error); }
         if (!match) { return next(new Error('match not found')); }
         if (match.date < new Date()) { return next(new Error('match already started')); }
-        return next();
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Sets possible reward for the bet
- * If the bet result is equals to the current match result, the toReturn field which indicates the possible reward of a
- * bet must be updated to the corresponding bet status.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.paths.bets.schema.pre('save', function (next) {
-    'use strict';
-
-    var query;
-    query = require('./match').findOne();
-    query.where('_id').equals(this.match);
-    query.exec(function (error, match) {
-        if (error) { return next(error); }
-        if (!match) { return next(new Error('match not found')); }
-        this.reward = this.result === match.winner ? this.bid * match.reward : 0;
         return next();
     }.bind(this));
 });
@@ -437,7 +418,7 @@ schema.virtual('toReturn').get(function () {
     }.bind(this)).filter(function (bet) {
         return !bet.finished;
     }.bind(this)).map(function (bet) {
-        return bet.bid * bet.match.jackpot / bet.match.pot[bet.result];
+        return bet.toReturn;
     }.bind(this)).reduce(function (toReturn, reward) {
         return toReturn + reward;
     }.bind(this), 0);
