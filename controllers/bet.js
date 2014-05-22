@@ -5,12 +5,13 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, errorParser, Wallet;
+var router, nconf, errorParser, Wallet, Team;
 
 router      = require('express').Router();
 nconf       = require('nconf');
 errorParser = require('../lib/error-parser');
 Wallet      = require('../models/wallet');
+Team        = require('../models/team');
 
 /**
  * @method
@@ -287,9 +288,13 @@ router.param('championshipId', function (request, response, next, id) {
     query.exec(function (error, wallet) {
         if (error) { return response.send(404, 'wallet not found'); }
         if (!wallet) { return response.send(404, 'wallet not found'); }
+        return Team.populate(wallet, 'bets.match.host bets.match.guest',  function (error, wallet) {
+            if (error) { return response.send(404, 'wallet not found'); }
+            if (!wallet) { return response.send(404, 'wallet not found'); }
 
-        request.wallet = wallet;
-        return next();
+            request.wallet = wallet;
+            return next();
+        });
     });
 });
 
