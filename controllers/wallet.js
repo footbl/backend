@@ -215,7 +215,8 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
         'productId'   : request.param('productId'),
         'packageName' : request.param('packageName')
     }, function (error, data) {
-        if (error) { return response.send(500, errorParser(error)); }
+        console.log(error, data)
+        if (error) { return response.send(500, ['invalid purchase']); }
         if (!response.receipt) { return response.send(500, ['invalid purchase']); }
 
         wallet.iaps.push({
