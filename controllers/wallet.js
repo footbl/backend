@@ -92,7 +92,6 @@ router.get('/users/:userId/wallets', function (request, response) {
     query.where('user').equals(request.params.userId);
     query.populate('championship');
     query.populate('user');
-    query.populate('bets.match');
     query.sort({'priority' : 1});
     query.skip(page);
     query.limit(pageSize);
@@ -183,7 +182,6 @@ router.put('/users/:userId/wallets/:walletId', function (request, response) {
  * @summary Sets wallet value to 100
  *
  * @param request.walletId
- * @param request.platform
  * @param request.receipt
  * @param request.productId
  * @param request.packageName
@@ -212,7 +210,7 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    return iap.verifyPayment(request.param('platform'), {
+    return iap.verifyReceipt('apple', {
         'receipt'     : request.param('receipt'),
         'productId'   : request.param('productId'),
         'packageName' : request.param('packageName')
