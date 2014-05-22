@@ -230,6 +230,31 @@ describe('wallet controller', function () {
             });
             req.end(done);
         });
+
+        it('should list valid with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/' + user._id + '/wallets');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.every(function (wallet) {
+                    wallet.should.have.property('_id');
+                    wallet.should.have.property('championship');
+                    wallet.should.have.property('user');
+                    wallet.should.have.property('active');
+                    wallet.should.have.property('funds');
+                    wallet.should.have.property('stake');
+                    wallet.should.have.property('toReturn');
+                });
+            });
+            req.end(done);
+        });
     });
 
     describe('details', function () {
@@ -285,6 +310,28 @@ describe('wallet controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('championship');
+                response.body.should.have.property('user');
+                response.body.should.have.property('active');
+                response.body.should.have.property('funds');
+                response.body.should.have.property('stake');
+                response.body.should.have.property('toReturn');
+            });
+            req.end(done);
+        });
+
+        it('should return with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/' + user._id + '/wallets/' + id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
             req = req.expect(200);
             req = req.expect(function (response) {
                 response.body.should.have.property('_id');
