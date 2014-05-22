@@ -424,7 +424,7 @@ describe('match controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets/' + wallet._id);
+            req = req.get('/users/' + user._id + '/wallets/' + wallet._id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -442,7 +442,7 @@ describe('match controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets/' + otherWallet._id);
+            req = req.get('/users/' + otherUser._id + '/wallets/' + otherWallet._id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);

@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    user, guest, host, championship, otherChampionship, match, otherMatch, otherMatchSameChampionship;
+    user, otherUser, guest, host, championship, otherChampionship, match, otherMatch, otherMatchSameChampionship;
 
 require('should');
 
@@ -56,6 +56,11 @@ describe('wallet controller', function () {
     });
 
     before(function (done) {
+        otherUser = new User({'password' : '1234', 'type' : 'admin'});
+        otherUser.save(done);
+    });
+
+    before(function (done) {
         guest = new Team({'name' : 'guest', 'picture' : 'http://guest_picture.com'});
         guest.save(done);
     });
@@ -95,10 +100,24 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.post('/wallets');
+            req = req.post('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.send({championship : championship._id});
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/users/' + user._id + '/wallets');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
             req = req.send({championship : championship._id});
             req = req.expect(401);
             req.end(done);
@@ -108,7 +127,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.post('/wallets');
+            req = req.post('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -124,7 +143,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.post('/wallets');
+            req = req.post('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -147,7 +166,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.post('/wallets');
+            req = req.post('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -166,7 +185,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.post('/wallets');
+            req = req.post('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -179,7 +198,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets');
+            req = req.get('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -191,7 +210,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets');
+            req = req.get('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -220,7 +239,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets');
+            req = req.get('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -236,7 +255,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets/' + id);
+            req = req.get('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -248,7 +267,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets/invalid');
+            req = req.get('/users/' + user._id + '/wallets/invalid');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -261,7 +280,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets/' + id);
+            req = req.get('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -287,7 +306,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets');
+            req = req.get('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -303,10 +322,24 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.put('/wallets/' + id);
+            req = req.put('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.send({active : false});
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.put('/users/' + user._id + '/wallets/' + id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
             req = req.send({active : false});
             req = req.expect(401);
             req.end(done);
@@ -316,7 +349,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.put('/wallets/' + id);
+            req = req.put('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -332,7 +365,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.put('/wallets/invalid');
+            req = req.put('/users/' + user._id + '/wallets/invalid');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -346,7 +379,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.put('/wallets/' + id);
+            req = req.put('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-token', auth.token(user));
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
@@ -373,7 +406,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/wallets');
+            req = req.get('/users/' + user._id + '/wallets');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -389,10 +422,23 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/wallets/' + id);
+            req = req.del('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/users/' + user._id + '/wallets/' + id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
             req = req.expect(401);
             req.end(done);
         });
@@ -401,7 +447,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/wallets/invalid');
+            req = req.del('/users/' + user._id + '/wallets/invalid');
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -414,7 +460,7 @@ describe('wallet controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/wallets/' + id);
+            req = req.del('/users/' + user._id + '/wallets/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);

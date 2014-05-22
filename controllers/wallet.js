@@ -31,7 +31,7 @@ Wallet      = require('../models/wallet');
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.post('/wallets', function (request, response) {
+router.post('/users/:userId/wallets', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -41,7 +41,7 @@ router.post('/wallets', function (request, response) {
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session._id.toString() !== request.params.userId) { return response.send(401, 'invalid token'); }
 
     var wallet;
     wallet = new Wallet({
@@ -72,7 +72,7 @@ router.post('/wallets', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.get('/wallets', function (request, response) {
+router.get('/users/:userId/wallets', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -89,7 +89,7 @@ router.get('/wallets', function (request, response) {
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
-    query.where('user').equals(request.session._id);
+    query.where('user').equals(request.params.userId);
     query.populate('championship');
     query.populate('user');
     query.populate('bets.match');
@@ -116,7 +116,7 @@ router.get('/wallets', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.get('/wallets/:walletId', function (request, response) {
+router.get('/users/:userId/wallets/:walletId', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -129,7 +129,7 @@ router.get('/wallets/:walletId', function (request, response) {
     var wallet;
     wallet = request.wallet;
 
-    if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
+    if (!request.session) { return response.send(401, 'invalid token'); }
 
     response.header('Last-Modified', wallet.updatedAt);
     return response.send(200, wallet);
@@ -153,7 +153,7 @@ router.get('/wallets/:walletId', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.put('/wallets/:walletId', function (request, response) {
+router.put('/users/:userId/wallets/:walletId', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -197,7 +197,7 @@ router.put('/wallets/:walletId', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.post('/wallets/:walletId/recharge', function (request, response) {
+router.post('/users/:userId/wallets/:walletId/recharge', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -250,7 +250,7 @@ router.post('/wallets/:walletId/recharge', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.delete('/wallets/:walletId', function (request, response) {
+router.delete('/users/:userId/wallets/:walletId', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -285,7 +285,7 @@ router.delete('/wallets/:walletId', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.get('/wallets/:walletId/bets', function (request, response) {
+router.get('/users/:userId/wallets/:walletId/bets', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -325,6 +325,7 @@ router.param('walletId', function (request, response, next, id) {
     var query;
     query = Wallet.findOne();
     query.where('_id').equals(id);
+    query.where('user').equals(request.params.userId);
     query.populate('championship');
     query.populate('user');
     query.populate('bets.match');
