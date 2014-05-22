@@ -214,7 +214,8 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
         'receipt'     : request.param('receipt'),
         'productId'   : request.param('productId'),
         'packageName' : request.param('packageName')
-    }, function (error, response) {
+    }, function (error, data) {
+        console.log(error, data);
         if (error) { return response.send(500, errorParser(error)); }
         if (!response.receipt) { return response.send(500, ['invalid purchase']); }
 
@@ -223,7 +224,7 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
             'productId'   : request.param('productId'),
             'receipt'     : request.param('receipt'),
             'packageName' : request.param('packageName'),
-            'date'        : new Date(response.receipt.purchase_date_ms)
+            'date'        : new Date(data.receipt.purchase_date_ms)
         });
 
         return wallet.save(function (error) {
