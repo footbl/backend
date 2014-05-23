@@ -31,7 +31,7 @@ query.exec(function (error, groups) {
         var round;
 
         if (!group.championship.roundFinished) { return next(); }
-        round = group.championship.currentRound;
+        round = group.championship.currentRound - 1;
 
         return async.sortBy(group.members.filter(function (member) {
             return member.username || member.facebookId || member.email;
@@ -41,7 +41,9 @@ query.exec(function (error, groups) {
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
             query.exec(function (error, wallet) {
-                if (!wallet.rounds[round]) { wallet.rounds[round] = {}; }
+                while (wallet.rounds.length <= round) {
+                    wallet.rounds.push({ranking : Infinity, funds : 100});
+                }
                 member.rounds[round].funds = wallet ? wallet.funds : 100;
                 next(error, member.rounds[round].funds * -1);
             });
