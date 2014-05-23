@@ -383,7 +383,10 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
 
     if (!member) { return response.send(404, 'member not found'); }
 
-    member.remove();
+    group.members = group.members.filter(function (member) {
+        return member.user._id.toString() !== request.params.memberId;
+    }).pop();
+
     return group.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, member);
