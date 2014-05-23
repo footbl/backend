@@ -49,7 +49,7 @@ query.exec(function (error, championships) {
                 });
                 async.each(wallets, function (wallet, next) {
                     wallet.save(function (e,w) {
-                        consoçe.log(e,w)
+                        console.log(e,w)
                         next();
                     });
                 }, next);
