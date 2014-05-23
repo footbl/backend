@@ -367,7 +367,10 @@ router.delete('/users/:userId/starred/:starredId', function (request, response) 
 
     if (!starred) { return response.send(404, 'starred not found'); }
 
-    starred.remove();
+    user.starred = user.starred.filter(function (user) {
+        return user._id.toString() !== request.params.starredId;
+    }).pop();
+
     return user.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, user);
