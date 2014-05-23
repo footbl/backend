@@ -213,7 +213,7 @@ schema.pre('save', function (next) {
 schema.pre('save', function (next) {
     'use strict';
 
-    if (this.stake > this.funds) {
+    if (this.funds < 0) {
         next(new Error('insufficient funds'));
     } else {
         next();

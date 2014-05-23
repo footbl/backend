@@ -66,7 +66,7 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
             return Team.populate(bet, 'match.host match.guest',  function (error, bet) {
                 if (error) { return response.send(500, errorParser(error)); }
 
-                response.header('Location', '/wallets/' + request.param.walletId + '/bets/' + bet._id);
+                response.header('Location', '/wallets/' + wallet._id + '/bets/' + bet._id);
                 return response.send(201, bet);
             });
         });
