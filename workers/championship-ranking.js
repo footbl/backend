@@ -39,6 +39,9 @@ query.exec(function (error, championships) {
                 return wallet.user.username || wallet.user.facebookId || wallet.user.email;
             }), function (wallet, next) {
                 if (!wallet.rounds[round]) { wallet.rounds[round] = {}; }
+                while (wallet.rounds.length < round) {
+                    wallet.rounds.push({ranking : Infinity, funds : 100});
+                }
                 wallet.rounds[round].funds = wallet ? wallet.funds : 100;
                 next(error, wallet.rounds[round].funds * -1);
             }, function (error, wallets) {
