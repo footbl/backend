@@ -29,7 +29,7 @@ query.exec(function (error, championships) {
         var round, query;
 
         if (!championship.roundFinished) { return next(); }
-        round = championship.currentRound;
+        round = championship.currentRound - 1;
 
         query = Wallet.find();
         query.where('championship').equals(championship._id);
@@ -48,8 +48,10 @@ query.exec(function (error, championships) {
                     wallet.rounds[round].ranking = index + 1;
                 });
                 async.each(wallets, function (wallet, next) {
-                    console.log(wallet)
-                    wallet.save(next);
+                    wallet.save(function (e,w) {
+                        consoçe.log(e,w)
+                        next();
+                    });
                 }, next);
             });
         });
