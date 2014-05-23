@@ -178,10 +178,7 @@ schema.post('save', function () {
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
 
                 if (oldReward === bet.reward && oldStatus === bet.finished && bet.toReturn === oldToReturn) { return next(); }
-                return wallet.save(function () {
-                    console.log(arguments);
-                    next();
-                });
+                return wallet.save(next);
             }.bind(this));
         }.bind(this));
     }.bind(this));

@@ -240,7 +240,7 @@ schema.paths.bets.schema.pre('save', function (next) {
     query.exec(function (error, match) {
         if (error) { return next(error); }
         if (!match) { return next(new Error('match not found')); }
-        if (match.date < new Date()) { return next(new Error('match already started')); }
+        if (match.date < new Date() && (this.oldBid !== this.bid || this.oldResult !== this.result)) { return next(new Error('match already started')); }
         return next();
     }.bind(this));
 });
