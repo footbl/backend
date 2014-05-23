@@ -176,11 +176,12 @@ schema.post('save', function () {
                 bet.finished = this.finished;
                 bet.toReturn = !bet.finished ? bet.bid * this.jackpot / this.pot[bet.result] : 0;
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
-                console.log(bet)
 
                 if (oldReward === bet.reward && oldStatus === bet.finished && bet.toReturn === oldToReturn) { return next(); }
-                console.log('a new hope')
-                return wallet.save(next);
+                return wallet.save(function () {
+                    console.log(arguments);
+                    next();
+                });
             }.bind(this));
         }.bind(this));
     }.bind(this));
