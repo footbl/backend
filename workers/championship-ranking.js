@@ -48,10 +48,7 @@ query.exec(function (error, championships) {
                     wallet.rounds[round].ranking = index + 1;
                 });
                 async.each(wallets, function (wallet, next) {
-                    wallet.save(function (e,w) {
-                        console.log(e,w)
-                        next();
-                    });
+                    Wallet.update({_id : wallet._id}, {$set : {rounds : wallet.rounds}}, next);
                 }, next);
             });
         });
