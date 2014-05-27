@@ -203,8 +203,6 @@ function parseMatches(records, next) {
             if (time.length > 1) {
                 record.date.setUTCHours((time[0] * 1) - 2);
                 record.date.setUTCMinutes(time[1] * 1);
-            } else {
-                record.date = null;
             }
             matches.push({
                 championship : record.championship,
@@ -325,22 +323,24 @@ function saveMatches(matches, next) {
             'host' : data.host,
             'round' : data.round,
             'championship' : data.championship
-        }, data.date ? {
-            'guest' : data.guest,
-            'host' : data.host,
-            'round' : data.round,
-            'championship' : data.championship,
-            'date' : data.date,
-            'finished' : data.finished,
-            'result' : data.score
-        } : {
+        }, {
             'guest' : data.guest,
             'host' : data.host,
             'round' : data.round,
             'championship' : data.championship,
             'finished' : data.finished,
             'result' : data.score
-        }, {'upsert' : true}, next);
+        }, {'upsert' : true}, function (error) {
+            Match.update({
+                'guest' : data.guest,
+                'host' : data.host,
+                'round' : data.round,
+                'championship' : data.championship,
+                'date' : {'$exists' : false}
+            }, {
+                'date' : data.date
+            }, next);
+        });
     }, next);
 }
 
