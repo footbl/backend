@@ -375,7 +375,7 @@ router.delete('/users/:userId/starred/:starredId', function (request, response) 
 
     return user.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, user);
+        return response.send(200, starred);
     });
 });
 

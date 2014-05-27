@@ -575,6 +575,32 @@ describe('user controller', function () {
                 req = req.expect(200);
                 req.end(done);
             });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/' + id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(200);
+                req.end(done);
+            });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/' + user._id + '/starred/' + id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(404);
+                req.end(done);
+            });
         });
     });
 });
