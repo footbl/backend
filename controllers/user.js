@@ -95,7 +95,12 @@ router.get('/users', function (request, response) {
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
-    if (request.param('emails')) {
+    if (request.param('emails') && request.param('facebookIds')) {
+        query.where('email').or([
+            { 'email' : {'$in' : request.param('emails', [])} },
+            { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
+        ]);
+    } else if (request.param('emails')) {
         query.where('email').in(request.param('emails', []));
     } else if (request.param('usernames')) {
         query.where('username').in(request.param('usernames', []));
