@@ -273,7 +273,11 @@ schema.pre('save', function (next) {
 
     repeated = this.starred.some(function (user, index) {
         return this.starred.some(function (otherUser, otherIndex) {
-            return user === user && index !== otherIndex;
+            if (user._id) {
+                return user._id.toString() === otherUser._id.toString() && index !== otherIndex;
+            } else {
+                return user.toString() === otherUser.toString() && index !== otherIndex;
+            }
         }.bind(this));
     }.bind(this));
 
