@@ -30,7 +30,7 @@ query = Match.find();
 query.where('date').lt(date);
 query.where('finished').equals(false);
 query.exec(function (error, matches) {
-    async.reduce(matches, function (championships, match, next) {
+    async.reduce(matches, [], function (championships, match, next) {
         if (championships.indexOf(match.championship.toString()) === -1) {
             championships.push(match.championship.toString());
         }
@@ -52,8 +52,6 @@ query.exec(function (error, matches) {
                     next();
                 }, next);
             });
-        }, function (error) {
-
-        });
+        }, process.exit);
     });
 });
