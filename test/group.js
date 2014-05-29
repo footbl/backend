@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    group, otherGroup, user, otherUser, memberUser, userWithoutWallet, candidateUser, championship, wallet, otherWallet, memberWallet, candidateWallet;
+    group, otherGroup, user, otherUser, memberUser, userWithoutWallet, candidateUser,invitedUser, championship, wallet, otherWallet, memberWallet, candidateWallet;
 
 require('should');
 
@@ -73,6 +73,11 @@ describe('group controller', function () {
     before(function (done) {
         userWithoutWallet = new User({'password' : '12345', 'type' : 'admin'});
         userWithoutWallet.save(done);
+    });
+
+    before(function (done) {
+        invitedUser = new User({'password' : '12345', 'type' : 'admin'});
+        invitedUser.save(done);
     });
 
     before(function (done) {
@@ -538,6 +543,71 @@ describe('group controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.expect(200);
+            req.end(done);
+        });
+    });
+
+    describe('invite', function () {
+        var id;
+
+        before(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/groups');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
+        it('should invite with valid email', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/groups/' + id + '/invites');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.send({'email' : 'invite-test@test.com'});
+            req = req.expect(201);
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.put('/users/' + invitedUser._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(invitedUser));
+            req = req.send({username : 'test', email : 'invite-test@test.com', password : '1234'});
+            req = req.expect(200);
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/groups');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(invitedUser));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+            });
             req.end(done);
         });
     });

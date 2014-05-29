@@ -232,6 +232,49 @@ router.delete('/groups/:groupId', function (request, response) {
 
 /**
  * @method
+ * @summary Creates a new group invite
+ *
+ * @param request.groupId
+ * @param request.facebookId
+ * @param request.email
+ * @param response
+ *
+ * @returns 201 invite
+ * @throws 500 error
+ * @throws 404 group not found
+ * @throws 401 invalid token
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.post('/groups/:groupId/invites', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (!request.session) { return response.send(401, 'invalid token'); }
+
+    var group, invited;
+    group   = request.group;
+    invited = request.param('facebookId') || request.param('email');
+
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
+
+    group.invites.push(invited);
+
+    return group.save(function (error) {
+        if (error) { return response.send(500, errorParser(error)); }
+        return response.send(201, invited);
+    });
+});
+
+/**
+ * @method
  * @summary Creates a new group member
  *
  * @param request.groupId

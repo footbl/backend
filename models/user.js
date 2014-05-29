@@ -5,10 +5,11 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var mongoose, Schema, nconf, schema;
+var mongoose, Schema, nconf, async, schema;
 
 mongoose = require('mongoose');
 nconf    = require('nconf');
+async    = require('async');
 Schema   = mongoose.Schema;
 
 /**
@@ -259,6 +260,41 @@ schema.pre('save', function (next) {
             'user'          : this._id
         });
         return wallet.save(next);
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Puts user in all invited groups
+ * When a user registers an account, all group invites that the user received must be removed and the user must be
+ * placed as a group member.
+ *
+ * @param next
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.facebookId && !this.email) { return next(); }
+
+    var query;
+    query = require('./group').find();
+    if (this.facebookId) {
+        query.where('invites').equals(this.facebookId);
+    } else {
+        query.where('invites').equals(this.email);
+    }
+    return query.exec(function (error, groups) {
+        if (error) { return next(error); }
+        return async.each(groups, function (group, next) {
+            group.members.push({'user' : this._id});
+            group.invites = group.invites.filter(function (invite) {
+                return invite !== this.facebookId && invite !== this.email;
+            }.bind(this));
+            group.save(next);
+        }.bind(this), next);
     }.bind(this));
 });
 

@@ -47,6 +47,10 @@ schema = new Schema({
         'required' : true
     },
     /** @property */
+    'invites' : [{
+        'type' : String
+    }],
+    /** @property */
     'members' : [{
         /** @property */
         'user' : {
@@ -141,6 +145,8 @@ schema.pre('save', function (next) {
  */
 schema.paths.members.schema.pre('save', function (next) {
     'use strict';
+
+    if (!this.isNew) { return next(); }
 
     var Wallet, query;
     Wallet = require('./wallet');
