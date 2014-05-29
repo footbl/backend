@@ -154,18 +154,6 @@ describe('user controller', function () {
     });
 
     describe('search', function () {
-        it('should raise error without token', function (done) {
-            var req, credentials;
-            credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/users');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.expect(401);
-            req.end(done);
-        });
-
         it('should list with valid credentials', function (done) {
             var req, credentials;
             credentials = auth.credentials();

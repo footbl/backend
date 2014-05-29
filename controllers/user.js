@@ -89,8 +89,6 @@ router.get('/users', function (request, response) {
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
     var query, page, pageSize;
     query    = User.find();
     pageSize = nconf.get('PAGE_SIZE');
