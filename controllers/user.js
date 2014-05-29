@@ -219,6 +219,42 @@ router.put('/users/:userId', function (request, response) {
 
 /**
  * @method
+ * @summary Removes user from database
+ *
+ * @param request
+ * @param response
+ *
+ * @returns 200 user
+ * @throws 500 error
+ * @throws 404 user not found
+ * @throws 401 invalid token
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+router.delete('/users/:userId', function (request, response) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    response.header('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (!request.session || request.session._id.toString() !== request.params.userId) { return response.send(401, 'invalid token'); }
+
+    var user;
+    user = request.user;
+
+    return user.remove(function (error) {
+        if (error) { return response.send(500, errorParser(error)); }
+        return response.send(200, user);
+    });
+});
+
+/**
+ * @method
  * @summary Login user
  * There are three forms of login, anonymous user login, registered user login and registered facebook user login. If is
  * an anonymous user login the API call should contain the _id and password of the user, if is a registered user login

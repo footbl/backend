@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 var request, app, mongoose, auth, nconf, crypto, nock,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    user, otherUser, facebook;
+    user, otherUser, removedUser, facebook;
 
 require('should');
 
@@ -64,6 +64,11 @@ describe('user controller', function () {
     before(function (done) {
         otherUser = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});
         otherUser.save(done);
+    });
+
+    before(function (done) {
+        removedUser = new User({'password' : crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex'), 'type' : 'admin'});
+        removedUser.save(done);
     });
 
     describe('create', function () {
@@ -423,6 +428,71 @@ describe('user controller', function () {
                 req = req.expect(500);
                 req.end(done);
             });
+        });
+    });
+
+    describe('delete', function () {
+        it('should raise error without token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/users/' + removedUser._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.expect(401);
+            req.end(done);
+        });
+        it('should raise error with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/users/' + removedUser._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with invalid id', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/users/invalid');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(removedUser));
+            req = req.expect(404);
+            req.end(done);
+        });
+
+        it('should delete', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/users/' + removedUser._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(removedUser));
+            req = req.expect(200);
+            req.end(done);
+        });
+
+        after(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/' + removedUser._id);
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(404);
+            req.end(done);
         });
     });
 

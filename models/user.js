@@ -291,4 +291,26 @@ schema.pre('save', function (next) {
     next(repeated ? new Error('duplicated') : null);
 });
 
+/**
+ * @callback
+ * @summary Removes all groups created by the user
+ *
+ * @param next
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.post('delete', function (doc) {
+    'use strict';
+
+    var query;
+    query = require('./group').find();
+    query.where('owner').equals(doc._id);
+    query.exec(function (error, groups) {
+        groups.forEach(function (group) {
+            group.remove();
+        });
+    });
+});
+
 module.exports = mongoose.model('User', schema);
