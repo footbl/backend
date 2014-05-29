@@ -68,6 +68,7 @@ router.post('/users', function (request, response) {
  * @param request.usernames
  * @param request.ids
  * @param request.facebookIds
+ * @param request.featured
  * @param request.page
  * @param response
  *
@@ -108,6 +109,8 @@ router.get('/users', function (request, response) {
         query.where('facebookId').in(request.param('facebookIds', []));
     } else if (request.param('ids')) {
         query.where('_id').in(request.param('ids', []));
+    } else if (request.param('featured')) {
+        query.where('featured').equals(true);
     }
 
     query.skip(page);

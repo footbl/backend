@@ -57,6 +57,12 @@ schema = new Schema({
         'default' : false
     },
     /** @property */
+    'featured' : {
+        'type' : Boolean,
+        'required' : true,
+        'default' : false
+    },
+    /** @property */
     'password' : {
         'type' : String,
         'required' : true
@@ -125,6 +131,7 @@ schema.plugin(require('mongoose-json-select'), {
     'name'          : 1,
     'about'         : 1,
     'verified'      : 1,
+    'featured'      : 1,
     'password'      : 0,
     'picture'       : 1,
     'language'      : 1,
