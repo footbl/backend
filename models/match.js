@@ -169,15 +169,13 @@ schema.post('save', function () {
             }.bind(this), function (bet) {
                 if (!bet) { return next(); }
 
-                var oldReward, oldStatus, oldToReturn;
+                var oldReward, oldStatus;
                 oldReward    = bet.reward;
                 oldStatus    = bet.finished;
-                oldToReturn  = bet.toReturn;
                 bet.finished = this.finished;
-                bet.toReturn = !bet.finished ? bet.bid * this.jackpot / this.pot[bet.result] : 0;
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
 
-                if (oldReward === bet.reward && oldStatus === bet.finished && bet.toReturn === oldToReturn) { return next(); }
+                if (oldReward === bet.reward && oldStatus === bet.finished) { return next(); }
                 return wallet.save(next);
             }.bind(this));
         }.bind(this));

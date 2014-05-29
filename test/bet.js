@@ -243,7 +243,6 @@ describe('bet', function () {
                 response.body.should.have.property('date');
                 response.body.should.have.property('result');
                 response.body.should.have.property('bid');
-                response.body.should.have.property('toReturn');
             });
             req.end(done);
         });
@@ -277,7 +276,6 @@ describe('bet', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('stake').be.equal(50);
                 response.body.should.have.property('funds').be.equal(50);
-                response.body.should.have.property('toReturn').be.equal(50);
             });
             req.end(done);
         });
@@ -547,7 +545,6 @@ describe('bet', function () {
             req = req.expect(function (response) {
                 response.body.should.have.property('stake').be.equal(5);
                 response.body.should.have.property('funds').be.equal(95);
-                response.body.should.have.property('toReturn').be.equal(5);
             });
             req.end(done);
         });
@@ -667,7 +664,6 @@ describe('bet', function () {
                 req = req.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(100);
-                    response.body.should.have.property('toReturn').be.equal(0);
                 });
                 req.end(done);
             });

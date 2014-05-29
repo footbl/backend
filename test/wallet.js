@@ -157,7 +157,6 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active');
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
-                response.body.should.have.property('toReturn');
             });
             req.end(done);
         });
@@ -225,7 +224,6 @@ describe('wallet controller', function () {
                     wallet.should.have.property('active');
                     wallet.should.have.property('funds');
                     wallet.should.have.property('stake');
-                    wallet.should.have.property('toReturn');
                 });
             });
             req.end(done);
@@ -250,7 +248,6 @@ describe('wallet controller', function () {
                     wallet.should.have.property('active');
                     wallet.should.have.property('funds');
                     wallet.should.have.property('stake');
-                    wallet.should.have.property('toReturn');
                 });
             });
             req.end(done);
@@ -318,7 +315,6 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active');
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
-                response.body.should.have.property('toReturn');
             });
             req.end(done);
         });
@@ -340,7 +336,6 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active');
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
-                response.body.should.have.property('toReturn');
             });
             req.end(done);
         });
@@ -440,7 +435,6 @@ describe('wallet controller', function () {
                 response.body.should.have.property('active').be.equal(false);
                 response.body.should.have.property('funds');
                 response.body.should.have.property('stake');
-                response.body.should.have.property('toReturn');
             });
             req.end(done);
         });

@@ -132,12 +132,6 @@ schema = new Schema({
             'default' : 0
         },
         /** @property */
-        'toReturn' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        },
-        /** @property */
         'finished' : {
             'type' : Boolean,
             'required' : true,
@@ -174,7 +168,6 @@ schema.plugin(require('mongoose-json-select'), {
     'lastDate'      : 1,
     'funds'         : 1,
     'stake'         : 1,
-    'toReturn'      : 1,
     'createdAt'     : 1,
     'updatedAt'     : 1
 });
@@ -398,29 +391,6 @@ schema.virtual('stake').get(function () {
         return bet.bid;
     }.bind(this)).reduce(function (stake, bid) {
         return stake + bid;
-    }.bind(this), 0);
-});
-
-/**
- * @method
- * @summary Return wallet to possible return
- * This method should return the wallets possible profit, this is calculated by summing all bets reward in the wallet
- * which the bet isn't finished yet.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('toReturn').get(function () {
-    'use strict';
-
-    return this.bets.filter(function (bet) {
-        return bet.date > this.lastDate;
-    }.bind(this)).filter(function (bet) {
-        return !bet.finished;
-    }.bind(this)).map(function (bet) {
-        return bet.toReturn;
-    }.bind(this)).reduce(function (toReturn, reward) {
-        return toReturn + reward;
     }.bind(this), 0);
 });
 

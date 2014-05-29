@@ -722,7 +722,6 @@ describe('group controller', function () {
                     response.body[0].should.have.property('active').be.equal(false);
                     response.body[0].should.have.property('funds').be.equal(100);
                     response.body[0].should.have.property('stake').be.equal(0);
-                    response.body[0].should.have.property('toReturn').be.equal(0);
                 });
                 req.end(done);
             });
