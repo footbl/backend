@@ -36,7 +36,7 @@ query.exec(function (error, championships) {
         query.populate('user');
         return query.exec(function (error, wallets) {
             async.sortBy(wallets.filter(function (wallet) {
-                return wallet.user.username || wallet.user.facebookId || wallet.user.email;
+                return wallet.user && (wallet.user.username || wallet.user.facebookId || wallet.user.email);
             }), function (wallet, next) {
                 while (wallet.rounds.length <= round) {
                     wallet.rounds.push({ranking : Infinity, funds : 100});
