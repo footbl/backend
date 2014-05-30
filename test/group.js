@@ -110,7 +110,8 @@ describe('group controller', function () {
             'name' : 'test',
             'championship' : championship._id,
             'owner' : user._id,
-            'members' : [{user : user._id}, {user : memberUser._id}]
+            'members' : [{user : user._id}, {user : memberUser._id}],
+            'freeToEdit' : false
         });
         group.save(done);
     });
@@ -120,7 +121,8 @@ describe('group controller', function () {
             'name' : 'test',
             'championship' : championship._id,
             'owner' : user._id,
-            'members' : [{user : user._id}, {user : memberUser._id}]
+            'members' : [{user : user._id}, {user : memberUser._id}],
+            'freeToEdit' : false
         });
         otherGroup.save(done);
     });

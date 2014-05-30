@@ -36,7 +36,7 @@ schema = new Schema({
     'freeToEdit' : {
         'type' : Boolean,
         'required' : true,
-        'default' : false
+        'default' : true
     },
     /** @property */
     'championship' : {
