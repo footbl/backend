@@ -462,7 +462,9 @@ router.param('groupId', function (request, response, next, id) {
     var query;
     query = Group.findOne();
     query.where('_id').equals(id);
-    if (request.session) {
+    if (request.param('code')) {
+        query.where('code').equals(request.param('code'));
+    } else if (request.session) {
         query.where('members.user').equals(request.session._id);
     }
     query.populate('championship');
