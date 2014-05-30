@@ -60,6 +60,7 @@ router.post('/groups', function (request, response) {
  * @method
  * @summary List all groups user belongs
  *
+ * @param request.code
  * @param request.page
  * @param response
  *
@@ -87,7 +88,11 @@ router.get('/groups', function (request, response) {
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
-    query.where('members.user').equals(request.session._id);
+    if (request.param('code')) {
+        query.where('code').equals(request.param('code'));
+    } else {
+        query.where('members.user').equals(request.session._id);
+    }
     query.populate('championship');
     query.populate('owner');
     query.skip(page);

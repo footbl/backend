@@ -24,6 +24,10 @@ schema = new Schema({
         'required' : true
     },
     /** @property */
+    'code' : {
+        'type' : String
+    },
+    /** @property */
     'picture' : {
         'type' : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
@@ -103,6 +107,7 @@ schema = new Schema({
 
 schema.plugin(require('mongoose-json-select'), {
     'name'         : 1,
+    'code'         : 1,
     'picture'      : 1,
     'freeToEdit'   : 1,
     'championship' : 1,
@@ -130,6 +135,24 @@ schema.pre('save', function (next) {
         this.updatedAt = new Date();
     }
     next();
+});
+
+/**
+ * @callback
+ * @summary Setups group code for social sharing
+ *
+ * @param next
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.isNew) { return next(); }
+
+    this.code = Math.floor(new Date().getTime() / 10000).toString(36);
+    return next();
 });
 
 /**
