@@ -34,12 +34,8 @@ query.exec(function (error, groups) {
         if (!group.championship.roundFinished) { return next(); }
         round = group.championship.currentRound - 1;
 
-        console.log(group.members);
-        console.log(group.members.filter(function (member) {
-            return member.username || member.facebookId || member.email;
-        }));
         return async.sortBy(group.members.filter(function (member) {
-            return member.username || member.facebookId || member.email;
+            return member.user && (member.user.username || member.user.facebookId || member.user.email);
         }), function (member, next) {
             var query;
             query = Wallet.findOne();
