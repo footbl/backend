@@ -529,6 +529,22 @@ describe('user controller', function () {
                 });
                 req.end(done);
             });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/' + otherUser._id);
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.expect(200);
+                req = req.expect(function (response) {
+                    response.body.should.have.property('followers').be.equal(1);
+                });
+                req.end(done);
+            });
         });
 
         describe('list', function () {

@@ -111,6 +111,11 @@ schema = new Schema({
         }
     },
     /** @property */
+    'followers' : {
+        'type' : Number,
+        'default' : 0
+    },
+    /** @property */
     'createdAt' : {
         'type' : Date
     },
@@ -140,6 +145,7 @@ schema.plugin(require('mongoose-json-select'), {
     'type'          : 1,
     'starred'       : 0,
     'notifications' : 1,
+    'followers'     : 1,
     'createdAt'     : 1,
     'updatedAt'     : 1
 });
@@ -216,39 +222,6 @@ schema.pre('save', function (next) {
     var query;
     query = require('./championship').findOne();
     query.where('country').equals(/*this.country*/'BR');
-    return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(); }
-        if (!championship.active) { return next(); }
-
-        var wallet;
-        wallet = new (require('./wallet'))({
-            'championship'  : championship._id,
-            'user'          : this._id
-        });
-        return wallet.save(next);
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Creates user continental league wallet
- * All system users must have a wallet in the current continental league if some is available. Se, before saving each
- * user, a new wallet must be created for the user in the championship.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.isNew) { return next(); }
-
-    var query;
-    query = require('./championship').findOne();
-    query.where('type').equals('continental league');
     return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
@@ -347,6 +320,31 @@ schema.post('delete', function (doc) {
             group.remove();
         });
     });
+});
+
+/**
+ * @callback
+ * @summary Updates starred user incrementing the number of followers
+ *
+ * @param next
+ *
+ * @since 2014-05
+ * @author Rafael Almeida Erthal Hermano
+ */
+schema.post('save', function (doc) {
+    'use strict';
+
+    this.starred.filter(function (starred) {
+        return starred.isNew;
+    }.bind(this)).forEach(function (starred) {
+        var query;
+        query = this.constructor.findOne();
+        query.where('_id').equals(starred);
+        query.exec(function (error, user) {
+            user.followers = (user.followers ? user.followers : 0) + 1;
+            user.save();
+        });
+    }.bind(this));
 });
 
 module.exports = mongoose.model('User', schema);
