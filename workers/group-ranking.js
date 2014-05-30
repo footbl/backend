@@ -53,7 +53,10 @@ query.exec(function (error, groups) {
                 member.rounds[round].ranking = index + 1;
             });
             group.members = members;
-            group.save(next);
+            group.save(function (error) {
+                console.log(error);
+                next();
+            });
             next();
         });
     }, process.exit);
