@@ -58,7 +58,6 @@ query.exec(function (error, groups) {
                 console.log(error);
                 next();
             });
-            next();
         });
     }, process.exit);
 });
