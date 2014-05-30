@@ -383,7 +383,7 @@ router.get('/groups/:groupId/members/:memberId', function (request, response) {
     var group, member;
     group = request.group;
     member = group.members.filter(function (member) {
-        return member.user._id.toString() === request.params.memberId;
+        return member._id.toString() === request.params.memberId;
     }).pop();
 
     if (!member) { return response.send(404, 'member not found'); }
@@ -426,13 +426,13 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
     if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     member = group.members.filter(function (member) {
-        return member.user._id.toString() === request.params.memberId;
+        return member._id.toString() === request.params.memberId;
     }).pop();
 
     if (!member) { return response.send(404, 'member not found'); }
 
     group.members = group.members.filter(function (member) {
-        return member.user._id.toString() !== request.params.memberId;
+        return member._id.toString() !== request.params.memberId;
     }).pop();
 
     return group.save(function (error) {

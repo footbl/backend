@@ -791,11 +791,29 @@ describe('group controller', function () {
     });
 
     describe('details member', function () {
+        var id;
+
+        before(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/groups/' + otherGroup._id + '/members');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
         it('should raise error without token', function (done) {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/groups/' + otherGroup._id + '/members/' + memberUser._id);
+            req = req.get('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -820,7 +838,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/groups/' + otherGroup._id + '/members/' + memberUser._id);
+            req = req.get('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -833,7 +851,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/groups/' + otherGroup._id + '/members/' + memberUser._id);
+            req = req.get('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -848,11 +866,29 @@ describe('group controller', function () {
     });
 
     describe('delete member', function () {
+        var id;
+
+        before(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/groups/' + otherGroup._id + '/members');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
         it('should raise error without token', function (done) {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -878,7 +914,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -891,7 +927,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -904,7 +940,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/groups/' + otherGroup._id + '/members/' + candidateUser._id);
+            req = req.del('/groups/' + otherGroup._id + '/members/' + id);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
