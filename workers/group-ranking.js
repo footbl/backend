@@ -42,10 +42,9 @@ query.exec(function (error, groups) {
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
             query.exec(function (error, wallet) {
-                while (wallet.rounds.length <= round) {
-                    wallet.rounds.push({ranking : Infinity, funds : 100});
+                while (member.rounds.length <= round) {
+                    member.rounds.push({ranking : Infinity, funds : 100});
                 }
-                console.log(member.rounds, wallet.rounds.length, round);
                 member.rounds[round].funds = wallet ? wallet.funds : 100;
                 next(error, member.rounds[round].funds * -1);
             });
