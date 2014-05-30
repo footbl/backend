@@ -45,7 +45,7 @@ query.exec(function (error, groups) {
                 while (wallet.rounds.length <= round) {
                     wallet.rounds.push({ranking : Infinity, funds : 100});
                 }
-                console.log(member.rounds, round);
+                console.log(member.rounds, wallet.rounds.length, round);
                 member.rounds[round].funds = wallet ? wallet.funds : 100;
                 next(error, member.rounds[round].funds * -1);
             });
