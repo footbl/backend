@@ -335,6 +335,7 @@ function saveMatches(matches, next) {
                 'round' : data.round,
                 'championship' : data.championship
             }, function (error, match) {
+                console.log(match)
                 match.finished = data.finished;
                 match.result = data.score;
                 if (!match.date) { match.date = data.date; }
