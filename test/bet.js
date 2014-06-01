@@ -159,23 +159,6 @@ describe('bet', function () {
             req.end(done);
         });
 
-        it('should raise error with finished match', function (done) {
-            var req, credentials;
-            credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/' + championship._id + '/matches/' + yesterdayMatch._id + '/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({date : new Date(), result : 'draw', bid : 50});
-            req = req.expect(500);
-            req = req.expect(function (response) {
-                response.body[0].should.be.equal('match already started');
-            });
-            req.end(done);
-        });
-
         it('should raise error without result', function (done) {
             var req, credentials;
             credentials = auth.credentials();
@@ -608,34 +591,6 @@ describe('bet', function () {
             req = req.set('auth-token', auth.token(user));
             req = req.expect(404);
             req.end(done);
-        });
-
-        describe('finished match', function () {
-            before(function (done) {
-                match.date = yesterdayMatch.date;
-                match.save(done);
-            });
-
-            it('should raise error with finished match', function (done) {
-                var req, credentials;
-                credentials = auth.credentials();
-                req = request(app);
-                req = req.del('/championships/' + championship._id + '/matches/' + match._id + '/bets/' + id);
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.expect(500);
-                req = req.expect(function (response) {
-                    response.body[0].should.be.equal('match already started');
-                });
-                req.end(done);
-            });
-
-            after(function (done) {
-                match.date = tomorrow;
-                match.save(done);
-            });
         });
 
         describe('valid match', function () {

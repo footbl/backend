@@ -214,56 +214,6 @@ schema.pre('save', function (next) {
 });
 
 /**
- * @callback
- * @summary Checks if the match already started
- * If the bet's match have already started, the bet cannot be changed, and a error must be raised. So, before saving the
- * bet, the system must get the match and see if the match start date is lower than the current date.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.paths.bets.schema.pre('save', function (next) {
-    'use strict';
-
-    var query;
-    query = require('./match').findOne();
-    query.where('_id').equals(this.match);
-    query.exec(function (error, match) {
-        if (error) { return next(error); }
-        if (!match) { return next(new Error('match not found')); }
-        if (match.date < new Date()) { return next(new Error('match already started')); }
-        return next();
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Checks if the match already started
- * If the bet's match have already started, the bet cannot be removed, and a error must be raised. So, before removing
- * the bet, the system must get the match and see if the match start date is lower than the current date.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.paths.bets.schema.pre('remove', function (next) {
-    'use strict';
-
-    var query;
-    query = require('./match').findOne();
-    query.where('_id').equals(this.match);
-    query.exec(function (error, match) {
-        if (error) { return next(error); }
-        if (!match) { return next(new Error('match not found')); }
-        if (match.date < new Date()) { return next(new Error('match already started')); }
-        return next();
-    }.bind(this));
-});
-
-/**
  * @method
  * @summary Return wallet last iap date
  * The wallet status must be calculated with all bets that happened after the iap, so this method should return the last
