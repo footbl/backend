@@ -345,5 +345,5 @@ function saveMatches(matches, next) {
 }
 
 async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches, function () {
-    setTimeout(process.exit, 5000);
+    setTimeout(process.exit, 10000);
 })();

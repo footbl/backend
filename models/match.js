@@ -158,6 +158,7 @@ schema.pre('save', function (next) {
 schema.post('save', function () {
     'use strict';
 
+    console.log('ola');
     var query;
     query = require('./wallet').find();
     query.where('championship').equals(this.championship);
