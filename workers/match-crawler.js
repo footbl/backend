@@ -31,8 +31,8 @@ championships = [
      {'acronym' : 'CO', 'name' : 'Primera A', 'country' : 'Colombia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},
      {'acronym' : 'SA', 'name' : 'Professional League Saudi', 'country' : 'Arabia', 'url' : 'http://football-data.enetpulse.com/standings.php?ttFK='},*/
     /*{'type' : 'continental league', 'acronym' : 'International', 'name' : 'Libertadores', 'country' : 'International', 'ttFK' : '45'},*/
-    worldCup = {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'}/*,
-    {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'},
+    worldCup = {'type' : 'world cup', 'acronym' : 'International', 'name' : 'World Cup', 'country' : 'International', 'ttFK' : '77'},
+    {'type' : 'national league', 'acronym' : 'BR', 'name' : 'Série A', 'country' : 'Brazil', 'ttFK' : '268'}/*,
     championsLeague = {'type' : 'continental league', 'acronym' : 'International', 'name' : 'Champions League', 'country' : 'International', 'ttFK' : '42'},
     {'type' : 'national league', 'acronym' : 'AU', 'name' : 'A-League', 'country' : 'Australia', 'ttFK' : '113'},
     {'type' : 'national league', 'acronym' : 'NO', 'name' : 'Tippeligaen', 'country' : 'Norway', 'ttFK' : '59'},
