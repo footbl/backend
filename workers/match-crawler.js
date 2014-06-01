@@ -327,19 +327,19 @@ function saveMatches(matches, next) {
             'guest' : data.guest,
             'host' : data.host,
             'round' : data.round,
-            'championship' : data.championship,
-            'finished' : data.finished,
-            'result' : data.score
+            'championship' : data.championship
         }, {'upsert' : true}, function (error) {
-            Match.update({
+            Match.findOne({
                 'guest' : data.guest,
                 'host' : data.host,
                 'round' : data.round,
-                'championship' : data.championship,
-                'date' : {'$exists' : false}
-            }, {
-                'date' : data.date
-            }, next);
+                'championship' : data.championship
+            }, function (error, match) {
+                match.finished = data.finished;
+                match.result = data.score;
+                if (!match.date) { match.date = data.date; }
+                match.save(next);
+            });
         });
     }, next);
 }
