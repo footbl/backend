@@ -180,6 +180,7 @@ schema.pre('save', function (next) {
  *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
+ */
 schema.pre('save', function (next) {
     'use strict';
 
@@ -188,40 +189,6 @@ schema.pre('save', function (next) {
     var query;
     query = require('./championship').findOne();
     query.where('type').equals('world cup');
-    return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(); }
-        if (!championship.active) { return next(); }
-
-        var wallet;
-        wallet = new (require('./wallet'))({
-            'championship'  : championship._id,
-            'user'          : this._id
-        });
-        return wallet.save(next);
-    }.bind(this));
-});
- */
-
-/**
- * @callback
- * @summary Creates user national league wallet
- * All system users must have a wallet in the user's country national league if the league of the users country is
- * active. So, before saving each system user, a new wallet must be created for the user in the championship.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.isNew) { return next(); }
-
-    var query;
-    query = require('./championship').findOne();
-    query.where('country').equals(/*this.country*/'BR');
     return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
