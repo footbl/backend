@@ -335,7 +335,6 @@ function saveMatches(matches, next) {
                 'round' : data.round,
                 'championship' : data.championship
             }, function (error, match) {
-                console.log(match)
                 match.finished = data.finished;
                 match.result = data.score;
                 if (!match.date) { match.date = data.date; }
@@ -345,4 +344,6 @@ function saveMatches(matches, next) {
     }, next);
 }
 
-async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches, process.exit)();
+async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches, function () {
+    setTimeout(process.exit, 5000);
+})();
