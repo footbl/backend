@@ -155,30 +155,27 @@ schema.pre('save', function (next) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-schema.post('save', function () {
+schema.pre('save', function (next) {
     'use strict';
 
     var query;
     query = require('./wallet').find();
     query.where('championship').equals(this.championship);
     return query.exec(function (error, wallets) {
-        if (error) { return; }
-        async.each(wallets, function (wallet, next) {
+        if (error) { return next(error); }
+        return async.each(wallets, function (wallet, next) {
             return async.detect(wallet.bets, function (bet, next) {
                 next(bet.match.toString() === this._id.toString());
             }.bind(this), function (bet) {
                 if (!bet) { return next(); }
 
-                var oldReward, oldStatus;
-                oldReward    = bet.reward;
-                oldStatus    = bet.finished;
                 bet.finished = this.finished;
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
-
-                if (oldReward === bet.reward && oldStatus === bet.finished) { return next(); }
-                return wallet.save(next);
+                return wallet.save(function () {
+                    next();
+                });
             }.bind(this));
-        }.bind(this));
+        }.bind(this), next);
     }.bind(this));
 });
 
