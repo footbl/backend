@@ -344,6 +344,4 @@ function saveMatches(matches, next) {
     }, next);
 }
 
-async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches, function () {
-    setTimeout(process.exit, 60000);
-})();
+async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches)();
