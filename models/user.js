@@ -188,8 +188,7 @@ schema.pre('save', function (next) {
 
     var query;
     query = require('./championship').findOne();
-    //query.where('type').equals('world cup');
-    query.where('country').equals('BR');
+    query.where('type').equals('world cup');
     return query.exec(function (error, championship) {
         if (error) { return next(error); }
         if (!championship) { return next(); }
