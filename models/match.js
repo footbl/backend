@@ -158,7 +158,6 @@ schema.pre('save', function (next) {
 schema.post('save', function () {
     'use strict';
 
-    console.log('ola');
     var query;
     query = require('./wallet').find();
     query.where('championship').equals(this.championship);
@@ -175,6 +174,9 @@ schema.post('save', function () {
                 oldStatus    = bet.finished;
                 bet.finished = this.finished;
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
+                if (this._id.toString() === '537f658c1fc8975b05d489f6') {
+                    console.log(bet.finished, bet.reward);
+                }
 
                 if (oldReward === bet.reward && oldStatus === bet.finished) { return next(); }
                 return wallet.save(next);
