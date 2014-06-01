@@ -171,9 +171,9 @@ schema.pre('save', function (next) {
 
                 bet.finished = this.finished;
                 bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
-                return wallet.save(function () {
-                    next();
-                });
+
+                console.log(wallet.user, bet.finished, bet.reward, bet._id);
+                return wallet.save(function () { next(); });
             }.bind(this));
         }.bind(this), next);
     }.bind(this));
