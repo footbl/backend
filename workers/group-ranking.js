@@ -30,8 +30,6 @@ query.populate('members.user');
 query.exec(function (error, groups) {
     async.each(groups, function (group, next) {
         var round;
-
-        if (!group.championship.roundFinished) { return next(); }
         round = group.championship.currentRound - 1;
 
         return async.sortBy(group.members.filter(function (member) {
