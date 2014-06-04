@@ -151,7 +151,7 @@ schema.pre('save', function (next) {
 
     if (!this.isNew) { return next(); }
 
-    this.code = Math.floor(new Date().getTime() / 10000).toString(36);
+    this.code = new Date().getTime().toString(36).substring(3);
     return next();
 });
 
