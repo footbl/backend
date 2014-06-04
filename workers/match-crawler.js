@@ -196,18 +196,25 @@ function parseMatches(records, next) {
         if (record.children().length === 2) {
             date = parseDate(record.children().next().text());
         } else if (record.children().length > 2) {
-            var time, score;
-            time  = record.children().first().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split(':');
-            score = record.children().first().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split(' - ');
+            var elapsed, time, score;
+            elapsed  = record.children().first().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split('\'');
+            time     = record.children().first().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split(':');
+            score    = record.children().first().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '').split(' - ');
             record.date = new Date(date);
             if (time.length > 1) {
                 record.date.setUTCHours((time[0] * 1) - 2);
                 record.date.setUTCMinutes(time[1] * 1);
             }
+            if (elapsed.length > 1) {
+                record.elapsed = elapsed[0];
+            } else {
+                record.elapsed = null;
+            }
             matches.push({
                 championship : record.championship,
                 round        : record.round,
                 date         : record.date,
+                elapsed      : record.elapsed,
                 guest        : record.children().first().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, ''),
                 host         : record.children().first().next().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, ''),
                 score        : {guest : !isNaN(score[0]) ? score[0] * 1 : 0, host  : !isNaN(score[1]) ? score[1] * 1 : 0},
@@ -327,7 +334,8 @@ function saveMatches(matches, next) {
             'guest' : data.guest,
             'host' : data.host,
             'round' : data.round,
-            'championship' : data.championship
+            'championship' : data.championship,
+            'elapsed' : data.elapsed
         }, {'upsert' : true}, function (error) {
             Match.findOne({
                 'guest' : data.guest,
