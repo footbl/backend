@@ -65,7 +65,7 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
         query.populate('host');
         return query.exec(function (error, match) {
             if (error) { return response.send(500, errorParser(error)); }
-            match.pot[request.param('result')] += request.param('bid');
+            match.pot[request.param('result')] += request.param('bid') * 1;
             return match.save(function (error) {
                 if (error) { return response.send(500, errorParser(error)); }
 
@@ -237,8 +237,8 @@ router.put('/championships/:championshipId/matches/:matchId/bets/:betId', functi
         return query.exec(function (error, match) {
             if (error) { return response.send(500, errorParser(error)); }
 
-            match.pot[oldResult]               -= oldBid;
-            match.pot[request.param('result')] += request.param('bid');
+            match.pot[oldResult]               -= oldBid * 1;
+            match.pot[request.param('result')] += request.param('bid') * 1;
             return match.save(function (error) {
                 if (error) { return response.send(500, errorParser(error)); }
 
@@ -300,7 +300,7 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
             return query.exec(function (error, match) {
                 if (error) { return response.send(500, errorParser(error)); }
 
-                match.pot[oldResult] -= oldBid;
+                match.pot[oldResult] -= oldBid * 1;
                 return match.save(function (error) {
                     if (error) { return response.send(500, errorParser(error)); }
 
