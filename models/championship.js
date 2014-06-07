@@ -115,7 +115,11 @@ schema.pre('init', function (next, data) {
     query.where('championship').equals(data._id);
     query.sort({round : -1});
     query.exec(function  (error, match) {
-        this._rounds = !match ? 1 : match.round;
+        if (this.type === "world cup") {
+            this._rounds = 7;
+        } else {
+            this._rounds = !match ? 1 : match.round;
+        }
         next();
     }.bind(this));
 });
