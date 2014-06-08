@@ -274,13 +274,10 @@ router.post('/groups/:groupId/invites', function (request, response) {
     group.invites.push(invited);
     mandrill.messages.send({
         'message' : {
-            'text' : [
-                'Join my group on footbl!',
-                '',
-                'Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.',
-                'Download (url: http://footbl.co/dl) the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.',
-                '',
-                'footbl | wanna bet?',
+            'html' : [
+                '<p>Join my group on footbl!</p>',
+                '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
+                '<p>footbl | wanna bet?<p>',
                 request.session.name || request.session.username || 'A friend on footbl'
             ].join('\n'),
             'subject'    : 'wanna bet?',
