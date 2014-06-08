@@ -19,6 +19,7 @@
     "forky": "0.0.x",
     "geoip-lite": "^1.1.3",
     "iap": "^0.1.1",
+    "mandrill-api": "^1.0.39",
     "method-override": "^1.0.0",
     "mongoose": "3.x.x",
     "mongoose-json-select": "0.2.x",

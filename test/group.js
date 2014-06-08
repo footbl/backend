@@ -577,7 +577,7 @@ describe('group controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({'email' : 'invite-test@test.com'});
+            req = req.send({'email' : 'rafaerthal@gmail.com'});
             req = req.expect(201);
             req.end(done);
         });
@@ -591,7 +591,7 @@ describe('group controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(invitedUser));
-            req = req.send({username : 'test', email : 'invite-test@test.com', password : '1234'});
+            req = req.send({username : 'test', email : 'rafaerthal@gmail.com', password : '1234'});
             req = req.expect(200);
             req.end(done);
         });

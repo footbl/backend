@@ -5,12 +5,13 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, errorParser, Group;
+var router, nconf, errorParser, mandrill, Group;
 
 router      = require('express').Router();
 nconf       = require('nconf');
 errorParser = require('../lib/error-parser');
 Group       = require('../models/group');
+mandrill    = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 
 /**
  * @method
@@ -271,6 +272,27 @@ router.post('/groups/:groupId/invites', function (request, response) {
     if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
 
     group.invites.push(invited);
+    mandrill.messages.send({
+        'message' : {
+            'text' : [
+                'Join my group on footbl!',
+                '',
+                'Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.',
+                'Download (url: http://footbl.co/dl) the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.',
+                '',
+                'footbl | wanna bet?',
+                request.session.name || request.session.username || 'A friend on footbl'
+            ].join('\n'),
+            'subject'    : 'wanna bet?',
+            'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
+            'from_email' : 'noreply@footbl.co',
+            'to'         : [{
+                'email' : invited,
+                'type'  : 'to'
+            }]
+        },
+        'async' : true
+    });
 
     return group.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
