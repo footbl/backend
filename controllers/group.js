@@ -89,7 +89,7 @@ router.get('/groups', function (request, response) {
     page     = request.param('page', 0) * pageSize;
 
     if (request.param('code')) {
-        query.where('code').equals(request.param('code'));
+        query.where('code').equals(request.param('code', '').toLowerCase());
     } else {
         query.where('members.user').equals(request.session._id);
     }
