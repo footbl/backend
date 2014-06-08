@@ -72,6 +72,14 @@ function parseDate(string) {
     return new Date(year, month, day);
 }
 
+function translateName(name) {
+    if (name === 'Bosnia-Herzegovina') {
+        return 'Bosnia and H.';
+    } else {
+        return name;
+    }
+}
+
 /**
  * @method
  * @summary Checks if championship is already saved and save it
@@ -215,8 +223,8 @@ function parseMatches(records, next) {
                 round        : record.round,
                 date         : record.date,
                 elapsed      : record.elapsed,
-                guest        : record.children().first().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, ''),
-                host         : record.children().first().next().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, ''),
+                guest        : translateName(record.children().first().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '')),
+                host         : translateName(record.children().first().next().next().next().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '')),
                 score        : {guest : !isNaN(score[0]) ? score[0] * 1 : 0, host  : !isNaN(score[1]) ? score[1] * 1 : 0},
                 finished     : record.children().first().text().replace(/\n/g, '').replace(/\t/g, '').replace(/\r/g, '') === 'FT'
             });
