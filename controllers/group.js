@@ -433,7 +433,7 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
 
     group.members = group.members.filter(function (member) {
         return member._id.toString() !== request.params.memberId;
-    }).pop();
+    });
 
     return group.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
