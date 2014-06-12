@@ -19,9 +19,15 @@ app.use(bodyParser());
 app.use(methodOverride());
 app.options('/*', function (request, response) {
     response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET');
+    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
     response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
     response.end();
+});
+app.use(function (request, response, next) {
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Pragma', 'no-cache');
+    response.header('Expires', '0');
+    next();
 });
 app.use(require('./lib/auth').signature);
 app.use(require('./lib/auth').facebook);
