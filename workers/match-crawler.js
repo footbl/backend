@@ -8,7 +8,7 @@
 'use strict';
 var mongoose, nconf, async, cheerio, request, querystring,
     Team, Championship, Match,
-    championships, worldCup, months, invalidNames;
+    championships, worldCup, months;
 
 mongoose     = require('mongoose');
 nconf        = require('nconf');
@@ -60,7 +60,6 @@ championships = [
     {'type' : 'national league', 'acronym' : 'TR', 'name' : 'Super Lig', 'country' : 'Turkey', 'ttFK' : '71'},
     {'type' : 'national league', 'acronym' : 'UA', 'name' : 'Premyer Liga', 'country' : 'Ukraine', 'ttFK' : '441'}*/
 ];
-invalidNames = ["2F", "2B", "2H", "Winner 1H/2G", "Winner SF 2", "2D", "2C", "Winner 1G/2H", "2E", "Winner 1C/2D", "Loser SF 2", "Winner 1D/2C", "Winner QF 4", "2A", "2G", "Winner QF 2", "1A", "1G", "1B", "1H", "1D", "Winner 1F/2E", "1C", "1F", "Winner 1B/2A", "Winner QF 1", "1E", "Winner 1E/2F", "Winner SF 1", "Winner QF 3", "Winner 1A/2B", "Loser SF 1"];
 months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function parseDate(string) {
@@ -230,9 +229,7 @@ function parseMatches(records, next) {
             });
         }
     });
-    next(null, matches.filter(function (match) {
-        return invalidNames.indexOf(match.guest) === -1 && invalidNames.indexOf(match.host);
-    }));
+    next(null, matches);
 }
 
 /**
@@ -247,15 +244,10 @@ function parseMatches(records, next) {
  */
 function retrieveHost(matches, next) {
     async.map(matches, function (match, next) {
-        Team.findOneAndUpdate({'name' : match.host}, {'$set' : {'name' : match.host}}, {'upsert' : true}, function (error, team) {
-            if (error) {
-                next(error);
-            } else if (!team) {
-                next(new Error('team not found'));
-            } else {
-                match.host = team._id;
-                next(null, match);
-            }
+        Team.findOne({'name' : match.host, 'picture' : {'$exists' : true}}, function (error, team) {
+            if (error) { next(error); }
+            match.host = team ? team._id : null;
+            next(null, match);
         });
     }, next.bind({}));
 }
@@ -272,15 +264,10 @@ function retrieveHost(matches, next) {
  */
 function retrieveGuest(matches, next) {
     async.map(matches, function (match, next) {
-        Team.findOneAndUpdate({'name' : match.guest}, {'$set' : {'name' : match.guest}}, {'upsert' : true}, function (error, team) {
-            if (error) {
-                next(error);
-            } else if (!team) {
-                next(new Error('team not found'));
-            } else {
-                match.guest = team._id;
-                next(null, match);
-            }
+        Team.findOneAndUpdate({'name' : match.guest, 'picture' : {'$exists' : true}}, function (error, team) {
+            if (error) { next(error); }
+            match.guest = team ? team._id : null;
+            next(null, match);
         });
     }, next.bind({}));
 }
@@ -298,7 +285,7 @@ function retrieveGuest(matches, next) {
 function retrieveRounds(matches, next) {
     async.seq(function (next) {
         async.filter(matches, function (match, next) {
-            next(match.championship.toString() === worldCup._id.toString());
+            next(match.championship.toString() === worldCup._id.toString() && match.guest && match.host);
         }, function (matches) {
             next(null, matches);
         });
@@ -344,7 +331,7 @@ function saveMatches(matches, next) {
             'round' : data.round,
             'championship' : data.championship,
             'elapsed' : data.elapsed
-        }, {'upsert' : true}, function (error) {
+        }, {'upsert' : true}, function () {
             Match.findOne({
                 'guest' : data.guest,
                 'host' : data.host,
