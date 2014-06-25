@@ -44,6 +44,7 @@ query.exec(function (error, groups) {
                     member.rounds.push({ranking : Infinity, funds : 100});
                 }
                 member.rounds[round].funds = wallet ? wallet.funds : 100;
+                member.rounds[round].date  = new Date();
                 next(error, member.rounds[round].funds * -1);
             });
         }, function (error, members) {

@@ -75,14 +75,12 @@ schema = new Schema({
                 'type' : Number,
                 'required' : true,
                 'default' : 100
+            },
+            /** @property */
+            'date' : {
+                'type' : Date
             }
         }],
-        /** @property */
-        'initialFunds' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 100
-        },
         /** @property */
         'createdAt' : {
             'type' : Date,
@@ -178,17 +176,13 @@ schema.paths.members.schema.pre('save', function (next) {
     query.where('user').equals(this.user);
     return query.exec(function (error, wallet) {
         if (error) { return next(error); }
-        if (!wallet) {
-            wallet = new (require('./wallet'))({
-                'championship'  : this.parent().championship,
-                'user'          : this.user,
-                'active'        : false
-            });
-            this.initialFunds = wallet.funds;
-            return wallet.save(next);
-        }
-        this.initialFunds = wallet.funds;
-        return next();
+        if (wallet) { return next(); }
+        wallet = new (require('./wallet'))({
+            'championship'  : this.parent().championship,
+            'user'          : this.user,
+            'active'        : false
+        });
+        return wallet.save(next);
     }.bind(this));
 });
 
