@@ -13,7 +13,6 @@ nconf.env();
 nconf.defaults(require('./config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-require('newrelic');
 app = express();
 app.use(bodyParser());
 app.use(methodOverride());
