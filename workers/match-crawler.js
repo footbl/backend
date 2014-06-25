@@ -264,7 +264,7 @@ function retrieveHost(matches, next) {
  */
 function retrieveGuest(matches, next) {
     async.map(matches, function (match, next) {
-        Team.findOneAndUpdate({'name' : match.guest, 'picture' : {'$exists' : true}}, function (error, team) {
+        Team.findOne({'name' : match.guest, 'picture' : {'$exists' : true}}, function (error, team) {
             if (error) { next(error); }
             match.guest = team ? team._id : null;
             next(null, match);
@@ -302,8 +302,8 @@ function retrieveRounds(matches, next) {
             guestRound[match.host] += 1;
             match.round = guestRound[match.guest > match.host ? match.guest : match.host];
         });
-        next();
-    }, function () {
+        next(null, matches);
+    }, function (matches) {
         next(null, matches);
     })();
 }
