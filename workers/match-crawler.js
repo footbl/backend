@@ -163,6 +163,7 @@ function loadRounds(championships, next) {
     async.map(championships, function (championship, next) {
         async.map(championship.rounds, function (round, next) {
             request('http://football-data.enetpulse.com/standings.php?ttFK=' + championship.ttFK + '&' + round.scanType + '=' + round.round, function (error, response, body) {
+                if (error) { return next(error); }
                 var $, result;
                 $      = cheerio.load(body);
                 result = [];
@@ -172,15 +173,17 @@ function loadRounds(championships, next) {
                     row.round = round.round * 1;
                     result.push(row);
                 });
-                next(error, result);
+                next(null, result);
             });
         }, function (error, pages) {
-            async.reduce(pages, [], function (matches, page, next) {
+            if (error) { return next(error); }
+            return async.reduce(pages, [], function (matches, page, next) {
                 next(null, matches.concat(page));
             }, next);
         });
     }, function (error, championships) {
-        async.reduce(championships, [], function (matches, championship, next) {
+        if (error) { return next(error); }
+        return async.reduce(championships, [], function (matches, championship, next) {
             next(null, matches.concat(championship));
         }, next);
     });
@@ -331,23 +334,25 @@ function saveMatches(matches, next) {
             'round' : data.round,
             'championship' : data.championship,
             'elapsed' : data.elapsed
-        }, {'upsert' : true}, function () {
-            Match.findOne({
+        }, {'upsert' : true}, function (error) {
+            if (error) { return next(error); }
+            return Match.findOne({
                 'guest' : data.guest,
                 'host' : data.host,
                 'round' : data.round,
                 'championship' : data.championship
             }, function (error, match) {
+                if (error) { return next(error); }
                 match.finished = data.finished;
                 match.result = data.score;
                 if (!match.date) { match.date = data.date; }
-                match.save(next);
+                return match.save(next);
             });
         });
     }, next);
 }
 
-async.timesSeries(20, function (n, next) {
+async.timesSeries(1, function (n, next) {
     async.seq(parseChampionships, parseRounds, loadRounds, parseMatches, retrieveHost, retrieveGuest, retrieveRounds, saveMatches, function () {})();
     setTimeout(next, 30000);
 }, process.exit);
