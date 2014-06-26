@@ -98,9 +98,7 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Counts championship number of rounds
- * To calculate the number of round in a championship, the system should return the highest round value in the matches.
- * And if the championship don't have any match the default number of rounds is 1.
+ * @summary Populates all championship matches
  *
  * @param next
  *
@@ -111,72 +109,20 @@ schema.pre('init', function (next, data) {
     'use strict';
 
     var query;
-    query = require('./match').findOne();
+    query = require('./match').find();
     query.where('championship').equals(data._id);
-    query.sort({round : -1});
-    query.exec(function  (error, match) {
-        if (data.type === "world cup") {
-            this._rounds = 7;
-        } else {
-            this._rounds = !match ? 1 : match.round;
-        }
-        next();
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Calculates championship current round
- * To calculate the championship current round, this method should return the highest round values in the matches that
- * have already finished. And if no match has finished, the default current round is 1.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('init', function (next, data) {
-    'use strict';
-
-    var query;
-    query = require('./match').findOne();
-    query.where('championship').equals(data._id);
-    query.where('finished').equals(true);
-    query.sort({round : -1});
-    query.exec(function  (error, match) {
-        this._currentRound = !match ? 1 : match.round;
-        next();
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Checks if championship round is finished
- * To calculate if the championship current round have finished, this method should see if all matches in the current
- * round have already finished.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('init', function (next, data) {
-    'use strict';
-
-    var query;
-    query = require('./match').findOne();
-    query.where('championship').equals(data._id);
-    query.where('finished').equals(false);
-    query.where('round').equals(this.currentRound);
-    query.exec(function  (error, match) {
-        this._roundFinished = !match;
-        next();
+    query.exec(function  (error, matches) {
+        if (error) { return next(error); }
+        this.matches = matches;
+        return next();
     }.bind(this));
 });
 
 /**
  * @method
- * @summary Returns the number of rounds
+ * @summary Counts championship number of rounds
+ * To calculate the number of round in a championship, the system should return the highest round value in the matches.
+ * And if the championship don't have any match the default number of rounds is 1.
  *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
@@ -184,12 +130,21 @@ schema.pre('init', function (next, data) {
 schema.virtual('rounds').get(function () {
     'use strict';
 
-    return this._rounds;
+    if (this.type === 'world cup') { return 7; }
+
+    var lastRound, matches;
+    matches   = this.matches || [];
+    lastRound = matches.sort(function (a, b) {
+        return b.round - a.round;
+    }.bind(this))[0];
+    return lastRound ? lastRound.round : 1;
 });
 
 /**
  * @method
- * @summary Returns the current round number
+ * @summary Calculates championship current round
+ * To calculate the championship current round, this method should return the highest round values in the matches that
+ * have already finished. And if no match has finished, the default current round is 1.
  *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
@@ -197,12 +152,21 @@ schema.virtual('rounds').get(function () {
 schema.virtual('currentRound').get(function () {
     'use strict';
 
-    return this._currentRound;
+    var lastRound, matches;
+    matches   = this.matches || [];
+    lastRound = matches.filter(function (match) {
+        return match.finished;
+    }.bind(this)).sort(function (a, b) {
+        return b.round - a.round;
+    }.bind(this))[0];
+    return lastRound ? lastRound.round : 1;
 });
 
 /**
  * @method
- * @summary Checks if round is finished
+ * @summary Checks if championship round is finished
+ * To calculate if the championship current round have finished, this method should see if all matches in the current
+ * round have already finished.
  *
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
@@ -210,7 +174,12 @@ schema.virtual('currentRound').get(function () {
 schema.virtual('roundFinished').get(function () {
     'use strict';
 
-    return this._roundFinished;
+    var lastRound, matches;
+    matches   = this.matches || [];
+    lastRound = matches.filter(function (match) {
+        return !match.finished && match.round === this.currentRound;
+    }.bind(this))[0];
+    return !lastRound;
 });
 
 /**

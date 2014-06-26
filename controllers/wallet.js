@@ -321,7 +321,6 @@ router.param('walletId', function (request, response, next, id) {
     query.exec(function (error, wallet) {
         if (error) { return response.send(404, 'wallet not found'); }
         if (!wallet) { return response.send(404, 'wallet not found'); }
-
         request.wallet = wallet;
         return next();
     });

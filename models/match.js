@@ -149,40 +149,6 @@ schema.pre('save', function (next) {
 });
 
 /**
- * @callback
- * @summary Updates user wallets
- * When a match is finished all bets of that match should be updated, this procedure will update the bet reward if the
- * bet was right with the match reward times the user bid, if the bet was wrong, the reward will be 0.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    var query;
-    query = require('./wallet').find();
-    query.where('championship').equals(this.championship);
-    return query.exec(function (error, wallets) {
-        if (error) { return next(error); }
-        return async.each(wallets, function (wallet, next) {
-            return async.detect(wallet.bets, function (bet, next) {
-                next(bet.match.toString() === this._id.toString());
-            }.bind(this), function (bet) {
-                if (!bet) { return next(); }
-
-                bet.finished = this.finished;
-                bet.reward   = bet.result === this.winner ? this.reward * bet.bid : 0;
-
-                return wallet.save(function () { next(); });
-            }.bind(this));
-        }.bind(this), next);
-    }.bind(this));
-});
-
-/**
  * @method
  * @summary Return match winner
  * This method should compare the match score and see which team has won the match, the team with higher number of gols,

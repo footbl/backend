@@ -155,9 +155,9 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
- * @summary Sets member initial funds
- * When a user become a group member the system must save the user wallet at the championship when the user entered at
- * the group to normalize the user wallet funds to calculate the ranking.
+ * @summary Ensures member has championship wallet
+ * When a user become a group member the system must ensure that the user have a wallet in the group championship, so if
+ * a wallet don't exist a wallet must be created.
  *
  * @param next
  *

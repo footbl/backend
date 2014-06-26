@@ -128,18 +128,6 @@ schema = new Schema({
         'bid' : {
             'type' : Number,
             'required' : true
-        },
-        /** @property */
-        'reward' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        },
-        /** @property */
-        'finished' : {
-            'type' : Boolean,
-            'required' : true,
-            'default' : false
         }
     }],
     /** @property */
@@ -252,7 +240,7 @@ schema.virtual('funds').get(function () {
     return this.bets.filter(function (bet) {
         return bet.date > this.lastDate;
     }.bind(this)).map(function (bet) {
-        return (bet.finished ? bet.reward : 0) - bet.bid;
+        return (bet.match.finished && bet.match.winner === bet.result ? bet.match.reward * bet.bid : 0) - bet.bid;
     }.bind(this)).reduce(function (funds, profit) {
         return funds + profit;
     }.bind(this), 100);
@@ -273,7 +261,7 @@ schema.virtual('stake').get(function () {
     return this.bets.filter(function (bet) {
         return bet.date > this.lastDate;
     }.bind(this)).filter(function (bet) {
-        return !bet.finished;
+        return !bet.match.finished;
     }.bind(this)).map(function (bet) {
         return bet.bid;
     }.bind(this)).reduce(function (stake, bid) {
