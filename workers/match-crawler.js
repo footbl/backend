@@ -322,7 +322,9 @@ function retrieveRounds(matches, next) {
  * @author Rafael Almeida Erthal Hermano
  */
 function saveMatches(matches, next) {
-    async.each(matches, function (data, next) {
+    async.each(matches.filter(function (match) {
+        return match.round !== 1;
+    }), function (data, next) {
         Match.update({
             'guest' : data.guest,
             'host' : data.host,
