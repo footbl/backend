@@ -89,6 +89,14 @@ async.timesSeries(20, function (n, next) {
         next(null, matches);
     }, function (matches, next) {
         async.each(matches, function (match, next) {
+            var elapsed;
+            if (match.currentGameMinute) {
+                elapsed = match.currentGameMinute;
+            } else if (new Date() < new Date(match.startTime) && match.status === 'Pre-game') {
+                elapsed = 90;
+            } else {
+                elapsed = null;
+            }
             Match.update({
                 'guest'        : match.guest,
                 'host'         : match.host,
@@ -99,7 +107,7 @@ async.timesSeries(20, function (n, next) {
                 'host'         : match.host,
                 'round'        : match.round,
                 'championship' : match.championship,
-                'elapsed'      : match.currentGameMinute,
+                'elapsed'      : elapsed,
                 'date'         : match.startTime,
                 'finished'     : match.status === 'Final',
                 'result'       : {
