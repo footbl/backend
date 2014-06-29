@@ -92,7 +92,7 @@ async.timesSeries(20, function (n, next) {
             var elapsed;
             if (match.currentGameMinute) {
                 elapsed = match.currentGameMinute;
-            } else if (new Date() < new Date(match.startTime) && match.status === 'Pre-game') {
+            } else if (new Date() > new Date(match.startTime) && match.status === 'Pre-game') {
                 elapsed = 90;
             } else {
                 elapsed = null;
