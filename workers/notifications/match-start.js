@@ -13,13 +13,13 @@ mongoose = require('mongoose');
 nconf    = require('nconf');
 async    = require('async');
 crypto   = require('crypto');
-User     = require('../models/user');
-Wallet   = require('../models/wallet');
-Match    = require('../models/match');
+User     = require('../../models/user');
+Wallet   = require('../../models/wallet');
+Match    = require('../../models/match');
 
 nconf.argv();
 nconf.env();
-nconf.defaults(require('../config'));
+nconf.defaults(require('../../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
 date = new Date();
@@ -44,7 +44,7 @@ query.exec(function (error, matches) {
             query.exec(function (error, wallets) {
                 async.each(wallets, function (wallet, next) {
                     if (wallet.user.apnsToken) {
-                        require('../lib/apn').push(wallet.user.apnsToken, {
+                        require('../.').push(wallet.user.apnsToken, {
                             'loc-key' : 'NOTIFICATION_ROUND_START',
                             'loc-args' : [wallet.user.username]
                         });

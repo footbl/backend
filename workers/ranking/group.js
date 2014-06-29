@@ -13,14 +13,14 @@ mongoose     = require('mongoose');
 nconf        = require('nconf');
 async        = require('async');
 crypto       = require('crypto');
-Group        = require('../models/group');
-Wallet       = require('../models/wallet');
-Championship = require('../models/championship');
-User         = require('../models/user');
+Group        = require('../../models/group');
+Wallet       = require('../../models/wallet');
+Championship = require('../../models/championship');
+User         = require('../../models/user');
 
 nconf.argv();
 nconf.env();
-nconf.defaults(require('../config'));
+nconf.defaults(require('../../config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
 var query;
