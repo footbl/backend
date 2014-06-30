@@ -39,6 +39,7 @@ query.exec(function (error, groups) {
             query = Wallet.findOne();
             query.where('championship').equals(group.championship);
             query.where('user').equals(member.user);
+            query.populate('bets.match');
             query.exec(function (error, wallet) {
                 while (member.rounds.length <= round) {
                     member.rounds.push({ranking : Infinity, funds : 100});

@@ -31,6 +31,7 @@ query.exec(function (error, championships) {
         query = Wallet.find();
         query.where('championship').equals(championship._id);
         query.populate('user');
+        query.populate('bets.match');
         return query.exec(function (error, wallets) {
             async.sortBy(wallets.filter(function (wallet) {
                 return wallet.user && (wallet.user.username || wallet.user.facebookId || wallet.user.email);
