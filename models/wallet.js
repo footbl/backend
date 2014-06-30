@@ -81,8 +81,7 @@ schema = new Schema({
     'iaps' : [{
         /** @property */
         'date' : {
-            'type' : Date,
-            'default' : Date.now
+            'type' : Date
         },
         /** @property */
         'tmp' : {

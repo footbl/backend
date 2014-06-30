@@ -211,7 +211,7 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     wallet.iaps.push({
-        'date' : Date.now,
+        'date' : new Date(),
         'tmp'  : 'bug do mongoose'
     });
 
