@@ -440,6 +440,44 @@ describe('wallet controller', function () {
         });
     });
 
+    describe('recharge', function () {
+        var id;
+
+        before(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users/' + user._id + '/wallets');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.expect(200);
+            req = req.expect(function (response) {
+                id = response.body[0]._id;
+            });
+            req.end(done);
+        });
+
+        it('should recharge', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/users/' + user._id + '/wallets/' + id + '/recharge');
+            req = req.set('auth-token', auth.token(user));
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.send({active : false});
+            req = req.expect(200);
+            req.expect(function (response) {
+                response.body.should.have.property('_id');
+                response.body.should.have.property('date');
+            });
+            req.end(done);
+        });
+    });
+
     describe('delete', function () {
         var id;
 

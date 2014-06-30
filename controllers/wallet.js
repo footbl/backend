@@ -211,12 +211,10 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
     wallet.iaps.push({
-        'date' : new Date(),
-        'tmp'  : 'bug do mongoose'
+        'date' : new Date()
     });
 
     return wallet.save(function (error) {
-        console.log(wallet, wallet.iaps, error);
         if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallet.iaps.pop());
     });
