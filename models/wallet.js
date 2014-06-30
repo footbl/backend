@@ -78,17 +78,6 @@ schema = new Schema({
         }
     }],
     /** @property */
-    'iaps' : [{
-        /** @property */
-        'date' : {
-            'type' : Date
-        },
-        /** @property */
-        'tmp' : {
-            'type' : String
-        }
-    }],
-    /** @property */
     'bets' : [{
         /** @property */
         'match' : {
@@ -138,9 +127,7 @@ schema.plugin(require('mongoose-json-select'), {
     'notifications' : 1,
     'priority'      : 1,
     'rounds'        : 1,
-    'iaps'          : 0,
     'bets'          : 0,
-    'lastDate'      : 1,
     'funds'         : 1,
     'stake'         : 1,
     'createdAt'     : 1,
@@ -190,26 +177,6 @@ schema.pre('save', function (next) {
 
 /**
  * @method
- * @summary Return wallet last iap date
- * The wallet status must be calculated with all bets that happened after the iap, so this method should return the last
- * iap and if none iap exists, this method should return the created date.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('lastDate').get(function () {
-    'use strict';
-
-    if (!this.iaps.length) { return this.createdAt; }
-    return this.iaps.sort(function (a, b) {
-        if (a.date > b.date) { return +1; }
-        if (a.date < b.date) { return -1; }
-        return 0;
-    }).pop().date;
-});
-
-/**
- * @method
  * @summary Return wallet available funds
  * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet
  * which the bet is finished.
@@ -220,9 +187,7 @@ schema.virtual('lastDate').get(function () {
 schema.virtual('funds').get(function () {
     'use strict';
 
-    return this.bets.filter(function (bet) {
-        return bet.date > this.lastDate;
-    }.bind(this)).map(function (bet) {
+    return this.bets.map(function (bet) {
         return (bet.match.finished && bet.match.winner === bet.result ? bet.match.reward * bet.bid : 0) - bet.bid;
     }.bind(this)).reduce(function (funds, profit) {
         return funds + profit;
@@ -242,8 +207,6 @@ schema.virtual('stake').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
-        return bet.date > this.lastDate;
-    }.bind(this)).filter(function (bet) {
         return !bet.match.finished;
     }.bind(this)).map(function (bet) {
         return bet.bid;

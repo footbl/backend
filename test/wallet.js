@@ -470,10 +470,6 @@ describe('wallet controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({active : false});
             req = req.expect(200);
-            req.expect(function (response) {
-                response.body.should.have.property('_id');
-                response.body.should.have.property('date');
-            });
             req.end(done);
         });
     });
