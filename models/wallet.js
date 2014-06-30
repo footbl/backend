@@ -81,28 +81,23 @@ schema = new Schema({
     'iaps' : [{
         /** @property */
         'platform' : {
-            'type' : String,
-            'required' : true
+            'type' : String
         },
         /** @property */
         'productId' : {
-            'type' : String,
-            'required' : true
+            'type' : String
         },
         /** @property */
         'receipt' : {
-            'type' : String,
-            'required' : true
+            'type' : String
         },
         /** @property */
         'packageName' : {
-            'type' : String,
-            'required' : true
+            'type' : String
         },
         /** @property */
         'date' : {
-            'type' : Date,
-            'required' : true
+            'type' : Date
         }
     }],
     /** @property */
