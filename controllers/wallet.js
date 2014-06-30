@@ -206,11 +206,14 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
     var wallet;
-    wallet   = request.wallet;
+    wallet = request.wallet;
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    wallet.iaps.push({'date' : new Date()});
+    wallet.iaps.push({
+        'date' : Date.now,
+        'tmp'  : 'bug do mongoose'
+    });
 
     return wallet.save(function (error) {
         console.log(wallet, wallet.iaps);

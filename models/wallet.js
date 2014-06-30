@@ -83,6 +83,10 @@ schema = new Schema({
         'date' : {
             'type' : Date,
             'default' : Date.now
+        },
+        /** @property */
+        'tmp' : {
+            'type' : String
         }
     }],
     /** @property */
