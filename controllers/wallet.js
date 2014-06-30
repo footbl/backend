@@ -210,17 +210,11 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    wallet.iaps.push({
-        'platform'    : request.param('platform'),
-        'productId'   : request.param('productId'),
-        'receipt'     : request.param('receipt'),
-        'packageName' : request.param('packageName'),
-        'date'        : new Date()
-    });
+    wallet.iaps.push({'date' : new Date()});
 
     return wallet.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, wallet);
+        return response.send(200, wallet.iaps.pop());
     });
 });
 
