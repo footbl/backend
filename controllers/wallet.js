@@ -92,6 +92,7 @@ router.get('/users/:userId/wallets', function (request, response) {
     query.where('user').equals(request.params.userId);
     query.populate('championship');
     query.populate('user');
+    query.populate('bets.match');
     query.sort({'priority' : 1});
     query.skip(page);
     query.limit(pageSize);
