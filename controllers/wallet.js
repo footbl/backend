@@ -216,7 +216,7 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
     });
 
     return wallet.save(function (error) {
-        console.log(wallet, wallet.iaps);
+        console.log(wallet, wallet.iaps, error);
         if (error) { return response.send(500, errorParser(error)); }
         return response.send(200, wallet.iaps.pop());
     });
