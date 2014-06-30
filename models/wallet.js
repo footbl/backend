@@ -103,6 +103,11 @@ schema = new Schema({
         }
     }],
     /** @property */
+    'lastRecharge' : {
+        'type' : Date,
+        'default' : Date.now
+    },
+    /** @property */
     'createdAt' : {
         'type' : Date
     },
@@ -128,6 +133,7 @@ schema.plugin(require('mongoose-json-select'), {
     'priority'      : 1,
     'rounds'        : 1,
     'bets'          : 0,
+    'lastRecharge'  : 1,
     'funds'         : 1,
     'stake'         : 1,
     'createdAt'     : 1,
@@ -187,7 +193,9 @@ schema.pre('save', function (next) {
 schema.virtual('funds').get(function () {
     'use strict';
 
-    return this.bets.map(function (bet) {
+    return this.bets.filter(function (bet) {
+        return bet.date > this.lastRecharge;
+    }.bind(this)).map(function (bet) {
         return (bet.match.finished && bet.match.winner === bet.result ? bet.match.reward * bet.bid : 0) - bet.bid;
     }.bind(this)).reduce(function (funds, profit) {
         return funds + profit;
@@ -207,6 +215,8 @@ schema.virtual('stake').get(function () {
     'use strict';
 
     return this.bets.filter(function (bet) {
+        return bet.date > this.lastRecharge;
+    }.bind(this)).filter(function (bet) {
         return !bet.match.finished;
     }.bind(this)).map(function (bet) {
         return bet.bid;

@@ -210,7 +210,7 @@ router.post('/users/:userId/wallets/:walletId/recharge', function (request, resp
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    wallet.bets = [];
+    wallet.lastRecharge = new Date();
 
     return wallet.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
