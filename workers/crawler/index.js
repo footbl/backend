@@ -36,6 +36,7 @@ async.timesSeries(20, function (n, next) {
         }}, {
             'upsert' : true
         }, function (error, champ) {
+            if (error) { process.exit(); }
             championship = champ;
             next();
         });
@@ -59,7 +60,7 @@ async.timesSeries(20, function (n, next) {
     }, function (matches, next) {
         async.map(matches, function (match, next) {
             teamApi.findById(match.homeTeamId, function (error, team) {
-                if (error) { next(error); }
+                if (error) { process.exit(); }
                 Team.findOne({'name' : team.name}, function (error, team) {
                     if (error) { next(error); }
                     match.host = team ? team._id : null;

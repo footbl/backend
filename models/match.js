@@ -126,7 +126,7 @@ schema.plugin(require('mongoose-json-select'), {
     'updatedAt'    : 1
 });
 
-schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'round' : 1}, {'unique' : true});
+schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'date' : 1}, {'unique' : true});
 
 /**
  * @callback
