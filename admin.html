@@ -172,7 +172,7 @@
             return function (data, headersGetter) {
                 var key, timestamp, transactionId, signature;
 
-                key           = '-f-Z~Nyhq!3&oSP:Do@E(/pj>K)Tza%})Qh= pxJ{o9j)F2.*$+#n}XJ(iSKQnXf';
+                key           = '~BYq)Ag-;$+r!hrw+b=Wx>MU#t0)*B,h+!#:+>Er|Gp#N)$=|tyU1%|c@yH]I2RR';
                 timestamp     = new Date().getTime();
                 transactionId = Math.floor(Math.random() * 1000000000);
                 signature     = sha1(timestamp.toString() + transactionId.toString() + key.toString());
@@ -187,210 +187,116 @@
         }
     });
 
-    app.factory('TeamService', function ($resource, auth) {
-        return $resource('http://footbl-development.herokuapp.com/teams/:_id', {'_id' : '@_id'}, {
-            'get'    : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get')},
-            'save'   : {'method' : 'GET', 'transformRequest' : auth.methodOverride('post')},
-            'query'  : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get'), 'isArray' : true},
-            'remove' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
-            'delete' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
-            'update' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('put')}
+    app.controller('MatchListController', function ($scope, $http, auth) {
+        $http.get('http://footbl-production.herokuapp.com/users/me/session', {'params' :{'email' : 'admin@admin.com', 'password' : '1234'}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
+            auth.setCredentials(data.token);
+            $scope.teams    = [];
+            $scope.matches  = [];
+            $scope.newMatch = {};
+
+            $http.get('http://footbl-production.herokuapp.com/teams', {'params' :{'page' : 0}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
+                for (var i in data) { $scope.teams.push(data[i]); }
+            });
+
+            $http.get('http://footbl-production.herokuapp.com/teams', {'params' :{'page' : 1}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
+                for (var i in data) { $scope.teams.push(data[i]); }
+            });
+
+            $scope.load = function (page) {
+                $http.get('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches', {'params' :{'page' : page}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
+                    for (var i in data) { $scope.matches.push(data[i]); }
+                });
+            };
+
+            $scope.updateMatch = function (match) {
+                var data;
+                data = angular.copy(match);
+                data.guest = data.guest._id;
+                data.host = data.host._id;
+                $http.put('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches/' + match._id, data, {'transformRequest' : auth.methodOverride('put')}).success(function (data) {
+                    for (var prop in data) { match[prop] = data[prop]; }
+                    alert('alterou!');
+                });
+            };
+
+            $scope.createMatch = function () {
+                $scope.newMatch.guest = $scope.newMatch.guest._id;
+                $scope.newMatch.host = $scope.newMatch.host._id;
+                $http.post('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches/', $scope.newMatch, {'transformRequest' : auth.methodOverride('post')}).success(function (data) {
+                    $scope.matches.push(data);
+                    $scope.newMatch = {};
+                    alert('salvou!');
+                });
+            };
+
+            $scope.load(0);
+            $scope.load(1);
+            $scope.load(2);
+            $scope.load(3);
+            $scope.load(4);
         });
-    });
-
-    app.factory('ChampionshipService', function ($resource, auth) {
-        return $resource('http://footbl-development.herokuapp.com/championships/:_id', {'_id' : '@_id'}, {
-            'get'    : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get')},
-            'save'   : {'method' : 'GET', 'transformRequest' : auth.methodOverride('post')},
-            'query'  : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get'), 'isArray' : true},
-            'remove' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
-            'delete' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
-            'update' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('put')}
-        });
-    });
-
-    app.factory('MatchService', function ($resource, auth) {
-        return $resource('http://footbl-development.herokuapp.com/championships/:championship/matches/:_id', {'_id' : '@_id'}, {
-            'get'    : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get')},
-            'save'   : {'method' : 'GET', 'transformRequest' : auth.methodOverride('post')},
-            'query'  : {'method' : 'GET', 'transformRequest' : auth.methodOverride('get'), 'isArray' : true},
-            'remove' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
-            'delete' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('delete')},
-            'update' : {'method' : 'GET', 'transformRequest' : auth.methodOverride('put')}
-        });
-    });
-
-    app.controller('LoginController', function ($scope, auth, $http) {
-        $scope.user   = {};
-        $scope.active = auth.getCredentials;
-
-        $scope.login = function () {
-            $http.get('http://footbl-development.herokuapp.com/users/me/session', {'params' :$scope.user, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
-                auth.setCredentials(data.token);
-            });
-        };
-    });
-
-    app.controller('TeamListController', function ($scope, auth, TeamService) {
-        var page;
-        page          = 0;
-        $scope.teams  = [];
-        $scope.active = auth.getCredentials;
-
-        $scope.load = function () {
-            TeamService.query({'page' : page}, function (teams) {
-                $scope.teams = $scope.teams.concat(teams);
-                console.log($scope.teams)
-            });
-            page += 1;
-        }
-    });
-
-    app.controller('ChampionshipListController', function ($scope, auth, ChampionshipService) {
-        var page;
-        page                  = 0;
-        $scope.championships  = [];
-        $scope.active = auth.getCredentials;
-
-        $scope.load = function () {
-            ChampionshipService.query({'page' : page}, function (championships) {
-                $scope.championships = $scope.championships.concat(championships);
-            });
-            page += 1;
-        }
-    });
-
-    app.controller('MatchListController', function ($scope, auth, MatchService) {
-        var page;
-        page           = 0;
-        $scope.matches = [];
-        $scope.active = auth.getCredentials;
-
-        $scope.saveMatch = function (match) {
-            MatchService.update({
-                '_id' : match._id,
-                'championship' : match.championship._id,
-                'guest' : match.guest._id,
-                'host' : match.host._id,
-                'round' : match.round,
-                'date' : match.date,
-                'result' : {
-                    'guest' : match.result.guest,
-                    'host' : match.result.host
-                }
-            });
-        };
-
-        $scope.load = function () {
-            MatchService.query({'championship' : $scope.championship._id, 'page' : page}, function (matches) {
-                $scope.matches = $scope.matches.concat(matches);
-            });
-            page += 1;
-        }
     });
 })(angular)
 </script>
 </head>
 <body>
-    <div ng-controller="LoginController" ng-hide="active()">
-        <form ng-submit="login()">
-            <div>
-                Email <input type="text" ng-model="user.email">
-            </div>
-            <div>
-                Password <input type="password" ng-model="user.password">
-            </div>
-            <div>
-                <input type="submit">
-            </div>
-        </form>
-    </div>
-    <div ng-controller="TeamListController" ng-show="active()">
-        <h2>
-            Times
-        </h2>
+    <div ng-controller="MatchListController">
+        <h3>
+            Partidas
+        </h3>
         <ul>
-            <li ng-repeat="team in teams">
-                <form ng-submit="team.$update(team);">
-                    <hr>
+            <li>
+                <form ng-submit="createMatch();">
                     <div>
-                        {{team.name}}
+                        <select ng-model="newMatch.guest._id" ng-options="team._id as team.name for team in teams"></select>
+                        <input type="text" ng-model="newMatch.result.guest">
+                        vs
+                        <input type="text" ng-model="newMatch.result.host">
+                        <select ng-model="newMatch.host._id" ng-options="team._id as team.name for team in teams"></select>
                     </div>
                     <div>
-                        picture <input type="text" ng-model="team.picture">
+                        Round: <input type="text" ng-model="newMatch.round">
                     </div>
                     <div>
-                        acronym <input type="text" ng-model="team.acronym">
+                        Date <input type="text" ng-model="newMatch.date">
+                    </div>
+                    <div>
+                        Finished <input type="checkbox" ng-model="newMatch.finished" ng-true-value="true" ng-false-value="false">
                     </div>
                     <div>
                         <input type="submit">
                     </div>
                 </form>
+                <hr>
             </li>
-        </ul>
-        <span ng-click="load()">carregar +</span>
-    </div>
-    <div ng-controller="ChampionshipListController" ng-show="active()">
-        <h2>
-            Campeonatos
-        </h2>
-        <ul>
-            <li ng-repeat="championship in championships">
-                <form ng-submit="championship.$update(championship);">
-                    <hr>
+            <li ng-repeat="match in matches | orderBy:'-round'">
+                <form ng-submit="updateMatch(match);">
                     <div>
-                        {{championship.name}}
+                        <select ng-model="match.guest._id" ng-options="team._id as team.name for team in teams"></select>
+                        <input type="text" ng-model="match.result.guest">
+                        vs
+                        <input type="text" ng-model="match.result.host">
+                        <select ng-model="match.host._id" ng-options="team._id as team.name for team in teams"></select>
                     </div>
                     <div>
-                        {{championship.year}}
+                        Round: <input type="text" ng-model="match.round">
                     </div>
                     <div>
-                        <input type="text" ng-model="championship.picture">
+                        Date <input type="text" ng-model="match.date">
                     </div>
                     <div>
-                        <select ng-model="championship.type">
-                            <option value="national league">national league</option>
-                            <option value="world cup">world cup</option>
-                            <option value="normal">normal</option>
-                        </select>
+                        Finished <input type="checkbox" ng-model="match.finished" ng-true-value="true" ng-false-value="false">
                     </div>
                     <div>
-                        {{championship.country}}
+
                     </div>
                     <div>
                         <input type="submit">
                     </div>
                 </form>
-                <div ng-controller="MatchListController">
-                    <h3>
-                        Partidas
-                    </h3>
-                    <ul>
-                        <li ng-repeat="match in matches">
-                            <form ng-submit="saveMatch(match);">
-                                <div>
-                                    {{match.guest.name}} {{match.result.guest}} x {{match.result.host}} {{match.host.name}}
-                                </div>
-                                <div>
-                                    Rodada: <input type="text" ng-model="match.round">
-                                </div>
-                                <div>
-                                    Data <input type="text" ng-model="match.date">
-                                </div>
-                                <div ng-show="match.finished">
-                                    Terminou
-                                </div>
-                                <div>
-                                    <input type="submit">
-                                </div>
-                            </form>
-                        </li>
-                    </ul>
-                    <span ng-click="load()">carregar +</span>
-                </div>
+                <hr>
             </li>
         </ul>
-        <span ng-click="load()">carregar +</span>
     </div>
 </body>
 </html>

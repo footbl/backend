@@ -208,10 +208,12 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
 
     var match;
     match = request.match;
-    match.date   = request.param('date');
-    match.guest  = request.param('guest');
-    match.host   = request.param('host');
-    match.round  = request.param('round');
+    match.date     = request.param('date');
+    match.guest    = request.param('guest');
+    match.host     = request.param('host');
+    match.round    = request.param('round');
+    match.finished = request.param('finished');
+    match.elapsed  = request.param('elapsed');
 
     return match.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
