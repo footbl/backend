@@ -30,7 +30,7 @@ query.populate('members.user');
 query.exec(function (error, groups) {
     async.each(groups, function (group, next) {
         var round;
-        round = group.championship.currentRound - 1;
+        round = group.championship.currentRound;
 
         return async.sortBy(group.members.filter(function (member) {
             return member.user && (member.user.username || member.user.facebookId || member.user.email);

@@ -27,7 +27,7 @@ query = Championship.find();
 query.exec(function (error, championships) {
     async.each(championships, function (championship, next) {
         var round, query;
-        round = championship.currentRound - 1;
+        round = championship.currentRound;
         query = Wallet.find();
         query.where('championship').equals(championship._id);
         query.populate('user');
