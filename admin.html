@@ -157,16 +157,15 @@
 (function (angular) {
     var app = angular.module('admin', ['ngResource']);
 
-    app.service('auth', function () {
+    app.service('auth', function ($http, $interval) {
         var token;
 
-        this.setCredentials = function (val) {
-            token = val;
-        };
-
-        this.getCredentials = function () {
-            return token;
-        };
+        this.loadToken = function (cb) {
+            $http.get('http://footbl-production.herokuapp.com/users/me/session', {'params' :{'email' : 'admin@admin.com', 'password' : '1234'}, 'transformRequest' : this.methodOverride('get')}).success(function (data) {
+                token = data.token;
+                if (cb) { cb(); }
+            }.bind(this));
+        }.bind(this);
 
         this.methodOverride = function (method) {
             return function (data, headersGetter) {
@@ -184,15 +183,23 @@
                 if (method) { headersGetter()['x-http-method-override'] = method; }
                 return JSON.stringify(data);
             };
-        }
+        }.bind(this);
+
+        $interval(this.loadToken, 30 * 60 * 1000);
+        this.loadToken();
     });
 
-    app.controller('MatchListController', function ($scope, $http, auth) {
-        $http.get('http://footbl-production.herokuapp.com/users/me/session', {'params' :{'email' : 'admin@admin.com', 'password' : '1234'}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
-            auth.setCredentials(data.token);
-            $scope.teams    = [];
-            $scope.matches  = [];
-            $scope.newMatch = {};
+    app.controller('MatchListController', function ($scope, $http, $interval, auth) {
+        $scope.teams    = [];
+        $scope.matches  = [];
+        $scope.newMatch = {};
+
+        auth.loadToken(function () {
+            $scope.load(0);
+            $scope.load(1);
+            $scope.load(2);
+            $scope.load(3);
+            $scope.load(4);
 
             $http.get('http://footbl-production.herokuapp.com/teams', {'params' :{'page' : 0}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
                 for (var i in data) { $scope.teams.push(data[i]); }
@@ -201,40 +208,49 @@
             $http.get('http://footbl-production.herokuapp.com/teams', {'params' :{'page' : 1}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
                 for (var i in data) { $scope.teams.push(data[i]); }
             });
-
-            $scope.load = function (page) {
-                $http.get('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches', {'params' :{'page' : page}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
-                    for (var i in data) { $scope.matches.push(data[i]); }
-                });
-            };
-
-            $scope.updateMatch = function (match) {
-                var data;
-                data = angular.copy(match);
-                data.guest = data.guest._id;
-                data.host = data.host._id;
-                $http.put('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches/' + match._id, data, {'transformRequest' : auth.methodOverride('put')}).success(function (data) {
-                    for (var prop in data) { match[prop] = data[prop]; }
-                    alert('alterou!');
-                });
-            };
-
-            $scope.createMatch = function () {
-                $scope.newMatch.guest = $scope.newMatch.guest._id;
-                $scope.newMatch.host = $scope.newMatch.host._id;
-                $http.post('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches/', $scope.newMatch, {'transformRequest' : auth.methodOverride('post')}).success(function (data) {
-                    $scope.matches.push(data);
-                    $scope.newMatch = {};
-                    alert('salvou!');
-                });
-            };
-
-            $scope.load(0);
-            $scope.load(1);
-            $scope.load(2);
-            $scope.load(3);
-            $scope.load(4);
         });
+
+        $scope.load = function (page) {
+            $http.get('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches', {'params' :{'page' : page}, 'transformRequest' : auth.methodOverride('get')}).success(function (data) {
+                for (var i in data) { $scope.matches.push(data[i]); }
+            });
+        };
+
+        $scope.updateMatch = function (match) {
+            var data;
+            data = angular.copy(match);
+            data.guest = data.guest._id;
+            data.host = data.host._id;
+            $http.put('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches/' + match._id, data, {'transformRequest' : auth.methodOverride('put')}).success(function () {});
+        };
+
+        $scope.createMatch = function () {
+            $scope.newMatch.guest = $scope.newMatch.guest._id;
+            $scope.newMatch.host = $scope.newMatch.host._id;
+            $http.post('http://footbl-production.herokuapp.com/championships/538cd3c6bef1ee1fdfed9e4b/matches/', $scope.newMatch, {'transformRequest' : auth.methodOverride('post')}).success(function (data) {
+                $scope.matches.push(data);
+                $scope.newMatch = {};
+            });
+        };
+
+        $scope.startCounting = function (match) {
+            match.elapsed = match.elapsed || 0;
+            $scope.updateMatch(match);
+            match.counter = $interval(function() {
+                match.elapsed += 1;
+                $scope.updateMatch(match);
+            }, 60000);
+        };
+
+        $scope.stopCounting = function (match) {
+            $interval.cancel(match.counter);
+            delete match.counter;
+        };
+
+        $scope.resetCounter = function (match) {
+            match.elapsed = null;
+            $scope.updateMatch(match);
+        };
     });
 })(angular)
 </script>
@@ -288,7 +304,11 @@
                         Finished <input type="checkbox" ng-model="match.finished" ng-true-value="true" ng-false-value="false">
                     </div>
                     <div>
-
+                        Elapsed
+                        {{match.elapsed}}
+                        <span ng-click="startCounting(match)" ng-hide="match.counter">start</span>
+                        <span ng-click="stopCounting(match)" ng-show="match.counter">stop</span>
+                        <span ng-click="resetCounter(match)" ng-show="match.elapsed">reset</span>
                     </div>
                     <div>
                         <input type="submit">

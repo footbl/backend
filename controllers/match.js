@@ -5,12 +5,13 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, errorParser, Match;
+var router, nconf, errorParser, Match, Team;
 
 router      = require('express').Router();
 nconf       = require('nconf');
 errorParser = require('../lib/error-parser');
 Match       = require('../models/match');
+Team        = require('../models/team');
 
 /**
  * @method
@@ -54,7 +55,13 @@ router.post('/championships/:championshipId/matches', function (request, respons
     return match.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
         response.header('Location', '/championships/' + request.param.championshipId + '/matches/' + match._id);
-        return response.send(201, match);
+        return Team.populate(match, {'path' : 'guest'}, function (error, match) {
+            if (error) { return response.send(500, errorParser(error)); }
+            return Team.populate(match, {'path' : 'host'}, function (error, match) {
+                if (error) { return response.send(500, errorParser(error)); }
+                return response.send(201, match);
+            });
+        });
     });
 });
 
