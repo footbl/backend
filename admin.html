@@ -218,6 +218,9 @@
 
         $scope.updateMatch = function (match) {
             var data;
+            if (match.finished) {
+                match.elapsed = null;
+            }
             data = angular.copy(match);
             data.guest = data.guest._id;
             data.host = data.host._id;
@@ -285,7 +288,7 @@
                 </form>
                 <hr>
             </li>
-            <li ng-repeat="match in matches | orderBy:'-round'">
+            <li ng-repeat="match in matches | orderBy:['-round', 'date']">
                 <form ng-submit="updateMatch(match);">
                     <div>
                         <select ng-model="match.guest._id" ng-options="team._id as team.name for team in teams"></select>
@@ -301,7 +304,7 @@
                         Date <input type="text" ng-model="match.date">
                     </div>
                     <div>
-                        Finished <input type="checkbox" ng-model="match.finished" ng-true-value="true" ng-false-value="false">
+                        Finished <input type="checkbox" ng-model="match.finished">
                     </div>
                     <div>
                         Elapsed
