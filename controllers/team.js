@@ -1,206 +1,283 @@
 /**
- * @module
- * Manages team resource
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiDefineStructure teamParams
+ * @apiParam {string} name Team name
+ * @apiParam {string} [picture] Team picture
  */
-var router, nconf, errorParser, Team;
+/**
+ * @apiDefineStructure teamSuccess
+ * @apiSuccess {String} name Team name.
+ * @apiSuccess {String} picture Team picture.
+ * @apiSuccess {String} slug Team identifier.
+ * @apiSuccess {Date} createdAt Date of document creation.
+ * @apiSuccess {Date} updatedAt Date of document last change.
+ */
+var VError, router, nconf, slug, Team;
 
-router      = require('express').Router();
-nconf       = require('nconf');
-errorParser = require('../lib/error-parser');
-Team        = require('../models/team');
+VError = require('verror');
+router = require('express').Router();
+nconf = require('nconf');
+slug = require('slug');
+Team = require('../models/team');
 
 /**
- * @method
- * @summary Creates a new team in database
+ * @api {post} /teams Creates a new team in database.
+ * @apiName createTeam
+ * @apiVersion 2.0.1
+ * @apiGroup team
+ * @apiPermission admin
+ * @apiDescription
+ * Creates a new team in database.
  *
- * @param request.name
- * @param request.acronym
- * @param request.picture
- * @param response
+ * @apiStructure teamParams
+ * @apiStructure teamSuccess
  *
- * @returns 201 team
- * @throws 500 error
- * @throws 401 invalid token
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "name": "required",
+ *       "picture": "required"
+ *     }
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 201 Created
+ *     {
+ *       "name": "santos fc",
+ *       "slug": "santos-fc",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "slug": "53b2a7f0fea3f69192122f38",
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.post('/teams', function (request, response) {
+router.post('/teams', function createTeam(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session.type !== 'admin') {
+        return response.send(401);
+    }
 
     var team;
     team = new Team({
-        'name'    : request.param('name'),
-        'acronym' : request.param('acronym'),
+        'slug' : slug(request.param('name', '')),
+        'name' : request.param('name'),
         'picture' : request.param('picture')
     });
-
-    return team.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        response.header('Location', '/teams/' + team._id);
+    return team.save(function createdTeam(error) {
+        if (error) {
+            if (error.code === 11000) {
+                return response.send(409);
+            }
+            if (error.errors) {
+                var errors, prop;
+                errors = {};
+                for (prop in error.errors) {
+                    if (error.errors.hasOwnProperty(prop)) {
+                        errors[prop] = error.errors[prop].type;
+                    }
+                }
+                return response.send(400, errors);
+            }
+            error = new VError(error, 'error creating team');
+            return next(error);
+        }
+        response.header('Location', '/teams/' + team.slug);
+        response.header('Last-Modified', team.updatedAt);
         return response.send(201, team);
     });
 });
 
 /**
- * @method
- * @summary List all teams in database
+ * @api {get} /teams List all teams in database
+ * @apiName listTeam
+ * @apiVersion 2.0.1
+ * @apiGroup team
+ * @apiPermission user
+ * @apiDescription
+ * List all teams in database.
  *
- * @param request.page
- * @param response
+ * @apiParam {String} [page=0] The page to be displayed.
+ * @apiStructure teamSuccess
  *
- * @returns 200 [team]
- * @throws 500 error
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "name": "santos fc",
+ *       "slug": "santos-fc",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
  */
-router.get('/teams', function (request, response) {
+router.get('/teams', function listTeam(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401);
+    }
 
-    var query, page, pageSize;
-    query    = Team.find();
+    var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
-
+    page = request.param('page', 0) * pageSize;
+    query = Team.find();
     query.skip(page);
     query.limit(pageSize);
-    return query.exec(function (error, teams) {
-        if (error) { return response.send(500, errorParser(error)); }
+    return query.exec(function listedTeam(error, teams) {
+        if (error) {
+            error = new VError(error, 'error finding teams');
+            return next(error);
+        }
+        if (teams.length > 0) {
+            response.header('Last-Modified', teams.sort(function (a, b) {
+                return b.updatedAt - a.updatedAt;
+            })[0].updatedAt);
+        }
         return response.send(200, teams);
     });
 });
 
 /**
- * @method
- * @summary Get team info in database
+ * @api {get} /teams/:id Get team info in database
+ * @apiName getTeam
+ * @apiVersion 2.0.1
+ * @apiGroup team
+ * @apiPermission user
+ * @apiDescription
+ * Get team info in database.
  *
- * @param request.teamId
- * @param response
+ * @apiStructure teamSuccess
  *
- * @returns 200 team
- * @throws 404 team not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "name": "santos fc",
+ *       "slug": "santos-fc",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.get('/teams/:teamId', function (request, response) {
+router.get('/teams/:id', function getTeam(request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401);
+    }
 
     var team;
     team = request.team;
-
     response.header('Last-Modified', team.updatedAt);
     return response.send(200, team);
 });
 
 /**
- * @method
- * @summary Updates team info in database
+ * @api {put} /teams/:id Updates team info in database
+ * @apiName updateTeam
+ * @apiVersion 2.0.1
+ * @apiGroup team
+ * @apiPermission admin
+ * @apiDescription
+ * Updates team info in database.
  *
- * @param request.teamId
- * @param request.name
- * @param request.acronym
- * @param request.picture
- * @param response
+ * @apiStructure teamParams
+ * @apiStructure teamSuccess
  *
- * @returns 200 team
- * @throws 500 error
- * @throws 404 team not found
- * @throws 401 invalid token
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "name": "required",
+ *       "picture": "required"
+ *     }
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "name": "santos fc",
+ *       "slug": "santos-fc",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.put('/teams/:teamId', function (request, response) {
+router.put('/teams/:id', function updateTeam(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session.type !== 'admin') {
+        return response.send(401);
+    }
 
     var team;
     team = request.team;
-    team.name    = request.param('name');
-    team.acronym = request.param('acronym');
+    team.slug = slug(request.param('name', ''));
+    team.name = request.param('name');
     team.picture = request.param('picture');
-
-    return team.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
+    return team.save(function updatedTeam(error) {
+        if (error) {
+            if (error.code === 11001) {
+                return response.send(409);
+            }
+            if (error.errors) {
+                var errors, prop;
+                errors = {};
+                for (prop in error.errors) {
+                    if (error.errors.hasOwnProperty(prop)) {
+                        errors[prop] = error.errors[prop].type;
+                    }
+                }
+                return response.send(400, errors);
+            }
+            error = new VError(error, 'error creating team');
+            return next(error);
+        }
+        response.header('Last-Modified', team.updatedAt);
         return response.send(200, team);
     });
 });
 
 /**
- * @method
- * @summary Removes team from database
- *
- * @param request.teamId
- * @param response
- *
- * @returns 200 team
- * @throws 500 error
- * @throws 404 team not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @api {delete} /teams/:id Removes team from database
+ * @apiName removeTeam
+ * @apiVersion 2.0.1
+ * @apiGroup team
+ * @apiPermission admin
+ * @apiDescription
+ * Removes team from database
  */
-router.delete('/teams/:teamId', function (request, response) {
+router.delete('/teams/:id', function removeTeam(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session.type !== 'admin') {
+        return response.send(401);
+    }
 
     var team;
     team = request.team;
-
-    return team.remove(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, team);
+    return team.remove(function removedTeam(error) {
+        if (error) {
+            error = new VError(error, 'error removing team: "$s"', request.params.id);
+            return next(error);
+        }
+        response.header('Last-Modified', team.updatedAt);
+        return response.send(204);
     });
 });
 
@@ -212,23 +289,25 @@ router.delete('/teams/:teamId', function (request, response) {
  * @param response
  * @param next
  * @param id
- *
- * @returns team
- * @throws 404 team not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
-router.param('teamId', function (request, response, next, id) {
+router.param('id', function findTeam(request, response, next, id) {
     'use strict';
+
+    if (!request.session) {
+        return response.send(401);
+    }
 
     var query;
     query = Team.findOne();
-    query.where('_id').equals(id);
-    query.exec(function (error, team) {
-        if (error) { return response.send(404, 'team not found'); }
-        if (!team) { return response.send(404, 'team not found'); }
-
+    query.where('slug').equals(id);
+    return query.exec(function foundTeam(error, team) {
+        if (error) {
+            error = new VError(error, 'error finding team: "$s"', id);
+            return next(error);
+        }
+        if (!team) {
+            return response.send(404);
+        }
         request.team = team;
         return next();
     });

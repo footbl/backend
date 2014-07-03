@@ -1,79 +1,68 @@
-/**
- * @module
- * Manages team model resource
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-var mongoose, Schema, schema;
+var VError, mongoose, jsonSelect, nconf, Schema, schema;
 
+VError = require('verror');
 mongoose = require('mongoose');
-Schema   = mongoose.Schema;
+jsonSelect = require('mongoose-json-select');
+nconf = require('nconf');
+Schema = mongoose.Schema;
 
 /**
  * @class
  * @summary System team entity
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * property {name} Team name
+ * property {slug} Team slug
+ * property {picture} Team picture for display
+ * property {createdAt}
+ * property {updatedAt}
  */
 schema = new Schema({
-    /** @property */
     'name' : {
         'type' : String,
-        'required' : true,
+        'required' : true
+    },
+    'slug' : {
+        'type' : String,
         'unique' : true
     },
-    /** @property */
-    'acronym' : {
-        'type' : String
-    },
-    /** @property */
     'picture' : {
         'type' : String,
-        'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+        'required' : true
     },
-    /** @property */
-    'createdAt' : {
-        'type' : Date
+    'createdAt': {
+        'type': Date,
+        'default': Date.now
     },
-    /** @property */
-    'updatedAt' : {
-        'type' : Date
+    'updatedAt': {
+        'type': Date
     }
 }, {
-    'collection' : 'teams',
-    'strict' : true,
-    'toJSON' : {
-        'virtuals' : true
+    'collection': 'teams',
+    'strict': true,
+    'toJSON': {
+        'virtuals': true
     }
 });
 
-schema.plugin(require('mongoose-json-select'), {
-    'name'      : 1,
-    'acronym'   : 1,
-    'picture'   : 1,
-    'createdAt' : 1,
-    'updatedAt' : 1
+schema.plugin(jsonSelect, {
+    '_id' : 0,
+    'name' : 1,
+    'slug' : 1,
+    'picture' : 1,
+    'createdAt': 1,
+    'updatedAt': 1
 });
 
 /**
  * @callback
- * @summary Setups createdAt and updatedAt
+ * @summary Setups updatedAt
  *
  * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
-schema.pre('save', function (next) {
+schema.pre('save', function setTeamUpdatedAt(next) {
     'use strict';
 
-    if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date();
-    } else {
-        this.updatedAt = new Date();
-    }
+    this.updatedAt = new Date();
     next();
 });
 

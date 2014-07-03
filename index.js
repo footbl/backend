@@ -28,6 +28,10 @@ app.use(function (request, response, next) {
     response.header('Expires', '0');
     next();
 });
+app.use(function (error, request, response, next) {
+    console.error(error);
+    process.exit();
+});
 app.use(require('./lib/auth').signature);
 app.use(require('./lib/auth').facebook);
 app.use(require('./lib/auth').session);

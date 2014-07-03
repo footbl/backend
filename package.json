@@ -1,9 +1,15 @@
 {
+  "config": {
+    "blanket": {
+      "data-cover-never": ["node_modules", "/test"],
+      "pattern": ["/controllers", "/models"]
+    }
+  },
   "name": "footbl",
-  "version": "0.0.1",
+  "version": "2.0.1",
   "scripts": {
     "start": "node index.js",
-    "test": "NODE_ENV=test mocha test/* -R spec"
+    "test": "NODE_ENV=test mocha test/ --require blanket -R mocha-spec-cov-alt"
   },
   "engines": {
     "node": "0.10.21"
@@ -25,7 +31,9 @@
     "mongoose-json-select": "0.2.x",
     "nconf": "0.6.x",
     "redis": "0.10.x",
-    "request": "^2.34.0"
+    "request": "^2.34.0",
+    "slug": "^0.5.0",
+    "verror": "^1.4.0"
   },
   "devDependencies": {
     "mocha": "~1.15.1",

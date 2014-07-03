@@ -1,205 +1,126 @@
-/**
- * @module
- * Manages match model resource
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-var mongoose, Schema, schema, async;
+var VError, mongoose, jsonSelect, nconf, Schema, schema;
 
+VError = require('verror');
 mongoose = require('mongoose');
-Schema   = mongoose.Schema;
-async    = require('async');
+jsonSelect = require('mongoose-json-select');
+nconf = require('nconf');
+Schema = mongoose.Schema;
 
 /**
  * @class
  * @summary System match entity
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * property {slug} Match slug
+ * property {championship} Match championship
+ * property {guest} Match guest
+ * property {host} Match host
+ * property {round} Match round
+ * property {date} Match date
+ * property {finished} Match status
+ * property {elapsed} Match elapsed time
+ * property {score} Match score
+ * property {score.guest} Guest number of gols
+ * property {score.host} Host number of gols
+ * property {createdAt}
+ * property {updatedAt}
  */
 schema = new Schema({
-    /** @property */
-    'date' : {
-        'type' : Date,
-        'required' : true
+    'slug' : {
+        'type' : String
     },
-    /** @property */
     'championship' : {
         'type' : Schema.Types.ObjectId,
         'ref' : 'Championship',
         'required' : true
     },
-    /** @property */
-    'finished' : {
-        'type' : Boolean,
-        'required' : true,
-        'default' : false
-    },
-    /** @property */
-    'elapsed' : {
-        'type' : Number
-    },
-    /** @property */
     'guest' : {
         'type' : Schema.Types.ObjectId,
         'ref' : 'Team',
         'required' : true
     },
-    /** @property */
     'host' : {
         'type' : Schema.Types.ObjectId,
         'ref' : 'Team',
         'required' : true
     },
-    /** @property */
     'round' : {
         'type' : Number,
         'required' : true
     },
-    /** @property */
-    'pot' : {
-        /** @property */
-        'guest' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        },
-        /** @property */
-        'host' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        },
-        /** @property */
-        'draw' : {
-            'type' : Number,
-            'required' : true,
-            'default' : 0
-        }
+    'date' : {
+        'type' : Date,
+        'required' : true
     },
-    /** @property */
-    'result' : {
-        /** @property */
+    'finished' : {
+        'type' : Boolean,
+        'required' : true,
+        'default' : false
+    },
+    'elapsed' : {
+        'type' : Number
+    },
+    'score' : {
         'guest' : {
             'type' : Number,
             'required' : true,
             'default' : 0
         },
-        /** @property */
         'host' : {
             'type' : Number,
             'required' : true,
             'default' : 0
         }
     },
-    /** @property */
-    'createdAt' : {
-        'type' : Date
+    'createdAt': {
+        'type': Date,
+        'default': Date.now
     },
-    /** @property */
-    'updatedAt' : {
-        'type' : Date
+    'updatedAt': {
+        'type': Date
     }
 }, {
-    'collection' : 'matches',
-    'strict' : true,
-    'toJSON' : {
-        'virtuals' : true
+    'collection': 'matches',
+    'strict': true,
+    'toJSON': {
+        'virtuals': true
     }
 });
 
-schema.plugin(require('mongoose-json-select'), {
-    'date'         : 1,
+schema.index({
     'championship' : 1,
-    'finished'     : 1,
-    'guest'        : 1,
-    'host'         : 1,
-    'round'        : 1,
-    'pot'          : 1,
-    'result'       : 1,
-    'winner'       : 1,
-    'jackpot'      : 1,
-    'reward'       : 1,
-    'elapsed'      : 1,
-    'createdAt'    : 1,
-    'updatedAt'    : 1
+    'guest' : 1,
+    'host' : 1,
+    'round' : 1
+}, {
+    'unique' : true
 });
 
-schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'round' : 1}, {'unique' : true});
+schema.plugin(jsonSelect, {
+    '_id' : 0,
+    'slug' : 1,
+    'championship' : 0,
+    'guest' : 1,
+    'host' : 1,
+    'round' : 1,
+    'date' : 1,
+    'finished' : 1,
+    'elapsed' : 1,
+    'score' : 1,
+    'createdAt': 1,
+    'updatedAt': 1
+});
 
 /**
  * @callback
- * @summary Setups createdAt and updatedAt
+ * @summary Setups updatedAt
  *
  * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
-schema.pre('save', function (next) {
+schema.pre('save', function setMatchUpdatedAt(next) {
     'use strict';
 
-    if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date();
-    } else {
-        this.updatedAt = new Date();
-    }
+    this.updatedAt = new Date();
     next();
-});
-
-/**
- * @method
- * @summary Return match winner
- * This method should compare the match score and see which team has won the match, the team with higher number of gols,
- * should be the winner and if the gols are equal, then the result is draw.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('winner').get(function () {
-    'use strict';
-
-    if (!this.finished) { return null; }
-    if (this.result.guest > this.result.host) { return 'guest'; }
-    if (this.result.guest < this.result.host) { return 'host'; }
-    return 'draw';
-});
-
-/**
- * @method
- * @summary Return match total pot
- * This method should return the match total bets bids, this is calculated summing the total bets in host plus the guest
- * and the draw.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('jackpot').get(function () {
-    'use strict';
-
-    return this.pot.guest + this.pot.draw + this.pot.host;
-});
-
-/**
- * @method
- * @summary Return match reward
- * This method should return how much the system will pay for each point spent in the bet, this is calculated dividing
- * the entire match jackpot by the winner result.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('reward').get(function () {
-    'use strict';
-
-    if (!this.jackpot) { return 0; }
-
-    switch (this.winner) {
-        case 'guest' : { return this.jackpot / this.pot.guest; }
-        case 'host'  : { return this.jackpot / this.pot.host; }
-        default      : { return this.jackpot / this.pot.draw; }
-    }
 });
 
 module.exports = mongoose.model('Match', schema);
