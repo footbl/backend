@@ -1,98 +1,91 @@
-/**
- * @module
- * Manages championship model resource
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-var mongoose, Schema, schema;
+var VError, mongoose, jsonSelect, nconf, Schema, schema;
 
+VError = require('verror');
 mongoose = require('mongoose');
-Schema   = mongoose.Schema;
+jsonSelect = require('mongoose-json-select');
+nconf = require('nconf');
+Schema = mongoose.Schema;
 
 /**
  * @class
  * @summary System championship entity
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * property {name} Championship name
+ * property {slug} Championship slug
+ * property {picture} Championship picture for display
+ * property {edition} Championship year of occurrence
+ * property {type} Championship type
+ * property {country} Championship country of occurrence
+ * property {createdAt}
+ * property {updatedAt}
  */
 schema = new Schema({
-    /** @property */
     'name' : {
         'type' : String,
         'required' : true
     },
-    /** @property */
+    'slug' : {
+        'type' : String,
+        'unique' : true
+    },
     'picture' : {
         'type' : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
-    /** @property */
     'edition' : {
-        'type' : Number
+        'type' : Number,
+        'required' : true
     },
-    /** @property */
     'type' : {
         'type' : String,
         'required' : true,
         'enum' : ['national league', 'continental league', 'world cup'],
         'default' : 'national league'
     },
-    /** @property */
     'country' : {
-        'type' : String
+        'type' : String,
+        'required' : true
     },
-    /** @property */
-    'createdAt' : {
-        'type' : Date
+    'createdAt': {
+        'type': Date,
+        'default': Date.now
     },
-    /** @property */
-    'updatedAt' : {
-        'type' : Date
+    'updatedAt': {
+        'type': Date
     }
 }, {
-    'collection' : 'championships',
-    'strict' : true,
-    'toJSON' : {
-        'virtuals' : true
+    'collection': 'championships',
+    'strict': true,
+    'toJSON': {
+        'virtuals': true
     }
 });
 
-schema.plugin(require('mongoose-json-select'), {
-    'name'          : 1,
-    'picture'       : 1,
-    'edition'       : 1,
-    'type'          : 1,
-    'country'       : 1,
-    'defaultGroup'  : 1,
-    'rounds'        : 1,
-    'currentRound'  : 1,
-    'roundFinished' : 1,
-    'active'        : 1,
-    'createdAt'     : 1,
-    'updatedAt'     : 1
+schema.plugin(jsonSelect, {
+    '_id' : 0,
+    'name' : 1,
+    'slug' : 1,
+    'picture' : 1,
+    'edition' : 1,
+    'type' : 1,
+    'country' : 1,
+    'createdAt': 1,
+    'updatedAt': 1,
+    'rounds' : 1,
+    'currentRound' : 1,
+    'active' : 1
 });
-
-schema.index({'name' : 1, 'country' : 1}, {'unique' : true});
 
 /**
  * @callback
- * @summary Setups createdAt and updatedAt
+ * @summary Setups updatedAt
  *
  * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
-schema.pre('save', function (next) {
+schema.pre('save', function setChampionshipUpdatedAt(next) {
     'use strict';
 
-    if (!this.createdAt) {
-        this.createdAt = this.updatedAt = new Date();
-    } else {
-        this.updatedAt = new Date();
-    }
+    this.updatedAt = new Date();
     next();
 });
 
@@ -101,9 +94,6 @@ schema.pre('save', function (next) {
  * @summary Populates all championship matches
  *
  * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
 schema.pre('init', function (next, data) {
     'use strict';
@@ -112,7 +102,10 @@ schema.pre('init', function (next, data) {
     query = require('./match').find();
     query.where('championship').equals(data._id);
     query.exec(function  (error, matches) {
-        if (error) { return next(error); }
+        if (error) {
+            error = new VError(error, 'error populating championship "%s" matches.', data._id);
+            return next(error);
+        }
         this.matches = matches;
         return next();
     }.bind(this));
@@ -121,11 +114,8 @@ schema.pre('init', function (next, data) {
 /**
  * @method
  * @summary Counts championship number of rounds
- * To calculate the number of round in a championship, the system should return the highest round value in the matches.
+ * To calculate the number of rounds in a championship, the system should return the highest round value in the matches.
  * And if the championship don't have any match the default number of rounds is 1.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('rounds').get(function () {
     'use strict';
@@ -145,56 +135,32 @@ schema.virtual('rounds').get(function () {
  * @summary Calculates championship current round
  * To calculate the championship current round, this method should return the highest round values in the matches that
  * have already finished. And if no match has finished, the default current round is 1.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
 schema.virtual('currentRound').get(function () {
     'use strict';
 
-    var lastRound, matches;
+    var lastFinishedRound, lastFinishedRoundIsActive, hasUnfinishedMatch, matches;
     matches   = this.matches || [];
-    lastRound = matches.filter(function (match) {
+    lastFinishedRound = matches.filter(function (match) {
         return match.finished;
     }.bind(this)).sort(function (a, b) {
         return b.round - a.round;
     }.bind(this))[0];
-    return lastRound ? lastRound.round : 1;
-});
 
-/**
- * @method
- * @summary Checks if championship round is finished
- * To calculate if the championship current round have finished, this method should see if all matches in the current
- * round have already finished.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('roundFinished').get(function () {
-    'use strict';
+    lastFinishedRound = !lastFinishedRound ? 1 : lastFinishedRound.round;
+    lastFinishedRoundIsActive = matches.some(function (match) {
+        return match.round === lastFinishedRound && !match.finished;
+    }.bind(this));
 
-    var lastRound, matches;
-    matches   = this.matches || [];
-    lastRound = matches.filter(function (match) {
-        return !match.finished && match.round === this.currentRound;
-    }.bind(this))[0];
-    return !lastRound;
-});
+    hasUnfinishedMatch = matches.some(function (match) {
+        return !match.finished;
+    });
 
-/**
- * @method
- * @summary Checks if championship is active
- * To see if the championship is still active, this method should see if thecurrent round is finished and the current
- * round is the last round.
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.virtual('active').get(function () {
-    'use strict';
-
-    return !(this.roundFinished && this.currentRound === this.rounds);
+    if (lastFinishedRoundIsActive || !hasUnfinishedMatch) {
+        return lastFinishedRound;
+    } else {
+        return lastFinishedRound + 1;
+    }
 });
 
 module.exports = mongoose.model('Championship', schema);

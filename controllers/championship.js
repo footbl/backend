@@ -1,260 +1,323 @@
 /**
- * @module
- * Manages championship resource
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiDefineStructure championshipParams
+ * @apiParam {String} name Championship name.
+ * @apiParam {String} [picture] Championship picture for display.
+ * @apiParam {Number} year Championship year of occurrence.
+ * @apiParam {String} [type='national league'] Championship type.
+ * @apiParam {String} country Championship country of occurrence.
  */
-var router, nconf, errorParser, Championship, Wallet;
+/**
+ * @apiDefineStructure championshipSuccess
+ * @apiSuccess {String} name Championship name.
+ * @apiSuccess {String} slug Championship identifier.
+ * @apiSuccess {String} picture Championship picture for display.
+ * @apiSuccess {Number} year Championship year of occurrence.
+ * @apiSuccess {String} type Championship type.
+ * @apiSuccess {String} country Championship country of occurrence.
+ * @apiSuccess {Date} createdAt Date of document creation.
+ * @apiSuccess {Date} updatedAt Date of document last change.
+ * @apiSuccess {Number} rounds Championship number of rounds.
+ * @apiSuccess {Number} currentRound Championship current round.
+ */
+var VError, router, nconf, slug, Championship;
 
-router       = require('express').Router();
-nconf        = require('nconf');
-errorParser  = require('../lib/error-parser');
+VError = require('verror');
+router = require('express').Router();
+nconf = require('nconf');
+slug = require('slug');
 Championship = require('../models/championship');
-Wallet       = require('../models/wallet');
 
 /**
- * @method
- * @summary Creates a new championship in database
+ * @api {post} /championships Creates a new championship in database.
+ * @apiName createChampionship
+ * @apiVersion 2.0.1
+ * @apiGroup championship
+ * @apiPermission admin
+ * @apiDescription
+ * Creates a new championship in database. To create a new championship, the client must provide a name, picture,
+ * edition, type and country. The the properties name, edition are required, and the default value for the type is
+ * national league.
  *
- * @param request.name
- * @param request.picture
- * @param request.edition
- * @param request.type
- * @param request.country
- * @param response
+ * @apiStructure championshipParams
+ * @apiStructure championshipSuccess
  *
- * @returns 201 championship
- * @throws 500 error
- * @throws 401 invalid token
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "name": "required",
+ *       "edition": "required",
+ *       "country": "required",
+ *       "type": "enum"
+ *     }
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 201 Created
+ *     {
+ *       "name": "Brasileirão",
+ *       "slug": "brasileirao-brasil-2014",
+ *       "country" : "brasil",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "edition": 2014,
+ *       "type": "national league",
+ *       "rounds": 7,
+ *       "currentRound" : 4,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.post('/championships', function (request, response) {
+router.post('/championships', function createChampionship(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
 
-    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session.type !== 'admin') {
+        return response.send(401);
+    }
 
     var championship;
     championship = new Championship({
-        'name'        : request.param('name'),
-        'picture'     : request.param('picture'),
-        'edition'     : request.param('edition'),
-        'type'        : request.param('type', 'national league'),
-        'country'     : request.param('country')
+        'slug' : slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', ''),
+        'name' : request.param('name'),
+        'picture' : request.param('picture'),
+        'edition' : request.param('edition'),
+        'type' : request.param('type', 'national league'),
+        'country' : request.param('country')
     });
-
-    return championship.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        response.header('Location', '/championships/' + championship._id);
+    return championship.save(function createdChampionship(error) {
+        if (error) {
+            if (error.code === 11000) {
+                return response.send(409);
+            }
+            if (error.errors) {
+                var errors, prop;
+                errors = {};
+                for (prop in error.errors) {
+                    if (error.errors.hasOwnProperty(prop)) {
+                        errors[prop] = error.errors[prop].type;
+                    }
+                }
+                return response.send(400, errors);
+            }
+            error = new VError(error, 'error creating championship');
+            return next(error);
+        }
+        response.header('Location', '/championships/' + championship.slug);
+        response.header('Last-Modified', championship.updatedAt);
         return response.send(201, championship);
     });
 });
 
 /**
- * @method
- * @summary List all championships in database
+ * @api {get} /championships List all championships in database
+ * @apiName listChampionship
+ * @apiVersion 2.0.1
+ * @apiGroup championship
+ * @apiPermission user
+ * @apiDescription
+ * List all championships in database.
  *
- * @param request.page
- * @param response
+ * @apiParam {String} [page=0] The page to be displayed.
+ * @apiStructure championshipSuccess
  *
- * @returns 200 [championship]
- * @throws 500 error
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "name": "Brasileirão",
+ *       "slug": "brasileirao-brasil-2014",
+ *       "country" : "brasil",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "edition": 2014,
+ *       "type": "national league",
+ *       "rounds": 7,
+ *       "currentRound" : 4,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
  */
-router.get('/championships', function (request, response) {
+router.get('/championships', function listChampionship(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401);
+    }
 
-    var query, page, pageSize;
-    query    = Championship.find();
+    var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
-
-    query.populate('competitors');
-    query.populate('matches');
+    page = request.param('page', 0) * pageSize;
+    query = Championship.find();
     query.skip(page);
     query.limit(pageSize);
-    return query.exec(function (error, championships) {
-        if (error) { return response.send(500, errorParser(error)); }
+    return query.exec(function listedChampionship(error, championships) {
+        if (error) {
+            error = new VError(error, 'error finding championships');
+            return next(error);
+        }
+        if (championships.length > 0) {
+            response.header('Last-Modified', championships.sort(function (a, b) {
+                return b.updatedAt - a.updatedAt;
+            })[0].updatedAt);
+        }
         return response.send(200, championships);
     });
 });
 
 /**
- * @method
- * @summary Get championship info in database
+ * @api {get} /championships/:id Get championship info in database
+ * @apiName getChampionship
+ * @apiVersion 2.0.1
+ * @apiGroup championship
+ * @apiPermission user
+ * @apiDescription
+ * Get championship info in database.
  *
- * @param request.championshipId
- * @param response
+ * @apiStructure championshipSuccess
  *
- * @returns 200 championship
- * @throws 401 invalid token
- * @throws 404 championship not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "name": "Brasileirão",
+ *       "slug": "brasileirao-brasil-2014",
+ *       "country" : "brasil",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "edition": 2014,
+ *       "type": "national league",
+ *       "rounds": 7,
+ *       "currentRound" : 4,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.get('/championships/:championshipId', function (request, response) {
+router.get('/championships/:id', function getChampionship(request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401);
+    }
 
     var championship;
     championship = request.championship;
-
     response.header('Last-Modified', championship.updatedAt);
     return response.send(200, championship);
 });
 
 /**
- * @method
- * @summary Updates championship info in database
+ * @api {put} /championships/:id Updates championship info in database
+ * @apiName updateChampionship
+ * @apiVersion 2.0.1
+ * @apiGroup championship
+ * @apiPermission admin
+ * @apiDescription
+ * Updates championship info in database.
  *
- * @param request.championshipId
- * @param request.name
- * @param request.picture
- * @param request.edition
- * @param request.type
- * @param request.country
- * @param response
+ * @apiStructure championshipParams
+ * @apiStructure championshipSuccess
  *
- * @returns 200 championship
- * @throws 500 error
- * @throws 401 invalid token
- * @throws 404 championship not found
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "name": "required",
+ *       "edition": "required",
+ *       "country": "required",
+ *       "type": "enum"
+ *     }
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "name": "Brasileirão",
+ *       "slug": "brasileirao-brasil-2014",
+ *       "country" : "brasil",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "edition": 2014,
+ *       "type": "national league",
+ *       "rounds": 7,
+ *       "currentRound" : 4,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.put('/championships/:championshipId', function (request, response) {
+router.put('/championships/:id', function updateChampionship(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session.type !== 'admin') {
+        return response.send(401);
+    }
 
     var championship;
     championship = request.championship;
-    championship.name        = request.param('name');
-    championship.picture     = request.param('picture');
-    championship.year        = request.param('year');
-    championship.competitors = request.param('competitors');
-    championship.type        = request.param('type', 'national league');
-    championship.country     = request.param('country');
 
-    return championship.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
+    championship.slug = slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', '');
+    championship.name = request.param('name');
+    championship.picture = request.param('picture');
+    championship.edition = request.param('edition');
+    championship.type = request.param('type', 'national league');
+    championship.country = request.param('country');
+    return championship.save(function updatedChampionship(error) {
+        if (error) {
+            if (error.code === 11001) {
+                return response.send(409);
+            }
+            if (error.errors) {
+                var errors, prop;
+                errors = {};
+                for (prop in error.errors) {
+                    if (error.errors.hasOwnProperty(prop)) {
+                        errors[prop] = error.errors[prop].type;
+                    }
+                }
+                return response.send(400, errors);
+            }
+            error = new VError(error, 'error creating championship');
+            return next(error);
+        }
+        response.header('Last-Modified', championship.updatedAt);
         return response.send(200, championship);
     });
 });
 
 /**
- * @method
- * @summary Removes championship from database
- *
- * @param request.championshipId
- * @param response
- *
- * @returns 200 championship
- * @throws 500 error
- * @throws 401 invalid token
- * @throws 404 championship not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @api {delete} /championships/:id Removes championship from database
+ * @apiName removeChampionship
+ * @apiVersion 2.0.1
+ * @apiGroup championship
+ * @apiPermission admin
+ * @apiDescription
+ * Removes championship from database
  */
-router.delete('/championships/:championshipId', function (request, response) {
+router.delete('/championships/:id', function removeChampionship(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session || request.session.type !== 'admin') { return response.send(401, 'invalid token'); }
+    if (!request.session || request.session.type !== 'admin') {
+        return response.send(401);
+    }
 
     var championship;
     championship = request.championship;
-
-    return championship.remove(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, championship);
-    });
-});
-
-/**
- * @method
- * @summary List championship wallets ordered by ranking
- *
- * @param request.championshipId
- * @param response
- *
- * @returns 200 championship
- * @throws 500 error
- * @throws 401 invalid token
- * @throws 404 championship not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.get('/championships/:championshipId/ranking', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var query, page, pageSize, championship, round;
-    query        = Wallet.find();
-    pageSize     = nconf.get('PAGE_SIZE');
-    page         = request.param('page', 0) * pageSize;
-    championship = request.championship;
-    round        = championship.currentRound;
-
-    query.where('championship').equals(championship._id);
-    query.populate('user');
-    query.sort('-ranking.' + round + '.ranking');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function (error, wallets) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, wallets);
+    return championship.remove(function removedChampionship(error) {
+        if (error) {
+            error = new VError(error, 'error removing championship: "$s"', request.params.id);
+            return next(error);
+        }
+        response.header('Last-Modified', championship.updatedAt);
+        return response.send(204);
     });
 });
 
@@ -266,25 +329,25 @@ router.get('/championships/:championshipId/ranking', function (request, response
  * @param response
  * @param next
  * @param id
- *
- * @returns championship
- * @throws 404 championship not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
-router.param('championshipId', function (request, response, next, id) {
+router.param('id', function findChampionship(request, response, next, id) {
     'use strict';
+
+    if (!request.session) {
+        return response.send(401);
+    }
 
     var query;
     query = Championship.findOne();
-    query.where('_id').equals(id);
-    query.populate('competitors');
-    query.populate('matches');
-    query.exec(function (error, championship) {
-        if (error) { return response.send(404, 'championship not found'); }
-        if (!championship) { return response.send(404, 'championship not found'); }
-
+    query.where('slug').equals(id);
+    return query.exec(function foundChampionship(error, championship) {
+        if (error) {
+            error = new VError(error, 'error finding championship: "$s"', id);
+            return next(error);
+        }
+        if (!championship) {
+            return response.send(404);
+        }
         request.championship = championship;
         return next();
     });
