@@ -250,7 +250,7 @@ router.get('/championships/:championshipId/ranking', function (request, response
     query.where('championship').equals(championship._id);
     query.exists('rounds.' + round + '.ranking');
     query.populate('user');
-    query.sort('-rounds.' + round + '.ranking');
+    query.sort('rounds.' + round + '.ranking');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function (error, wallets) {
