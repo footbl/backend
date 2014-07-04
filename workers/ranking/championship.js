@@ -39,7 +39,7 @@ query.exec(function (error, championships) {
                 while (wallet.rounds.length <= round) {
                     wallet.rounds.push({ranking : Infinity, funds : 100});
                 }
-                wallet.rounds[round].funds = wallet ? wallet.funds : 100;
+                wallet.rounds[round].funds = wallet ? wallet.funds + wallet.stake : 100;
                 wallet.rounds[round].date  = new Date();
                 next(error, wallet.rounds[round].funds * -1);
             }, function (error, wallets) {
