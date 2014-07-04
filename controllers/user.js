@@ -5,7 +5,7 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, errorParser, crypto, geo, auth, User;
+var router, nconf, errorParser, crypto, geo, auth, url, qs, User;
 
 router      = require('express').Router();
 auth        = require('../lib/auth');
@@ -13,6 +13,8 @@ nconf       = require('nconf');
 errorParser = require('../lib/error-parser');
 crypto      = require('crypto');
 geo         = require('geoip-lite');
+url         = require('url');
+qs          = require('querystring');
 User        = require('../models/user');
 
 /**
@@ -89,24 +91,25 @@ router.get('/users', function (request, response) {
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var query, page, pageSize;
+    var query, page, pageSize, params;
     query    = User.find();
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
+    params   = qs.parse(url.parse(request.url).query, {'maxKeys' : Infinity});
 
-    if (request.param('emails') && request.param('facebookIds')) {
+    if (params.emails && params.facebookIds) {
         query.where('email').or([
-            { 'email' : {'$in' : request.param('emails', [])} },
-            { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
+            { 'email' : {'$in' : params.emails || []} },
+            { 'facebookId' : {'$in' : params.facebookIds || []} }
         ]);
-    } else if (request.param('emails')) {
-        query.where('email').in(request.param('emails', []));
-    } else if (request.param('usernames')) {
-        query.where('username').in(request.param('usernames', []));
-    } else if (request.param('facebookIds')) {
-        query.where('facebookId').in(request.param('facebookIds', []));
-    } else if (request.param('ids')) {
-        query.where('_id').in(request.param('ids', []));
+    } else if (params.emails) {
+        query.where('email').in(params.emails || []);
+    } else if (params.usernames) {
+        query.where('username').in(params.usernames || []);
+    } else if (params.facebookIds) {
+        query.where('facebookId').in(params.facebookIds || []);
+    } else if (params.ids) {
+        query.where('_id').in(params.ids || []);
     } else if (request.param('featured')) {
         query.where('featured').equals(true);
     }
