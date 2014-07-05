@@ -23,16 +23,40 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, async, Match, Championship, Team;
+var VError, router, nconf, slug, auth, errorParser, Match, Championship, Team;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
-async = require('async');
+auth = require('../lib/auth');
+errorParser = require('../lib/error-parser');
 Match = require('../models/match');
 Championship = require('../models/championship');
 Team = require('../models/team');
+
+/**
+ * @method
+ * @summary Setups default headers
+ *
+ * @param request
+ * @param response
+ * @param next
+ */
+router.use(function (request, response, next) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Pragma', 'no-cache');
+    response.header('Expires', '0');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
+    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
+    next();
+});
 
 /**
  * @method
@@ -48,7 +72,9 @@ router.use(function (request, response, next) {
 
     var query, guest;
     guest = request.param('guest');
-    if (!guest) { return next(); }
+    if (!guest) {
+        return next();
+    }
     query = Team.findOne();
     query.where('slug').equals(guest);
     return query.exec(function (error, team) {
@@ -75,7 +101,9 @@ router.use(function (request, response, next) {
 
     var query, host;
     host = request.param('host');
-    if (!host) { return next(); }
+    if (!host) {
+        return next();
+    }
     query = Team.findOne();
     query.where('slug').equals(host);
     return query.exec(function (error, team) {
@@ -139,54 +167,36 @@ router.use(function (request, response, next) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.post('/championships/:championship/matches', function createMatch(request, response, next) {
+router
+.route('/championships/:championship/matches')
+.post(auth.signature())
+.post(auth.session('admin'))
+.post(errorParser.notFound('championship'))
+.post(function createMatch(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var match;
     match = new Match({
-        'slug' : 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : ''),
+        'slug'         : 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : ''),
         'championship' : request.championship._id,
-        'guest' : request.guestTeam ? request.guestTeam._id : null,
-        'host' : request.hostTeam ? request.hostTeam._id : null,
-        'round' : request.param('round'),
-        'date' : request.param('date'),
-        'finished' : request.param('finished', false),
-        'elapsed' : request.param('elapsed'),
-        'score' : request.param('score')
+        'guest'        : request.guestTeam ? request.guestTeam._id : null,
+        'host'         : request.hostTeam ? request.hostTeam._id : null,
+        'round'        : request.param('round'),
+        'date'         : request.param('date'),
+        'finished'     : request.param('finished', false),
+        'elapsed'      : request.param('elapsed'),
+        'score'        : request.param('score')
     });
     return match.save(function createdMatch(error) {
-        var query, errors, prop;
         if (error) {
-            if (error.code === 11000) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
             error = new VError(error, 'error creating match');
             return next(error);
         }
-        query = Match.findOne();
-        query.where('_id').equals(match._id);
-        query.populate('guest');
-        query.populate('host');
-        return query.exec(function (error, match) {
+        match.populate('guest');
+        match.populate('host');
+        return match.populate(function populateMatchAfterSave(error) {
             if (error) {
-                error = new VError(error, 'error finding match: "$s"', match._id);
+                error = new VError(error, 'error populating match: "$s"', match._id);
                 return next(error);
             }
             response.header('Last-Modified', match.updatedAt);
@@ -238,16 +248,13 @@ router.post('/championships/:championship/matches', function createMatch(request
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
  */
-router.get('/championships/:championship/matches', function listMatch(request, response, next) {
+router
+.route('/championships/:championship/matches')
+.get(auth.signature())
+.get(auth.session())
+.get(errorParser.notFound('championship'))
+.get(function listMatch(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var pageSize, page, query, championship;
     championship = request.championship;
@@ -263,11 +270,6 @@ router.get('/championships/:championship/matches', function listMatch(request, r
         if (error) {
             error = new VError(error, 'error finding matches');
             return next(error);
-        }
-        if (matches.length > 0) {
-            response.header('Last-Modified', matches.sort(function (a, b) {
-                return b.updatedAt - a.updatedAt;
-            })[0].updatedAt);
         }
         return response.send(200, matches);
     });
@@ -314,16 +316,14 @@ router.get('/championships/:championship/matches', function listMatch(request, r
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.get('/championships/:championship/matches/:id', function getMatch(request, response) {
+router
+.route('/championships/:championship/matches/:id')
+.get(auth.signature())
+.get(auth.session())
+.get(errorParser.notFound('championship'))
+.get(errorParser.notFound('match'))
+.get(function getMatch(request, response) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var match;
     match = request.match;
@@ -382,20 +382,18 @@ router.get('/championships/:championship/matches/:id', function getMatch(request
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.put('/championships/:championship/matches/:id', function updateMatch(request, response, next) {
+router
+.route('/championships/:championship/matches/:id')
+.put(auth.signature())
+.put(auth.session('admin'))
+.put(errorParser.notFound('championship'))
+.put(errorParser.notFound('match'))
+.put(function updateMatch(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var match;
     match = request.match;
-    match.slug = 'round-' + request.param('round', '') + '-' + slug(request.guestTeam ? request.guestTeam.name : '') + '-vs-' + slug(request.hostTeam ? request.hostTeam.name :  '');
+    match.slug = 'round-' + request.param('round', '') + '-' + slug(request.guestTeam ? request.guestTeam.name : '') + '-vs-' + slug(request.hostTeam ? request.hostTeam.name : '');
     match.guest = request.guestTeam ? request.guestTeam._id : null;
     match.host = request.hostTeam ? request.hostTeam._id : null;
     match.round = request.param('round');
@@ -403,31 +401,16 @@ router.put('/championships/:championship/matches/:id', function updateMatch(requ
     match.finished = request.param('finished', false);
     match.elapsed = request.param('elapsed');
     match.score = request.param('score', {'guest' : 0, 'host' : 0});
-    return match.save(function updatedMatch(error) {
-        var query, errors, prop;
+    return match.save(function updatedMatch(error, match) {
         if (error) {
-            if (error.code === 11001) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
-            error = new VError(error, 'error creating match');
+            error = new VError(error, 'error updating match');
             return next(error);
         }
-        query = Match.findOne();
-        query.where('_id').equals(match._id);
-        query.populate('guest');
-        query.populate('host');
-        return query.exec(function (error, match) {
+        match.populate('guest');
+        match.populate('host');
+        return match.populate(function populateMatchAfterUpdate(error) {
             if (error) {
-                error = new VError(error, 'error finding match: "$s"', match._id);
+                error = new VError(error, 'error populating match: "$s"', match._id);
                 return next(error);
             }
             response.header('Last-Modified', match.updatedAt);
@@ -445,16 +428,14 @@ router.put('/championships/:championship/matches/:id', function updateMatch(requ
  * @apiDescription
  * Removes match from database
  */
-router.delete('/championships/:championship/matches/:id', function removeMatch(request, response, next) {
+router
+.route('/championships/:championship/matches/:id')
+.delete(auth.signature())
+.delete(auth.session('admin'))
+.delete(errorParser.notFound('championship'))
+.delete(errorParser.notFound('match'))
+.delete(function removeMatch(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var match;
     match = request.match;
@@ -477,12 +458,9 @@ router.delete('/championships/:championship/matches/:id', function removeMatch(r
  * @param next
  * @param id
  */
+router.param('id', errorParser.notFound('championship'));
 router.param('id', function findMatch(request, response, next, id) {
     'use strict';
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var query, championship;
     championship = request.championship;
@@ -495,9 +473,6 @@ router.param('id', function findMatch(request, response, next, id) {
         if (error) {
             error = new VError(error, 'error finding match: "$s"', id);
             return next(error);
-        }
-        if (!match) {
-            return response.send(404);
         }
         request.match = match;
         return next();
@@ -516,10 +491,6 @@ router.param('id', function findMatch(request, response, next, id) {
 router.param('championship', function findChampionship(request, response, next, id) {
     'use strict';
 
-    if (!request.session) {
-        return response.send(401);
-    }
-
     var query;
     query = Championship.findOne();
     query.where('slug').equals(id);
@@ -528,14 +499,11 @@ router.param('championship', function findChampionship(request, response, next, 
             error = new VError(error, 'error finding championship: "$s"', id);
             return next(error);
         }
-        if (!championship) {
-            return response.send(404);
-        }
         request.championship = championship;
         return next();
     });
 });
 
-
+router.use(errorParser.mongoose());
 
 module.exports = router;

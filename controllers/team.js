@@ -11,13 +11,38 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, Team;
+var VError, router, nconf, slug, auth, errorParser, Team;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+auth = require('../lib/auth');
+errorParser = require('../lib/error-parser');
 Team = require('../models/team');
+
+/**
+ * @method
+ * @summary Setups default headers
+ *
+ * @param request
+ * @param response
+ * @param next
+ */
+router.use(function (request, response, next) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Pragma', 'no-cache');
+    response.header('Expires', '0');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
+    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
+    next();
+});
 
 /**
  * @api {post} /teams Creates a new team in database.
@@ -49,38 +74,21 @@ Team = require('../models/team');
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.post('/teams', function createTeam(request, response, next) {
+router
+.route('/teams')
+.post(auth.signature())
+.post(auth.session('admin'))
+.post(function createTeam(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var team;
     team = new Team({
-        'slug' : slug(request.param('name', '')),
-        'name' : request.param('name'),
+        'slug'    : slug(request.param('name', '')),
+        'name'    : request.param('name'),
         'picture' : request.param('picture')
     });
     return team.save(function createdTeam(error) {
         if (error) {
-            if (error.code === 11000) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                var errors, prop;
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
             error = new VError(error, 'error creating team');
             return next(error);
         }
@@ -112,16 +120,12 @@ router.post('/teams', function createTeam(request, response, next) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
  */
-router.get('/teams', function listTeam(request, response, next) {
+router
+.route('/teams')
+.get(auth.signature())
+.get(auth.session())
+.get(function listTeam(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -133,11 +137,6 @@ router.get('/teams', function listTeam(request, response, next) {
         if (error) {
             error = new VError(error, 'error finding teams');
             return next(error);
-        }
-        if (teams.length > 0) {
-            response.header('Last-Modified', teams.sort(function (a, b) {
-                return b.updatedAt - a.updatedAt;
-            })[0].updatedAt);
         }
         return response.send(200, teams);
     });
@@ -164,16 +163,13 @@ router.get('/teams', function listTeam(request, response, next) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.get('/teams/:id', function getTeam(request, response) {
+router
+.route('/teams/:id')
+.get(auth.signature())
+.get(auth.session())
+.get(errorParser.notFound('team'))
+.get(function getTeam(request, response) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var team;
     team = request.team;
@@ -210,16 +206,13 @@ router.get('/teams/:id', function getTeam(request, response) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.put('/teams/:id', function updateTeam(request, response, next) {
+router
+.route('/teams/:id')
+.put(auth.signature())
+.put(auth.session('admin'))
+.put(errorParser.notFound('team'))
+.put(function updateTeam(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var team;
     team = request.team;
@@ -228,20 +221,7 @@ router.put('/teams/:id', function updateTeam(request, response, next) {
     team.picture = request.param('picture');
     return team.save(function updatedTeam(error) {
         if (error) {
-            if (error.code === 11001) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                var errors, prop;
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
-            error = new VError(error, 'error creating team');
+            error = new VError(error, 'error updating team');
             return next(error);
         }
         response.header('Last-Modified', team.updatedAt);
@@ -258,16 +238,13 @@ router.put('/teams/:id', function updateTeam(request, response, next) {
  * @apiDescription
  * Removes team from database
  */
-router.delete('/teams/:id', function removeTeam(request, response, next) {
+router
+.route('/teams/:id')
+.delete(auth.signature())
+.delete(auth.session('admin'))
+.delete(errorParser.notFound('team'))
+.delete(function removeTeam(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var team;
     team = request.team;
@@ -293,10 +270,6 @@ router.delete('/teams/:id', function removeTeam(request, response, next) {
 router.param('id', function findTeam(request, response, next, id) {
     'use strict';
 
-    if (!request.session) {
-        return response.send(401);
-    }
-
     var query;
     query = Team.findOne();
     query.where('slug').equals(id);
@@ -305,12 +278,11 @@ router.param('id', function findTeam(request, response, next, id) {
             error = new VError(error, 'error finding team: "$s"', id);
             return next(error);
         }
-        if (!team) {
-            return response.send(404);
-        }
         request.team = team;
         return next();
     });
 });
+
+router.use(errorParser.mongoose());
 
 module.exports = router;

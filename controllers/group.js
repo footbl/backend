@@ -13,13 +13,38 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, Group;
+var VError, router, nconf, slug, auth, errorParser, Group;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+auth = require('../lib/auth');
+errorParser = require('../lib/error-parser');
 Group = require('../models/group');
+
+/**
+ * @method
+ * @summary Setups default headers
+ *
+ * @param request
+ * @param response
+ * @param next
+ */
+router.use(function (request, response, next) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Pragma', 'no-cache');
+    response.header('Expires', '0');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
+    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
+    next();
+});
 
 /**
  * @api {post} /groups Creates a new group in database.
@@ -50,43 +75,26 @@ Group = require('../models/group');
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.post('/groups', function createGroup(request, response, next) {
+router
+.route('/groups')
+.post(auth.signature())
+.post(auth.session())
+.post(function createGroup(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401, 'invalid token');
-    }
 
     var group;
     group = new Group({
-        'name' : request.param('name'),
-        'slug': new Date().getTime().toString(36).substring(3),
-        'picture' : request.param('picture'),
+        'name'       : request.param('name'),
+        'slug'       : new Date().getTime().toString(36).substring(3),
+        'picture'    : request.param('picture'),
         'freeToEdit' : request.param('freeToEdit', false),
-        'owner' : request.session._id
-    });
-    group.members.push({
-        'user' : request.session._id
+        'owner'      : request.session._id,
+        'members'    : [{
+            'user' : request.session._id
+        }]
     });
     return group.save(function createdGroup(error) {
         if (error) {
-            if (error.code === 11000) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                var errors, prop;
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
             error = new VError(error, 'error creating group');
             return next(error);
         }
@@ -119,16 +127,12 @@ router.post('/groups', function createGroup(request, response, next) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
  */
-router.get('/groups', function listGroup(request, response, next) {
+router
+.route('/groups')
+.get(auth.signature())
+.get(auth.session())
+.get(function listGroup(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401, 'invalid token');
-    }
 
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -141,11 +145,6 @@ router.get('/groups', function listGroup(request, response, next) {
         if (error) {
             error = new VError(error, 'error finding groups');
             return next(error);
-        }
-        if (groups.length > 0) {
-            response.header('Last-Modified', groups.sort(function (a, b) {
-                return b.updatedAt - a.updatedAt;
-            })[0].updatedAt);
         }
         return response.send(200, groups);
     });
@@ -173,16 +172,13 @@ router.get('/groups', function listGroup(request, response, next) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.get('/groups/:id', function getGroup(request, response) {
+router
+.route('/groups/:id')
+.get(auth.signature())
+.get(auth.session())
+.get(errorParser.notFound('group'))
+.get(function getGroup(request, response) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401, 'invalid token');
-    }
 
     var group;
     group = request.group;
@@ -219,48 +215,33 @@ router.get('/groups/:id', function getGroup(request, response) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.put('/groups/:id', function updateGroup(request, response, next) {
+router
+.route('/groups/:id')
+.put(auth.signature())
+.put(auth.session())
+.put(errorParser.notFound('group'))
+.put(function (request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401, 'invalid token');
-    }
 
     var group;
     group = request.group;
-
     if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
         response.header('Allow', 'GET');
         return response.send(405);
     }
+    return next();
+})
+.put(function updateGroup(request, response, next) {
+    'use strict';
 
+    var group;
+    group = request.group;
     group.name = request.param('name');
     group.picture = request.param('picture');
-
-    if (request.session._id.toString() === group.owner.toString()) {
-        group.freeToEdit = request.param('freeToEdit', false);
-    }
-
+    group.freeToEdit = request.session._id.toString() === group.owner.toString() ? request.param('freeToEdit', false) : group.freeToEdit;
     return group.save(function updatedGroup(error) {
         if (error) {
-            if (error.code === 11001) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                var errors, prop;
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
-            error = new VError(error, 'error creating group');
+            error = new VError(error, 'error updating group');
             return next(error);
         }
         response.header('Last-Modified', group.updatedAt);
@@ -277,25 +258,27 @@ router.put('/groups/:id', function updateGroup(request, response, next) {
  * @apiDescription
  * Removes group from database
  */
-router.delete('/groups/:id', function removeGroup(request, response, next) {
+router
+.route('/groups/:id')
+.delete(auth.signature())
+.delete(auth.session())
+.delete(errorParser.notFound('group'))
+.delete(function (request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401, 'invalid token');
-    }
 
     var group;
     group = request.group;
-
     if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
         response.header('Allow', 'GET');
         return response.send(405);
     }
+    return next();
+})
+.delete(function removeGroup(request, response, next) {
+    'use strict';
 
+    var group;
+    group = request.group;
     return group.remove(function removedGroup(error) {
         if (error) {
             error = new VError(error, 'error removing group: "$s"', request.params.id);
@@ -318,10 +301,6 @@ router.delete('/groups/:id', function removeGroup(request, response, next) {
 router.param('id', function findGroup(request, response, next, id) {
     'use strict';
 
-    if (!request.session) {
-        return response.send(401, 'invalid token');
-    }
-
     var query;
     query = Group.findOne();
     query.where('slug').equals(id.toLowerCase());
@@ -330,12 +309,11 @@ router.param('id', function findGroup(request, response, next, id) {
             error = new VError(error, 'error finding group: "$s"', id);
             return next(error);
         }
-        if (!group) {
-            return response.send(404);
-        }
         request.group = group;
         return next();
     });
 });
+
+router.use(errorParser.mongoose());
 
 module.exports = router;

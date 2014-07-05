@@ -19,13 +19,38 @@
  * @apiSuccess {Number} rounds Championship number of rounds.
  * @apiSuccess {Number} currentRound Championship current round.
  */
-var VError, router, nconf, slug, Championship;
+var VError, router, nconf, slug, auth, errorParser, Championship;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+auth = require('../lib/auth');
+errorParser = require('../lib/error-parser');
 Championship = require('../models/championship');
+
+/**
+ * @method
+ * @summary Setups default headers
+ *
+ * @param request
+ * @param response
+ * @param next
+ */
+router.use(function (request, response, next) {
+    'use strict';
+
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Pragma', 'no-cache');
+    response.header('Expires', '0');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
+    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
+    next();
+});
 
 /**
  * @api {post} /championships Creates a new championship in database.
@@ -65,41 +90,24 @@ Championship = require('../models/championship');
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.post('/championships', function createChampionship(request, response, next) {
+router
+.route('/championships')
+.post(auth.signature())
+.post(auth.session('admin'))
+.post(function createChampionship(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var championship;
     championship = new Championship({
-        'slug' : slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', ''),
-        'name' : request.param('name'),
+        'slug'    : slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', ''),
+        'name'    : request.param('name'),
         'picture' : request.param('picture'),
         'edition' : request.param('edition'),
-        'type' : request.param('type', 'national league'),
+        'type'    : request.param('type', 'national league'),
         'country' : request.param('country')
     });
     return championship.save(function createdChampionship(error) {
         if (error) {
-            if (error.code === 11000) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                var errors, prop;
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
             error = new VError(error, 'error creating championship');
             return next(error);
         }
@@ -136,16 +144,12 @@ router.post('/championships', function createChampionship(request, response, nex
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
  */
-router.get('/championships', function listChampionship(request, response, next) {
+router
+.route('/championships')
+.get(auth.signature())
+.get(auth.session())
+.get(function listChampionship(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -157,11 +161,6 @@ router.get('/championships', function listChampionship(request, response, next) 
         if (error) {
             error = new VError(error, 'error finding championships');
             return next(error);
-        }
-        if (championships.length > 0) {
-            response.header('Last-Modified', championships.sort(function (a, b) {
-                return b.updatedAt - a.updatedAt;
-            })[0].updatedAt);
         }
         return response.send(200, championships);
     });
@@ -193,16 +192,13 @@ router.get('/championships', function listChampionship(request, response, next) 
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.get('/championships/:id', function getChampionship(request, response) {
+router
+.route('/championships/:id')
+.get(auth.signature())
+.get(auth.session())
+.get(errorParser.notFound('championship'))
+.get(function getChampionship(request, response) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session) {
-        return response.send(401);
-    }
 
     var championship;
     championship = request.championship;
@@ -246,20 +242,16 @@ router.get('/championships/:id', function getChampionship(request, response) {
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
-router.put('/championships/:id', function updateChampionship(request, response, next) {
+router
+.route('/championships/:id')
+.put(auth.signature())
+.put(auth.session('admin'))
+.put(errorParser.notFound('championship'))
+.put(function updateChampionship(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var championship;
     championship = request.championship;
-
     championship.slug = slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', '');
     championship.name = request.param('name');
     championship.picture = request.param('picture');
@@ -268,20 +260,7 @@ router.put('/championships/:id', function updateChampionship(request, response, 
     championship.country = request.param('country');
     return championship.save(function updatedChampionship(error) {
         if (error) {
-            if (error.code === 11001) {
-                return response.send(409);
-            }
-            if (error.errors) {
-                var errors, prop;
-                errors = {};
-                for (prop in error.errors) {
-                    if (error.errors.hasOwnProperty(prop)) {
-                        errors[prop] = error.errors[prop].type;
-                    }
-                }
-                return response.send(400, errors);
-            }
-            error = new VError(error, 'error creating championship');
+            error = new VError(error, 'error updating championship');
             return next(error);
         }
         response.header('Last-Modified', championship.updatedAt);
@@ -298,16 +277,13 @@ router.put('/championships/:id', function updateChampionship(request, response, 
  * @apiDescription
  * Removes championship from database
  */
-router.delete('/championships/:id', function removeChampionship(request, response, next) {
+router
+.route('/championships/:id')
+.delete(auth.signature())
+.delete(auth.session('admin'))
+.delete(errorParser.notFound('championship'))
+.delete(function removeChampionship(request, response, next) {
     'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-
-    if (!request.session || request.session.type !== 'admin') {
-        return response.send(401);
-    }
 
     var championship;
     championship = request.championship;
@@ -333,10 +309,6 @@ router.delete('/championships/:id', function removeChampionship(request, respons
 router.param('id', function findChampionship(request, response, next, id) {
     'use strict';
 
-    if (!request.session) {
-        return response.send(401);
-    }
-
     var query;
     query = Championship.findOne();
     query.where('slug').equals(id);
@@ -345,12 +317,11 @@ router.param('id', function findChampionship(request, response, next, id) {
             error = new VError(error, 'error finding championship: "$s"', id);
             return next(error);
         }
-        if (!championship) {
-            return response.send(404);
-        }
         request.championship = championship;
         return next();
     });
 });
+
+router.use(errorParser.mongoose());
 
 module.exports = router;
