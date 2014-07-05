@@ -1293,5 +1293,61 @@ describe('match controller', function () {
                 });
             });
         });
+
+        describe('with one finished match in the first and second round', function () {
+            before(function (done) {
+                Match.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/championships/brasileirao-brasil-2014/matches');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.send({'guest' : 'botafogo'});
+                req = req.send({'host' : 'fluminense'});
+                req = req.send({'round' : 1});
+                req = req.send({'finished' : true});
+                req = req.send({'date' : new Date(2014, 10, 10)});
+                req.end(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/championships/brasileirao-brasil-2014/matches');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.send({'guest' : 'vasco'});
+                req = req.send({'host' : 'flamengo'});
+                req = req.send({'round' : 2});
+                req = req.send({'date' : new Date(2014, 10, 10)});
+                req.end(done);
+            });
+
+            it('it should return championship rounds equal to 2 and currentRound equal to 2', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/championships/brasileirao-brasil-2014');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('rounds').be.equal(2);
+                    response.body.should.have.property('currentRound').be.equal(2);
+                });
+                req.end(done);
+            });
+        });
     });
 });

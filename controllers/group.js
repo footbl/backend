@@ -1,462 +1,308 @@
 /**
- * @module
- * Manages group resource
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiDefineStructure groupParams
+ * @apiParam {String} name Group name.
+ * @apiParam {String} [picture] Group picture for display.
+ * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited be any member.
  */
-var router, nconf, errorParser, mandrill, Group;
+/**
+ * @apiDefineStructure groupSuccess
+ * @apiSuccess {String} name Group name.
+ * @apiSuccess {String} slug Group identifier.
+ * @apiSuccess {String} picture Group picture for display.
+ * @apiSuccess {Boolean} freeToEdit Tells if the group can be edited be any member.
+ * @apiSuccess {Date} createdAt Date of document creation.
+ * @apiSuccess {Date} updatedAt Date of document last change.
+ */
+var VError, router, nconf, slug, Group;
 
-router      = require('express').Router();
-nconf       = require('nconf');
-errorParser = require('../lib/error-parser');
-Group       = require('../models/group');
-mandrill    = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
+VError = require('verror');
+router = require('express').Router();
+nconf = require('nconf');
+slug = require('slug');
+Group = require('../models/group');
 
 /**
- * @method
- * @summary Creates a new group in database
+ * @api {post} /groups Creates a new group in database.
+ * @apiName createGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * Creates a new group in database.
  *
- * @param request.name
- * @param request.championship
- * @param request.picture
- * @param response
+ * @apiStructure groupParams
+ * @apiStructure groupSuccess
  *
- * @returns 201 group
- * @throws 500 error
- * @throws 401 invalid token
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "name": "required"
+ *     }
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 201 Created
+ *     {
+ *       "name": "College Buddies",
+ *       "slug": "abcde",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "freeToEdit": false,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.post('/groups', function (request, response) {
+router.post('/groups', function createGroup(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401, 'invalid token');
+    }
 
     var group;
     group = new Group({
-        'name'         : request.param('name'),
-        'championship' : request.param('championship'),
-        'owner'        : request.session._id,
-        'picture'      : request.param('picture'),
-        'members'      : [{'user' : request.session._id}]
+        'name' : request.param('name'),
+        'slug': new Date().getTime().toString(36).substring(3),
+        'picture' : request.param('picture'),
+        'freeToEdit' : request.param('freeToEdit', false),
+        'owner' : request.session._id
     });
-
-    return group.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        response.header('Location', '/groups/' + group._id);
+    group.members.push({
+        'user' : request.session._id
+    });
+    return group.save(function createdGroup(error) {
+        if (error) {
+            if (error.code === 11000) {
+                return response.send(409);
+            }
+            if (error.errors) {
+                var errors, prop;
+                errors = {};
+                for (prop in error.errors) {
+                    if (error.errors.hasOwnProperty(prop)) {
+                        errors[prop] = error.errors[prop].type;
+                    }
+                }
+                return response.send(400, errors);
+            }
+            error = new VError(error, 'error creating group');
+            return next(error);
+        }
+        response.header('Location', '/groups/' + group.slug);
+        response.header('Last-Modified', group.updatedAt);
         return response.send(201, group);
     });
 });
 
 /**
- * @method
- * @summary List all groups user belongs
+ * @api {get} /groups List all groups in database
+ * @apiName listGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * List all groups in database.
  *
- * @param request.code
- * @param request.page
- * @param response
+ * @apiParam {String} [page=0] The page to be displayed.
+ * @apiStructure groupSuccess
  *
- * @returns 200 [group]
- * @throws 500 error
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "name": "College Buddies",
+ *       "slug": "abcde",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "freeToEdit": false,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
  */
-router.get('/groups', function (request, response) {
+router.get('/groups', function listGroup(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var query, page, pageSize;
-    query    = Group.find();
-    pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
-
-    if (request.param('code')) {
-        query.where('code').equals(request.param('code', '').toLowerCase());
-    } else {
-        query.where('members.user').equals(request.session._id);
+    if (!request.session) {
+        return response.send(401, 'invalid token');
     }
-    query.populate('championship');
-    query.populate('owner');
+
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Group.find();
+    query.where('members.user').equals(request.session._id);
     query.skip(page);
     query.limit(pageSize);
-    return query.exec(function (error, groups) {
-        if (error) { return response.send(500, errorParser(error)); }
-
-        groups = groups.sort(function (a, b) {
-            var dateA, dateB;
-
-            dateA = a.members.filter(function (member) {
-                return member.user.toString() === request.session._id.toString();
-            }).pop().date;
-
-            dateB = b.members.filter(function (member) {
-                return member.user.toString() === request.session._id.toString();
-            }).pop().date;
-
-            return dateA - dateB;
-        });
+    return query.exec(function listedGroup(error, groups) {
+        if (error) {
+            error = new VError(error, 'error finding groups');
+            return next(error);
+        }
+        if (groups.length > 0) {
+            response.header('Last-Modified', groups.sort(function (a, b) {
+                return b.updatedAt - a.updatedAt;
+            })[0].updatedAt);
+        }
         return response.send(200, groups);
     });
 });
 
 /**
- * @method
- * @summary Get group info in database
+ * @api {get} /groups/:id Get group info in database
+ * @apiName getGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * Get group info in database.
  *
- * @param request.groupId
- * @param response
+ * @apiStructure groupSuccess
  *
- * @returns 200 group
- * @throws 401 invalid token
- * @throws 404 group not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "name": "College Buddies",
+ *       "slug": "abcde",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "freeToEdit": false,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.get('/groups/:groupId', function (request, response) {
+router.get('/groups/:id', function getGroup(request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401, 'invalid token');
+    }
 
     var group;
     group = request.group;
-
     response.header('Last-Modified', group.updatedAt);
     return response.send(200, group);
 });
 
 /**
- * @method
- * @summary Updates group info in database
+ * @api {put} /groups/:id Updates group info in database
+ * @apiName updateGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * Updates group info in database.
  *
- * @param request.groupId
- * @param request.name
- * @param request.picture
- * @param request.freeToEdit
- * @param response
+ * @apiStructure groupParams
+ * @apiStructure groupSuccess
  *
- * @returns 200 group
- * @throws 500 error
- * @throws 401 invalid token
- * @throws 404 group not found
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "name": "required"
+ *     }
  *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "name": "College Buddies",
+ *       "slug": "abcde",
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "freeToEdit": false,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
  */
-router.put('/groups/:groupId', function (request, response) {
+router.put('/groups/:id', function updateGroup(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var group;
-    group = request.group;
-
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
-
-    group.name    = request.param('name');
-    group.picture = request.param('picture');
-    if (request.session._id.toString() === group.owner._id.toString()) {
-        group.freeToEdit = request.param('freeToEdit');
+    if (!request.session) {
+        return response.send(401, 'invalid token');
     }
 
-    return group.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
+    var group;
+    group = request.group;
+
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+
+    group.name = request.param('name');
+    group.picture = request.param('picture');
+
+    if (request.session._id.toString() === group.owner.toString()) {
+        group.freeToEdit = request.param('freeToEdit', false);
+    }
+
+    return group.save(function updatedGroup(error) {
+        if (error) {
+            if (error.code === 11001) {
+                return response.send(409);
+            }
+            if (error.errors) {
+                var errors, prop;
+                errors = {};
+                for (prop in error.errors) {
+                    if (error.errors.hasOwnProperty(prop)) {
+                        errors[prop] = error.errors[prop].type;
+                    }
+                }
+                return response.send(400, errors);
+            }
+            error = new VError(error, 'error creating group');
+            return next(error);
+        }
+        response.header('Last-Modified', group.updatedAt);
         return response.send(200, group);
     });
 });
 
 /**
- * @method
- * @summary Removes group from database
- *
- * @param request.groupId
- * @param response
- *
- * @returns 200 group
- * @throws 500 error
- * @throws 404 group not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
+ * @api {delete} /groups/:id Removes group from database
+ * @apiName removeGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * Removes group from database
  */
-router.delete('/groups/:groupId', function (request, response) {
+router.delete('/groups/:id', function removeGroup(request, response, next) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
     response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    if (!request.session) { return response.send(401, 'invalid token'); }
+    if (!request.session) {
+        return response.send(401, 'invalid token');
+    }
 
     var group;
     group = request.group;
 
-    if (request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
 
-    return group.remove(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, group);
-    });
-});
-
-/**
- * @method
- * @summary Creates a new group invite
- *
- * @param request.groupId
- * @param request.facebookId
- * @param request.email
- * @param response
- *
- * @returns 201 invite
- * @throws 500 error
- * @throws 404 group not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.post('/groups/:groupId/invites', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var group, invited;
-    group   = request.group;
-    invited = request.param('facebookId') || request.param('email');
-
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
-
-    group.invites.push(invited);
-    mandrill.messages.send({
-        'message' : {
-            'html' : [
-                '<p>Join my group on footbl!</p>',
-                '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
-                '<p>footbl | wanna bet?<p>',
-                request.session.name || request.session.username || 'A friend on footbl'
-            ].join('\n'),
-            'subject'    : 'wanna bet?',
-            'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
-            'from_email' : 'noreply@footbl.co',
-            'to'         : [{
-                'email' : invited,
-                'type'  : 'to'
-            }]
-        },
-        'async' : true
-    });
-
-    return group.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(201, invited);
-    });
-});
-
-/**
- * @method
- * @summary Creates a new group member
- *
- * @param request.groupId
- * @param request.user
- * @param response
- *
- * @returns 201 member
- * @throws 500 error
- * @throws 404 group not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.post('/groups/:groupId/members', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var group;
-    group = request.group;
-
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
-
-    group.members.push({user : request.param('user')});
-
-    return group.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(201, group.members.pop());
-    });
-});
-
-/**
- * @method
- * @summary Get group members in database
- *
- * @param request.groupId
- * @param response
- *
- * @returns 200 [members]
- * @throws 404 group not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.get('/groups/:groupId/members', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var group;
-    group = request.group;
-
-    return response.send(200, group.members);
-});
-
-/**
- * @method
- * @summary Removes group member from database
- *
- * @param request.groupId
- * @param request.memberId
- * @param response
- *
- * @returns 200 group
- * @throws 500 error
- * @throws 404 group not found
- * @throws 404 member not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.get('/groups/:groupId/members/:memberId', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var group, member;
-    group = request.group;
-    member = group.members.filter(function (member) {
-        return member._id.toString() === request.params.memberId;
-    }).pop();
-
-    if (!member) { return response.send(404, 'member not found'); }
-
-    return response.send(200, member);
-});
-
-/**
- * @method
- * @summary Removes group member from database
- *
- * @param request.groupId
- * @param request.memberId
- * @param response
- *
- * @returns 200 group
- * @throws 500 error
- * @throws 404 group not found
- * @throws 404 member not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.delete('/groups/:groupId/members/:memberId', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var group, member;
-    group = request.group;
-
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) { return response.send(401, 'invalid token'); }
-
-    member = group.members.filter(function (member) {
-        return member._id.toString() === request.params.memberId;
-    }).pop();
-
-    if (!member) { return response.send(404, 'member not found'); }
-
-    group.members = group.members.filter(function (member) {
-        return member._id.toString() !== request.params.memberId;
-    });
-
-    return group.save(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, member);
+    return group.remove(function removedGroup(error) {
+        if (error) {
+            error = new VError(error, 'error removing group: "$s"', request.params.id);
+            return next(error);
+        }
+        response.header('Last-Modified', group.updatedAt);
+        return response.send(204);
     });
 });
 
@@ -468,31 +314,25 @@ router.delete('/groups/:groupId/members/:memberId', function (request, response)
  * @param response
  * @param next
  * @param id
- *
- * @returns group
- * @throws 404 group not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
  */
-router.param('groupId', function (request, response, next, id) {
+router.param('id', function findGroup(request, response, next, id) {
     'use strict';
+
+    if (!request.session) {
+        return response.send(401, 'invalid token');
+    }
 
     var query;
     query = Group.findOne();
-    query.where('_id').equals(id);
-    if (request.param('code')) {
-        query.where('code').equals(request.param('code'));
-    } else if (request.session) {
-        query.where('members.user').equals(request.session._id);
-    }
-    query.populate('championship');
-    query.populate('owner');
-    query.populate('members.user');
-    query.exec(function (error, group) {
-        if (error) { return response.send(404, 'group not found'); }
-        if (!group) { return response.send(404, 'group not found'); }
-
+    query.where('slug').equals(id.toLowerCase());
+    return query.exec(function foundGroup(error, group) {
+        if (error) {
+            error = new VError(error, 'error finding group: "$s"', id);
+            return next(error);
+        }
+        if (!group) {
+            return response.send(404);
+        }
         request.group = group;
         return next();
     });
