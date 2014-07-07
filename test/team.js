@@ -4,10 +4,9 @@ var request, app, auth,
     User, Team,
     user;
 
-request  = require('supertest');
-app      = require('../index.js');
-auth     = require('../lib/auth');
-
+request = require('supertest');
+app = require('../index.js');
+auth = require('../lib/auth');
 User = require('../models/user');
 Team = require('../models/team');
 

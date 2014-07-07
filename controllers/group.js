@@ -13,15 +13,17 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, auth, errorParser, Group;
+var VError, router, nconf, slug, async, auth, errorParser, Group, GroupMember;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 Group = require('../models/group');
+GroupMember = require('../models/group-member');
 
 /**
  * @method
@@ -82,18 +84,23 @@ router
 .post(function createGroup(request, response, next) {
     'use strict';
 
-    var group;
+    var group, groupMember;
+
     group = new Group({
         'name'       : request.param('name'),
         'slug'       : new Date().getTime().toString(36).substring(3),
         'picture'    : request.param('picture'),
         'freeToEdit' : request.param('freeToEdit', false),
-        'owner'      : request.session._id,
-        'members'    : [{
-            'user' : request.session._id
-        }]
+        'owner'      : request.session._id
     });
-    return group.save(function createdGroup(error) {
+
+    groupMember = new GroupMember({
+        'slug'  : request.session.slug,
+        'user'  : request.session._id,
+        'group' : group._id
+    });
+
+    return async.series([group.save.bind(group), groupMember.save.bind(groupMember)], function (error) {
         if (error) {
             error = new VError(error, 'error creating group');
             return next(error);
@@ -137,16 +144,19 @@ router
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
     page = request.param('page', 0) * pageSize;
-    query = Group.find();
-    query.where('members.user').equals(request.session._id);
+    query = GroupMember.find();
+    query.where('user').equals(request.session._id);
+    query.populate('group');
     query.skip(page);
     query.limit(pageSize);
-    return query.exec(function listedGroup(error, groups) {
+    return query.exec(function listedGroup(error, groupMembers) {
         if (error) {
             error = new VError(error, 'error finding groups');
             return next(error);
         }
-        return response.send(200, groups);
+        return response.send(200, groupMembers.map(function (groupMember) {
+            return groupMember.group;
+        }));
     });
 });
 

@@ -37,7 +37,6 @@
     "verror": "^1.4.0"
   },
   "devDependencies": {
-    "mocha-spec-cov-alt": "0.1.1",
     "blanket": "^1.1.6",
     "mocha": "~1.15.1",
     "nock": "^0.31.1",

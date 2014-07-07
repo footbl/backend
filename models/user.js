@@ -25,6 +25,10 @@ Schema   = mongoose.Schema;
  */
 schema = new Schema({
     /** @property */
+    'slug' : {
+        'type' : String
+    },
+    /** @property */
     'email' : {
         'type' : String,
         'match' : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
@@ -168,150 +172,6 @@ schema.pre('save', function (next) {
         this.updatedAt = new Date();
     }
     next();
-});
-
-/**
- * @callback
- * @summary Creates user world cup wallet
- * All system users must have a wallet in the current world cup if some is available. Se, before saving each user, a new
- * wallet must be created for the user in the championship.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.isNew) { return next(); }
-
-    var query;
-    query = require('./championship').findOne();
-    query.where('type').equals('world cup');
-    return query.exec(function (error, championship) {
-        if (error) { return next(error); }
-        if (!championship) { return next(); }
-        if (!championship.active) { return next(); }
-
-        var wallet;
-        wallet = new (require('./wallet'))({
-            'championship'  : championship._id,
-            'user'          : this._id
-        });
-        return wallet.save(next);
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Puts user in all invited groups
- * When a user registers an account, all group invites that the user received must be removed and the user must be
- * placed as a group member.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    if (!this.facebookId && !this.email) { return next(); }
-
-    var query;
-    query = require('./group').find();
-    if (this.facebookId) {
-        query.where('invites').equals(this.facebookId);
-    } else {
-        query.where('invites').equals(this.email);
-    }
-    return query.exec(function (error, groups) {
-        if (error) { return next(error); }
-        return async.each(groups, function (group, next) {
-            group.members.push({'user' : this._id});
-            group.invites = group.invites.filter(function (invite) {
-                return invite !== this.facebookId && invite !== this.email;
-            }.bind(this));
-            group.save(next);
-        }.bind(this), next);
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Ensures unique starred
- * When saving a user, the system must ensure that the user don't have any repeated starred. So, before saving, the
- * system must look into all starred to see if anyone is repeated.
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.pre('save', function (next) {
-    'use strict';
-
-    var repeated;
-
-    repeated = this.starred.some(function (user, index) {
-        return this.starred.some(function (otherUser, otherIndex) {
-            if (user._id) {
-                return user._id.toString() === otherUser._id.toString() && index !== otherIndex;
-            } else {
-                return user.toString() === otherUser.toString() && index !== otherIndex;
-            }
-        }.bind(this));
-    }.bind(this));
-
-    next(repeated ? new Error('duplicated') : null);
-});
-
-/**
- * @callback
- * @summary Removes all groups created by the user
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.post('delete', function (doc) {
-    'use strict';
-
-    var query;
-    query = require('./group').find();
-    query.where('owner').equals(doc._id);
-    query.exec(function (error, groups) {
-        groups.forEach(function (group) {
-            group.remove();
-        });
-    });
-});
-
-/**
- * @callback
- * @summary Updates starred user incrementing the number of followers
- *
- * @param next
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-schema.post('save', function (doc) {
-    'use strict';
-
-    this.starred.filter(function (starred) {
-        return starred.isNew;
-    }.bind(this)).forEach(function (starred) {
-        var query;
-        query = this.constructor.findOne();
-        query.where('_id').equals(starred);
-        query.exec(function (error, user) {
-            user.followers = (user.followers ? user.followers : 0) + 1;
-            user.save();
-        });
-    }.bind(this));
 });
 
 module.exports = mongoose.model('User', schema);

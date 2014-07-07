@@ -45,25 +45,6 @@ schema = new Schema({
     'invites' : [{
         'type' : String
     }],
-    'members' : [{
-        'user' : {
-            'type' : Schema.Types.ObjectId,
-            'ref' : 'User',
-            'required' : true
-        },
-        'rounds' : [{
-            'ranking' : {
-                'type' : Number,
-                'required' : true,
-                'default' : Infinity
-            },
-            'funds' : {
-                'type' : Number,
-                'required' : true,
-                'default' : 100
-            }
-        }]
-    }],
     'createdAt': {
         'type': Date,
         'default': Date.now

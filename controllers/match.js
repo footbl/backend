@@ -67,7 +67,7 @@ router.use(function (request, response, next) {
  * @param next
  * @param id
  */
-router.use(function (request, response, next) {
+router.use(function findMatchGuest(request, response, next) {
     'use strict';
 
     var query, guest;
@@ -96,7 +96,7 @@ router.use(function (request, response, next) {
  * @param next
  * @param id
  */
-router.use(function (request, response, next) {
+router.use(function findMatchHost(request, response, next) {
     'use strict';
 
     var query, host;

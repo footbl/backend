@@ -1,15 +1,15 @@
 /*globals describe, before, it, after*/
 require('should');
 var request, app, auth,
-    User, Group,
+    User, Group, GroupMember,
     groupOwner, otherGroupOwner, groupUser, otherGroupUser;
 
-request  = require('supertest');
-app      = require('../index.js');
-auth     = require('../lib/auth');
-
-User  = require('../models/user');
+request = require('supertest');
+app = require('../index.js');
+auth = require('../lib/auth');
+User = require('../models/user');
 Group = require('../models/group');
+GroupMember = require('../models/group-member');
 
 describe('group controller', function () {
     'use strict';
@@ -19,28 +19,32 @@ describe('group controller', function () {
     });
 
     before(function (done) {
-        groupOwner = new User({'password' : '1234'});
+        groupOwner = new User({'password' : '1234', 'slug' : 'group-owner'});
         groupOwner.save(done);
     });
 
     before(function (done) {
-        otherGroupOwner = new User({'password' : '1234'});
+        otherGroupOwner = new User({'password' : '1234', 'slug' : 'other-group-owner'});
         otherGroupOwner.save(done);
     });
 
     before(function (done) {
-        groupUser = new User({'password' : '1234'});
+        groupUser = new User({'password' : '1234', 'slug' : 'group-user'});
         groupUser.save(done);
     });
 
     before(function (done) {
-        otherGroupUser = new User({'password' : '1234'});
+        otherGroupUser = new User({'password' : '1234', 'slug' : 'other-group-user'});
         otherGroupUser.save(done);
     });
 
     describe('create', function () {
         before(function (done) {
             Group.remove(done);
+        });
+
+        before(function (done) {
+            GroupMember.remove(done);
         });
 
         it('should raise error without token', function (done) {
@@ -93,6 +97,10 @@ describe('group controller', function () {
     describe('list', function () {
         before(function (done) {
             Group.remove(done);
+        });
+
+        before(function (done) {
+            GroupMember.remove(done);
         });
 
         before(function (done) {
@@ -174,28 +182,37 @@ describe('group controller', function () {
     });
 
     describe('details', function () {
+        var slug;
+
         before(function (done) {
             Group.remove(done);
         });
 
         before(function (done) {
-            var group;
-            group = new Group({
-                'name' : 'College Buddies',
-                'slug' : 'abcde',
-                'owner' : groupOwner._id,
-                'members' : [{
-                    'user' : groupOwner._id
-                }]
+            GroupMember.remove(done);
+        });
+
+        before(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/groups');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(groupOwner));
+            req = req.send({'name' : 'College Buddies'});
+            req.expect(function (response) {
+                slug = response.body.slug;
             });
-            group.save(done);
+            req.end(done);
         });
 
         it('should raise error without token', function (done) {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/groups/abcde');
+            req = req.get('/groups/' + slug);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -220,7 +237,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/groups/abcde');
+            req = req.get('/groups/' + slug);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -228,7 +245,7 @@ describe('group controller', function () {
             req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('name').be.equal('College Buddies');
-                response.body.should.have.property('slug').be.equal('abcde');
+                response.body.should.have.property('slug');
             });
             req.end(done);
         });
@@ -237,7 +254,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/groups/abcde');
+            req = req.get('/groups/' + slug);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -245,7 +262,7 @@ describe('group controller', function () {
             req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('name').be.equal('College Buddies');
-                response.body.should.have.property('slug').be.equal('abcde');
+                response.body.should.have.property('slug');
             });
             req.end(done);
         });
@@ -253,31 +270,52 @@ describe('group controller', function () {
 
     describe('update', function () {
         describe('free to edit', function () {
+            var slug;
+
             before(function (done) {
                 Group.remove(done);
             });
 
             before(function (done) {
-                var group;
-                group = new Group({
-                    'name' : 'College Buddies',
-                    'slug' : 'abcde',
-                    'owner' : groupOwner._id,
-                    'freeToEdit' : true,
-                    'members' : [{
-                        'user' : groupOwner._id
-                    }, {
-                        'user' : groupUser._id
-                    }]
+                GroupMember.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req = req.send({'name' : 'college buddies'});
+                req = req.send({'freeToEdit' : true});
+                req.expect(function (response) {
+                    slug = response.body.slug;
                 });
-                group.save(done);
+                req.end(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/members');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req = req.send({'group' : slug});
+                req = req.send({'user' : groupUser._id});
+                req.end(done);
             });
 
             it('should raise error without token', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -290,7 +328,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -302,11 +340,25 @@ describe('group controller', function () {
                 req.end(done);
             });
 
+            it('should raise error with invalid id', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.put('/groups/invalid');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupUser));
+                req = req.send({'name' : 'edited again college buddies'});
+                req.expect(404);
+                req.end(done);
+            });
+
             it('should update with user token', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -323,7 +375,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -342,7 +394,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -361,7 +413,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.get('/groups/abcde');
+                req = req.get('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -376,31 +428,52 @@ describe('group controller', function () {
         });
 
         describe('not free to edit', function () {
+            var slug;
+
             before(function (done) {
                 Group.remove(done);
             });
 
             before(function (done) {
-                var group;
-                group = new Group({
-                    'name' : 'College Buddies',
-                    'slug' : 'abcde',
-                    'owner' : groupOwner._id,
-                    'freeToEdit' : false,
-                    'members' : [{
-                        'user' : groupOwner._id
-                    }, {
-                        'user' : groupUser._id
-                    }]
+                GroupMember.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req = req.send({'name' : 'college buddies'});
+                req = req.send({'freeToEdit' : false});
+                req.expect(function (response) {
+                    slug = response.body.slug;
                 });
-                group.save(done);
+                req.end(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/members');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req = req.send({'group' : slug});
+                req = req.send({'user' : groupUser._id});
+                req.end(done);
             });
 
             it('should raise error without token', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -413,7 +486,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -429,7 +502,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -444,7 +517,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/abcde');
+                req = req.put('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -463,7 +536,7 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.get('/groups/abcde');
+                req = req.get('/groups/' + slug);
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
@@ -479,31 +552,37 @@ describe('group controller', function () {
     });
 
     describe('delete', function () {
+        var slug;
+
         before(function (done) {
             Group.remove(done);
         });
 
         before(function (done) {
-            var group;
-            group = new Group({
-                'name' : 'College Buddies',
-                'slug' : 'abcde',
-                'owner' : groupOwner._id,
-                'freeToEdit' : true,
-                'members' : [{
-                    'user' : groupOwner._id
-                }, {
-                    'user' : groupUser._id
-                }]
+            GroupMember.remove(done);
+        });
+
+        before(function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/groups');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(groupOwner));
+            req = req.send({'name' : 'college buddies'});
+            req.expect(function (response) {
+                slug = response.body.slug;
             });
-            group.save(done);
+            req.end(done);
         });
 
         it('should raise error without token', function (done) {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/groups/abcde');
+            req = req.del('/groups/' + slug);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -528,7 +607,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.del('/groups/abcde');
+            req = req.del('/groups/' + slug);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
@@ -541,7 +620,7 @@ describe('group controller', function () {
             var req, credentials;
             credentials = auth.credentials();
             req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014');
+            req = req.get('/groups/' + slug);
             req = req.set('auth-signature', credentials.signature);
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);

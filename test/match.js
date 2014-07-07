@@ -4,14 +4,13 @@ var request, app, auth,
     User, Championship, Match, Team,
     user;
 
-request  = require('supertest');
-app      = require('../index.js');
-auth     = require('../lib/auth');
-
-User         = require('../models/user');
+request = require('supertest');
+app = require('../index.js');
+auth = require('../lib/auth');
+User = require('../models/user');
 Championship = require('../models/championship');
-Match        = require('../models/match');
-Team         = require('../models/team');
+Match = require('../models/match');
+Team = require('../models/team');
 
 describe('match controller', function () {
     'use strict';

@@ -4,11 +4,10 @@ var request, app, auth,
     User, Championship,
     user;
 
-request  = require('supertest');
-app      = require('../index.js');
-auth     = require('../lib/auth');
-
-User         = require('../models/user');
+request = require('supertest');
+app = require('../index.js');
+auth = require('../lib/auth');
+User = require('../models/user');
 Championship = require('../models/championship');
 
 describe('championship controller', function () {
