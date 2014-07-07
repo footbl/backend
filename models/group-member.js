@@ -21,8 +21,7 @@ Schema = mongoose.Schema;
  */
 schema = new Schema({
     'slug'      : {
-        'type'   : String,
-        'unique' : true
+        'type' : String
     },
     'user'      : {
         'type'     : Schema.Types.ObjectId,
@@ -61,6 +60,13 @@ schema = new Schema({
     'toJSON'     : {
         'virtuals' : true
     }
+});
+
+schema.index({
+    'user'  : 1,
+    'group' : 1
+}, {
+    'unique' : true
 });
 
 schema.plugin(jsonSelect, {

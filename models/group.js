@@ -20,57 +20,59 @@ Schema = mongoose.Schema;
  * property {updatedAt}
  */
 schema = new Schema({
-    'name' : {
-        'type' : String,
+    'name'       : {
+        'type'     : String,
         'required' : true
     },
-    'slug': {
-        'type': String,
-        'unique': true
+    'slug'       : {
+        'type'   : String,
+        'unique' : true
     },
-    'picture' : {
-        'type' : String,
+    'picture'    : {
+        'type'  : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
     'freeToEdit' : {
-        'type' : Boolean,
+        'type'     : Boolean,
         'required' : true,
-        'default' : true
+        'default'  : true
     },
-    'owner' : {
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'User',
+    'owner'      : {
+        'type'     : Schema.Types.ObjectId,
+        'ref'      : 'User',
         'required' : true
     },
-    'invites' : [{
-        'type' : String
-    }],
-    'createdAt': {
-        'type': Date,
-        'default': Date.now
+    'invites'    : [
+        {
+            'type' : String
+        }
+    ],
+    'createdAt'  : {
+        'type'    : Date,
+        'default' : Date.now
     },
-    'updatedAt': {
-        'type': Date
+    'updatedAt'  : {
+        'type' : Date
     }
 }, {
-    'collection': 'groups',
-    'strict': true,
-    'toJSON': {
-        'virtuals': true
+    'collection' : 'groups',
+    'strict'     : true,
+    'toJSON'     : {
+        'virtuals' : true
     }
 });
 
 schema.plugin(jsonSelect, {
-    '_id': 0,
-    'name' : 1,
-    'slug': 1,
-    'picture' : 1,
+    '_id'        : 0,
+    'name'       : 1,
+    'slug'       : 1,
+    'picture'    : 1,
     'freeToEdit' : 1,
-    'owner' : 0,
-    'invites' : 0,
-    'members' : 0,
-    'createdAt': 1,
-    'updatedAt': 1
+    'owner'      : 0,
+    'invites'    : 0,
+    'members'    : 0,
+    'createdAt'  : 1,
+    'updatedAt'  : 1
 });
 
 /**

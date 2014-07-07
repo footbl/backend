@@ -17,40 +17,40 @@ Schema = mongoose.Schema;
  * property {updatedAt}
  */
 schema = new Schema({
-    'name' : {
-        'type' : String,
+    'name'      : {
+        'type'     : String,
         'required' : true
     },
-    'slug' : {
-        'type' : String,
+    'slug'      : {
+        'type'   : String,
         'unique' : true
     },
-    'picture' : {
-        'type' : String,
+    'picture'   : {
+        'type'     : String,
         'required' : true
     },
-    'createdAt': {
-        'type': Date,
-        'default': Date.now
+    'createdAt' : {
+        'type'    : Date,
+        'default' : Date.now
     },
-    'updatedAt': {
-        'type': Date
+    'updatedAt' : {
+        'type' : Date
     }
 }, {
-    'collection': 'teams',
-    'strict': true,
-    'toJSON': {
-        'virtuals': true
+    'collection' : 'teams',
+    'strict'     : true,
+    'toJSON'     : {
+        'virtuals' : true
     }
 });
 
 schema.plugin(jsonSelect, {
-    '_id' : 0,
-    'name' : 1,
-    'slug' : 1,
-    'picture' : 1,
-    'createdAt': 1,
-    'updatedAt': 1
+    '_id'       : 0,
+    'name'      : 1,
+    'slug'      : 1,
+    'picture'   : 1,
+    'createdAt' : 1,
+    'updatedAt' : 1
 });
 
 /**

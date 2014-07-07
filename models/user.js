@@ -8,9 +8,9 @@
 var mongoose, Schema, nconf, async, schema;
 
 mongoose = require('mongoose');
-nconf    = require('nconf');
-async    = require('async');
-Schema   = mongoose.Schema;
+nconf = require('nconf');
+async = require('async');
+Schema = mongoose.Schema;
 
 /**
  * @class
@@ -25,112 +25,114 @@ Schema   = mongoose.Schema;
  */
 schema = new Schema({
     /** @property */
-    'slug' : {
+    'slug'          : {
         'type' : String
     },
     /** @property */
-    'email' : {
-        'type' : String,
-        'match' : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+    'email'         : {
+        'type'   : String,
+        'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
         'unique' : true,
         'sparse' : true
     },
     /** @property */
-    'username' : {
-        'type' : String,
+    'username'      : {
+        'type'   : String,
         'unique' : true,
         'sparse' : true
     },
     /** @property */
-    'name' : {
+    'name'          : {
         'type' : String
     },
     /** @property */
-    'facebookId' : {
-        'type' : String,
+    'facebookId'    : {
+        'type'   : String,
         'unique' : true,
         'sparse' : true
     },
     /** @property */
-    'about' : {
+    'about'         : {
         'type' : String
     },
     /** @property */
-    'verified' : {
-        'type' : Boolean,
+    'verified'      : {
+        'type'     : Boolean,
         'required' : true,
-        'default' : false
+        'default'  : false
     },
     /** @property */
-    'featured' : {
-        'type' : Boolean,
+    'featured'      : {
+        'type'     : Boolean,
         'required' : true,
-        'default' : false
+        'default'  : false
     },
     /** @property */
-    'password' : {
-        'type' : String,
+    'password'      : {
+        'type'     : String,
         'required' : true
     },
     /** @property */
-    'picture' : {
-        'type' : String,
+    'picture'       : {
+        'type'  : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
     /** @property */
-    'language' : {
+    'language'      : {
         'type' : String
     },
     /** @property */
-    'country' : {
+    'country'       : {
         'type' : String
     },
     /** @property */
-    'type' : {
-        'type' : String,
+    'type'          : {
+        'type'     : String,
         'required' : true,
-        'default' : 'user',
-        'enum' : ['user', 'admin']
+        'default'  : 'user',
+        'enum'     : ['user', 'admin']
     },
     /** @property */
-    'starred' : [{
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'User'
-    }],
+    'starred'       : [
+        {
+            'type' : Schema.Types.ObjectId,
+            'ref'  : 'User'
+        }
+    ],
     /** @property */
-    'apnsToken' : {
+    'apnsToken'     : {
         'type' : String
     },
     /** @property */
     'notifications' : {
         /** @property */
-        'newGroups' : {
-            'type' : Boolean,
+        'newGroups'          : {
+            'type'    : Boolean,
             'default' : true
         },
         /** @property */
         'championshipEnding' : {
-            'type' : Boolean,
+            'type'    : Boolean,
             'default' : true
         }
     },
     /** @property */
-    'followers' : {
-        'type' : Number,
+    'followers'     : {
+        'type'    : Number,
         'default' : 0
     },
     /** @property */
-    'createdAt' : {
+    'createdAt'     : {
         'type' : Date
     },
     /** @property */
-    'updatedAt' : {
+    'updatedAt'     : {
         'type' : Date
     }
 }, {
     'collection' : 'users',
-    'strict' : true,
-    'toJSON' : {
+    'strict'     : true,
+    'toJSON'     : {
         'virtuals' : true
     }
 });

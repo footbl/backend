@@ -629,6 +629,74 @@ define({ api: [
     "filename": "./controllers/championship.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          }
+        ]
+      }
+    },
+    "group": "group-member.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/group-member.js"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "GroupMember identifier."
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "field": "rounds",
+            "optional": false,
+            "description": "GroupMember status snapshots;"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "group-member.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/group-member.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -717,6 +785,305 @@ define({ api: [
     "url": "",
     "version": "0.0.0",
     "filename": "./controllers/group.js"
+  },
+  {
+    "type": "post",
+    "url": "/groups/:group/members",
+    "title": "Creates a new groupMember in database.",
+    "name": "createGroupMember",
+    "version": "2.0.0",
+    "group": "groupMember",
+    "permission": "user",
+    "description": "Creates a new groupMember in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"user\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 201 Created",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "GroupMember identifier."
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "field": "rounds",
+            "optional": false,
+            "description": "GroupMember status snapshots;"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/group-member.js"
+  },
+  {
+    "type": "get",
+    "url": "/groups/:group/members/:id",
+    "title": "Get groupMember info in database",
+    "name": "getGroupMember",
+    "version": "2.0.0",
+    "group": "groupMember",
+    "permission": "user",
+    "description": "Get groupMember info in database.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "GroupMember identifier."
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "field": "rounds",
+            "optional": false,
+            "description": "GroupMember status snapshots;"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/group-member.js"
+  },
+  {
+    "type": "get",
+    "url": "/groups/:group/members",
+    "title": "List all groupMembers in database",
+    "name": "listGroupMember",
+    "version": "2.0.0",
+    "group": "groupMember",
+    "permission": "user",
+    "description": "List all groupMembers in database.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "GroupMember identifier."
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "field": "rounds",
+            "optional": false,
+            "description": "GroupMember status snapshots;"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/group-member.js"
+  },
+  {
+    "type": "delete",
+    "url": "/groups/:group/members/:id",
+    "title": "Removes groupMember from database",
+    "name": "removeGroupMember",
+    "version": "2.0.0",
+    "group": "groupMember",
+    "permission": "user",
+    "description": "Removes groupMember from database",
+    "filename": "./controllers/group-member.js"
+  },
+  {
+    "type": "put",
+    "url": "/groups/:group/members/:id",
+    "title": "Updates groupMember info in database",
+    "name": "updateGroupMember",
+    "version": "2.0.0",
+    "group": "groupMember",
+    "permission": "user",
+    "description": "Updates groupMember info in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"user\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "GroupMember identifier."
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Array",
+            "field": "rounds",
+            "optional": false,
+            "description": "GroupMember status snapshots;"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/group-member.js"
   },
   {
     "type": "post",

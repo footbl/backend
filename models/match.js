@@ -25,89 +25,89 @@ Schema = mongoose.Schema;
  * property {updatedAt}
  */
 schema = new Schema({
-    'slug' : {
+    'slug'         : {
         'type' : String
     },
     'championship' : {
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'Championship',
+        'type'     : Schema.Types.ObjectId,
+        'ref'      : 'Championship',
         'required' : true
     },
-    'guest' : {
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'Team',
+    'guest'        : {
+        'type'     : Schema.Types.ObjectId,
+        'ref'      : 'Team',
         'required' : true
     },
-    'host' : {
-        'type' : Schema.Types.ObjectId,
-        'ref' : 'Team',
+    'host'         : {
+        'type'     : Schema.Types.ObjectId,
+        'ref'      : 'Team',
         'required' : true
     },
-    'round' : {
-        'type' : Number,
+    'round'        : {
+        'type'     : Number,
         'required' : true
     },
-    'date' : {
-        'type' : Date,
+    'date'         : {
+        'type'     : Date,
         'required' : true
     },
-    'finished' : {
-        'type' : Boolean,
+    'finished'     : {
+        'type'     : Boolean,
         'required' : true,
-        'default' : false
+        'default'  : false
     },
-    'elapsed' : {
+    'elapsed'      : {
         'type' : Number
     },
-    'score' : {
+    'score'        : {
         'guest' : {
-            'type' : Number,
+            'type'     : Number,
             'required' : true,
-            'default' : 0
+            'default'  : 0
         },
-        'host' : {
-            'type' : Number,
+        'host'  : {
+            'type'     : Number,
             'required' : true,
-            'default' : 0
+            'default'  : 0
         }
     },
-    'createdAt': {
-        'type': Date,
-        'default': Date.now
+    'createdAt'    : {
+        'type'    : Date,
+        'default' : Date.now
     },
-    'updatedAt': {
-        'type': Date
+    'updatedAt'    : {
+        'type' : Date
     }
 }, {
-    'collection': 'matches',
-    'strict': true,
-    'toJSON': {
-        'virtuals': true
+    'collection' : 'matches',
+    'strict'     : true,
+    'toJSON'     : {
+        'virtuals' : true
     }
 });
 
 schema.index({
     'championship' : 1,
-    'guest' : 1,
-    'host' : 1,
-    'round' : 1
+    'guest'        : 1,
+    'host'         : 1,
+    'round'        : 1
 }, {
     'unique' : true
 });
 
 schema.plugin(jsonSelect, {
-    '_id' : 0,
-    'slug' : 1,
+    '_id'          : 0,
+    'slug'         : 1,
     'championship' : 0,
-    'guest' : 1,
-    'host' : 1,
-    'round' : 1,
-    'date' : 1,
-    'finished' : 1,
-    'elapsed' : 1,
-    'score' : 1,
-    'createdAt': 1,
-    'updatedAt': 1
+    'guest'        : 1,
+    'host'         : 1,
+    'round'        : 1,
+    'date'         : 1,
+    'finished'     : 1,
+    'elapsed'      : 1,
+    'score'        : 1,
+    'createdAt'    : 1,
+    'updatedAt'    : 1
 });
 
 /**

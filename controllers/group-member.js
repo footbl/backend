@@ -1,12 +1,11 @@
 /**
  * @apiDefineStructure groupMemberParams
  * @apiParam {String} user GroupMember user
- * @apiParam {String} group GroupMember group
  */
 /**
  * @apiDefineStructure groupMemberSuccess
  * @apiSuccess {String} slug GroupMember identifier.
- * @apiSuccess {String} group GroupMember group;
+ * @apiSuccess {String} user GroupMember user
  * @apiSuccess {Array} rounds GroupMember status snapshots;
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
@@ -80,7 +79,7 @@ router.use(function findGroupUser(request, response, next) {
  * @apiName createGroupMember
  * @apiVersion 2.0.0
  * @apiGroup groupMember
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
  * Creates a new groupMember in database.
  *
@@ -90,6 +89,7 @@ router.use(function findGroupUser(request, response, next) {
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
  *     {
+ *       "user": "required"
  *     }
  *
  * @apiSuccessExample
@@ -116,14 +116,25 @@ router
 .post(auth.signature())
 .post(auth.session())
 .post(errorParser.notFound('group'))
+.post(function (request, response, next) {
+    'use strict';
+
+    var group;
+    group = request.group;
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
 .post(function createGroupMember(request, response, next) {
     'use strict';
 
     var groupMember;
     groupMember = new GroupMember({
-        'slug'  : request.groupUser.slug,
-        'group' : request.group._id,
-        'user'  : request.groupUser._id
+        'slug'  : request.groupUser ? request.groupUser.slug : null,
+        'group' : request.group ? request.group._id : null,
+        'user'  : request.groupUser ? request.groupUser._id : null
     });
     return groupMember.save(function createdGroupMember(error) {
         if (error) {
@@ -141,7 +152,7 @@ router
  * @apiName listGroupMember
  * @apiVersion 2.0.0
  * @apiGroup groupMember
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
  * List all groupMembers in database.
  *
@@ -179,7 +190,7 @@ router
     pageSize = nconf.get('PAGE_SIZE');
     page = request.param('page', 0) * pageSize;
     query = GroupMember.find();
-    query.where('group').equals(request.params.group);
+    query.where('group').equals(request.group._id);
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function listedGroupMember(error, groupMembers) {
@@ -196,7 +207,7 @@ router
  * @apiName getGroupMember
  * @apiVersion 2.0.0
  * @apiGroup groupMember
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
  * Get groupMember info in database.
  *
@@ -241,7 +252,7 @@ router
  * @apiName updateGroupMember
  * @apiVersion 2.0.0
  * @apiGroup groupMember
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
  * Updates groupMember info in database.
  *
@@ -251,6 +262,7 @@ router
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
  *     {
+ *       "user": "required"
  *     }
  *
  * @apiSuccessExample
@@ -278,13 +290,24 @@ router
 .put(auth.session())
 .put(errorParser.notFound('group'))
 .put(errorParser.notFound('groupMember'))
+.put(function (request, response, next) {
+    'use strict';
+
+    var group;
+    group = request.group;
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
 .put(function updateGroupMember(request, response, next) {
     'use strict';
 
     var groupMember;
     groupMember = request.groupMember;
-    groupMember.slug = request.groupUser.slug;
-    groupMember.user = request.groupUser._id;
+    groupMember.slug = request.groupUser ? request.groupUser.slug : null;
+    groupMember.user = request.groupUser ? request.groupUser._id : null;
     return groupMember.save(function updatedGroupMember(error) {
         if (error) {
             error = new VError(error, 'error updating groupMember');
@@ -300,7 +323,7 @@ router
  * @apiName removeGroupMember
  * @apiVersion 2.0.0
  * @apiGroup groupMember
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
  * Removes groupMember from database
  */
@@ -310,6 +333,17 @@ router
 .delete(auth.session())
 .delete(errorParser.notFound('group'))
 .delete(errorParser.notFound('groupMember'))
+.delete(function (request, response, next) {
+    'use strict';
+
+    var group;
+    group = request.group;
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
 .delete(function removeGroupMember(request, response, next) {
     'use strict';
 
@@ -334,12 +368,13 @@ router
  * @param next
  * @param id
  */
+router.param('id', errorParser.notFound('group'));
 router.param('id', function findGroupMember(request, response, next, id) {
     'use strict';
 
     var query;
     query = GroupMember.findOne();
-    query.where('group').equals(request.params.group);
+    query.where('group').equals(request.group._id);
     query.where('slug').equals(id);
     query.exec(function foundGroupMember(error, groupMember) {
         if (error) {

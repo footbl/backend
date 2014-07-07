@@ -20,60 +20,60 @@ Schema = mongoose.Schema;
  * property {updatedAt}
  */
 schema = new Schema({
-    'name' : {
-        'type' : String,
+    'name'      : {
+        'type'     : String,
         'required' : true
     },
-    'slug' : {
-        'type' : String,
+    'slug'      : {
+        'type'   : String,
         'unique' : true
     },
-    'picture' : {
-        'type' : String,
+    'picture'   : {
+        'type'  : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
-    'edition' : {
-        'type' : Number,
+    'edition'   : {
+        'type'     : Number,
         'required' : true
     },
-    'type' : {
-        'type' : String,
+    'type'      : {
+        'type'     : String,
         'required' : true,
-        'enum' : ['national league', 'continental league', 'world cup'],
-        'default' : 'national league'
+        'enum'     : ['national league', 'continental league', 'world cup'],
+        'default'  : 'national league'
     },
-    'country' : {
-        'type' : String,
+    'country'   : {
+        'type'     : String,
         'required' : true
     },
-    'createdAt': {
-        'type': Date,
-        'default': Date.now
+    'createdAt' : {
+        'type'    : Date,
+        'default' : Date.now
     },
-    'updatedAt': {
-        'type': Date
+    'updatedAt' : {
+        'type' : Date
     }
 }, {
-    'collection': 'championships',
-    'strict': true,
-    'toJSON': {
-        'virtuals': true
+    'collection' : 'championships',
+    'strict'     : true,
+    'toJSON'     : {
+        'virtuals' : true
     }
 });
 
 schema.plugin(jsonSelect, {
-    '_id' : 0,
-    'name' : 1,
-    'slug' : 1,
-    'picture' : 1,
-    'edition' : 1,
-    'type' : 1,
-    'country' : 1,
-    'createdAt': 1,
-    'updatedAt': 1,
-    'rounds' : 1,
+    '_id'          : 0,
+    'name'         : 1,
+    'slug'         : 1,
+    'picture'      : 1,
+    'edition'      : 1,
+    'type'         : 1,
+    'country'      : 1,
+    'createdAt'    : 1,
+    'updatedAt'    : 1,
+    'rounds'       : 1,
     'currentRound' : 1,
-    'active' : 1
+    'active'       : 1
 });
 
 /**
@@ -101,7 +101,7 @@ schema.pre('init', function (next, data) {
     var query;
     query = require('./match').find();
     query.where('championship').equals(data._id);
-    query.exec(function  (error, matches) {
+    query.exec(function (error, matches) {
         if (error) {
             error = new VError(error, 'error populating championship "%s" matches.', data._id);
             return next(error);
@@ -120,10 +120,12 @@ schema.pre('init', function (next, data) {
 schema.virtual('rounds').get(function () {
     'use strict';
 
-    if (this.type === 'world cup') { return 7; }
+    if (this.type === 'world cup') {
+        return 7;
+    }
 
     var lastRound, matches;
-    matches   = this.matches || [];
+    matches = this.matches || [];
     lastRound = matches.sort(function (a, b) {
         return b.round - a.round;
     }.bind(this))[0];
@@ -140,7 +142,7 @@ schema.virtual('currentRound').get(function () {
     'use strict';
 
     var lastFinishedRound, lastFinishedRoundIsActive, hasUnfinishedMatch, matches;
-    matches   = this.matches || [];
+    matches = this.matches || [];
     lastFinishedRound = matches.filter(function (match) {
         return match.finished;
     }.bind(this)).sort(function (a, b) {

@@ -24,6 +24,7 @@ app.use(require('./controllers/championship'));
 app.use(require('./controllers/match'));
 app.use(require('./controllers/team'));
 app.use(require('./controllers/group'));
+app.use(require('./controllers/group-member'));
 app.listen(nconf.get('PORT'));
 
 module.exports = app;
