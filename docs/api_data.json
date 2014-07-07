@@ -807,7 +807,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -878,7 +878,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -950,7 +950,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -1027,7 +1027,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\"\n       //@TODO colocar estrutura de exemplo de usuário\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {

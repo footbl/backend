@@ -97,8 +97,18 @@ router.use(function findGroupUser(request, response, next) {
  *     {
  *       "slug": "vandoren",
  *       "user": {
- *         "slug": "vandoren"
- *         //@TODO colocar estrutura de exemplo de usuário
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "language': "PT",
+ *         "country": "BR",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "rounds": [{
  *         "ranking": 1,
@@ -164,8 +174,18 @@ router
  *     [{
  *       "slug": "vandoren",
  *       "user": {
- *         "slug": "vandoren"
- *         //@TODO colocar estrutura de exemplo de usuário
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "language': "PT",
+ *         "country": "BR",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "rounds": [{
  *         "ranking": 1,
@@ -218,8 +238,18 @@ router
  *     {
  *       "slug": "vandoren",
  *       "user": {
- *         "slug": "vandoren"
- *         //@TODO colocar estrutura de exemplo de usuário
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "language': "PT",
+ *         "country": "BR",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "rounds": [{
  *         "ranking": 1,
@@ -270,8 +300,18 @@ router
  *     {
  *       "slug": "vandoren",
  *       "user": {
- *         "slug": "vandoren"
- *         //@TODO colocar estrutura de exemplo de usuário
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "language': "PT",
+ *         "country": "BR",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "rounds": [{
  *         "ranking": 1,
