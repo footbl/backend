@@ -134,12 +134,12 @@ define({ api: [
   {
     "type": "post",
     "url": "/championships",
-    "title": "Creates a new championship in database.",
+    "title": "Creates a new championship.",
     "name": "createChampionship",
     "version": "2.0.1",
     "group": "championship",
     "permission": "admin",
-    "description": "Creates a new championship in database. To create a new championship, the client must provide a name, picture,\nedition, type and country. The the properties name, edition are required, and the default value for the type is\nnational league.",
+    "description": "Creates a new championship.",
     "error": {
       "examples": [
         {
@@ -277,12 +277,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/championships/:id",
-    "title": "Get championship info in database",
+    "title": "Get championship info",
     "name": "getChampionship",
     "version": "2.0.1",
     "group": "championship",
     "permission": "user",
-    "description": "Get championship info in database.",
+    "description": "Get championship info.",
     "success": {
       "examples": [
         {
@@ -370,12 +370,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/championships",
-    "title": "List all championships in database",
+    "title": "List all championships",
     "name": "listChampionship",
     "version": "2.0.1",
     "group": "championship",
     "permission": "user",
-    "description": "List all championships in database.",
+    "description": "List all championships.",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -488,12 +488,12 @@ define({ api: [
   {
     "type": "put",
     "url": "/championships/:id",
-    "title": "Updates championship info in database",
+    "title": "Updates championship info",
     "name": "updateChampionship",
     "version": "2.0.1",
     "group": "championship",
     "permission": "admin",
-    "description": "Updates championship info in database.",
+    "description": "Updates championship info.",
     "error": {
       "examples": [
         {
@@ -635,6 +635,338 @@ define({ api: [
           {
             "group": "Parameter",
             "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          }
+        ]
+      }
+    },
+    "group": "featured.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Featured identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "featured.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "type": "post",
+    "url": "/featured",
+    "title": "Creates a new featured.",
+    "name": "createFeatured",
+    "version": "2.0.1",
+    "group": "featured",
+    "permission": "user",
+    "description": "Creates a new featured.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"featured\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 201 Created",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Featured identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "type": "get",
+    "url": "/featured/:id",
+    "title": "Get featured info",
+    "name": "getFeatured",
+    "version": "2.0.1",
+    "group": "featured",
+    "permission": "user",
+    "description": "Get featured info.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Featured identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "type": "get",
+    "url": "/featured",
+    "title": "List all featured",
+    "name": "listFeatured",
+    "version": "2.0.1",
+    "group": "featured",
+    "permission": "user",
+    "description": "List all featured.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Featured identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "type": "delete",
+    "url": "/featured/:id",
+    "title": "Removes featured from database",
+    "name": "removeFeatured",
+    "version": "2.0.1",
+    "group": "featured",
+    "permission": "user",
+    "description": "Removes featured from database",
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "type": "put",
+    "url": "/featured/:id",
+    "title": "Updates featured info",
+    "name": "updateFeatured",
+    "version": "2.0.1",
+    "group": "featured",
+    "permission": "user",
+    "description": "Updates featured info.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"featured\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Featured identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
             "field": "user",
             "optional": false,
             "description": "GroupMember user"
@@ -697,6 +1029,41 @@ define({ api: [
     "filename": "./controllers/group-member.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Group name."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "Group picture for display."
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "freeToEdit",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Tells if the group can be edited be any member."
+          }
+        ]
+      }
+    },
+    "group": "group.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/group.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -752,49 +1119,14 @@ define({ api: [
     "filename": "./controllers/group.js"
   },
   {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "Group name."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "picture",
-            "optional": true,
-            "description": "Group picture for display."
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "freeToEdit",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Tells if the group can be edited be any member."
-          }
-        ]
-      }
-    },
-    "group": "group.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/group.js"
-  },
-  {
     "type": "post",
     "url": "/groups/:group/members",
-    "title": "Creates a new groupMember in database.",
+    "title": "Creates a new groupMember.",
     "name": "createGroupMember",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "groupMember",
     "permission": "user",
-    "description": "Creates a new groupMember in database.",
+    "description": "Creates a new groupMember.",
     "error": {
       "examples": [
         {
@@ -868,12 +1200,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/groups/:group/members/:id",
-    "title": "Get groupMember info in database",
+    "title": "Get groupMember info",
     "name": "getGroupMember",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "groupMember",
     "permission": "user",
-    "description": "Get groupMember info in database.",
+    "description": "Get groupMember info.",
     "success": {
       "examples": [
         {
@@ -926,12 +1258,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/groups/:group/members",
-    "title": "List all groupMembers in database",
+    "title": "List all groupMembers",
     "name": "listGroupMember",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "groupMember",
     "permission": "user",
-    "description": "List all groupMembers in database.",
+    "description": "List all groupMembers.",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1000,7 +1332,7 @@ define({ api: [
     "url": "/groups/:group/members/:id",
     "title": "Removes groupMember from database",
     "name": "removeGroupMember",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "groupMember",
     "permission": "user",
     "description": "Removes groupMember from database",
@@ -1009,12 +1341,12 @@ define({ api: [
   {
     "type": "put",
     "url": "/groups/:group/members/:id",
-    "title": "Updates groupMember info in database",
+    "title": "Updates groupMember info",
     "name": "updateGroupMember",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "groupMember",
     "permission": "user",
-    "description": "Updates groupMember info in database.",
+    "description": "Updates groupMember info.",
     "error": {
       "examples": [
         {
@@ -1088,12 +1420,12 @@ define({ api: [
   {
     "type": "post",
     "url": "/groups",
-    "title": "Creates a new group in database.",
+    "title": "Creates a new group.",
     "name": "createGroup",
     "version": "2.0.1",
     "group": "group",
     "permission": "user",
-    "description": "Creates a new group in database.",
+    "description": "Creates a new group.",
     "error": {
       "examples": [
         {
@@ -1189,12 +1521,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/groups/:id",
-    "title": "Get group info in database",
+    "title": "Get group info",
     "name": "getGroup",
     "version": "2.0.1",
     "group": "group",
     "permission": "user",
-    "description": "Get group info in database.",
+    "description": "Get group info.",
     "success": {
       "examples": [
         {
@@ -1254,12 +1586,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/groups",
-    "title": "List all groups in database",
+    "title": "List all groups",
     "name": "listGroup",
     "version": "2.0.1",
     "group": "group",
     "permission": "user",
-    "description": "List all groups in database.",
+    "description": "List all groups.",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1344,12 +1676,12 @@ define({ api: [
   {
     "type": "put",
     "url": "/groups/:id",
-    "title": "Updates group info in database",
+    "title": "Updates group info",
     "name": "updateGroup",
     "version": "2.0.1",
     "group": "group",
     "permission": "user",
-    "description": "Updates group info in database.",
+    "description": "Updates group info.",
     "error": {
       "examples": [
         {
@@ -1441,78 +1773,6 @@ define({ api: [
       }
     },
     "filename": "./controllers/group.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "round",
-            "optional": false,
-            "description": "Match round"
-          },
-          {
-            "group": "Parameter",
-            "type": "Date",
-            "field": "date",
-            "optional": false,
-            "description": "Match date"
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "finished",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Match status"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "elapsed",
-            "optional": true,
-            "description": "Match elapsed time"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.guest",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match guest team score"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.host",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match host team score"
-          }
-        ]
-      }
-    },
-    "group": "match.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/match.js"
   },
   {
     "success": {
@@ -1605,14 +1865,86 @@ define({ api: [
     "filename": "./controllers/match.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "finished",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Match status"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": true,
+            "description": "Match elapsed time"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.guest",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match guest team score"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.host",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match host team score"
+          }
+        ]
+      }
+    },
+    "group": "match.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/match.js"
+  },
+  {
     "type": "post",
     "url": "/championships/:championship/matches",
-    "title": "Creates a new match in database.",
+    "title": "Creates a new match.",
     "name": "createMatch",
     "version": "2.0.1",
     "group": "match",
     "permission": "admin",
-    "description": "Creates a new match in database.",
+    "description": "Creates a new match.",
     "error": {
       "examples": [
         {
@@ -1780,12 +2112,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/championships/:championship/matches/:id",
-    "title": "Get match info in database",
+    "title": "Get match info",
     "name": "getMatch",
     "version": "2.0.1",
     "group": "match",
     "permission": "user",
-    "description": "Get match info in database.",
+    "description": "Get match info.",
     "success": {
       "examples": [
         {
@@ -1880,12 +2212,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/championships/:championship/matches",
-    "title": "List all matches in database",
+    "title": "List all matches",
     "name": "listMatch",
     "version": "2.0.1",
     "group": "match",
     "permission": "user",
-    "description": "List all matches in database.",
+    "description": "List all matches.",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2005,12 +2337,12 @@ define({ api: [
   {
     "type": "put",
     "url": "/championships/:championship/matches/:id",
-    "title": "Updates match info in database",
+    "title": "Updates match info",
     "name": "updateMatch",
     "version": "2.0.1",
     "group": "match",
     "permission": "admin",
-    "description": "Updates match info in database.",
+    "description": "Updates match info.",
     "error": {
       "examples": [
         {
@@ -2253,12 +2585,12 @@ define({ api: [
   {
     "type": "post",
     "url": "/teams",
-    "title": "Creates a new team in database.",
+    "title": "Creates a new team.",
     "name": "createTeam",
     "version": "2.0.1",
     "group": "team",
     "permission": "admin",
-    "description": "Creates a new team in database.",
+    "description": "Creates a new team.",
     "error": {
       "examples": [
         {
@@ -2339,12 +2671,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/teams/:id",
-    "title": "Get team info in database",
+    "title": "Get team info",
     "name": "getTeam",
     "version": "2.0.1",
     "group": "team",
     "permission": "user",
-    "description": "Get team info in database.",
+    "description": "Get team info.",
     "success": {
       "examples": [
         {
@@ -2397,12 +2729,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/teams",
-    "title": "List all teams in database",
+    "title": "List all teams",
     "name": "listTeam",
     "version": "2.0.1",
     "group": "team",
     "permission": "user",
-    "description": "List all teams in database.",
+    "description": "List all teams.",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -2480,12 +2812,12 @@ define({ api: [
   {
     "type": "put",
     "url": "/teams/:id",
-    "title": "Updates team info in database",
+    "title": "Updates team info",
     "name": "updateTeam",
     "version": "2.0.1",
     "group": "team",
     "permission": "admin",
-    "description": "Updates team info in database.",
+    "description": "Updates team info.",
     "error": {
       "examples": [
         {
@@ -2718,12 +3050,12 @@ define({ api: [
   {
     "type": "post",
     "url": "/users",
-    "title": "Creates a new user in database.",
+    "title": "Creates a new user.",
     "name": "createUser",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "user",
     "permission": "none",
-    "description": "Creates a new user in database.",
+    "description": "Creates a new user.",
     "error": {
       "examples": [
         {
@@ -2881,12 +3213,12 @@ define({ api: [
   {
     "type": "get",
     "url": "/users/:id",
-    "title": "Get user info in database",
+    "title": "Get user info",
     "name": "getUser",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "user",
-    "permission": "none",
-    "description": "Get user info in database.",
+    "permission": "user",
+    "description": "Get user info.",
     "success": {
       "examples": [
         {
@@ -2980,13 +3312,113 @@ define({ api: [
   },
   {
     "type": "get",
-    "url": "/users",
-    "title": "List all users in database",
-    "name": "listUser",
-    "version": "2.0.0",
+    "url": "/users/:id/auth",
+    "title": "Get user access token",
+    "name": "getUser",
+    "version": "2.0.1",
     "group": "user",
     "permission": "none",
-    "description": "List all users in database.",
+    "description": "Get user info.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"token\": \"asdpsfhysdofwe3456sdfsd\",\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "get",
+    "url": "/users",
+    "title": "List all users",
+    "name": "listUser",
+    "version": "2.0.1",
+    "group": "user",
+    "permission": "none",
+    "description": "List all users.",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -3111,21 +3543,21 @@ define({ api: [
     "url": "/users/:id",
     "title": "Removes user from database",
     "name": "removeUser",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "user",
-    "permission": "none",
+    "permission": "user",
     "description": "Removes user from database",
     "filename": "./controllers/user.js"
   },
   {
     "type": "put",
     "url": "/users/:id",
-    "title": "Updates user info in database",
+    "title": "Updates user info",
     "name": "updateUser",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "group": "user",
-    "permission": "none",
-    "description": "Updates user info in database.",
+    "permission": "user",
+    "description": "Updates user info.",
     "error": {
       "examples": [
         {

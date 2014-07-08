@@ -117,13 +117,13 @@ router.use(function findMatchHost(request, response, next) {
 });
 
 /**
- * @api {post} /championships/:championship/matches Creates a new match in database.
+ * @api {post} /championships/:championship/matches Creates a new match.
  * @apiName createMatch
  * @apiVersion 2.0.1
  * @apiGroup match
  * @apiPermission admin
  * @apiDescription
- * Creates a new match in database.
+ * Creates a new match.
  *
  * @apiStructure matchParams
  * @apiStructure matchSuccess
@@ -207,13 +207,13 @@ router
 });
 
 /**
- * @api {get} /championships/:championship/matches List all matches in database
+ * @api {get} /championships/:championship/matches List all matches
  * @apiName listMatch
  * @apiVersion 2.0.1
  * @apiGroup match
  * @apiPermission user
  * @apiDescription
- * List all matches in database.
+ * List all matches.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiStructure matchSuccess
@@ -276,13 +276,13 @@ router
 });
 
 /**
- * @api {get} /championships/:championship/matches/:id Get match info in database
+ * @api {get} /championships/:championship/matches/:id Get match info
  * @apiName getMatch
  * @apiVersion 2.0.1
  * @apiGroup match
  * @apiPermission user
  * @apiDescription
- * Get match info in database.
+ * Get match info.
  *
  * @apiStructure matchSuccess
  *
@@ -332,13 +332,13 @@ router
 });
 
 /**
- * @api {put} /championships/:championship/matches/:id Updates match info in database
+ * @api {put} /championships/:championship/matches/:id Updates match info
  * @apiName updateMatch
  * @apiVersion 2.0.1
  * @apiGroup match
  * @apiPermission admin
  * @apiDescription
- * Updates match info in database.
+ * Updates match info.
  *
  * @apiStructure matchParams
  * @apiStructure matchSuccess

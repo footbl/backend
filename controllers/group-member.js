@@ -75,13 +75,13 @@ router.use(function findGroupUser(request, response, next) {
 });
 
 /**
- * @api {post} /groups/:group/members Creates a new groupMember in database.
+ * @api {post} /groups/:group/members Creates a new groupMember.
  * @apiName createGroupMember
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription
- * Creates a new groupMember in database.
+ * Creates a new groupMember.
  *
  * @apiStructure groupMemberParams
  * @apiStructure groupMemberSuccess
@@ -163,13 +163,13 @@ router
 });
 
 /**
- * @api {get} /groups/:group/members List all groupMembers in database
+ * @api {get} /groups/:group/members List all groupMembers
  * @apiName listGroupMember
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription
- * List all groupMembers in database.
+ * List all groupMembers.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiStructure groupMemberSuccess
@@ -226,13 +226,13 @@ router
 });
 
 /**
- * @api {get} /groups/:group/members/:id Get groupMember info in database
+ * @api {get} /groups/:group/members/:id Get groupMember info
  * @apiName getGroupMember
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription
- * Get groupMember info in database.
+ * Get groupMember info.
  *
  * @apiStructure groupMemberSuccess
  *
@@ -279,13 +279,13 @@ router
 });
 
 /**
- * @api {put} /groups/:group/members/:id Updates groupMember info in database
+ * @api {put} /groups/:group/members/:id Updates groupMember info
  * @apiName updateGroupMember
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription
- * Updates groupMember info in database.
+ * Updates groupMember info.
  *
  * @apiStructure groupMemberParams
  * @apiStructure groupMemberSuccess
@@ -360,7 +360,7 @@ router
 /**
  * @api {delete} /groups/:group/members/:id Removes groupMember from database
  * @apiName removeGroupMember
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription

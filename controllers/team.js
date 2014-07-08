@@ -45,13 +45,13 @@ router.use(function (request, response, next) {
 });
 
 /**
- * @api {post} /teams Creates a new team in database.
+ * @api {post} /teams Creates a new team.
  * @apiName createTeam
  * @apiVersion 2.0.1
  * @apiGroup team
  * @apiPermission admin
  * @apiDescription
- * Creates a new team in database.
+ * Creates a new team.
  *
  * @apiStructure teamParams
  * @apiStructure teamSuccess
@@ -99,13 +99,13 @@ router
 });
 
 /**
- * @api {get} /teams List all teams in database
+ * @api {get} /teams List all teams
  * @apiName listTeam
  * @apiVersion 2.0.1
  * @apiGroup team
  * @apiPermission user
  * @apiDescription
- * List all teams in database.
+ * List all teams.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiStructure teamSuccess
@@ -143,13 +143,13 @@ router
 });
 
 /**
- * @api {get} /teams/:id Get team info in database
+ * @api {get} /teams/:id Get team info
  * @apiName getTeam
  * @apiVersion 2.0.1
  * @apiGroup team
  * @apiPermission user
  * @apiDescription
- * Get team info in database.
+ * Get team info.
  *
  * @apiStructure teamSuccess
  *
@@ -178,13 +178,13 @@ router
 });
 
 /**
- * @api {put} /teams/:id Updates team info in database
+ * @api {put} /teams/:id Updates team info
  * @apiName updateTeam
  * @apiVersion 2.0.1
  * @apiGroup team
  * @apiPermission admin
  * @apiDescription
- * Updates team info in database.
+ * Updates team info.
  *
  * @apiStructure teamParams
  * @apiStructure teamSuccess

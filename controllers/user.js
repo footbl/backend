@@ -57,13 +57,13 @@ router.use(function (request, response, next) {
 });
 
 /**
- * @api {post} /users Creates a new user in database.
+ * @api {post} /users Creates a new user.
  * @apiName createUser
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * Creates a new user in database.
+ * Creates a new user.
  *
  * @apiStructure userParams
  * @apiStructure userSuccess
@@ -127,13 +127,13 @@ router
 });
 
 /**
- * @api {get} /users List all users in database
+ * @api {get} /users List all users
  * @apiName listUser
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * List all users in database.
+ * List all users.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiParam {Array} [emails] Emails to search.
@@ -190,13 +190,13 @@ router
 });
 
 /**
- * @api {get} /users/:id Get user info in database
+ * @api {get} /users/:id Get user info
  * @apiName getUser
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup user
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
- * Get user info in database.
+ * Get user info.
  *
  * @apiStructure userSuccess
  *
@@ -230,13 +230,13 @@ router
 });
 
 /**
- * @api {put} /users/:id Updates user info in database
+ * @api {put} /users/:id Updates user info
  * @apiName updateUser
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup user
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
- * Updates user info in database.
+ * Updates user info.
  *
  * @apiStructure userParams
  * @apiStructure userSuccess
@@ -314,9 +314,9 @@ router
 /**
  * @api {delete} /users/:id Removes user from database
  * @apiName removeUser
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup user
- * @apiPermission none
+ * @apiPermission user
  * @apiDescription
  * Removes user from database
  */
@@ -354,11 +354,11 @@ router
 /**
  * @api {get} /users/:id/auth Get user access token
  * @apiName getUser
- * @apiVersion 2.0.0
+ * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * Get user info in database.
+ * Get user info.
  *
  * @apiStructure userSuccess
  *

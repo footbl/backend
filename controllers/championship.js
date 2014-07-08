@@ -53,15 +53,13 @@ router.use(function (request, response, next) {
 });
 
 /**
- * @api {post} /championships Creates a new championship in database.
+ * @api {post} /championships Creates a new championship.
  * @apiName createChampionship
  * @apiVersion 2.0.1
  * @apiGroup championship
  * @apiPermission admin
  * @apiDescription
- * Creates a new championship in database. To create a new championship, the client must provide a name, picture,
- * edition, type and country. The the properties name, edition are required, and the default value for the type is
- * national league.
+ * Creates a new championship.
  *
  * @apiStructure championshipParams
  * @apiStructure championshipSuccess
@@ -118,13 +116,13 @@ router
 });
 
 /**
- * @api {get} /championships List all championships in database
+ * @api {get} /championships List all championships
  * @apiName listChampionship
  * @apiVersion 2.0.1
  * @apiGroup championship
  * @apiPermission user
  * @apiDescription
- * List all championships in database.
+ * List all championships.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiStructure championshipSuccess
@@ -167,13 +165,13 @@ router
 });
 
 /**
- * @api {get} /championships/:id Get championship info in database
+ * @api {get} /championships/:id Get championship info
  * @apiName getChampionship
  * @apiVersion 2.0.1
  * @apiGroup championship
  * @apiPermission user
  * @apiDescription
- * Get championship info in database.
+ * Get championship info.
  *
  * @apiStructure championshipSuccess
  *
@@ -207,13 +205,13 @@ router
 });
 
 /**
- * @api {put} /championships/:id Updates championship info in database
+ * @api {put} /championships/:id Updates championship info
  * @apiName updateChampionship
  * @apiVersion 2.0.1
  * @apiGroup championship
  * @apiPermission admin
  * @apiDescription
- * Updates championship info in database.
+ * Updates championship info.
  *
  * @apiStructure championshipParams
  * @apiStructure championshipSuccess

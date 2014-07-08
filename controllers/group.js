@@ -49,13 +49,13 @@ router.use(function (request, response, next) {
 });
 
 /**
- * @api {post} /groups Creates a new group in database.
+ * @api {post} /groups Creates a new group.
  * @apiName createGroup
  * @apiVersion 2.0.1
  * @apiGroup group
  * @apiPermission user
  * @apiDescription
- * Creates a new group in database.
+ * Creates a new group.
  *
  * @apiStructure groupParams
  * @apiStructure groupSuccess
@@ -112,13 +112,13 @@ router
 });
 
 /**
- * @api {get} /groups List all groups in database
+ * @api {get} /groups List all groups
  * @apiName listGroup
  * @apiVersion 2.0.1
  * @apiGroup group
  * @apiPermission user
  * @apiDescription
- * List all groups in database.
+ * List all groups.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiStructure groupSuccess
@@ -161,13 +161,13 @@ router
 });
 
 /**
- * @api {get} /groups/:id Get group info in database
+ * @api {get} /groups/:id Get group info
  * @apiName getGroup
  * @apiVersion 2.0.1
  * @apiGroup group
  * @apiPermission user
  * @apiDescription
- * Get group info in database.
+ * Get group info.
  *
  * @apiStructure groupSuccess
  *
@@ -197,13 +197,13 @@ router
 });
 
 /**
- * @api {put} /groups/:id Updates group info in database
+ * @api {put} /groups/:id Updates group info
  * @apiName updateGroup
  * @apiVersion 2.0.1
  * @apiGroup group
  * @apiPermission user
  * @apiDescription
- * Updates group info in database.
+ * Updates group info.
  *
  * @apiStructure groupParams
  * @apiStructure groupSuccess
