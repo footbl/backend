@@ -11,82 +11,79 @@ Schema = mongoose.Schema;
  * @summary System user entity
  *
  * property {slug} User slug
+ * property {email} User email
+ * property {username} User username
+ * property {facebookId} User facebookId
+ * property {password} User password
+ * property {name} User name
+ * property {about} User about
+ * property {verified} User verified
+ * property {featured} User featured
+ * property {picture} User picture
+ * property {type} User type
+ * property {apnsToken} User apnsToken
  * property {createdAt}
  * property {updatedAt}
  */
 schema = new Schema({
-    'slug'          : {
+    'slug'       : {
         'type' : String
     },
-    'email'         : {
+    'email'      : {
         'type'   : String,
         'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
         'unique' : true,
         'sparse' : true
     },
-    'username'      : {
+    'username'   : {
         'type'   : String,
         'unique' : true,
         'sparse' : true
     },
-    'facebookId'    : {
+    'facebookId' : {
         'type'   : String,
         'unique' : true,
         'sparse' : true
     },
-    'password'      : {
+    'password'   : {
         'type'     : String,
         'required' : true
     },
-    'name'          : {
+    'name'       : {
+        'type'   : String,
+        'unique' : true,
+        'sparse' : true
+    },
+    'about'      : {
         'type' : String
     },
-    'about'         : {
-        'type' : String
-    },
-    'verified'      : {
+    'verified'   : {
         'type'     : Boolean,
         'required' : true,
         'default'  : false
     },
-    'featured'      : {
+    'featured'   : {
         'type'     : Boolean,
         'required' : true,
         'default'  : false
     },
-    'picture'       : {
+    'picture'    : {
         'type'  : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
-    'language'      : {
-        'type' : String
-    },
-    'country'       : {
-        'type' : String
-    },
-    'type'          : {
+    'type'       : {
         'type'     : String,
         'required' : true,
         'default'  : 'user',
         'enum'     : ['user', 'admin']
     },
-    'apnsToken'     : {
+    'apnsToken'  : {
         'type' : String
     },
-    'notifications' : {
-        'newGroups'          : {
-            'type'    : Boolean,
-            'default' : true
-        },
-        'championshipEnding' : {
-            'type'    : Boolean,
-            'default' : true
-        }
-    },
-    'createdAt'     : {
+    'createdAt'  : {
         'type' : Date
     },
-    'updatedAt'     : {
+    'updatedAt'  : {
         'type' : Date
     }
 }, {
@@ -98,6 +95,7 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
+    '_id'           : 0,
     'slug'          : 1,
     'email'         : 1,
     'username'      : 1,

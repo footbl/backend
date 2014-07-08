@@ -105,8 +105,6 @@ router.use(function findGroupUser(request, response, next) {
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "language': "PT",
- *         "country": "BR",
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
@@ -151,9 +149,16 @@ router
             error = new VError(error, 'error creating groupMember');
             return next(error);
         }
-        response.header('Location', '/groups/' + request.params.group + '/members/' + groupMember.slug);
-        response.header('Last-Modified', groupMember.updatedAt);
-        return response.send(201, groupMember);
+        groupMember.populate('user');
+        return groupMember.populate(function populateMatchAfterSave(error) {
+            if (error) {
+                error = new VError(error, 'error populating user: "$s"', groupMember._id);
+                return next(error);
+            }
+            response.header('Location', '/groups/' + request.params.group + '/members/' + groupMember.slug);
+            response.header('Last-Modified', groupMember.updatedAt);
+            return response.send(201, groupMember);
+        });
     });
 });
 
@@ -182,8 +187,6 @@ router
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "language': "PT",
- *         "country": "BR",
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
@@ -246,8 +249,6 @@ router
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "language': "PT",
- *         "country": "BR",
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
@@ -308,8 +309,6 @@ router
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "language': "PT",
- *         "country": "BR",
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },

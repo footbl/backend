@@ -440,7 +440,7 @@ describe('match controller', function () {
             req = req.send({'host' : 'fluminense'});
             req = req.send({'round' : '1'});
             req = req.send({'date' : new Date(2014, 10, 10)});
-            //req.expect(201);
+            req.expect(201);
             req.expect(function (response) {
                 response.body.should.have.property('slug').be.equal('round-1-fluminense-vs-botafogo');
                 response.body.should.have.property('guest').with.property('name').be.equal('botafogo');

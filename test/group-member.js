@@ -359,6 +359,78 @@ describe('group controller', function () {
                 });
                 req.end(done);
             });
+
+            describe('with member created', function () {
+                var slug;
+
+                before(function (done) {
+                    Group.remove(done);
+                });
+
+                before(function (done) {
+                    GroupMember.remove(done);
+                });
+
+                before(function (done) {
+                    var req, credentials;
+                    credentials = auth.credentials();
+                    req = request(app);
+                    req = req.post('/groups');
+                    req = req.set('auth-signature', credentials.signature);
+                    req = req.set('auth-timestamp', credentials.timestamp);
+                    req = req.set('auth-transactionId', credentials.transactionId);
+                    req = req.set('auth-token', auth.token(groupOwner));
+                    req = req.send({'name' : 'college buddies'});
+                    req = req.send({'freeToEdit' : false});
+                    req.expect(function (response) {
+                        slug = response.body.slug;
+                    });
+                    req.end(done);
+                });
+
+                before(function (done) {
+                    var req, credentials;
+                    credentials = auth.credentials();
+                    req = request(app);
+                    req = req.post('/groups/' + slug + '/members');
+                    req = req.set('auth-signature', credentials.signature);
+                    req = req.set('auth-timestamp', credentials.timestamp);
+                    req = req.set('auth-transactionId', credentials.transactionId);
+                    req = req.set('auth-token', auth.token(groupOwner));
+                    req = req.send({'group' : slug});
+                    req = req.send({'user' : groupUser.slug});
+                    req.end(done);
+                });
+
+                before(function (done) {
+                    var req, credentials;
+                    credentials = auth.credentials();
+                    req = request(app);
+                    req = req.post('/groups/' + slug + '/members');
+                    req = req.set('auth-signature', credentials.signature);
+                    req = req.set('auth-timestamp', credentials.timestamp);
+                    req = req.set('auth-transactionId', credentials.transactionId);
+                    req = req.set('auth-token', auth.token(groupOwner));
+                    req = req.send({'group' : slug});
+                    req = req.send({'user' : otherGroupUser.slug});
+                    req.end(done);
+                });
+
+                it('should raise error with repeated user', function (done) {
+                    var req, credentials;
+                    credentials = auth.credentials();
+                    req = request(app);
+                    req = req.post('/groups/' + slug + '/members');
+                    req = req.set('auth-signature', credentials.signature);
+                    req = req.set('auth-timestamp', credentials.timestamp);
+                    req = req.set('auth-transactionId', credentials.transactionId);
+                    req = req.set('auth-token', auth.token(groupOwner));
+                    req = req.send({'group' : slug});
+                    req = req.send({'user' : otherGroupUser.slug});
+                    req.expect(409);
+                    req.end(done);
+                });
+            });
         });
     });
 

@@ -20,6 +20,7 @@ app.use(function (error, request, response, next) {
     console.error(error);
     process.exit();
 });
+app.use(require('./controllers/user'));
 app.use(require('./controllers/championship'));
 app.use(require('./controllers/match'));
 app.use(require('./controllers/team'));

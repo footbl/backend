@@ -807,7 +807,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -878,7 +878,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -950,7 +950,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -1027,7 +1027,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"language': \"PT\",\n       \"country\": \"BR\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -2562,5 +2562,722 @@ define({ api: [
       }
     },
     "filename": "./controllers/team.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "email",
+            "optional": true,
+            "description": "User email"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "username",
+            "optional": true,
+            "description": "User username"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "password",
+            "optional": false,
+            "description": "User password"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": true,
+            "description": "User name"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "about",
+            "optional": true,
+            "description": "User about"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "User picture"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": true,
+            "description": "User apnsToken"
+          }
+        ]
+      }
+    },
+    "group": "user.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/user.js"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "user.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "post",
+    "url": "/users",
+    "title": "Creates a new user in database.",
+    "name": "createUser",
+    "version": "2.0.0",
+    "group": "user",
+    "permission": "none",
+    "description": "Creates a new user in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"password\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 201 Created",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "email",
+            "optional": true,
+            "description": "User email"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "username",
+            "optional": true,
+            "description": "User username"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "password",
+            "optional": false,
+            "description": "User password"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": true,
+            "description": "User name"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "about",
+            "optional": true,
+            "description": "User about"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "User picture"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": true,
+            "description": "User apnsToken"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "get",
+    "url": "/users/:id",
+    "title": "Get user info in database",
+    "name": "getUser",
+    "version": "2.0.0",
+    "group": "user",
+    "permission": "none",
+    "description": "Get user info in database.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "get",
+    "url": "/users",
+    "title": "List all users in database",
+    "name": "listUser",
+    "version": "2.0.0",
+    "group": "user",
+    "permission": "none",
+    "description": "List all users in database.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          },
+          {
+            "group": "Parameter",
+            "type": "Array",
+            "field": "emails",
+            "optional": true,
+            "description": "Emails to search."
+          },
+          {
+            "group": "Parameter",
+            "type": "Array",
+            "field": "usernames",
+            "optional": true,
+            "description": "Usernames to search."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "delete",
+    "url": "/users/:id",
+    "title": "Removes user from database",
+    "name": "removeUser",
+    "version": "2.0.0",
+    "group": "user",
+    "permission": "none",
+    "description": "Removes user from database",
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "put",
+    "url": "/users/:id",
+    "title": "Updates user info in database",
+    "name": "updateUser",
+    "version": "2.0.0",
+    "group": "user",
+    "permission": "none",
+    "description": "Updates user info in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"password\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "email",
+            "optional": true,
+            "description": "User email"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "username",
+            "optional": true,
+            "description": "User username"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "password",
+            "optional": false,
+            "description": "User password"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": true,
+            "description": "User name"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "about",
+            "optional": true,
+            "description": "User about"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "User picture"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": true,
+            "description": "User apnsToken"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/user.js"
   }
 ] });
