@@ -1584,6 +1584,30 @@
     "filename": "./controllers/group.js"
   },
   {
+    "type": "post",
+    "url": "/groups/:id/invite",
+    "title": "Invites new user",
+    "name": "inviteGroup",
+    "version": "2.0.1",
+    "group": "group",
+    "permission": "user",
+    "description": "Updates group info.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "invite",
+            "optional": false,
+            "description": "Invite"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/group.js"
+  },
+  {
     "type": "get",
     "url": "/groups",
     "title": "List all groups",

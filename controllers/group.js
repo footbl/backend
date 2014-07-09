@@ -300,6 +300,49 @@ router
 });
 
 /**
+ * @api {post} /groups/:id/invite Invites new user
+ * @apiName inviteGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * Updates group info.
+ *
+ * @apiParam {String} invite Invite
+ */
+router
+.route('/groups/:id/invite')
+.post(auth.signature())
+.post(auth.session())
+.post(errorParser.notFound('group'))
+.post(function (request, response, next) {
+    'use strict';
+
+    var group;
+    group = request.group;
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
+.post(function inviteGroup(request, response, next) {
+    'use strict';
+
+    var group;
+    group = request.group;
+    group.invites.push(request.param('invite'));
+    return group.save(function updatedGroup(error) {
+        if (error) {
+            error = new VError(error, 'error inviting user');
+            return next(error);
+        }
+        response.header('Last-Modified', group.updatedAt);
+        return response.send(200, group.invites.pop());
+    });
+});
+
+/**
  * @method
  * @summary Puts requested group in request object
  *
