@@ -3048,6 +3048,36 @@ define({ api: [
     "filename": "./controllers/user.js"
   },
   {
+    "type": "get",
+    "url": "/users/:id/auth",
+    "title": "Get user access token",
+    "name": "authUser",
+    "version": "2.0.1",
+    "group": "user",
+    "permission": "none",
+    "description": "Get user info.",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "token",
+            "optional": false,
+            "description": "User access token"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"token\": \"asdpsfhysdofwe3456sdfsd\",\n   }\n"
+        }
+      ]
+    },
+    "filename": "./controllers/user.js"
+  },
+  {
     "type": "post",
     "url": "/users",
     "title": "Creates a new user.",
@@ -3224,106 +3254,6 @@ define({ api: [
         {
           "title": "    HTTP/1.1 200 Ok",
           "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
-        }
-      ],
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "slug",
-            "optional": false,
-            "description": "User identifier"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "email",
-            "optional": false,
-            "description": "User email"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "username",
-            "optional": false,
-            "description": "User username"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "User name"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "about",
-            "optional": false,
-            "description": "User about"
-          },
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "field": "verified",
-            "optional": false,
-            "description": "User verified"
-          },
-          {
-            "group": "Success 200",
-            "type": "Boolean",
-            "field": "featured",
-            "optional": false,
-            "description": "User featured"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "picture",
-            "optional": false,
-            "description": "User picture"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "apnsToken",
-            "optional": false,
-            "description": "User apnsToken"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "field": "createdAt",
-            "optional": false,
-            "description": "Date of document creation."
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "field": "updatedAt",
-            "optional": false,
-            "description": "Date of document last change."
-          }
-        ]
-      }
-    },
-    "filename": "./controllers/user.js"
-  },
-  {
-    "type": "get",
-    "url": "/users/:id/auth",
-    "title": "Get user access token",
-    "name": "getUser",
-    "version": "2.0.1",
-    "group": "user",
-    "permission": "none",
-    "description": "Get user info.",
-    "success": {
-      "examples": [
-        {
-          "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"token\": \"asdpsfhysdofwe3456sdfsd\",\n   }\n"
         }
       ],
       "fields": {

@@ -353,14 +353,14 @@ router
 
 /**
  * @api {get} /users/:id/auth Get user access token
- * @apiName getUser
+ * @apiName authUser
  * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
  * Get user info.
  *
- * @apiStructure userSuccess
+ * @apiSuccess {String} token User access token
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -372,7 +372,7 @@ router
 .route('/users/:id/auth')
 .get(auth.signature())
 .get(auth.facebook())
-.get(function getUser(request, response, next) {
+.get(function authUser(request, response, next) {
     'use strict';
 
     var query, facebook, password, email, _id;
