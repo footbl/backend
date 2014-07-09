@@ -66,7 +66,7 @@ router.use(function findGroupUser(request, response, next) {
     query.where('slug').equals(user);
     return query.exec(function (error, user) {
         if (error) {
-            error = new VError(error, 'error finding guest: "$s"', user);
+            error = new VError(error, 'error finding user: "$s"', user);
             return next(error);
         }
         request.groupUser = user;
@@ -214,6 +214,7 @@ router
     page = request.param('page', 0) * pageSize;
     query = GroupMember.find();
     query.where('group').equals(request.group._id);
+    query.populate('user');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function listedGroupMember(error, groupMembers) {
@@ -352,8 +353,15 @@ router
             error = new VError(error, 'error updating groupMember');
             return next(error);
         }
-        response.header('Last-Modified', groupMember.updatedAt);
-        return response.send(200, groupMember);
+        groupMember.populate('user');
+        return groupMember.populate(function populateMatchAfterSave(error) {
+            if (error) {
+                error = new VError(error, 'error populating user: "$s"', groupMember._id);
+                return next(error);
+            }
+            response.header('Last-Modified', groupMember.updatedAt);
+            return response.send(200, groupMember);
+        });
     });
 });
 
@@ -415,6 +423,7 @@ router.param('id', function findGroupMember(request, response, next, id) {
     query = GroupMember.findOne();
     query.where('group').equals(request.group._id);
     query.where('slug').equals(id);
+    query.populate('user');
     query.exec(function foundGroupMember(error, groupMember) {
         if (error) {
             error = new VError(error, 'error finding groupMember: "$s"', id);

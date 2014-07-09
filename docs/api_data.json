@@ -691,7 +691,7 @@
   },
   {
     "type": "post",
-    "url": "/featured",
+    "url": "/users/:user/featured",
     "title": "Creates a new featured.",
     "name": "createFeatured",
     "version": "2.0.1",
@@ -763,7 +763,7 @@
   },
   {
     "type": "get",
-    "url": "/featured/:id",
+    "url": "/users/:user/featured/:id",
     "title": "Get featured info",
     "name": "getFeatured",
     "version": "2.0.1",
@@ -814,7 +814,7 @@
   },
   {
     "type": "get",
-    "url": "/featured",
+    "url": "/users/:user/featured",
     "title": "List all featured",
     "name": "listFeatured",
     "version": "2.0.1",
@@ -879,7 +879,7 @@
   },
   {
     "type": "delete",
-    "url": "/featured/:id",
+    "url": "/users/:user/featured/:id",
     "title": "Removes featured from database",
     "name": "removeFeatured",
     "version": "2.0.1",
@@ -890,7 +890,7 @@
   },
   {
     "type": "put",
-    "url": "/featured/:id",
+    "url": "/users/:user/featured/:id",
     "title": "Updates featured info",
     "name": "updateFeatured",
     "version": "2.0.1",

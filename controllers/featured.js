@@ -9,7 +9,7 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, auth, errorParser, Featured;
+var VError, router, nconf, slug, auth, errorParser, User, Featured;
 
 VError = require('verror');
 router = require('express').Router();
@@ -17,6 +17,7 @@ nconf = require('nconf');
 slug = require('slug');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
+User = require('../models/user');
 Featured = require('../models/featured');
 
 /**
@@ -43,7 +44,36 @@ router.use(function (request, response, next) {
 });
 
 /**
- * @api {post} /featured Creates a new featured.
+ * @method
+ * @summary Puts requested user in request object
+ *
+ * @param request
+ * @param response
+ * @param next
+ * @param id
+ */
+router.use(function findFeaturedUser(request, response, next) {
+    'use strict';
+
+    var query, user;
+    user = request.param('featured');
+    if (!user) {
+        return next();
+    }
+    query = User.findOne();
+    query.where('slug').equals(user);
+    return query.exec(function (error, user) {
+        if (error) {
+            error = new VError(error, 'error finding featured: "$s"', user);
+            return next(error);
+        }
+        request.featuredUser = user;
+        return next();
+    });
+});
+
+/**
+ * @api {post} /users/:user/featured Creates a new featured.
  * @apiName createFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
@@ -81,29 +111,50 @@ router.use(function (request, response, next) {
  *     }
  */
 router
-.route('/featured')
+.route('/users/:user/featured')
 .post(auth.signature())
 .post(auth.session())
+.post(errorParser.notFound('user'))
+.post(function (request, response, next) {
+    'use strict';
+
+    var user;
+    user = request.user;
+    if (request.session._id.toString() !== user._id.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
 .post(function createFeatured(request, response, next) {
     'use strict';
 
     var featured;
     featured = new Featured({
-        'slug' : slug(request.param(''))
+        'slug'     : request.featuredUser ? request.featuredUser.slug : null,
+        'featured' : request.featuredUser,
+        'user'     : request.session._id
     });
     return featured.save(function createdFeatured(error) {
         if (error) {
             error = new VError(error, 'error creating featured');
             return next(error);
         }
-        response.header('Location', '/featured/' + featured.slug);
-        response.header('Last-Modified', featured.updatedAt);
-        return response.send(201, featured);
+        featured.populate('featured');
+        return featured.populate(function (error) {
+            if (error) {
+                error = new VError(error, 'error populating featured: "$s"', featured._id);
+                return next(error);
+            }
+            response.header('Location', '/users/:user/featured/' + featured.slug);
+            response.header('Last-Modified', featured.updatedAt);
+            return response.send(201, featured);
+        });
     });
 });
 
 /**
- * @api {get} /featured List all featured
+ * @api {get} /users/:user/featured List all featured
  * @apiName listFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
@@ -135,9 +186,10 @@ router
  *     }]
  */
 router
-.route('/featured')
+.route('/users/:user/featured')
 .get(auth.signature())
 .get(auth.session())
+.get(errorParser.notFound('user'))
 .get(function listFeatured(request, response, next) {
     'use strict';
 
@@ -145,6 +197,8 @@ router
     pageSize = nconf.get('PAGE_SIZE');
     page = request.param('page', 0) * pageSize;
     query = Featured.find();
+    query.where('user').equals(request.user._id);
+    query.populate('featured');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function listedFeatured(error, featured) {
@@ -157,7 +211,7 @@ router
 });
 
 /**
- * @api {get} /featured/:id Get featured info
+ * @api {get} /users/:user/featured/:id Get featured info
  * @apiName getFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
@@ -188,9 +242,10 @@ router
  *     }
  */
 router
-.route('/featured/:id')
+.route('/users/:user/featured/:id')
 .get(auth.signature())
 .get(auth.session())
+.get(errorParser.notFound('user'))
 .get(errorParser.notFound('featured'))
 .get(function getFeatured(request, response) {
     'use strict';
@@ -202,7 +257,7 @@ router
 });
 
 /**
- * @api {put} /featured/:id Updates featured info
+ * @api {put} /users/:user/featured/:id Updates featured info
  * @apiName updateFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
@@ -240,28 +295,47 @@ router
  *     }
  */
 router
-.route('/featured/:id')
+.route('/users/:user/featured/:id')
 .put(auth.signature())
 .put(auth.session())
+.put(errorParser.notFound('user'))
 .put(errorParser.notFound('featured'))
+.put(function (request, response, next) {
+    'use strict';
+
+    var user;
+    user = request.user;
+    if (request.session._id.toString() !== user._id.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
 .put(function updateFeatured(request, response, next) {
     'use strict';
 
     var featured;
     featured = request.featured;
-    featured.slug = slug(request.param(''));
+    featured.slug = request.featuredUser ? request.featuredUser.slug : null;
+    featured.featured = request.featuredUser;
     return featured.save(function updatedFeatured(error) {
         if (error) {
             error = new VError(error, 'error updating featured');
             return next(error);
         }
-        response.header('Last-Modified', featured.updatedAt);
-        return response.send(200, featured);
+        return featured.populate(function (error) {
+            if (error) {
+                error = new VError(error, 'error populating featured: "$s"', featured._id);
+                return next(error);
+            }
+            response.header('Last-Modified', featured.updatedAt);
+            return response.send(200, featured);
+        });
     });
 });
 
 /**
- * @api {delete} /featured/:id Removes featured from database
+ * @api {delete} /users/:user/featured/:id Removes featured from database
  * @apiName removeFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
@@ -270,10 +344,22 @@ router
  * Removes featured from database
  */
 router
-.route('/featured/:id')
+.route('/users/:user/featured/:id')
 .delete(auth.signature())
 .delete(auth.session())
+.delete(errorParser.notFound('user'))
 .delete(errorParser.notFound('featured'))
+.delete(function (request, response, next) {
+    'use strict';
+
+    var user;
+    user = request.user;
+    if (request.session._id.toString() !== user._id.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
 .delete(function removeFeatured(request, response, next) {
     'use strict';
 
@@ -298,18 +384,50 @@ router
  * @param next
  * @param id
  */
+router.param('id', errorParser.notFound('user'));
 router.param('id', function findFeatured(request, response, next, id) {
     'use strict';
 
     var query;
     query = Featured.findOne();
+    query.where('user').equals(request.user._id);
     query.where('slug').equals(id);
+    query.populate('featured');
     query.exec(function foundFeatured(error, featured) {
         if (error) {
             error = new VError(error, 'error finding featured: "$s"', id);
             return next(error);
         }
         request.featured = featured;
+        return next();
+    });
+});
+
+/**
+ * @method
+ * @summary Puts requested user in request object
+ *
+ * @param request
+ * @param response
+ * @param next
+ * @param id
+ */
+router.param('user', function findUser(request, response, next, id) {
+    'use strict';
+
+    var query;
+    query = User.findOne();
+    if (id === 'me') {
+        request.user = request.session;
+        return next();
+    }
+    query.where('slug').equals(id);
+    return query.exec(function foundUser(error, user) {
+        if (error) {
+            error = new VError(error, 'error finding user: "$s"', id);
+            return next(error);
+        }
+        request.user = user;
         return next();
     });
 });

@@ -22,6 +22,7 @@ app.use(function (error, request, response, next) {
 });
 app.use('/docs', express.static(__dirname + '/docs'));
 app.use(require('./controllers/user'));
+app.use(require('./controllers/featured'));
 app.use(require('./controllers/championship'));
 app.use(require('./controllers/match'));
 app.use(require('./controllers/team'));
