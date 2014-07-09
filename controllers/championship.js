@@ -267,13 +267,13 @@ router
 });
 
 /**
- * @api {delete} /championships/:id Removes championship from database
+ * @api {delete} /championships/:id Removes championship 
  * @apiName removeChampionship
  * @apiVersion 2.0.1
  * @apiGroup championship
  * @apiPermission admin
  * @apiDescription
- * Removes championship from database
+ * Removes championship 
  */
 router
 .route('/championships/:id')

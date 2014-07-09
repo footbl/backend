@@ -312,13 +312,13 @@ router
 });
 
 /**
- * @api {delete} /users/:id Removes user from database
+ * @api {delete} /users/:id Removes user 
  * @apiName removeUser
  * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * Removes user from database
+ * Removes user 
  */
 router
 .route('/users/:id')

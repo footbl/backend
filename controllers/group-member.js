@@ -366,13 +366,13 @@ router
 });
 
 /**
- * @api {delete} /groups/:group/members/:id Removes groupMember from database
+ * @api {delete} /groups/:group/members/:id Removes groupMember 
  * @apiName removeGroupMember
  * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription
- * Removes groupMember from database
+ * Removes groupMember 
  */
 router
 .route('/groups/:group/members/:id')

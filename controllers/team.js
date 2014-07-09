@@ -230,13 +230,13 @@ router
 });
 
 /**
- * @api {delete} /teams/:id Removes team from database
+ * @api {delete} /teams/:id Removes team 
  * @apiName removeTeam
  * @apiVersion 2.0.1
  * @apiGroup team
  * @apiPermission admin
  * @apiDescription
- * Removes team from database
+ * Removes team 
  */
 router
 .route('/teams/:id')

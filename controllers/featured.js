@@ -335,13 +335,13 @@ router
 });
 
 /**
- * @api {delete} /users/:user/featured/:id Removes featured from database
+ * @api {delete} /users/:user/featured/:id Removes featured 
  * @apiName removeFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
  * @apiPermission user
  * @apiDescription
- * Removes featured from database
+ * Removes featured 
  */
 router
 .route('/users/:user/featured/:id')

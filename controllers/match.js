@@ -420,13 +420,13 @@ router
 });
 
 /**
- * @api {delete} /championships/:championship/matches/:id Removes match from database
+ * @api {delete} /championships/:championship/matches/:id Removes match 
  * @apiName removeMatch
  * @apiVersion 2.0.1
  * @apiGroup match
  * @apiPermission admin
  * @apiDescription
- * Removes match from database
+ * Removes match 
  */
 router
 .route('/championships/:championship/matches/:id')

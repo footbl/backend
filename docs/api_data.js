@@ -477,12 +477,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/championships/:id",
-    "title": "Removes championship from database",
+    "title": "Removes championship",
     "name": "removeChampionship",
     "version": "2.0.1",
     "group": "championship",
     "permission": "admin",
-    "description": "Removes championship from database",
+    "description": "Removes championship",
     "filename": "./controllers/championship.js"
   },
   {
@@ -880,12 +880,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/users/:user/featured/:id",
-    "title": "Removes featured from database",
+    "title": "Removes featured",
     "name": "removeFeatured",
     "version": "2.0.1",
     "group": "featured",
     "permission": "user",
-    "description": "Removes featured from database",
+    "description": "Removes featured",
     "filename": "./controllers/featured.js"
   },
   {
@@ -1330,12 +1330,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/groups/:group/members/:id",
-    "title": "Removes groupMember from database",
+    "title": "Removes groupMember",
     "name": "removeGroupMember",
     "version": "2.0.1",
     "group": "groupMember",
     "permission": "user",
-    "description": "Removes groupMember from database",
+    "description": "Removes groupMember",
     "filename": "./controllers/group-member.js"
   },
   {
@@ -1665,12 +1665,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/groups/:id",
-    "title": "Removes group from database",
+    "title": "Removes group",
     "name": "removeGroup",
     "version": "2.0.1",
     "group": "group",
     "permission": "user",
-    "description": "Removes group from database",
+    "description": "Removes group",
     "filename": "./controllers/group.js"
   },
   {
@@ -2326,12 +2326,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/championships/:championship/matches/:id",
-    "title": "Removes match from database",
+    "title": "Removes match",
     "name": "removeMatch",
     "version": "2.0.1",
     "group": "match",
     "permission": "admin",
-    "description": "Removes match from database",
+    "description": "Removes match",
     "filename": "./controllers/match.js"
   },
   {
@@ -2801,12 +2801,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/teams/:id",
-    "title": "Removes team from database",
+    "title": "Removes team",
     "name": "removeTeam",
     "version": "2.0.1",
     "group": "team",
     "permission": "admin",
-    "description": "Removes team from database",
+    "description": "Removes team",
     "filename": "./controllers/team.js"
   },
   {
@@ -3541,12 +3541,12 @@ define({ api: [
   {
     "type": "delete",
     "url": "/users/:id",
-    "title": "Removes user from database",
+    "title": "Removes user",
     "name": "removeUser",
     "version": "2.0.1",
     "group": "user",
     "permission": "user",
-    "description": "Removes user from database",
+    "description": "Removes user",
     "filename": "./controllers/user.js"
   },
   {
