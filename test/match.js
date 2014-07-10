@@ -531,6 +531,19 @@ describe('match controller', function () {
             req.end(done);
         });
 
+        it('should raise error with invalid championship', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/championships/invalid/matches');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req.expect(404);
+            req.end(done);
+        });
+
         it('should list', function (done) {
             var req, credentials;
             credentials = auth.credentials();
@@ -611,6 +624,19 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with invalid championship', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req.expect(404);
             req.end(done);
         });
 
