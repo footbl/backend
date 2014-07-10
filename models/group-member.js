@@ -20,38 +20,34 @@ Schema = mongoose.Schema;
  * property {updatedAt}
  */
 schema = new Schema({
-    'slug'      : {
+    'slug'            : {
         'type' : String
     },
-    'user'      : {
+    'user'            : {
         'type'     : Schema.Types.ObjectId,
         'ref'      : 'User',
         'required' : true
     },
-    'group'     : {
+    'group'           : {
         'type'     : Schema.Types.ObjectId,
         'ref'      : 'Group',
         'required' : true
     },
-    'rounds'    : [
-        {
-            'ranking' : {
-                'type'     : Number,
-                'required' : true,
-                'default'  : Infinity
-            },
-            'funds'   : {
-                'type'     : Number,
-                'required' : true,
-                'default'  : 100
-            }
-        }
-    ],
-    'createdAt' : {
+    'ranking'         : {
+        'type'     : Number,
+        'required' : true,
+        'default'  : Infinity
+    },
+    'previousRanking' : {
+        'type'     : Number,
+        'required' : true,
+        'default'  : Infinity
+    },
+    'createdAt'       : {
         'type'    : Date,
         'default' : Date.now
     },
-    'updatedAt' : {
+    'updatedAt'       : {
         'type' : Date
     }
 }, {
@@ -70,13 +66,14 @@ schema.index({
 });
 
 schema.plugin(jsonSelect, {
-    '_id'       : 0,
-    'user'      : 1,
-    'group'     : 0,
-    'rounds'    : 1,
-    'slug'      : 1,
-    'createdAt' : 1,
-    'updatedAt' : 1
+    '_id'             : 0,
+    'user'            : 1,
+    'group'           : 0,
+    'ranking'         : 1,
+    'previousRanking' : 1,
+    'slug'            : 1,
+    'createdAt'       : 1,
+    'updatedAt'       : 1
 });
 
 /**

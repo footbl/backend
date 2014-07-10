@@ -25,6 +25,7 @@ app.use(require('./controllers/user'));
 app.use(require('./controllers/featured'));
 app.use(require('./controllers/championship'));
 app.use(require('./controllers/match'));
+app.use(require('./controllers/bet'));
 app.use(require('./controllers/team'));
 app.use(require('./controllers/group'));
 app.use(require('./controllers/group-member'));

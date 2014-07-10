@@ -6,7 +6,8 @@
  * @apiDefineStructure groupMemberSuccess
  * @apiSuccess {String} slug GroupMember identifier.
  * @apiSuccess {String} user GroupMember user
- * @apiSuccess {Array} rounds GroupMember status snapshots;
+ * @apiSuccess {Number} ranking GroupMember current ranking
+ * @apiSuccess {Number} previousRanking GroupMember previous ranking
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
@@ -105,16 +106,20 @@ router.use(function findGroupUser(request, response, next) {
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
- *       "rounds": [{
- *         "ranking": 1,
- *         "funds": 110
- *       },{
- *         "ranking": 1,
- *         "funds": 140
- *       }],
+ *       "ranking": 1,
+ *       "previousRanking": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -150,7 +155,7 @@ router
             return next(error);
         }
         groupMember.populate('user');
-        return groupMember.populate(function populateMatchAfterSave(error) {
+        return groupMember.populate(function populateGroupMemberAfterSave(error) {
             if (error) {
                 error = new VError(error, 'error populating user: "$s"', groupMember._id);
                 return next(error);
@@ -187,16 +192,20 @@ router
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
- *       "rounds": [{
- *         "ranking": 1,
- *         "funds": 110
- *       },{
- *         "ranking": 1,
- *         "funds": 140
- *       }],
+ *       "ranking": 1,
+ *       "previousRanking": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -250,16 +259,20 @@ router
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
- *       "rounds": [{
- *         "ranking": 1,
- *         "funds": 110
- *       },{
- *         "ranking": 1,
- *         "funds": 140
- *       }],
+ *       "ranking": 1,
+ *       "previousRanking": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -310,16 +323,20 @@ router
  *         "verified": false,
  *         "featured": false,
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
- *       "rounds": [{
- *         "ranking": 1,
- *         "funds": 110
- *       },{
- *         "ranking": 1,
- *         "funds": 140
- *       }],
+ *       "ranking": 1,
+ *       "previousRanking": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -354,7 +371,7 @@ router
             return next(error);
         }
         groupMember.populate('user');
-        return groupMember.populate(function populateMatchAfterSave(error) {
+        return groupMember.populate(function populateGroupMemberAfterUpdate(error) {
             if (error) {
                 error = new VError(error, 'error populating user: "$s"', groupMember._id);
                 return next(error);

@@ -85,6 +85,15 @@ router.use(function (request, response, next) {
  *       "verified": false,
  *       "featured": false,
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "ranking": "2",
+ *       "previousRanking": "1",
+ *       "history": [{
+ *         "date": "2014-07-01T12:22:25.058Z",
+ *         "funds": 100
+ *       },{
+ *         "date": "2014-07-03T12:22:25.058Z",
+ *         "funds": 120
+ *       }],
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -152,6 +161,15 @@ router
  *       "verified": false,
  *       "featured": false,
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "ranking": "2",
+ *       "previousRanking": "1",
+ *       "history": [{
+ *         "date": "2014-07-01T12:22:25.058Z",
+ *         "funds": 100
+ *       },{
+ *         "date": "2014-07-03T12:22:25.058Z",
+ *         "funds": 120
+ *       }],
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -211,6 +229,15 @@ router
  *       "verified": false,
  *       "featured": false,
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "ranking": "2",
+ *       "previousRanking": "1",
+ *       "history": [{
+ *         "date": "2014-07-01T12:22:25.058Z",
+ *         "funds": 100
+ *       },{
+ *         "date": "2014-07-03T12:22:25.058Z",
+ *         "funds": 120
+ *       }],
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -258,6 +285,15 @@ router
  *       "verified": false,
  *       "featured": false,
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "ranking": "2",
+ *       "previousRanking": "1",
+ *       "history": [{
+ *         "date": "2014-07-01T12:22:25.058Z",
+ *         "funds": 100
+ *       },{
+ *         "date": "2014-07-03T12:22:25.058Z",
+ *         "funds": 120
+ *       }],
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }

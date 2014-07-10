@@ -22,68 +22,93 @@ Schema = mongoose.Schema;
  * property {picture} User picture
  * property {type} User type
  * property {apnsToken} User apnsToken
+ * property {ranking} User current ranking
+ * property {previousRanking} User previous ranking
+ * property {history} User score history
  * property {createdAt}
  * property {updatedAt}
  */
 schema = new Schema({
-    'slug'       : {
+    'slug'            : {
         'type' : String
     },
-    'email'      : {
+    'email'           : {
         'type'   : String,
         'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
         'unique' : true,
         'sparse' : true
     },
-    'username'   : {
+    'username'        : {
         'type'   : String,
         'unique' : true,
         'sparse' : true
     },
-    'facebookId' : {
+    'facebookId'      : {
         'type'   : String,
         'unique' : true,
         'sparse' : true
     },
-    'password'   : {
+    'password'        : {
         'type'     : String,
         'required' : true
     },
-    'name'       : {
+    'name'            : {
         'type'   : String,
         'unique' : true,
         'sparse' : true
     },
-    'about'      : {
+    'about'           : {
         'type' : String
     },
-    'verified'   : {
+    'verified'        : {
         'type'     : Boolean,
         'required' : true,
         'default'  : false
     },
-    'featured'   : {
+    'featured'        : {
         'type'     : Boolean,
         'required' : true,
         'default'  : false
     },
-    'picture'    : {
+    'picture'         : {
         'type'  : String,
         'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
     },
-    'type'       : {
+    'type'            : {
         'type'     : String,
         'required' : true,
         'default'  : 'user',
         'enum'     : ['user', 'admin']
     },
-    'apnsToken'  : {
+    'apnsToken'       : {
         'type' : String
     },
-    'createdAt'  : {
+    'ranking'         : {
+        'type'     : Number,
+        'required' : true,
+        'default'  : Infinity
+    },
+    'previousRanking' : {
+        'type'     : Number,
+        'required' : true,
+        'default'  : Infinity
+    },
+    'history'         : [
+        {
+            'date'  : {
+                'type'     : Date,
+                'required' : true
+            },
+            'funds' : {
+                'type'     : Number,
+                'required' : true
+            }
+        }
+    ],
+    'createdAt'       : {
         'type' : Date
     },
-    'updatedAt'  : {
+    'updatedAt'       : {
         'type' : Date
     }
 }, {
@@ -95,24 +120,27 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    '_id'           : 0,
-    'slug'          : 1,
-    'email'         : 1,
-    'username'      : 1,
-    'name'          : 1,
-    'facebookId'    : 0,
-    'about'         : 1,
-    'verified'      : 1,
-    'featured'      : 1,
-    'password'      : 0,
-    'picture'       : 1,
-    'language'      : 1,
-    'country'       : 1,
-    'type'          : 0,
-    'apnsToken'     : 0,
-    'notifications' : 1,
-    'createdAt'     : 1,
-    'updatedAt'     : 1
+    '_id'             : 0,
+    'slug'            : 1,
+    'email'           : 1,
+    'username'        : 1,
+    'name'            : 1,
+    'facebookId'      : 0,
+    'about'           : 1,
+    'verified'        : 1,
+    'featured'        : 1,
+    'password'        : 0,
+    'picture'         : 1,
+    'language'        : 1,
+    'country'         : 1,
+    'type'            : 0,
+    'apnsToken'       : 0,
+    'ranking'         : 1,
+    'previousRanking' : 1,
+    'history'         : 1,
+    'notifications'   : 1,
+    'createdAt'       : 1,
+    'updatedAt'       : 1
 });
 
 /**
