@@ -5,6 +5,464 @@
         "Parameter": [
           {
             "group": "Parameter",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          }
+        ]
+      }
+    },
+    "group": "bet.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Bet identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "Bet user"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "match",
+            "optional": false,
+            "description": "Bet match"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "bet.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "type": "post",
+    "url": "/championships/:championship/matches/:match/bets",
+    "title": "Creates a new bet in database.",
+    "name": "createBet",
+    "version": "2.0.1",
+    "group": "bet",
+    "permission": "user",
+    "description": "Creates a new bet in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"bid\": \"required\",\n     \"result\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 201 Created",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Bet identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "Bet user"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "match",
+            "optional": false,
+            "description": "Bet match"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "type": "get",
+    "url": "/championships/:championship/matches/:match/bets/:id",
+    "title": "Get bet info in database",
+    "name": "getBet",
+    "version": "2.0.1",
+    "group": "bet",
+    "permission": "user",
+    "description": "Get bet info in database.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Bet identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "Bet user"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "match",
+            "optional": false,
+            "description": "Bet match"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "type": "get",
+    "url": "/championships/:championship/matches/:match/bets",
+    "title": "List all bets in database",
+    "name": "listBet",
+    "version": "2.0.1",
+    "group": "bet",
+    "permission": "user",
+    "description": "List all bets in database.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Bet identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "Bet user"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "match",
+            "optional": false,
+            "description": "Bet match"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "type": "delete",
+    "url": "/championships/:championship/matches/:match/bets/:id",
+    "title": "Removes bet from database",
+    "name": "removeBet",
+    "version": "2.0.1",
+    "group": "bet",
+    "permission": "user",
+    "description": "Removes bet from database",
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "type": "put",
+    "url": "/championships/:championship/matches/:match/bets/:id",
+    "title": "Updates bet info in database",
+    "name": "updateBet",
+    "version": "2.0.1",
+    "group": "bet",
+    "permission": "user",
+    "description": "Updates bet info in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"bid\": \"required\",\n     \"result\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Bet identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "Bet user"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "match",
+            "optional": false,
+            "description": "Bet match"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/bet.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
             "type": "String",
             "field": "name",
             "optional": false,
@@ -710,7 +1168,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -774,7 +1232,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -839,7 +1297,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -909,7 +1367,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -1000,10 +1458,17 @@
           },
           {
             "group": "Success 200",
-            "type": "Array",
-            "field": "rounds",
+            "type": "Number",
+            "field": "ranking",
             "optional": false,
-            "description": "GroupMember status snapshots;"
+            "description": "GroupMember current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "GroupMember previous ranking"
           },
           {
             "group": "Success 200",
@@ -1027,41 +1492,6 @@
     "url": "",
     "version": "0.0.0",
     "filename": "./controllers/group-member.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "Group name."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "picture",
-            "optional": true,
-            "description": "Group picture for display."
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "freeToEdit",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Tells if the group can be edited be any member."
-          }
-        ]
-      }
-    },
-    "group": "group.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/group.js"
   },
   {
     "success": {
@@ -1119,6 +1549,41 @@
     "filename": "./controllers/group.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Group name."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "Group picture for display."
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "freeToEdit",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Tells if the group can be edited be any member."
+          }
+        ]
+      }
+    },
+    "group": "group.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/group.js"
+  },
+  {
     "type": "post",
     "url": "/groups/:group/members",
     "title": "Creates a new groupMember.",
@@ -1139,7 +1604,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -1160,10 +1625,17 @@
           },
           {
             "group": "Success 200",
-            "type": "Array",
-            "field": "rounds",
+            "type": "Number",
+            "field": "ranking",
             "optional": false,
-            "description": "GroupMember status snapshots;"
+            "description": "GroupMember current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "GroupMember previous ranking"
           },
           {
             "group": "Success 200",
@@ -1210,7 +1682,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -1231,10 +1703,17 @@
           },
           {
             "group": "Success 200",
-            "type": "Array",
-            "field": "rounds",
+            "type": "Number",
+            "field": "ranking",
             "optional": false,
-            "description": "GroupMember status snapshots;"
+            "description": "GroupMember current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "GroupMember previous ranking"
           },
           {
             "group": "Success 200",
@@ -1282,7 +1761,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -1303,10 +1782,17 @@
           },
           {
             "group": "Success 200",
-            "type": "Array",
-            "field": "rounds",
+            "type": "Number",
+            "field": "ranking",
             "optional": false,
-            "description": "GroupMember status snapshots;"
+            "description": "GroupMember current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "GroupMember previous ranking"
           },
           {
             "group": "Success 200",
@@ -1359,7 +1845,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"rounds\": [{\n       \"ranking\": 1,\n       \"funds\": 110\n     },{\n       \"ranking\": 1,\n       \"funds\": 140\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -1380,10 +1866,17 @@
           },
           {
             "group": "Success 200",
-            "type": "Array",
-            "field": "rounds",
+            "type": "Number",
+            "field": "ranking",
             "optional": false,
-            "description": "GroupMember status snapshots;"
+            "description": "GroupMember current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "GroupMember previous ranking"
           },
           {
             "group": "Success 200",
@@ -1799,6 +2292,78 @@
     "filename": "./controllers/group.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "finished",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Match status"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": true,
+            "description": "Match elapsed time"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.guest",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match guest team score"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.host",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match host team score"
+          }
+        ]
+      }
+    },
+    "group": "match.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/match.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -1878,78 +2443,6 @@
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
-          }
-        ]
-      }
-    },
-    "group": "match.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/match.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "round",
-            "optional": false,
-            "description": "Match round"
-          },
-          {
-            "group": "Parameter",
-            "type": "Date",
-            "field": "date",
-            "optional": false,
-            "description": "Match date"
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "finished",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Match status"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "elapsed",
-            "optional": true,
-            "description": "Match elapsed time"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.guest",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match guest team score"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.host",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match host team score"
           }
         ]
       }
@@ -3122,7 +3615,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -3277,7 +3770,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -3405,7 +3898,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -3524,7 +4017,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
