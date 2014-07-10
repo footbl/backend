@@ -418,7 +418,7 @@ describe('bet controller', function () {
     describe('details', function () {
         before(function (done) {
             Bet.remove(done);
-        })
+        });
 
         before(function (done) {
             Match.remove(done);
