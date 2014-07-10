@@ -21,6 +21,9 @@
  * @apiSuccess (featured) {Number} previousRanking User previous ranking
  * @apiSuccess (featured) {Date} createdAt Date of document creation.
  * @apiSuccess (featured) {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (featured history) {Date} date Date of history creation
+ * @apiSuccess (featured history) {Number} funds Funds in history
  */
 var VError, router, nconf, slug, auth, errorParser, User, Featured;
 

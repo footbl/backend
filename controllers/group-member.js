@@ -23,6 +23,9 @@
  * @apiSuccess (user) {Number} previousRanking User previous ranking
  * @apiSuccess (user) {Date} createdAt Date of document creation.
  * @apiSuccess (user) {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (user history) {Date} date Date of history creation
+ * @apiSuccess (user history) {Number} funds Funds in history
  */
 var VError, router, nconf, slug, auth, errorParser, GroupMember, Group, User;
 

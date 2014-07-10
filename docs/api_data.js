@@ -159,6 +159,22 @@ define({ api: [
             "description": "Date of document last change."
           }
         ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
+        ],
         "match": [
           {
             "group": "match",
@@ -461,6 +477,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ],
         "match": [
@@ -775,6 +807,22 @@ define({ api: [
             "description": "Date of document last change."
           }
         ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
+        ],
         "match": [
           {
             "group": "match",
@@ -1079,6 +1127,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ],
         "match": [
@@ -1390,6 +1454,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ],
         "match": [
@@ -2324,6 +2404,22 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "featured history": [
+          {
+            "group": "featured history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "featured history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
         ]
       }
     },
@@ -2472,6 +2568,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "featured history": [
+          {
+            "group": "featured history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "featured history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -2623,6 +2735,22 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "featured history": [
+          {
+            "group": "featured history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "featured history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
         ]
       }
     },
@@ -2773,6 +2901,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "featured history": [
+          {
+            "group": "featured history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "featured history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -2929,6 +3073,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "featured history": [
+          {
+            "group": "featured history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "featured history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -3099,6 +3259,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -3353,6 +3529,22 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
         ]
       }
     },
@@ -3516,6 +3708,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -3681,6 +3889,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -3851,6 +4075,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -5839,6 +6079,22 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "history": [
+          {
+            "group": "history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
         ]
       }
     },
@@ -5994,6 +6250,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "history": [
+          {
+            "group": "history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }
@@ -6164,6 +6436,22 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "history": [
+          {
+            "group": "history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
         ]
       }
     },
@@ -6306,6 +6594,22 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "history": [
+          {
+            "group": "history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
         ]
       }
     },
@@ -6438,6 +6742,22 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "history": [
+          {
+            "group": "history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
           }
         ]
       }

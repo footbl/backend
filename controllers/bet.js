@@ -25,6 +25,9 @@
  * @apiSuccess (user) {Date} createdAt Date of document creation.
  * @apiSuccess (user) {Date} updatedAt Date of document last change.
  *
+ * @apiSuccess (user history) {Date} date Date of history creation
+ * @apiSuccess (user history) {Number} funds Funds in history
+ *
  * @apiSuccess (match) {String} slug Match identifier.
  * @apiSuccess (match) {Number} round Match round.
  * @apiSuccess (match) {Date} date Match date.
