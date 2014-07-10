@@ -16,11 +16,18 @@
  * @apiSuccess {Date} date Match date.
  * @apiSuccess {Boolean} finished Match status.
  * @apiSuccess {Number} elapsed Match elapsed time.
+ * @apiSuccess {String} winner Match winner.
+ * @apiSuccess {Number} jackpot Match total pot.
+ * @apiSuccess {Number} reward Match reward.
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  *
  * @apiSuccess (score) {Number} guest Match guest team score.
  * @apiSuccess (score) {Number} host Match host team score.
+ *
+ * @apiSuccess (pot) {Number} guest Match guest total bets.
+ * @apiSuccess (pot) {Number} host Match host total bets.
+ * @apiSuccess (pot) {Number} draw Match draw total bets.
  *
  * @apiSuccess (guest) {String} name Guest team name.
  * @apiSuccess (guest) {String} picture Guest team picture.
@@ -174,6 +181,14 @@ router.use(function findMatchHost(request, response, next) {
  *         "guest": 0,
  *         "host" 0
  *       },
+ *       "pot": {
+ *         "guest": 0,
+ *         "host" 0,
+ *         "draw" 0
+ *       },
+ *       "winner": "draw",
+ *       "jackpot": 0,
+ *       "reward": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -255,6 +270,14 @@ router
  *         "guest": 0,
  *         "host" 0
  *       },
+ *       "pot": {
+ *         "guest": 0,
+ *         "host" 0,
+ *         "draw" 0
+ *       },
+ *       "winner": "draw",
+ *       "jackpot": 0,
+ *       "reward": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -323,6 +346,14 @@ router
  *         "guest": 0,
  *         "host" 0
  *       },
+ *       "pot": {
+ *         "guest": 0,
+ *         "host" 0,
+ *         "draw" 0
+ *       },
+ *       "winner": "draw",
+ *       "jackpot": 0,
+ *       "reward": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -389,6 +420,14 @@ router
  *         "guest": 0,
  *         "host" 0
  *       },
+ *       "pot": {
+ *         "guest": 0,
+ *         "host" 0,
+ *         "draw" 0
+ *       },
+ *       "winner": "draw",
+ *       "jackpot": 0,
+ *       "reward": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }

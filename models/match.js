@@ -21,6 +21,10 @@ Schema = mongoose.Schema;
  * property {score} Match score
  * property {score.guest} Guest number of gols
  * property {score.host} Host number of gols
+ * property {pot} Match pot
+ * property {pot.guest} Guest total bets
+ * property {pot.host} Host total bets
+ * property {pot.draw} Draw total bets
  * property {createdAt}
  * property {updatedAt}
  */
@@ -71,6 +75,20 @@ schema = new Schema({
             'default'  : 0
         }
     },
+    'pot'          : {
+        'guest' : {
+            'type'    : Number,
+            'default' : 0
+        },
+        'host'  : {
+            'type'    : Number,
+            'default' : 0
+        },
+        'draw'  : {
+            'type'    : Number,
+            'default' : 0
+        }
+    },
     'createdAt'    : {
         'type'    : Date,
         'default' : Date.now
@@ -106,6 +124,10 @@ schema.plugin(jsonSelect, {
     'finished'     : 1,
     'elapsed'      : 1,
     'score'        : 1,
+    'pot'          : 1,
+    'winner'       : 1,
+    'jackpot'      : 1,
+    'reward'       : 1,
     'createdAt'    : 1,
     'updatedAt'    : 1
 });
@@ -121,6 +143,68 @@ schema.pre('save', function setMatchUpdatedAt(next) {
 
     this.updatedAt = new Date();
     next();
+});
+
+/**
+ * @method
+ * @summary Return match winner
+ * This method should compare the match score and see which team has won the match, the team with higher number of gols,
+ * should be the winner and if the gols are equal, then the result is draw.
+ */
+schema.virtual('winner').get(function () {
+    'use strict';
+
+    if (!this.finished) {
+        return null;
+    }
+    if (this.result.guest > this.result.host) {
+        return 'guest';
+    }
+    if (this.result.guest < this.result.host) {
+        return 'host';
+    }
+    return 'draw';
+});
+
+/**
+ * @method
+ * @summary Return match total pot
+ * This method should return the match total bets bids, this is calculated summing the total bets in host plus the guest
+ * and the draw.
+ */
+schema.virtual('jackpot').get(function () {
+    'use strict';
+
+    return this.pot.guest + this.pot.draw + this.pot.host;
+});
+
+/**
+ * @method
+ * @summary Return match reward
+ * This method should return how much the system will pay for each point spent in the bet, this is calculated dividing
+ * the entire match jackpot by the winner result.
+ */
+schema.virtual('reward').get(function () {
+    'use strict';
+
+    if (!this.jackpot) {
+        return 0;
+    }
+
+    switch (this.winner) {
+        case 'guest' :
+        {
+            return this.jackpot / this.pot.guest;
+        }
+        case 'host'  :
+        {
+            return this.jackpot / this.pot.host;
+        }
+        default      :
+        {
+            return this.jackpot / this.pot.draw;
+        }
+    }
 });
 
 module.exports = mongoose.model('Match', schema);
