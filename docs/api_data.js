@@ -213,6 +213,27 @@ define({ api: [
           },
           {
             "group": "match",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "match",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -240,6 +261,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "match pot": [
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "match guest": [
@@ -345,7 +389,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -533,6 +577,27 @@ define({ api: [
           },
           {
             "group": "match",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "match",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -560,6 +625,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "match pot": [
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "match guest": [
@@ -673,7 +761,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -861,6 +949,27 @@ define({ api: [
           },
           {
             "group": "match",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "match",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -888,6 +997,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "match pot": [
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "match guest": [
@@ -995,7 +1127,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -1183,6 +1315,27 @@ define({ api: [
           },
           {
             "group": "match",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "match",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1210,6 +1363,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "match pot": [
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "match guest": [
@@ -1322,7 +1498,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -1510,6 +1686,27 @@ define({ api: [
           },
           {
             "group": "match",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "match",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1537,6 +1734,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "match pot": [
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "match guest": [
@@ -4604,6 +4824,27 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -4631,6 +4872,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "pot": [
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "guest": [
@@ -4736,7 +5000,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"pot\": {\n       \"guest\": 0,\n       \"host\" 0,\n       \"draw\" 0\n     },\n     \"winner\": \"draw\",\n     \"jackpot\": 0,\n     \"reward\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -4778,6 +5042,27 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -4805,6 +5090,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "pot": [
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "guest": [
@@ -4963,7 +5271,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"pot\": {\n       \"guest\": 0,\n       \"host\" 0,\n       \"draw\" 0\n     },\n     \"winner\": \"draw\",\n     \"jackpot\": 0,\n     \"reward\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -5005,6 +5313,27 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -5032,6 +5361,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "pot": [
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "guest": [
@@ -5139,7 +5491,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"pot\": {\n       \"guest\": 0,\n       \"host\" 0,\n       \"draw\" 0\n     },\n     \"winner\": \"draw\",\n     \"jackpot\": 0,\n     \"reward\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -5181,6 +5533,27 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -5208,6 +5581,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "pot": [
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "guest": [
@@ -5320,7 +5716,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n     \"guest\": {\n       \"name\": \"fluminense\",\n       \"slug\": \"fluminense\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"host\": {\n       \"name\": \"botafogo\",\n       \"slug\": \"botafogo\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"round\": 3,\n     \"date\": \"2014-07-01T12:22:25.058Z\",\n     \"finished\": true,\n     \"elapsed\": null,\n     \"score\": {\n       \"guest\": 0,\n       \"host\" 0\n     },\n     \"pot\": {\n       \"guest\": 0,\n       \"host\" 0,\n       \"draw\" 0\n     },\n     \"winner\": \"draw\",\n     \"jackpot\": 0,\n     \"reward\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -5362,6 +5758,27 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -5389,6 +5806,29 @@ define({ api: [
             "field": "host",
             "optional": false,
             "description": "Match host team score."
+          }
+        ],
+        "pot": [
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
           }
         ],
         "guest": [
