@@ -25,12 +25,13 @@
  * @apiSuccess (featured history) {Date} date Date of history creation
  * @apiSuccess (featured history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, auth, errorParser, User, Featured;
+var VError, router, nconf, slug, async, async, auth, errorParser, User, Featured;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 User = require('../models/user');
@@ -160,21 +161,18 @@ router
         'featured' : request.featuredUser,
         'user'     : request.session._id
     });
-    return featured.save(function createdFeatured(error) {
+
+    return async.series([featured.save.bind(featured), function populateFeaturedAfterSave(next) {
+        featured.populate('featured');
+        featured.populate(next);
+    }], function createdFeature(error) {
         if (error) {
-            error = new VError(error, 'error creating featured');
+            error = new VError(error, 'error creating featured: "$s"', featured._id);
             return next(error);
         }
-        featured.populate('featured');
-        return featured.populate(function populateFeaturedAfterSave(error) {
-            if (error) {
-                error = new VError(error, 'error populating featured: "$s"', featured._id);
-                return next(error);
-            }
-            response.header('Location', '/users/:user/featured/' + featured.slug);
-            response.header('Last-Modified', featured.updatedAt);
-            return response.send(201, featured);
-        });
+        response.header('Location', '/users/:user/featured/' + featured.slug);
+        response.header('Last-Modified', featured.updatedAt);
+        return response.send(201, featured);
     });
 });
 
@@ -370,30 +368,28 @@ router
     featured = request.featured;
     featured.slug = request.featuredUser ? request.featuredUser.slug : null;
     featured.featured = request.featuredUser;
-    return featured.save(function updatedFeatured(error) {
+
+    return async.series([featured.save.bind(featured), function populateFeaturedAfterUpdate(next) {
+        featured.populate('user');
+        featured.populate(next);
+    }], function updatedFeatured(error) {
         if (error) {
-            error = new VError(error, 'error updating featured');
+            error = new VError(error, 'error updating featured: "$s"', featured._id);
             return next(error);
         }
-        return featured.populate(function populateFeaturedAfterUpdate(error) {
-            if (error) {
-                error = new VError(error, 'error populating featured: "$s"', featured._id);
-                return next(error);
-            }
-            response.header('Last-Modified', featured.updatedAt);
-            return response.send(200, featured);
-        });
+        response.header('Last-Modified', featured.updatedAt);
+        return response.send(200, featured);
     });
 });
 
 /**
- * @api {delete} /users/:user/featured/:id Removes featured 
+ * @api {delete} /users/:user/featured/:id Removes featured
  * @apiName removeFeatured
  * @apiVersion 2.0.1
  * @apiGroup featured
  * @apiPermission user
  * @apiDescription
- * Removes featured 
+ * Removes featured
  */
 router
 .route('/users/:user/featured/:id')

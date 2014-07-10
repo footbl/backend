@@ -41,12 +41,13 @@
  * @apiSuccess (host) {Date} createdAt Date of document creation.
  * @apiSuccess (host) {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, auth, errorParser, Match, Championship, Team;
+var VError, router, nconf, slug, async, auth, errorParser, Match, Championship, Team;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 Match = require('../models/match');
@@ -213,22 +214,19 @@ router
         'elapsed'      : request.param('elapsed'),
         'score'        : request.param('score')
     });
-    return match.save(function createdMatch(error) {
-        if (error) {
-            error = new VError(error, 'error creating match');
-            return next(error);
-        }
+
+    return async.series([match.save.bind(match), function populateMatchAfterSave(next) {
         match.populate('guest');
         match.populate('host');
-        return match.populate(function populateMatchAfterSave(error) {
-            if (error) {
-                error = new VError(error, 'error populating match: "$s"', match._id);
-                return next(error);
-            }
-            response.header('Last-Modified', match.updatedAt);
-            response.header('Location', '/matches/' + match.slug);
-            return response.send(201, match);
-        });
+        match.populate(next);
+    }], function (error) {
+        if (error) {
+            error = new VError(error, 'error creating match: "$s"', match._id);
+            return next(error);
+        }
+        response.header('Last-Modified', match.updatedAt);
+        response.header('Location', '/matches/' + match.slug);
+        return response.send(201, match);
     });
 });
 
@@ -451,21 +449,18 @@ router
     match.finished = request.param('finished', false);
     match.elapsed = request.param('elapsed');
     match.score = request.param('score', {'guest' : 0, 'host' : 0});
-    return match.save(function updatedMatch(error, match) {
-        if (error) {
-            error = new VError(error, 'error updating match');
-            return next(error);
-        }
+
+    return async.series([match.save.bind(match), function populateMatchAfterUpdate(next) {
         match.populate('guest');
         match.populate('host');
-        return match.populate(function populateMatchAfterUpdate(error) {
-            if (error) {
-                error = new VError(error, 'error populating match: "$s"', match._id);
-                return next(error);
-            }
-            response.header('Last-Modified', match.updatedAt);
-            return response.send(200, match);
-        });
+        match.populate(next);
+    }], function updatedMatch(error) {
+        if (error) {
+            error = new VError(error, 'error updating match: "$s"', match._id);
+            return next(error);
+        }
+        response.header('Last-Modified', match.updatedAt);
+        return response.send(200, match);
     });
 });
 

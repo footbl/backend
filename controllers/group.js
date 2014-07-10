@@ -20,6 +20,7 @@ router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
+async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 Group = require('../models/group');
@@ -102,7 +103,7 @@ router
 
     return async.series([group.save.bind(group), groupMember.save.bind(groupMember)], function (error) {
         if (error) {
-            error = new VError(error, 'error creating group');
+            error = new VError(error, 'error creating group: "$s"', group._id);
             return next(error);
         }
         response.header('Location', '/groups/' + group.slug);
@@ -251,7 +252,7 @@ router
     group.freeToEdit = request.session._id.toString() === group.owner.toString() ? request.param('freeToEdit', false) : group.freeToEdit;
     return group.save(function updatedGroup(error) {
         if (error) {
-            error = new VError(error, 'error updating group');
+            error = new VError(error, 'error updating group: "$s"', group._id);
             return next(error);
         }
         response.header('Last-Modified', group.updatedAt);

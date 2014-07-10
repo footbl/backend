@@ -27,12 +27,13 @@
  * @apiSuccess (user history) {Date} date Date of history creation
  * @apiSuccess (user history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, auth, errorParser, GroupMember, Group, User;
+var VError, router, nconf, slug, async, auth, errorParser, GroupMember, Group, User;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 GroupMember = require('../models/group-member');
@@ -165,21 +166,18 @@ router
         'group' : request.group ? request.group._id : null,
         'user'  : request.groupUser ? request.groupUser._id : null
     });
-    return groupMember.save(function createdGroupMember(error) {
+
+    return async.series([groupMember.save.bind(groupMember), function populateGroupMemberAfterSave(next) {
+        groupMember.populate('user');
+        groupMember.populate(next);
+    }], function createdGroupMember(error) {
         if (error) {
-            error = new VError(error, 'error creating groupMember');
+            error = new VError(error, 'error creating group member: "$s"', groupMember._id);
             return next(error);
         }
-        groupMember.populate('user');
-        return groupMember.populate(function populateGroupMemberAfterSave(error) {
-            if (error) {
-                error = new VError(error, 'error populating user: "$s"', groupMember._id);
-                return next(error);
-            }
-            response.header('Location', '/groups/' + request.params.group + '/members/' + groupMember.slug);
-            response.header('Last-Modified', groupMember.updatedAt);
-            return response.send(201, groupMember);
-        });
+        response.header('Location', '/groups/' + request.params.group + '/members/' + groupMember.slug);
+        response.header('Last-Modified', groupMember.updatedAt);
+        return response.send(201, groupMember);
     });
 });
 
@@ -381,20 +379,17 @@ router
     groupMember = request.groupMember;
     groupMember.slug = request.groupUser ? request.groupUser.slug : null;
     groupMember.user = request.groupUser ? request.groupUser._id : null;
-    return groupMember.save(function updatedGroupMember(error) {
+
+    return async.series([groupMember.save.bind(groupMember), function populateGroupMemberAfterUpdate(next) {
+        groupMember.populate('user');
+        groupMember.populate(next);
+    }], function updatedGroupMember(error) {
         if (error) {
-            error = new VError(error, 'error updating groupMember');
+            error = new VError(error, 'error updating groupMember: "$s"', groupMember._id);
             return next(error);
         }
-        groupMember.populate('user');
-        return groupMember.populate(function populateGroupMemberAfterUpdate(error) {
-            if (error) {
-                error = new VError(error, 'error populating user: "$s"', groupMember._id);
-                return next(error);
-            }
-            response.header('Last-Modified', groupMember.updatedAt);
-            return response.send(200, groupMember);
-        });
+        response.header('Last-Modified', groupMember.updatedAt);
+        return response.send(200, groupMember);
     });
 });
 

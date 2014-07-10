@@ -157,10 +157,10 @@ schema.virtual('winner').get(function () {
     if (!this.finished) {
         return null;
     }
-    if (this.result.guest > this.result.host) {
+    if (this.score.guest > this.score.host) {
         return 'guest';
     }
-    if (this.result.guest < this.result.host) {
+    if (this.score.guest < this.score.host) {
         return 'host';
     }
     return 'draw';

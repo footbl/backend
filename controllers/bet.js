@@ -58,12 +58,13 @@
  * @apiSuccess (match host) {Date} createdAt Date of document creation.
  * @apiSuccess (match host) {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, auth, errorParser, Championship, Match, Team, Bet;
+var VError, router, nconf, slug, async, auth, errorParser, Championship, Match, Team, Bet;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 Championship = require('../models/championship');
@@ -194,30 +195,29 @@ router
         'bid'    : request.param('bid'),
         'result' : request.param('result')
     });
-    return bet.save(function createdBet(error) {
-        if (error) {
-            error = new VError(error, 'error creating bet');
-            return next(error);
-        }
+
+    return async.series([bet.save.bind(bet), function populateBetAfterSave(next) {
         bet.populate('user');
         bet.populate('match');
-        return bet.populate(function populateBetAfterSave(error) {
-            if (error) {
-                error = new VError(error, 'error populating bet: "$s"', bet._id);
-                return next(error);
-            }
-            bet.match.populate('guest');
-            bet.match.populate('host');
-            return bet.match.populate(function (error) {
-                if (error) {
-                    error = new VError(error, 'error populating bet: "$s"', bet._id);
-                    return next(error);
-                }
-                response.header('Location', '/bets/' + bet.slug);
-                response.header('Last-Modified', bet.updatedAt);
-                return response.send(201, bet);
-            });
-        });
+        bet.populate(next);
+    }, function populateMatchAfterSave(next) {
+        bet.match.populate('guest');
+        bet.match.populate('host');
+        bet.match.populate(next);
+    }, function updateMatchAfterSave(next) {
+        Match.update({'_id' : request.match._id}, {'$inc' : {
+            'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
+            'pot.host'  : bet.result === 'host' ? bet.bid : 0,
+            'pot.draw'  : bet.result === 'draw' ? bet.bid : 0
+        }}, next);
+    }], function createdBet(error) {
+        if (error) {
+            error = new VError(error, 'error creating bet: "$s"', bet._id);
+            return next(error);
+        }
+        response.header('Location', '/bets/' + bet.slug);
+        response.header('Last-Modified', bet.updatedAt);
+        return response.send(201, bet);
     });
 });
 
@@ -531,13 +531,30 @@ router
 .put(function updateBet(request, response, next) {
     'use strict';
 
-    var bet;
+    var bet, oldResult, oldBid;
     bet = request.bet;
+    oldBid = bet.bid;
+    oldResult = bet.result;
     bet.bid = request.param('bid');
     bet.result = request.param('result');
-    return bet.save(function updatedBet(error) {
+
+    return async.series([bet.save.bind(bet), function populateBetAfterUpdate(next) {
+        bet.populate('user');
+        bet.populate('match');
+        bet.populate(next);
+    }, function populateMatchAfterUpdate(next) {
+        bet.match.populate('guest');
+        bet.match.populate('host');
+        bet.match.populate(next);
+    }, function updateMatchAfterUpdate(next) {
+        Match.update({'_id' : request.match._id}, {'$inc' : {
+            'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
+            'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
+            'pot.draw'  : (bet.result === 'draw' ? bet.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
+        }}, next);
+    }], function updatedBet(error) {
         if (error) {
-            error = new VError(error, 'error updating bet');
+            error = new VError(error, 'error updating bet: "$s"', bet._id);
             return next(error);
         }
         response.header('Last-Modified', bet.updatedAt);
@@ -575,11 +592,19 @@ router
 .delete(function removeBet(request, response, next) {
     'use strict';
 
-    var bet;
+    var bet, oldResult, oldBid;
     bet = request.bet;
-    return bet.remove(function removedBet(error) {
+    oldBid = bet.bid;
+    oldResult = bet.result;
+    return async.series([bet.remove.bind(bet), function updateMatchAfterRemove(next) {
+        Match.update({'_id' : request.match._id}, {'$inc' : {
+            'pot.guest' : - (oldResult === 'guest' ? oldBid : 0),
+            'pot.host'  : - (oldResult === 'host' ? oldBid : 0),
+            'pot.draw'  : - (oldResult === 'draw' ? oldBid : 0)
+        }}, next);
+    }], function removedBet(error) {
         if (error) {
-            error = new VError(error, 'error removing bet: "$s"', request.params.id);
+            error = new VError(error, 'error updating bet: "$s"', bet._id);
             return next(error);
         }
         response.header('Last-Modified', bet.updatedAt);
