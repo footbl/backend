@@ -1046,19 +1046,19 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'vasco'});
-            req = req.send({'host' : 'flamengo'});
+            req = req.send({'guest' : 'flamengo'});
+            req = req.send({'host' : 'vasco'});
             req = req.send({'round' : '2'});
             req = req.send({'date' : new Date(2014, 10, 9)});
             req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('slug').be.equal('round-2-vasco-vs-flamengo');
-                response.body.should.have.property('guest').with.property('name').be.equal('vasco');
-                response.body.should.have.property('guest').with.property('slug').be.equal('vasco');
-                response.body.should.have.property('guest').with.property('picture').be.equal('http://pictures.com/vasco.png');
-                response.body.should.have.property('host').with.property('name').be.equal('flamengo');
-                response.body.should.have.property('host').with.property('slug').be.equal('flamengo');
-                response.body.should.have.property('host').with.property('picture').be.equal('http://pictures.com/flamengo.png');
+                response.body.should.have.property('guest').with.property('name').be.equal('flamengo');
+                response.body.should.have.property('guest').with.property('slug').be.equal('flamengo');
+                response.body.should.have.property('guest').with.property('picture').be.equal('http://pictures.com/flamengo.png');
+                response.body.should.have.property('host').with.property('name').be.equal('vasco');
+                response.body.should.have.property('host').with.property('slug').be.equal('vasco');
+                response.body.should.have.property('host').with.property('picture').be.equal('http://pictures.com/vasco.png');
                 response.body.should.have.property('round').be.equal(2);
                 response.body.should.have.property('date');
                 response.body.should.have.property('finished').be.equal(false);
@@ -1080,12 +1080,12 @@ describe('match controller', function () {
             req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('slug').be.equal('round-2-vasco-vs-flamengo');
-                response.body.should.have.property('guest').with.property('name').be.equal('vasco');
-                response.body.should.have.property('guest').with.property('slug').be.equal('vasco');
-                response.body.should.have.property('guest').with.property('picture').be.equal('http://pictures.com/vasco.png');
-                response.body.should.have.property('host').with.property('name').be.equal('flamengo');
-                response.body.should.have.property('host').with.property('slug').be.equal('flamengo');
-                response.body.should.have.property('host').with.property('picture').be.equal('http://pictures.com/flamengo.png');
+                response.body.should.have.property('guest').with.property('name').be.equal('flamengo');
+                response.body.should.have.property('guest').with.property('slug').be.equal('flamengo');
+                response.body.should.have.property('guest').with.property('picture').be.equal('http://pictures.com/flamengo.png');
+                response.body.should.have.property('host').with.property('name').be.equal('vasco');
+                response.body.should.have.property('host').with.property('slug').be.equal('vasco');
+                response.body.should.have.property('host').with.property('picture').be.equal('http://pictures.com/vasco.png');
                 response.body.should.have.property('round').be.equal(2);
                 response.body.should.have.property('date');
                 response.body.should.have.property('finished').be.equal(false);

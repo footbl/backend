@@ -84,4 +84,50 @@ schema.pre('save', function setBetUpdatedAt(next) {
     next();
 });
 
+/**
+ * @callback
+ * @summary Ensures bet is not created after match finished or started
+ *
+ * @param next
+ */
+schema.pre('save', function setBetUpdatedAt(next) {
+    'use strict';
+
+    this.populate('match');
+    this.populate(function (error) {
+        if (error) {
+            error = new VError(error, 'error populating bet "%s" match.', this._id);
+            return next(error);
+        }
+        if (this.match.finished || this.match.elapsed) {
+            error = new VError('match already started');
+            return next(error);
+        }
+        return next();
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Ensures bet is not created after match finished or started
+ *
+ * @param next
+ */
+schema.pre('remove', function setBetUpdatedAt(next) {
+    'use strict';
+
+    this.populate('match');
+    this.populate(function (error) {
+        if (error) {
+            error = new VError(error, 'error populating bet "%s" match.', this._id);
+            return next(error);
+        }
+        if (this.match.finished || this.match.elapsed) {
+            error = new VError('match already started');
+            return next(error);
+        }
+        return next();
+    }.bind(this));
+});
+
 module.exports = mongoose.model('Bet', schema);

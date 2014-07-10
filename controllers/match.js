@@ -441,7 +441,7 @@ router
 
     var match;
     match = request.match;
-    match.slug = 'round-' + request.param('round', '') + '-' + slug(request.guestTeam ? request.guestTeam.name : '') + '-vs-' + slug(request.hostTeam ? request.hostTeam.name : '');
+    match.slug = 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : '');
     match.guest = request.guestTeam ? request.guestTeam._id : null;
     match.host = request.hostTeam ? request.hostTeam._id : null;
     match.round = request.param('round');
