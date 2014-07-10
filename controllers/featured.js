@@ -5,9 +5,22 @@
 /**
  * @apiDefineStructure featuredSuccess
  * @apiSuccess {String} slug Featured identifier
- * @apiSuccess {String} featured Featured user
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (featured) {String} slug User identifier
+ * @apiSuccess (featured) {String} email User email
+ * @apiSuccess (featured) {String} username User username
+ * @apiSuccess (featured) {String} name User name
+ * @apiSuccess (featured) {String} about User about
+ * @apiSuccess (featured) {Boolean} verified User verified
+ * @apiSuccess (featured) {Boolean} featured User featured
+ * @apiSuccess (featured) {String} picture User picture
+ * @apiSuccess (featured) {String} apnsToken User apnsToken
+ * @apiSuccess (featured) {Number} ranking User current ranking
+ * @apiSuccess (featured) {Number} previousRanking User previous ranking
+ * @apiSuccess (featured) {Date} createdAt Date of document creation.
+ * @apiSuccess (featured) {Date} updatedAt Date of document last change.
  */
 var VError, router, nconf, slug, auth, errorParser, User, Featured;
 

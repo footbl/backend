@@ -12,16 +12,27 @@
 /**
  * @apiDefineStructure matchSuccess
  * @apiSuccess {String} slug Match identifier.
- * @apiSuccess {String} guest Match guest team slug.
- * @apiSuccess {String} host Match host team slug.
  * @apiSuccess {Number} round Match round.
  * @apiSuccess {Date} date Match date.
  * @apiSuccess {Boolean} finished Match status.
  * @apiSuccess {Number} elapsed Match elapsed time.
- * @apiSuccess {Number} score.guest Match guest team score.
- * @apiSuccess {Number} score.host Match host team score.
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (score) {Number} guest Match guest team score.
+ * @apiSuccess (score) {Number} host Match host team score.
+ *
+ * @apiSuccess (guest) {String} name Guest team name.
+ * @apiSuccess (guest) {String} picture Guest team picture.
+ * @apiSuccess (guest) {String} slug Guest team identifier.
+ * @apiSuccess (guest) {Date} createdAt Date of document creation.
+ * @apiSuccess (guest) {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (host) {String} name Host team name.
+ * @apiSuccess (host) {String} picture Host team picture.
+ * @apiSuccess (host) {String} slug Host team identifier.
+ * @apiSuccess (host) {Date} createdAt Date of document creation.
+ * @apiSuccess (host) {Date} updatedAt Date of document last change.
  */
 var VError, router, nconf, slug, auth, errorParser, Match, Championship, Team;
 

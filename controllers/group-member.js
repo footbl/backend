@@ -5,11 +5,24 @@
 /**
  * @apiDefineStructure groupMemberSuccess
  * @apiSuccess {String} slug GroupMember identifier.
- * @apiSuccess {String} user GroupMember user
  * @apiSuccess {Number} ranking GroupMember current ranking
  * @apiSuccess {Number} previousRanking GroupMember previous ranking
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (user) {String} slug User identifier
+ * @apiSuccess (user) {String} email User email
+ * @apiSuccess (user) {String} username User username
+ * @apiSuccess (user) {String} name User name
+ * @apiSuccess (user) {String} about User about
+ * @apiSuccess (user) {Boolean} verified User verified
+ * @apiSuccess (user) {Boolean} featured User featured
+ * @apiSuccess (user) {String} picture User picture
+ * @apiSuccess (user) {String} apnsToken User apnsToken
+ * @apiSuccess (user) {Number} ranking User current ranking
+ * @apiSuccess (user) {Number} previousRanking User previous ranking
+ * @apiSuccess (user) {Date} createdAt Date of document creation.
+ * @apiSuccess (user) {Date} updatedAt Date of document last change.
  */
 var VError, router, nconf, slug, auth, errorParser, GroupMember, Group, User;
 

@@ -19,6 +19,8 @@
  * @apiSuccess {Boolean} featured User featured
  * @apiSuccess {String} picture User picture
  * @apiSuccess {String} apnsToken User apnsToken
+ * @apiSuccess {Number} ranking User current ranking
+ * @apiSuccess {Number} previousRanking User previous ranking
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */

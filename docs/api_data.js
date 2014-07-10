@@ -39,20 +39,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "Bet user"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "match",
-            "optional": false,
-            "description": "Bet match"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "bid",
             "optional": false,
@@ -74,6 +60,240 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match": [
+          {
+            "group": "match",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Match identifier."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date."
+          },
+          {
+            "group": "match",
+            "type": "Boolean",
+            "field": "finished",
+            "optional": false,
+            "description": "Match status."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": false,
+            "description": "Match elapsed time."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match score": [
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "match guest": [
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match host": [
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -123,20 +343,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "Bet user"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "match",
-            "optional": false,
-            "description": "Bet match"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "bid",
             "optional": false,
@@ -158,6 +364,240 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match": [
+          {
+            "group": "match",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Match identifier."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date."
+          },
+          {
+            "group": "match",
+            "type": "Boolean",
+            "field": "finished",
+            "optional": false,
+            "description": "Match status."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": false,
+            "description": "Match elapsed time."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match score": [
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "match guest": [
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match host": [
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -215,20 +655,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "Bet user"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "match",
-            "optional": false,
-            "description": "Bet match"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "bid",
             "optional": false,
@@ -250,6 +676,240 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match": [
+          {
+            "group": "match",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Match identifier."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date."
+          },
+          {
+            "group": "match",
+            "type": "Boolean",
+            "field": "finished",
+            "optional": false,
+            "description": "Match status."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": false,
+            "description": "Match elapsed time."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match score": [
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "match guest": [
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match host": [
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -301,20 +961,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "Bet user"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "match",
-            "optional": false,
-            "description": "Bet match"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "bid",
             "optional": false,
@@ -336,6 +982,240 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match": [
+          {
+            "group": "match",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Match identifier."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date."
+          },
+          {
+            "group": "match",
+            "type": "Boolean",
+            "field": "finished",
+            "optional": false,
+            "description": "Match status."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": false,
+            "description": "Match elapsed time."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match score": [
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "match guest": [
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match host": [
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -392,20 +1272,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "Bet user"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "match",
-            "optional": false,
-            "description": "Bet match"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "bid",
             "optional": false,
@@ -427,6 +1293,240 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match": [
+          {
+            "group": "match",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Match identifier."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date."
+          },
+          {
+            "group": "match",
+            "type": "Boolean",
+            "field": "finished",
+            "optional": false,
+            "description": "Match status."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": false,
+            "description": "Match elapsed time."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match score": [
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "match guest": [
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match host": [
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1119,13 +2219,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1133,6 +2226,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured": [
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "featured",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1182,13 +2368,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1196,6 +2375,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured": [
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "featured",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1246,13 +2518,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1260,6 +2525,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured": [
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "featured",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1311,13 +2669,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1325,6 +2676,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured": [
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "featured",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1381,13 +2825,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -1395,6 +2832,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured": [
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "featured",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1451,13 +2981,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "ranking",
             "optional": false,
@@ -1479,6 +3002,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1618,13 +3234,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "ranking",
             "optional": false,
@@ -1646,6 +3255,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1696,13 +3398,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "ranking",
             "optional": false,
@@ -1724,6 +3419,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1775,13 +3563,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "ranking",
             "optional": false,
@@ -1803,6 +3584,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -1859,13 +3733,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "ranking",
             "optional": false,
@@ -1887,6 +3754,99 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -2376,20 +4336,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug."
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug."
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "round",
             "optional": false,
@@ -2418,20 +4364,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "Number",
-            "field": "score.guest",
-            "optional": false,
-            "description": "Match guest team score."
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "score.host",
-            "optional": false,
-            "description": "Match host team score."
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -2439,6 +4371,96 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "score": [
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "guest": [
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "host": [
+          {
+            "group": "host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -2488,20 +4510,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug."
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug."
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "round",
             "optional": false,
@@ -2530,20 +4538,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "Number",
-            "field": "score.guest",
-            "optional": false,
-            "description": "Match guest team score."
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "score.host",
-            "optional": false,
-            "description": "Match host team score."
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -2551,6 +4545,96 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "score": [
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "guest": [
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "host": [
+          {
+            "group": "host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -2653,20 +4737,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug."
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug."
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "round",
             "optional": false,
@@ -2695,20 +4765,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "Number",
-            "field": "score.guest",
-            "optional": false,
-            "description": "Match guest team score."
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "score.host",
-            "optional": false,
-            "description": "Match host team score."
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -2716,6 +4772,96 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "score": [
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "guest": [
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "host": [
+          {
+            "group": "host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -2767,20 +4913,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug."
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug."
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "round",
             "optional": false,
@@ -2809,20 +4941,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "Number",
-            "field": "score.guest",
-            "optional": false,
-            "description": "Match guest team score."
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "score.host",
-            "optional": false,
-            "description": "Match host team score."
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -2830,6 +4948,96 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "score": [
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "guest": [
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "host": [
+          {
+            "group": "host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -2886,20 +5094,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug."
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug."
-          },
-          {
-            "group": "Success 200",
             "type": "Number",
             "field": "round",
             "optional": false,
@@ -2928,20 +5122,6 @@ define({ api: [
           },
           {
             "group": "Success 200",
-            "type": "Number",
-            "field": "score.guest",
-            "optional": false,
-            "description": "Match guest team score."
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "score.host",
-            "optional": false,
-            "description": "Match host team score."
-          },
-          {
-            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -2949,6 +5129,96 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "score": [
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "guest": [
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "host": [
+          {
+            "group": "host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "host",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -3543,6 +5813,20 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -3682,6 +5966,20 @@ define({ api: [
             "field": "apnsToken",
             "optional": false,
             "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
           },
           {
             "group": "Success 200",
@@ -3840,6 +6138,20 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -3968,6 +6280,20 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -4084,6 +6410,20 @@ define({ api: [
             "field": "apnsToken",
             "optional": false,
             "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
           },
           {
             "group": "Success 200",
