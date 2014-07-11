@@ -368,10 +368,12 @@ router.get('/users/:userId/starred', function (request, response) {
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
-    var user;
+    var user, pageSize, page;
     user = request.user;
+    pageSize  = nconf.get('PAGE_SIZE');
+    page      = request.param('page', 0) * pageSize;
 
-    return response.send(200, user.starred);
+    return response.send(200, user.starred.slice(page, page + pageSize));
 });
 
 /**
