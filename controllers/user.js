@@ -217,38 +217,6 @@ router
         return response.send(200, users);
     });
 });
-router
-.route('/users/search')
-.post(auth.signature())
-.post(function listUser(request, response, next) {
-    'use strict';
-
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = User.find();
-    query.skip(page);
-    query.limit(pageSize);
-    if (request.param('emails') && request.param('facebookIds')) {
-        query.where('email').or([
-            { 'email' : {'$in' : request.param('emails', [])} },
-            { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
-        ]);
-    } else if (request.param('emails')) {
-        query.where('email').in(request.param('emails', []));
-    } else if (request.param('facebookIds')) {
-        query.where('facebookId').in(request.param('facebookIds', []));
-    } else if (request.param('featured')) {
-        query.where('featured').equals(true);
-    }
-    return query.exec(function listedUser(error, users) {
-        if (error) {
-            error = new VError(error, 'error finding users');
-            return next(error);
-        }
-        return response.send(200, users);
-    });
-});
 
 /**
  * @api {get} /users/:id Get user info
