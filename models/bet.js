@@ -109,6 +109,35 @@ schema.pre('save', function setBetUpdatedAt(next) {
 
 /**
  * @callback
+ * @summary Ensures sufficient funds
+ *
+ * @param next
+ */
+schema.pre('save', function setBetUpdatedAt(next) {
+    'use strict';
+
+    var query;
+    query = require('./user').findOne();
+    query.where('_id').equals(this.user);
+    query.exec(function (error, user) {
+        if (error) {
+            error = new VError(error, 'error finding bet "%s" user.', this._id);
+            return next(error);
+        }
+        if (!user) {
+            error = new VError(error, 'bet "%s" user not found.', this._id);
+            return next(error);
+        }
+        if (this.bid > user.funds) {
+            error = new VError('insufficient funds');
+            return next(error);
+        }
+        return next();
+    }.bind(this));
+});
+
+/**
+ * @callback
  * @summary Ensures bet is not created after match finished or started
  *
  * @param next

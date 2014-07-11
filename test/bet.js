@@ -332,6 +332,41 @@ describe('bet controller', function () {
                 req.end(done);
             });
         });
+
+        describe('without sufficient funds', function () {
+            before(function (done) {
+                Bet.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.send({'bid' : 70});
+                req = req.send({'result' : 'draw'});
+                req.end(done);
+            });
+
+            it('should raise error', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/championships/brasileirao-brasil-2014/matches/round-2-fluminense-vs-botafogo/bets');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req = req.send({'bid' : 50});
+                req = req.send({'result' : 'draw'});
+                req.expect(400);
+                req.end(done);
+            });
+        });
     });
 
     describe('list', function () {

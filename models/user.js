@@ -1,10 +1,9 @@
-var VError, mongoose, jsonSelect, nconf, Bet, Schema, schema;
+var VError, mongoose, jsonSelect, nconf, Schema, schema;
 
 VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');
-Bet = require('./bet');
 Schema = mongoose.Schema;
 
 /**
@@ -174,7 +173,7 @@ schema.pre('init', function (next, data) {
     'use strict';
 
     var query;
-    query = Bet.find();
+    query = require('./bet').find();
     query.where('user').equals(data._id);
     query.populate('match');
     query.exec(function (error, bets) {
