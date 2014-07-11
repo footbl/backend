@@ -19,6 +19,8 @@
  * @apiSuccess (featured) {String} apnsToken User apnsToken
  * @apiSuccess (featured) {Number} ranking User current ranking
  * @apiSuccess (featured) {Number} previousRanking User previous ranking
+ * @apiSuccess (featured) {Number} funds User funds
+ * @apiSuccess (featured) {Number} stake User stake
  * @apiSuccess (featured) {Date} createdAt Date of document creation.
  * @apiSuccess (featured) {Date} updatedAt Date of document last change.
  *
@@ -129,6 +131,8 @@ router.use(function findFeaturedUser(request, response, next) {
  *           "date": "2014-07-03T12:22:25.058Z",
  *           "funds": 120
  *         }],
+ *         "funds": 100,
+ *         "stake": 0,
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
@@ -210,6 +214,8 @@ router
  *           "date": "2014-07-03T12:22:25.058Z",
  *           "funds": 120
  *         }],
+ *         "funds": 100,
+ *         "stake": 0,
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
@@ -275,6 +281,8 @@ router
  *           "date": "2014-07-03T12:22:25.058Z",
  *           "funds": 120
  *         }],
+ *         "funds": 100,
+ *         "stake": 0,
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
@@ -337,6 +345,8 @@ router
  *           "date": "2014-07-03T12:22:25.058Z",
  *           "funds": 120
  *         }],
+ *         "funds": 100,
+ *         "stake": 0,
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },

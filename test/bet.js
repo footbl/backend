@@ -279,6 +279,23 @@ describe('bet controller', function () {
                 });
                 req.end(done);
             });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('stake').be.equal(50);
+                    response.body.should.have.property('funds').be.equal(50);
+                });
+                req.end(done);
+            });
         });
 
         describe('with a created bet', function () {
@@ -879,6 +896,23 @@ describe('bet controller', function () {
                 });
                 req.end(done);
             });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('stake').be.equal(40);
+                    response.body.should.have.property('funds').be.equal(60);
+                });
+                req.end(done);
+            });
         });
 
         describe('updating by mine', function () {
@@ -958,6 +992,23 @@ describe('bet controller', function () {
                     response.body.should.have.property('pot').with.property('draw').be.equal(0);
                     response.body.should.have.property('pot').with.property('guest').be.equal(30);
                     response.body.should.have.property('pot').with.property('host').be.equal(0);
+                });
+                req.end(done);
+            });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(user));
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('stake').be.equal(30);
+                    response.body.should.have.property('funds').be.equal(70);
                 });
                 req.end(done);
             });

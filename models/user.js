@@ -1,9 +1,10 @@
-var VError, mongoose, jsonSelect, nconf, Schema, schema;
+var VError, mongoose, jsonSelect, nconf, Bet, Schema, schema;
 
 VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');
+Bet = require('./bet');
 Schema = mongoose.Schema;
 
 /**
@@ -105,6 +106,10 @@ schema = new Schema({
             }
         }
     ],
+    'lastRecharge'    : {
+        'type'    : Date,
+        'default' : Date.now
+    },
     'createdAt'       : {
         'type' : Date
     },
@@ -139,6 +144,9 @@ schema.plugin(require('mongoose-json-select'), {
     'previousRanking' : 1,
     'history'         : 1,
     'notifications'   : 1,
+    'lastRecharge'    : 1,
+    'stake'           : 1,
+    'funds'           : 1,
     'createdAt'       : 1,
     'updatedAt'       : 1
 });
@@ -154,6 +162,75 @@ schema.pre('save', function setUserUpdatedAt(next) {
 
     this.updatedAt = new Date();
     next();
+});
+
+/**
+ * @callback
+ * @summary Populates all user bets
+ *
+ * @param next
+ */
+schema.pre('init', function (next, data) {
+    'use strict';
+
+    var query;
+    query = Bet.find();
+    query.where('user').equals(data._id);
+    query.populate('match');
+    query.exec(function (error, bets) {
+        if (error) {
+            error = new VError(error, 'error populating user "%s" bets.', data._id);
+            return next(error);
+        }
+        this.bets = bets;
+        return next();
+    }.bind(this));
+});
+
+/**
+ * @method
+ * @summary Return wallet stake
+ * This method should return the wallets funds at stake, this is calculated by summing all bets bid in the wallet which
+ * the bet isn't finished yet.
+ */
+schema.virtual('stake').get(function () {
+    'use strict';
+
+    if (!this.bets) {
+        return 0;
+    }
+
+    return this.bets.filter(function (bet) {
+        return bet.createdAt > this.lastRecharge;
+    }.bind(this)).filter(function (bet) {
+        return !bet.match.finished;
+    }.bind(this)).map(function (bet) {
+        return bet.bid;
+    }.bind(this)).reduce(function (stake, bid) {
+        return stake + bid;
+    }.bind(this), 0);
+});
+
+/**
+ * @method
+ * @summary Return wallet available funds
+ * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet
+ * which the bet is finished.
+ */
+schema.virtual('funds').get(function () {
+    'use strict';
+
+    if (!this.bets) {
+        return 100;
+    }
+
+    return this.bets.filter(function (bet) {
+        return bet.createdAt > this.lastRecharge;
+    }.bind(this)).map(function (bet) {
+        return (bet.match.finished && bet.match.winner === bet.result ? bet.match.reward * bet.bid : 0) - bet.bid;
+    }.bind(this)).reduce(function (stake, bid) {
+        return stake + bid;
+    }.bind(this), 100);
 });
 
 module.exports = mongoose.model('User', schema);

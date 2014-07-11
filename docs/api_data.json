@@ -146,6 +146,20 @@
           },
           {
             "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "user",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -389,7 +403,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -507,6 +521,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -761,7 +789,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -879,6 +907,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -1127,7 +1169,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -1245,6 +1287,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -1498,7 +1554,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -1616,6 +1672,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -2612,6 +2682,20 @@
           },
           {
             "group": "featured",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "featured",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -2670,7 +2754,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -2774,6 +2858,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "featured",
@@ -2836,7 +2934,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -2940,6 +3038,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "featured",
@@ -3003,7 +3115,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -3107,6 +3219,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "featured",
@@ -3175,7 +3301,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -3279,6 +3405,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "featured",
@@ -3465,6 +3605,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -3616,7 +3770,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -3734,6 +3888,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -3796,7 +3964,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -3914,6 +4082,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -3977,7 +4159,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -4095,6 +4277,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -4163,7 +4359,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -4281,6 +4477,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "user",
@@ -6507,6 +6717,20 @@
           },
           {
             "group": "Success 200",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -6595,7 +6819,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"funds\": 100,\n     \"stake\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -6676,6 +6900,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "Success 200",
@@ -6780,7 +7018,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"funds\": 100,\n     \"stake\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -6861,6 +7099,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "Success 200",
@@ -6938,7 +7190,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"funds\": 100,\n     \"stake\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -7019,6 +7271,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "Success 200",
@@ -7087,7 +7353,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"funds\": 100,\n     \"stake\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -7168,6 +7434,20 @@
             "field": "previousRanking",
             "optional": false,
             "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
           },
           {
             "group": "Success 200",

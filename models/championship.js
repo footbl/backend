@@ -1,9 +1,10 @@
-var VError, mongoose, jsonSelect, nconf, Schema, schema;
+var VError, mongoose, jsonSelect, nconf, Match, Schema, schema;
 
 VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');
+Match = require('./match');
 Schema = mongoose.Schema;
 
 /**
@@ -99,7 +100,7 @@ schema.pre('init', function (next, data) {
     'use strict';
 
     var query;
-    query = require('./match').find();
+    query = Match.find();
     query.where('championship').equals(data._id);
     query.exec(function (error, matches) {
         if (error) {

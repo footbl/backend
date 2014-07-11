@@ -21,6 +21,8 @@
  * @apiSuccess {String} apnsToken User apnsToken
  * @apiSuccess {Number} ranking User current ranking
  * @apiSuccess {Number} previousRanking User previous ranking
+ * @apiSuccess {Number} funds User funds
+ * @apiSuccess {Number} stake User stake
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  *
@@ -99,6 +101,8 @@ router.use(function (request, response, next) {
  *         "date": "2014-07-03T12:22:25.058Z",
  *         "funds": 120
  *       }],
+ *       "funds": 100,
+ *       "stake": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -175,6 +179,8 @@ router
  *         "date": "2014-07-03T12:22:25.058Z",
  *         "funds": 120
  *       }],
+ *       "funds": 100,
+ *       "stake": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -243,6 +249,8 @@ router
  *         "date": "2014-07-03T12:22:25.058Z",
  *         "funds": 120
  *       }],
+ *       "funds": 100,
+ *       "stake": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -299,6 +307,8 @@ router
  *         "date": "2014-07-03T12:22:25.058Z",
  *         "funds": 120
  *       }],
+ *       "funds": 100,
+ *       "stake": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
