@@ -404,7 +404,7 @@ router
 });
 
 /**
- * @api {get} /users/:id/auth Get user access token
+ * @api {get} /users/me/auth Get user access token
  * @apiName authUser
  * @apiVersion 2.0.1
  * @apiGroup user
@@ -421,19 +421,17 @@ router
  *     }
  */
 router
-.route('/users/:id/auth')
+.route('/users/me/auth')
 .get(auth.signature())
 .get(auth.facebook())
 .get(function authUser(request, response, next) {
     'use strict';
 
-    var query, facebook, password, email, _id;
+    var query, facebook, password, email;
     facebook = request.facebook;
     email = request.param('email');
-    _id = request.param('_id');
     password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
     query = User.findOne();
-
     if (request.facebook) {
         query.where('facebookId').equals(facebook);
     } else if (email) {

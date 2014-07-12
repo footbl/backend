@@ -12,6 +12,7 @@ User = require('../models/user');
 Championship = require('../models/championship');
 
 nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id': '111'});
+nock('https://graph.facebook.com').get('/me?access_token=invalid').times(Infinity).reply(404, {});
 
 describe('user controller', function () {
     'use strict';
@@ -557,6 +558,184 @@ describe('user controller', function () {
             req = req.set('auth-token', auth.token(user));
             req.expect(204);
             req.end(done);
+        });
+    });
+
+    describe('login', function () {
+        describe('anonymous user', function () {
+            before(function (done) {
+                User.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/users');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'password' : '1234'});
+                req.end(done);
+            });
+
+            it('should raise error with invalid password', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'password' : 'invalid'});
+                req.expect(403);
+                req.end(done);
+            });
+
+            it('should login with valid password', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'password' : '1234'});
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('token');
+                });
+                req.end(done);
+            });
+        });
+
+        describe('facebook user', function () {
+            before(function (done) {
+                User.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/users');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('facebook-token', '1234');
+                req = req.send({'password' : '1234'});
+                req.end(done);
+            });
+
+            it('should raise error with invalid facebook token', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('facebook-token', 'invalid');
+                req.expect(403);
+                req.end(done);
+            });
+
+            it('should login with valid facebook token', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('facebook-token', '1234');
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('token');
+                });
+                req.end(done);
+            });
+        });
+
+        describe('registred user', function () {
+            before(function (done) {
+                User.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/users');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('facebook-token', '1234');
+                req = req.send({'password' : '1234'});
+                req = req.send({'email' : 'user1@user.com'});
+                req = req.send({'name' : 'user1'});
+                req = req.send({'password' : '1234'});
+                req.end(done);
+            });
+
+            it('should raise error with invalid password', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'email' : 'user1@user.com'});
+                req = req.send({'password' : 'invalid'});
+                req.expect(403);
+                req.end(done);
+            });
+
+            it('should raise error with invalid id', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'email' : 'invalid'});
+                req = req.send({'password' : '1234'});
+                req.expect(403);
+                req.end(done);
+            });
+
+            it('should raise error with invalid id and password', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'email' : 'invalid'});
+                req = req.send({'password' : 'invalid'});
+                req.expect(403);
+                req.end(done);
+            });
+
+            it('should login with valid id and password', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/users/me/auth');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'email' : 'user1@user.com'});
+                req = req.send({'password' : '1234'});
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.have.property('token');
+                });
+                req.end(done);
+            });
         });
     });
 });
