@@ -121,10 +121,6 @@ schema.pre('init', function (next, data) {
 schema.virtual('rounds').get(function () {
     'use strict';
 
-    if (this.type === 'world cup') {
-        return 7;
-    }
-
     var lastRound, matches;
     matches = this.matches || [];
     lastRound = matches.sort(function (a, b) {

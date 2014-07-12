@@ -332,7 +332,7 @@ router
 
     var group;
     group = request.group;
-    group.invites.push(request.param('invite'));
+    group.invites.push(request.param('invite', ''));
     return group.save(function updatedGroup(error) {
         if (error) {
             error = new VError(error, 'error inviting user');

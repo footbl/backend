@@ -680,80 +680,58 @@ describe('group controller', function () {
                 req.end(done);
             });
 
-            before(function (done) {
-                var req, credentials;
-                credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/groups/' + slug + '/members');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(groupOwner));
-                req = req.send({'group' : slug});
-                req = req.send({'user' : groupUser._id});
-                req.end(done);
-            });
-
             it('should raise error without token', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/' + slug);
+                req = req.post('/groups/' + slug + '/invite');
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.send({'name' : 'edited college buddies'});
+                req = req.send({'invite' : 'invited-user2@invite.com'});
                 req.expect(401);
                 req.end(done);
             });
 
-            it('should raise error without name', function (done) {
+            it('should raise error with invalid id', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/' + slug);
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(groupOwner));
-                req.expect(400);
-                req.expect(function (response) {
-                    response.body.should.have.property('name').be.equal('required');
-                });
-                req.end(done);
-            });
-
-            it('should raise error with user token', function (done) {
-                var req, credentials;
-                credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/groups/' + slug);
+                req = req.post('/groups/invalid/invite');
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.set('auth-token', auth.token(groupUser));
-                req = req.send({'name' : 'edited again college buddies'});
-                req = req.send({'freeToEdit' : false});
+                req = req.send({'invite' : 'invited-user2@invite.com'});
+                req.expect(404);
+                req.end(done);
+            });
+
+            it('should raise error with other user token', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/invite');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupUser));
+                req = req.send({'invite' : 'invited-user2@invite.com'});
                 req.expect(405);
                 req.end(done);
             });
 
-            it('should update with owner token', function (done) {
+            it('should invite', function (done) {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.put('/groups/' + slug);
+                req = req.post('/groups/' + slug + '/invite');
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.set('auth-token', auth.token(groupOwner));
-                req = req.send({'name' : 'edited college buddies'});
-                req = req.send({'freeToEdit' : false});
+                req = req.send({'invite' : 'invited-user2@invite.com'});
                 req.expect(200);
-                req.expect(function (response) {
-                    response.body.should.have.property('name').be.equal('edited college buddies');
-                    response.body.should.have.property('freeToEdit').be.equal(false);
-                });
                 req.end(done);
             });
 
@@ -761,15 +739,28 @@ describe('group controller', function () {
                 var req, credentials;
                 credentials = auth.credentials();
                 req = request(app);
-                req = req.get('/groups/' + slug);
+                req = req.post('/users');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'password' : '1234'});
+                req = req.send({'email' : 'invited-user2@invite.com'});
+                req.end(done);
+            });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/groups/' + slug + '/members');
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.set('auth-token', auth.token(groupOwner));
                 req.expect(200);
                 req.expect(function (response) {
-                    response.body.should.have.property('name').be.equal('edited college buddies');
-                    response.body.should.have.property('freeToEdit').be.equal(false);
+                    response.body.should.be.instanceOf(Array);
+                    response.body.should.have.lengthOf(2);
                 });
                 req.end(done);
             });
