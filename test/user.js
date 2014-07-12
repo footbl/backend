@@ -232,6 +232,30 @@ describe('user controller', function () {
             req = req.send({'password' : '1234'});
             req = req.send({'name' : 'user2'});
             req.end(done);
+        })
+
+        before(function (done) {
+            var featured;
+            featured = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user', 'featured' : true});
+            featured.save(done);
+        });
+
+        it('should filter by featured', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.send({'featured' : true});
+            req.expect(200);
+            req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+                response.body[0].should.have.property('slug').be.equal('user');
+            });
+            req.end(done);
         });
 
         it('should filter by facebookId', function (done) {
@@ -266,6 +290,24 @@ describe('user controller', function () {
                 response.body.should.be.instanceOf(Array);
                 response.body.should.have.lengthOf(1);
                 response.body[0].should.have.property('slug').be.equal('user1');
+            });
+            req.end(done);
+        });
+
+        it('should filter by facebookId and email', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.get('/users');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.send({'facebookIds' : ['111']});
+            req = req.send({'emails' : ['user1@user.com']});
+            req.expect(200);
+            req.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(2);
             });
             req.end(done);
         });
