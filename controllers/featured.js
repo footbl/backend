@@ -136,6 +136,29 @@ router.use(function findFeaturedUser(request, response, next) {
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "user": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -168,6 +191,7 @@ router
 
     return async.series([featured.save.bind(featured), function populateFeaturedAfterSave(next) {
         featured.populate('featured');
+        featured.populate('user');
         featured.populate(next);
     }], function createdFeature(error) {
         if (error) {
@@ -219,6 +243,29 @@ router
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "user": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -237,6 +284,99 @@ router
     query = Featured.find();
     query.where('user').equals(request.user._id);
     query.populate('featured');
+    query.populate('user');
+    query.skip(page);
+    query.limit(pageSize);
+    return query.exec(function listedFeatured(error, featured) {
+        if (error) {
+            error = new VError(error, 'error finding featured');
+            return next(error);
+        }
+        return response.send(200, featured);
+    });
+});
+
+/**
+ * @api {get} /users/:user/fans List all user fans
+ * @apiName listFeatured
+ * @apiVersion 2.0.1
+ * @apiGroup featured
+ * @apiPermission user
+ * @apiDescription
+ * List all featured.
+ *
+ * @apiParam {String} [page=0] The page to be displayed.
+ * @apiStructure featuredSuccess
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "slug": "vandoren",
+ *       "featured": {
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "user": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
+ */
+router
+.route('/users/:user/fans')
+.get(auth.signature())
+.get(auth.session())
+.get(errorParser.notFound('user'))
+.get(function listFeatured(request, response, next) {
+    'use strict';
+
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Featured.find();
+    query.where('featured').equals(request.user._id);
+    query.populate('featured');
+    query.populate('user');
     query.skip(page);
     query.limit(pageSize);
     return query.exec(function listedFeatured(error, featured) {
@@ -274,6 +414,29 @@ router
  *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *         "ranking": "2",
  *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "user": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
  *         "history": [{
  *           "date": "2014-07-01T12:22:25.058Z",
  *           "funds": 100
@@ -350,6 +513,29 @@ router
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "user": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -380,6 +566,7 @@ router
     featured.featured = request.featuredUser;
 
     return async.series([featured.save.bind(featured), function populateFeaturedAfterUpdate(next) {
+        featured.populate('featured');
         featured.populate('user');
         featured.populate(next);
     }], function updatedFeatured(error) {
@@ -451,6 +638,7 @@ router.param('id', function findFeatured(request, response, next, id) {
     query.where('user').equals(request.user._id);
     query.where('slug').equals(id);
     query.populate('featured');
+    query.populate('user');
     query.exec(function foundFeatured(error, featured) {
         if (error) {
             error = new VError(error, 'error finding featured: "$s"', id);

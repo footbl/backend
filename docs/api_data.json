@@ -2754,7 +2754,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -2934,7 +2934,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -3115,7 +3115,188 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Featured identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured": [
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "featured",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "featured",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "featured",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "featured",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "featured history": [
+          {
+            "group": "featured history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "featured history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/featured.js"
+  },
+  {
+    "type": "get",
+    "url": "/users/:user/fans",
+    "title": "List all user fans",
+    "name": "listFeatured",
+    "version": "2.0.1",
+    "group": "featured",
+    "permission": "user",
+    "description": "List all featured.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -3301,7 +3482,7 @@
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {

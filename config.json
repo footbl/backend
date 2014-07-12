@@ -1,5 +1,5 @@
 {
-    "MONGOHQ_URL"         : "mongodb://localhost/footbal",
+    "MONGOHQ_URL"         : "mongodb://localhost/footbl",
     "REDISCLOUD_URL"      : null,
     "MANDRILL_APIKEY"     : "tbBa-7QGpKRaN8o0ehSDRw",
     "PAGE_SIZE"           : 20,

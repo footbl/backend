@@ -22,12 +22,12 @@ schema = new Schema({
     },
     'user'      : {
         'type'     : Schema.Types.ObjectId,
-        'ref'      : 'Championship',
+        'ref'      : 'User',
         'required' : true
     },
     'featured'  : {
         'type'     : Schema.Types.ObjectId,
-        'ref'      : 'Championship',
+        'ref'      : 'User',
         'required' : true
     },
     'createdAt' : {
@@ -54,7 +54,7 @@ schema.index({
 
 schema.plugin(jsonSelect, {
     '_id'       : 0,
-    'user'      : 0,
+    'user'      : 1,
     'featured'  : 1,
     'slug'      : 1,
     'createdAt' : 1,
