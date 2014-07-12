@@ -3090,9 +3090,9 @@
   },
   {
     "type": "get",
-    "url": "/users/:user/featured",
-    "title": "List all featured",
-    "name": "listFeatured",
+    "url": "/users/:user/fans",
+    "title": "List all user fans",
+    "name": "listFans",
     "version": "2.0.1",
     "group": "featured",
     "permission": "user",
@@ -3271,8 +3271,8 @@
   },
   {
     "type": "get",
-    "url": "/users/:user/fans",
-    "title": "List all user fans",
+    "url": "/users/:user/featured",
+    "title": "List all featured",
     "name": "listFeatured",
     "version": "2.0.1",
     "group": "featured",
