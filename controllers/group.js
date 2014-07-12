@@ -20,7 +20,6 @@ router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
-async = require('async');
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 Group = require('../models/group');
