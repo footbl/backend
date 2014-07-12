@@ -298,7 +298,7 @@ router
 
 /**
  * @api {get} /users/:user/fans List all user fans
- * @apiName listFeatured
+ * @apiName listFans
  * @apiVersion 2.0.1
  * @apiGroup featured
  * @apiPermission user
@@ -367,7 +367,7 @@ router
 .get(auth.signature())
 .get(auth.session())
 .get(errorParser.notFound('user'))
-.get(function listFeatured(request, response, next) {
+.get(function listFans(request, response, next) {
     'use strict';
 
     var pageSize, page, query;
