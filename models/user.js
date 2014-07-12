@@ -1,9 +1,10 @@
-var VError, mongoose, jsonSelect, nconf, Schema, schema;
+var VError, mongoose, jsonSelect, nconf, async, Schema, schema;
 
 VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');
+async = require('async');
 Schema = mongoose.Schema;
 
 /**
@@ -161,6 +162,41 @@ schema.pre('save', function setUserUpdatedAt(next) {
 
     this.updatedAt = new Date();
     next();
+});
+
+/**
+ * @callback
+ * @summary Puts user in all invited groups
+ * When a user registers an account, all group invites that the user received must be removed and the user must be
+ * placed as a group member.
+ *
+ * @param next
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.facebookId && !this.email) {
+        return next();
+    }
+
+    var query;
+    query = require('./group').find();
+    query.where('invites').equals(this.facebookId ? this.facebookId : this.email);
+    return query.exec(function (error, groups) {
+        if (error) {
+            error = new VError(error, 'error finding user "%s" invited groups.', this._id);
+            return next(error);
+        }
+        return async.each(groups, function (group, next) {
+            var groupMember, GroupMember;
+            GroupMember = require('./group-member');
+            groupMember = new GroupMember({
+                'user'  : this._id,
+                'group' : group._id
+            });
+            groupMember.save(next);
+        }.bind(this), next);
+    }.bind(this));
 });
 
 /**

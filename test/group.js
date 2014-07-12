@@ -588,7 +588,7 @@ describe('group controller', function () {
                 req = req.set('auth-signature', credentials.signature);
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.send({'invite' : 'invited user'});
+                req = req.send({'invite' : 'invited-user@invite.com'});
                 req.expect(401);
                 req.end(done);
             });
@@ -602,7 +602,7 @@ describe('group controller', function () {
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.set('auth-token', auth.token(groupUser));
-                req = req.send({'invite' : 'invited user'});
+                req = req.send({'invite' : 'invited-user@invite.com'});
                 req.expect(404);
                 req.end(done);
             });
@@ -616,8 +616,38 @@ describe('group controller', function () {
                 req = req.set('auth-timestamp', credentials.timestamp);
                 req = req.set('auth-transactionId', credentials.transactionId);
                 req = req.set('auth-token', auth.token(groupOwner));
-                req = req.send({'invite' : 'invited user'});
+                req = req.send({'invite' : 'invited-user@invite.com'});
                 req.expect(200);
+                req.end(done);
+            });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/users');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.send({'password' : '1234'});
+                req = req.send({'email' : 'invited-user@invite.com'});
+                req.end(done);
+            });
+
+            after(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.get('/groups/' + slug + '/members');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req.expect(200);
+                req.expect(function (response) {
+                    response.body.should.be.instanceOf(Array);
+                    response.body.should.have.lengthOf(2);
+                });
                 req.end(done);
             });
         });

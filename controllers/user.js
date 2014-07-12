@@ -195,6 +195,7 @@ router
     pageSize = nconf.get('PAGE_SIZE');
     page = request.param('page', 0) * pageSize;
     query = User.find();
+    query.sort('ranking');
     query.skip(page);
     query.limit(pageSize);
     if (request.param('emails') && request.param('facebookIds')) {
