@@ -2,7 +2,7 @@
 require('should');
 var request, app, auth,
 User, Championship, Match, Team, Bet,
-user;
+user, otherUser;
 
 request = require('supertest');
 app = require('../index.js');
@@ -31,6 +31,11 @@ describe('bet controller', function () {
     before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user'});
         user.save(done);
+    });
+
+    before(function (done) {
+        otherUser = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'other-user'});
+        otherUser.save(done);
     });
 
     before(function (done) {
@@ -703,6 +708,21 @@ describe('bet controller', function () {
             req.end(done);
         });
 
+        it('should raise error with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
+            req = req.send({'bid' : 50});
+            req = req.send({'result' : 'draw'});
+            req.expect(405);
+            req.end(done);
+        });
+
         it('should raise error with invalid championship', function (done) {
             var req, credentials;
             credentials = auth.credentials();
@@ -1115,6 +1135,19 @@ describe('bet controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise error with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
+            req.expect(405);
             req.end(done);
         });
 
