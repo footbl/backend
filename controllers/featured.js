@@ -658,6 +658,7 @@ router.param('id', function findFeatured(request, response, next, id) {
  * @param next
  * @param id
  */
+router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
     'use strict';
 

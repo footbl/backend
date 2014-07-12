@@ -2,7 +2,7 @@
 require('should');
 var request, app, auth,
 User, Featured,
-user, featuredUser, otherFeaturedUser;
+user, otherUser, featuredUser, otherFeaturedUser;
 
 request = require('supertest');
 app = require('../index.js');
@@ -20,6 +20,11 @@ describe('featured controller', function () {
     before(function (done) {
         user = new User({'password' : '1234', 'slug' : 'user'});
         user.save(done);
+    });
+
+    before(function (done) {
+        otherUser = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'other-user'});
+        otherUser.save(done);
     });
 
     before(function (done) {
@@ -103,6 +108,24 @@ describe('featured controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({'featured' : 'featured-user'});
+            req.expect(201);
+            req.expect(function (response) {
+                response.body.should.have.property('featured');
+                response.body.should.have.property('slug');
+            });
+            req.end(done);
+        });
+
+        it('should create by me slug', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.post('/users/me/featured');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(user));
+            req = req.send({'featured' : 'other-featured-user'});
             req.expect(201);
             req.expect(function (response) {
                 response.body.should.have.property('featured');
@@ -416,6 +439,20 @@ describe('featured controller', function () {
             req.end(done);
         });
 
+        it('should raise with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.put('/users/user/featured/featured-user');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
+            req = req.send({'featured' : 'other-featured-user'});
+            req.expect(405);
+            req.end(done);
+        });
+
         it('should raise with invalid user id', function (done) {
             var req, credentials;
             credentials = auth.credentials();
@@ -503,6 +540,19 @@ describe('featured controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req.expect(401);
+            req.end(done);
+        });
+
+        it('should raise with other user token', function (done) {
+            var req, credentials;
+            credentials = auth.credentials();
+            req = request(app);
+            req = req.del('/users/user/featured/featured-user');
+            req = req.set('auth-signature', credentials.signature);
+            req = req.set('auth-timestamp', credentials.timestamp);
+            req = req.set('auth-transactionId', credentials.transactionId);
+            req = req.set('auth-token', auth.token(otherUser));
+            req.expect(405);
             req.end(done);
         });
 
