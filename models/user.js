@@ -262,7 +262,7 @@ schema.virtual('funds').get(function () {
     return this.bets.filter(function (bet) {
         return bet.createdAt > this.lastRecharge;
     }.bind(this)).map(function (bet) {
-        return (bet.match.finished && bet.match.winner === bet.result ? bet.match.reward * bet.bid : 0) - bet.bid;
+        return bet.profit;
     }.bind(this)).reduce(function (stake, bid) {
         return stake + bid;
     }.bind(this), 100);

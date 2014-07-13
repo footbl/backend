@@ -67,6 +67,8 @@ schema.plugin(jsonSelect, {
     'match'     : 1,
     'bid'       : 1,
     'result'    : 1,
+    'reward'    : 1,
+    'profit'    : 1,
     'createdAt' : 1,
     'updatedAt' : 1
 });
@@ -90,7 +92,30 @@ schema.pre('save', function setBetUpdatedAt(next) {
  *
  * @param next
  */
-schema.pre('save', function setBetUpdatedAt(next) {
+schema.pre('save', function validateStartedMatchBeforeSave(next) {
+    'use strict';
+
+    this.populate('match');
+    this.populate(function (error) {
+        if (error) {
+            error = new VError(error, 'error populating bet "%s" match.', this._id);
+            return next(error);
+        }
+        if (this.match.finished || this.match.elapsed) {
+            error = new VError('match already started');
+            return next(error);
+        }
+        return next();
+    }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Ensures bet is not created after match finished or started
+ *
+ * @param next
+ */
+schema.pre('remove', function validateStartedMatchBeforeRemove(next) {
     'use strict';
 
     this.populate('match');
@@ -113,7 +138,7 @@ schema.pre('save', function setBetUpdatedAt(next) {
  *
  * @param next
  */
-schema.pre('save', function setBetUpdatedAt(next) {
+schema.pre('save', function validateSufficientFundsBeforeSave(next) {
     'use strict';
 
     var query;
@@ -133,26 +158,29 @@ schema.pre('save', function setBetUpdatedAt(next) {
 });
 
 /**
- * @callback
- * @summary Ensures bet is not created after match finished or started
- *
- * @param next
+ * @method
+ * @summary Return bet reward
+ * This method should return the bet reward, if the bet's result is correct, the reward must be the match reward times
+ * the bet bid, otherwise, it should return 0
  */
-schema.pre('remove', function setBetUpdatedAt(next) {
+schema.virtual('reward').get(function () {
     'use strict';
 
-    this.populate('match');
-    this.populate(function (error) {
-        if (error) {
-            error = new VError(error, 'error populating bet "%s" match.', this._id);
-            return next(error);
-        }
-        if (this.match.finished || this.match.elapsed) {
-            error = new VError('match already started');
-            return next(error);
-        }
-        return next();
-    }.bind(this));
+    if (!this.match.finished || this.match.winner !== this.result) {
+        return 0;
+    }
+    return (this.match ? this.match.reward * this.bid : undefined);
+});
+
+/**
+ * @method
+ * @summary Return bet profit
+ * This method should return the bet profit, the profit is the match reward times the bet bid minus the bet bid.
+ */
+schema.virtual('profit').get(function () {
+    'use strict';
+
+    return (this.reward ? this.reward : 0) - this.bid;
 });
 
 module.exports = mongoose.model('Bet', schema);
