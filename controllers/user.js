@@ -364,13 +364,13 @@ router
 });
 
 /**
- * @api {delete} /users/:id Removes user 
+ * @api {delete} /users/:id Removes user
  * @apiName removeUser
  * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * Removes user 
+ * Removes user
  */
 router
 .route('/users/:id')
@@ -451,6 +451,75 @@ router
         return response.send(200, {
             'token' : auth.token(user)
         });
+    });
+});
+
+/**
+ * @api {post} /users/:id/recharge Recharges user funds.
+ * @apiName rechargeUser
+ * @apiVersion 2.0.1
+ * @apiGroup user
+ * @apiPermission user
+ * @apiDescription
+ * Recharges user funds.
+ *
+ * @apiStructure userParams
+ * @apiStructure userSuccess
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 201 Created
+ *     {
+ *       "slug": "vandoren",
+ *       "email": "vandoren@vandoren.com",
+ *       "username": "vandoren",
+ *       "name": "Van Doren",
+ *       "about": "footbl fan",
+ *       "verified": false,
+ *       "featured": false,
+ *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *       "ranking": "2",
+ *       "previousRanking": "1",
+ *       "history": [{
+ *         "date": "2014-07-01T12:22:25.058Z",
+ *         "funds": 100
+ *       },{
+ *         "date": "2014-07-03T12:22:25.058Z",
+ *         "funds": 120
+ *       }],
+ *       "funds": 100,
+ *       "stake": 0,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
+ */
+router
+.route('/users/:id/recharge')
+.post(auth.signature())
+.post(auth.session())
+.post(errorParser.notFound('user'))
+.post(function validateRechargeUser(request, response, next) {
+    'use strict';
+
+    var user;
+    user = request.user;
+    if (user._id.toString() !== request.session._id.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
+.post(function createUser(request, response, next) {
+    'use strict';
+
+    var user;
+    user = request.user;
+    user.lastRecharge = new Date();
+    return user.save(function (error) {
+        if (error) {
+            error = new VError(error, 'error recharging user: "$s"', user._id);
+            return next(error);
+        }
+        return response.send(200, user);
     });
 });
 

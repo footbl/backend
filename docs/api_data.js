@@ -5103,78 +5103,6 @@ define({ api: [
     "filename": "./controllers/group.js"
   },
   {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "round",
-            "optional": false,
-            "description": "Match round"
-          },
-          {
-            "group": "Parameter",
-            "type": "Date",
-            "field": "date",
-            "optional": false,
-            "description": "Match date"
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "finished",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Match status"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "elapsed",
-            "optional": true,
-            "description": "Match elapsed time"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.guest",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match guest team score"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.host",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match host team score"
-          }
-        ]
-      }
-    },
-    "group": "match.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/match.js"
-  },
-  {
     "success": {
       "fields": {
         "Success 200": [
@@ -5360,6 +5288,78 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "match.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/match.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "finished",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Match status"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": true,
+            "description": "Match elapsed time"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.guest",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match guest team score"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.host",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match host team score"
           }
         ]
       }
@@ -6366,33 +6366,6 @@ define({ api: [
     "filename": "./controllers/match.js"
   },
   {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "field": "name",
-            "optional": false,
-            "description": "Team name"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "field": "picture",
-            "optional": true,
-            "description": "Team picture"
-          }
-        ]
-      }
-    },
-    "group": "team.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/team.js"
-  },
-  {
     "success": {
       "fields": {
         "Success 200": [
@@ -6430,6 +6403,33 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "team.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/team.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "field": "name",
+            "optional": false,
+            "description": "Team name"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "field": "picture",
+            "optional": true,
+            "description": "Team picture"
           }
         ]
       }
@@ -6951,7 +6951,7 @@ define({ api: [
   },
   {
     "type": "get",
-    "url": "/users/:id/auth",
+    "url": "/users/me/auth",
     "title": "Get user access token",
     "name": "authUser",
     "version": "2.0.1",
@@ -7496,6 +7496,205 @@ define({ api: [
             "field": "funds",
             "optional": false,
             "description": "Funds in history"
+          }
+        ]
+      }
+    },
+    "filename": "./controllers/user.js"
+  },
+  {
+    "type": "post",
+    "url": "/users/:id/recharge",
+    "title": "Recharges user funds.",
+    "name": "rechargeUser",
+    "version": "2.0.1",
+    "group": "user",
+    "permission": "user",
+    "description": "Recharges user funds.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 201 Created",
+          "content": "   {\n     \"slug\": \"vandoren\",\n     \"email\": \"vandoren@vandoren.com\",\n     \"username\": \"vandoren\",\n     \"name\": \"Van Doren\",\n     \"about\": \"footbl fan\",\n     \"verified\": false,\n     \"featured\": false,\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"ranking\": \"2\",\n     \"previousRanking\": \"1\",\n     \"history\": [{\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"funds\": 100\n     },{\n       \"date\": \"2014-07-03T12:22:25.058Z\",\n       \"funds\": 120\n     }],\n     \"funds\": 100,\n     \"stake\": 0,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "history": [
+          {
+            "group": "history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "email",
+            "optional": true,
+            "description": "User email"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "username",
+            "optional": true,
+            "description": "User username"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "password",
+            "optional": false,
+            "description": "User password"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": true,
+            "description": "User name"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "about",
+            "optional": true,
+            "description": "User about"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "User picture"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": true,
+            "description": "User apnsToken"
           }
         ]
       }
