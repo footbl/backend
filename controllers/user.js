@@ -209,6 +209,11 @@ router
         query.where('facebookId').in(request.param('facebookIds', []));
     } else if (request.param('featured')) {
         query.where('featured').equals(true);
+    } else {
+        query.or([
+            {'email' : {'$exists' : true}},
+            {'facebookId' : {'$exists' : true}}
+        ]);
     }
     return query.exec(function listedUser(error, users) {
         if (error) {
