@@ -95,9 +95,10 @@ router
     });
 
     groupMember = new GroupMember({
-        'slug'  : request.session.slug,
-        'user'  : request.session._id,
-        'group' : group._id
+        'slug'         : request.session.slug,
+        'user'         : request.session._id,
+        'group'        : group._id,
+        'initialFunds' : request.session.funds
     });
 
     return async.series([group.save.bind(group), groupMember.save.bind(groupMember)], function (error) {
@@ -260,13 +261,13 @@ router
 });
 
 /**
- * @api {delete} /groups/:id Removes group 
+ * @api {delete} /groups/:id Removes group
  * @apiName removeGroup
  * @apiVersion 2.0.1
  * @apiGroup group
  * @apiPermission user
  * @apiDescription
- * Removes group 
+ * Removes group
  */
 router
 .route('/groups/:id')

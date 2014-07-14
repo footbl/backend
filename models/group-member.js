@@ -72,7 +72,7 @@ schema.plugin(jsonSelect, {
     '_id'             : 0,
     'user'            : 1,
     'group'           : 0,
-    'initialFunds'    : 0,
+    'initialFunds'    : 1,
     'ranking'         : 1,
     'previousRanking' : 1,
     'slug'            : 1,
