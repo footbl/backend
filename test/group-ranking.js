@@ -1,8 +1,8 @@
 /*globals describe, before, it, after*/
 require('should');
 var request, app, auth,
-User, Championship, Match, Team, Bet, ranking, previousRanking,
-user, otherUser, guestBetter, hostBetter, drawBetter;
+User, Championship, Match, Team, Bet, Group, GroupMember, ranking, previousRanking,
+user, groupOwner, otherUser, guestBetter, hostBetter, drawBetter, slug;
 
 request = require('supertest');
 app = require('../index.js');
@@ -12,10 +12,12 @@ Championship = require('../models/championship');
 Match = require('../models/match');
 Team = require('../models/team');
 Bet = require('../models/bet');
-ranking = require('../workers/world-ranking');
-previousRanking = require('../workers/world-previous-ranking');
+Group = require('../models/group');
+GroupMember = require('../models/group-member');
+ranking = require('../workers/group-ranking');
+previousRanking = require('../workers/group-previous-ranking');
 
-describe('world ranking', function () {
+describe('group ranking', function () {
     'use strict';
 
     before(function (done) {
@@ -39,8 +41,21 @@ describe('world ranking', function () {
     });
 
     before(function (done) {
+        Group.remove(done);
+    });
+
+    before(function (done) {
+        GroupMember.remove(done);
+    });
+
+    before(function (done) {
         user = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user'});
         user.save(done);
+    });
+
+    before(function (done) {
+        groupOwner = new User({'password' : '1234', 'slug' : 'group-owner'});
+        groupOwner.save(done);
     });
 
     before(function (done) {
@@ -61,6 +76,65 @@ describe('world ranking', function () {
     before(function (done) {
         otherUser = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'other-user'});
         otherUser.save(done);
+    });
+
+    before(function (done) {
+        var req, credentials;
+        credentials = auth.credentials();
+        req = request(app);
+        req = req.post('/groups');
+        req = req.set('auth-signature', credentials.signature);
+        req = req.set('auth-timestamp', credentials.timestamp);
+        req = req.set('auth-transactionId', credentials.transactionId);
+        req = req.set('auth-token', auth.token(groupOwner));
+        req = req.send({'name' : 'college buddies'});
+        req = req.send({'freeToEdit' : true});
+        req.expect(function (response) {
+            slug = response.body.slug;
+        });
+        req.end(done);
+    });
+
+    before(function (done) {
+        var req, credentials;
+        credentials = auth.credentials();
+        req = request(app);
+        req = req.post('/groups/' + slug + '/members');
+        req = req.set('auth-signature', credentials.signature);
+        req = req.set('auth-timestamp', credentials.timestamp);
+        req = req.set('auth-transactionId', credentials.transactionId);
+        req = req.set('auth-token', auth.token(groupOwner));
+        req = req.send({'group' : slug});
+        req = req.send({'user' : drawBetter.slug});
+        req.end(done);
+    });
+
+    before(function (done) {
+        var req, credentials;
+        credentials = auth.credentials();
+        req = request(app);
+        req = req.post('/groups/' + slug + '/members');
+        req = req.set('auth-signature', credentials.signature);
+        req = req.set('auth-timestamp', credentials.timestamp);
+        req = req.set('auth-transactionId', credentials.transactionId);
+        req = req.set('auth-token', auth.token(groupOwner));
+        req = req.send({'group' : slug});
+        req = req.send({'user' : guestBetter.slug});
+        req.end(done);
+    });
+
+    before(function (done) {
+        var req, credentials;
+        credentials = auth.credentials();
+        req = request(app);
+        req = req.post('/groups/' + slug + '/members');
+        req = req.set('auth-signature', credentials.signature);
+        req = req.set('auth-timestamp', credentials.timestamp);
+        req = req.set('auth-transactionId', credentials.transactionId);
+        req = req.set('auth-token', auth.token(groupOwner));
+        req = req.send({'group' : slug});
+        req = req.send({'user' : hostBetter.slug});
+        req.end(done);
     });
 
     before(function (done) {
@@ -191,7 +265,7 @@ describe('world ranking', function () {
         var req, credentials;
         credentials = auth.credentials();
         req = request(app);
-        req = req.get('/users/host-better');
+        req = req.get('/groups/' + slug + '/members/host-better');
         req = req.set('auth-signature', credentials.signature);
         req = req.set('auth-timestamp', credentials.timestamp);
         req = req.set('auth-transactionId', credentials.transactionId);
@@ -207,14 +281,14 @@ describe('world ranking', function () {
         var req, credentials;
         credentials = auth.credentials();
         req = request(app);
-        req = req.get('/users/draw-better');
+        req = req.get('/groups/' + slug + '/members/draw-better');
         req = req.set('auth-signature', credentials.signature);
         req = req.set('auth-timestamp', credentials.timestamp);
         req = req.set('auth-transactionId', credentials.transactionId);
         req = req.set('auth-token', auth.token(user));
         req.expect(function (response) {
-            response.body.should.have.property('ranking').be.equal(2);
-            response.body.should.have.property('previousRanking').be.equal(2);
+            response.body.should.have.property('ranking').be.equal(3);
+            response.body.should.have.property('previousRanking').be.equal(3);
         });
         req.end(done);
     });
@@ -223,14 +297,14 @@ describe('world ranking', function () {
         var req, credentials;
         credentials = auth.credentials();
         req = request(app);
-        req = req.get('/users/guest-better');
+        req = req.get('/groups/' + slug + '/members/guest-better');
         req = req.set('auth-signature', credentials.signature);
         req = req.set('auth-timestamp', credentials.timestamp);
         req = req.set('auth-transactionId', credentials.transactionId);
         req = req.set('auth-token', auth.token(user));
         req.expect(function (response) {
-            response.body.should.have.property('ranking').be.equal(3);
-            response.body.should.have.property('previousRanking').be.equal(3);
+            response.body.should.have.property('ranking').be.equal(4);
+            response.body.should.have.property('previousRanking').be.equal(4);
         });
         req.end(done);
     });

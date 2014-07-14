@@ -2,7 +2,7 @@
 require('should');
 var request, app, auth,
 User, Group, GroupMember,
-groupOwner, groupUser, otherGroupUser, anotherGroupUser;
+groupOwner, groupUser, otherGroupUser, anotherGroupUser, Match;
 
 request = require('supertest');
 app = require('../index.js');
@@ -10,6 +10,7 @@ auth = require('../lib/auth');
 User = require('../models/user');
 Group = require('../models/group');
 GroupMember = require('../models/group-member');
+Match = require('../models/match');
 
 describe('group controller', function () {
     'use strict';

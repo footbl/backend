@@ -33,6 +33,9 @@ schema = new Schema({
         'ref'      : 'Group',
         'required' : true
     },
+    'initialFunds'    : {
+        'type' : Number
+    },
     'ranking'         : {
         'type'     : Number,
         'required' : true,
@@ -69,6 +72,7 @@ schema.plugin(jsonSelect, {
     '_id'             : 0,
     'user'            : 1,
     'group'           : 0,
+    'initialFunds'    : 0,
     'ranking'         : 1,
     'previousRanking' : 1,
     'slug'            : 1,

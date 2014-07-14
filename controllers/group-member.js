@@ -166,9 +166,10 @@ router
 
     var groupMember;
     groupMember = new GroupMember({
-        'slug'  : request.groupUser ? request.groupUser.slug : null,
-        'group' : request.group ? request.group._id : null,
-        'user'  : request.groupUser ? request.groupUser._id : null
+        'slug'         : request.groupUser ? request.groupUser.slug : null,
+        'group'        : request.group ? request.group._id : null,
+        'user'         : request.groupUser ? request.groupUser._id : null,
+        'initialFunds' : request.groupUser ? request.groupUser.funds : null
     });
 
     return async.series([groupMember.save.bind(groupMember), function populateGroupMemberAfterSave(next) {
@@ -243,6 +244,7 @@ router
     page = request.param('page', 0) * pageSize;
     query = GroupMember.find();
     query.where('group').equals(request.group._id);
+    query.sort('ranking');
     query.populate('user');
     query.skip(page);
     query.limit(pageSize);
@@ -389,6 +391,7 @@ router
     groupMember = request.groupMember;
     groupMember.slug = request.groupUser ? request.groupUser.slug : null;
     groupMember.user = request.groupUser ? request.groupUser._id : null;
+    groupMember.initialFunds = request.groupUser ? request.groupUser.funds : null;
 
     return async.series([groupMember.save.bind(groupMember), function populateGroupMemberAfterUpdate(next) {
         groupMember.populate('user');
@@ -404,13 +407,13 @@ router
 });
 
 /**
- * @api {delete} /groups/:group/members/:id Removes groupMember 
+ * @api {delete} /groups/:group/members/:id Removes groupMember
  * @apiName removeGroupMember
  * @apiVersion 2.0.1
  * @apiGroup groupMember
  * @apiPermission user
  * @apiDescription
- * Removes groupMember 
+ * Removes groupMember
  */
 router
 .route('/groups/:group/members/:id')

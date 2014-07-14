@@ -1,5 +1,5 @@
 'use strict';
-var mongoose, nconf, async, User, Match;
+var mongoose, nconf, async, User, Match, now;
 
 mongoose = require('mongoose');
 nconf = require('nconf');
@@ -21,21 +21,18 @@ module.exports = function (next) {
         ]);
         query.exec(next);
     }, function (users, next) {
-        async.sortBy(users, function (user, next) {
-            next(null, user.funds * -1);
-        }, next);
-    }, function (users, next) {
-        var ranking;
-        ranking = 1;
-        async.eachSeries(users, function (user, next) {
-            user.ranking = ranking;
-            ranking += 1;
+        async.each(users, function (user, next) {
+            user.previousRanking = user.ranking;
             user.save(next);
         }, next);
     }], next);
 };
 
 if (require.main === module) {
+    now = new Date();
+    if (now.getDay() !== 0) {
+        process.exit();
+    }
     mongoose.connect(nconf.get('MONGOHQ_URL'));
     module.exports(process.exit);
 }
