@@ -1,11 +1,11 @@
 'use strict';
 var express, mongoose, nconf, bodyParser, methodOverride,
-    app;
+app;
 
-express        = require('express');
-mongoose       = require('mongoose');
-nconf          = require('nconf');
-bodyParser     = require('body-parser');
+express = require('express');
+mongoose = require('mongoose');
+nconf = require('nconf');
+bodyParser = require('body-parser');
 methodOverride = require('method-override');
 
 nconf.argv();
