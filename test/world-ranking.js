@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 require('should');
 var request, app, auth,
-User, Championship, Match, Team, Bet, ranking, previousRanking,
+User, Championship, Match, Team, Bet, ranking, previousRanking, userHistory,
 user, otherUser, guestBetter, hostBetter, drawBetter;
 
 request = require('supertest');
@@ -14,6 +14,7 @@ Team = require('../models/team');
 Bet = require('../models/bet');
 ranking = require('../workers/world-ranking');
 previousRanking = require('../workers/world-previous-ranking');
+userHistory = require('../workers/user-history');
 
 describe('world ranking', function () {
     'use strict';
@@ -187,6 +188,10 @@ describe('world ranking', function () {
 
     it('should update previous ranking', previousRanking);
 
+    it('should update history', userHistory);
+
+    it('should not duplicate history', userHistory);
+
     after(function (done) {
         var req, credentials;
         credentials = auth.credentials();
@@ -197,6 +202,8 @@ describe('world ranking', function () {
         req = req.set('auth-transactionId', credentials.transactionId);
         req = req.set('auth-token', auth.token(user));
         req.expect(function (response) {
+            response.body.history.should.have.lengthOf(1);
+            response.body.history[0].should.have.property('funds').be.equal(150);
             response.body.should.have.property('ranking').be.equal(1);
             response.body.should.have.property('previousRanking').be.equal(1);
         });
@@ -213,6 +220,8 @@ describe('world ranking', function () {
         req = req.set('auth-transactionId', credentials.transactionId);
         req = req.set('auth-token', auth.token(user));
         req.expect(function (response) {
+            response.body.history.should.have.lengthOf(1);
+            response.body.history[0].should.have.property('funds').be.equal(80);
             response.body.should.have.property('ranking').be.equal(2);
             response.body.should.have.property('previousRanking').be.equal(2);
         });
@@ -229,6 +238,8 @@ describe('world ranking', function () {
         req = req.set('auth-transactionId', credentials.transactionId);
         req = req.set('auth-token', auth.token(user));
         req.expect(function (response) {
+            response.body.history.should.have.lengthOf(1);
+            response.body.history[0].should.have.property('funds').be.equal(70);
             response.body.should.have.property('ranking').be.equal(3);
             response.body.should.have.property('previousRanking').be.equal(3);
         });
