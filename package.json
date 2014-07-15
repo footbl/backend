@@ -23,16 +23,15 @@
   "dependencies": {
     "async": "^0.7.0",
     "body-parser": "1.0.x",
+    "method-override": "^1.0.0",
     "express": "^4.1.1",
     "fbgraph": "^0.2.10",
     "forky": "0.0.x",
     "mandrill-api": "^1.0.39",
-    "method-override": "^1.0.0",
     "mongoose": "3.x.x",
     "mongoose-json-select": "0.2.x",
     "nconf": "0.6.x",
     "redis": "0.10.x",
-    "request": "^2.34.0",
     "slug": "^0.5.0",
     "verror": "^1.4.0"
   },
