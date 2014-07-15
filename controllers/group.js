@@ -344,6 +344,58 @@ router
 });
 
 /**
+ * @api {post} /groups/:id/restart Restarts all group members initial funds
+ * @apiName inviteGroup
+ * @apiVersion 2.0.1
+ * @apiGroup group
+ * @apiPermission user
+ * @apiDescription
+ * Restarts all group members initial funds.
+ */
+router
+.route('/groups/:id/restart')
+.post(auth.signature())
+.post(auth.session())
+.post(errorParser.notFound('group'))
+.post(function (request, response, next) {
+    'use strict';
+
+    var group;
+    group = request.group;
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+        response.header('Allow', 'GET');
+        return response.send(405);
+    }
+    return next();
+})
+.post(function inviteGroup(request, response, next) {
+    'use strict';
+
+    var group, query;
+    group = request.group;
+    query = GroupMember.find();
+    query.where('group').equals(group._id);
+    query.populate('user');
+    query.exec(function (error, members) {
+        if (error) {
+            error = new VError(error, 'error finding groupMembers to restart group: "%s"', request.group._id);
+            return next(error);
+        }
+        return async.each(members, function (member, next) {
+            member.initialFunds = member.user.funds;
+            member.save(next);
+        }, function (error) {
+            if (error) {
+                error = new VError(error, 'error restarting group: "%s"', request.group._id);
+                return next(error);
+            }
+            response.header('Last-Modified', group.updatedAt);
+            return response.send(200, group);
+        });
+    });
+});
+
+/**
  * @method
  * @summary Puts requested group in request object
  *

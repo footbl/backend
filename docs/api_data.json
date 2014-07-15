@@ -4889,6 +4889,17 @@
   },
   {
     "type": "post",
+    "url": "/groups/:id/restart",
+    "title": "Restarts all group members initial funds",
+    "name": "inviteGroup",
+    "version": "2.0.1",
+    "group": "group",
+    "permission": "user",
+    "description": "Restarts all group members initial funds.",
+    "filename": "./controllers/group.js"
+  },
+  {
+    "type": "post",
     "url": "/groups/:id/invite",
     "title": "Invites new user",
     "name": "inviteGroup",
@@ -5103,6 +5114,78 @@
     "filename": "./controllers/group.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team slug"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round"
+          },
+          {
+            "group": "Parameter",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date"
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "finished",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Match status"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": true,
+            "description": "Match elapsed time"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.guest",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match guest team score"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "score.host",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "Match host team score"
+          }
+        ]
+      }
+    },
+    "group": "match.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/match.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -5288,78 +5371,6 @@
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
-          }
-        ]
-      }
-    },
-    "group": "match.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/match.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "guest",
-            "optional": false,
-            "description": "Match guest team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "host",
-            "optional": false,
-            "description": "Match host team slug"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "round",
-            "optional": false,
-            "description": "Match round"
-          },
-          {
-            "group": "Parameter",
-            "type": "Date",
-            "field": "date",
-            "optional": false,
-            "description": "Match date"
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "finished",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Match status"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "elapsed",
-            "optional": true,
-            "description": "Match elapsed time"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.guest",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match guest team score"
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "score.host",
-            "defaultValue": "0",
-            "optional": true,
-            "description": "Match host team score"
           }
         ]
       }
@@ -6366,6 +6377,33 @@
     "filename": "./controllers/match.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "field": "name",
+            "optional": false,
+            "description": "Team name"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "field": "picture",
+            "optional": true,
+            "description": "Team picture"
+          }
+        ]
+      }
+    },
+    "group": "team.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./controllers/team.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -6403,33 +6441,6 @@
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
-          }
-        ]
-      }
-    },
-    "group": "team.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/team.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "field": "name",
-            "optional": false,
-            "description": "Team name"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "field": "picture",
-            "optional": true,
-            "description": "Team picture"
           }
         ]
       }

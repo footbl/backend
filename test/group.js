@@ -767,6 +767,155 @@ describe('group controller', function () {
         });
     });
 
+    describe('restart', function () {
+        describe('free to edit', function () {
+            var slug;
+
+            before(function (done) {
+                Group.remove(done);
+            });
+
+            before(function (done) {
+                GroupMember.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req = req.send({'name' : 'college buddies'});
+                req = req.send({'freeToEdit' : true});
+                req.expect(function (response) {
+                    slug = response.body.slug;
+                });
+                req.end(done);
+            });
+
+            it('should raise error without token', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req.expect(401);
+                req.end(done);
+            });
+
+            it('should raise error with invalid id', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/invalid/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupUser));
+                req.expect(404);
+                req.end(done);
+            });
+
+            it('should restart', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req.expect(200);
+                req.end(done);
+            });
+        });
+
+        describe('not free to edit', function () {
+            var slug;
+
+            before(function (done) {
+                Group.remove(done);
+            });
+
+            before(function (done) {
+                GroupMember.remove(done);
+            });
+
+            before(function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req = req.send({'name' : 'college buddies'});
+                req = req.send({'freeToEdit' : false});
+                req.expect(function (response) {
+                    slug = response.body.slug;
+                });
+                req.end(done);
+            });
+
+            it('should raise error without token', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req.expect(401);
+                req.end(done);
+            });
+
+            it('should raise error with invalid id', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/invalid/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupUser));
+                req.expect(404);
+                req.end(done);
+            });
+
+            it('should raise error with other user token', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupUser));
+                req.expect(405);
+                req.end(done);
+            });
+
+            it('should invite', function (done) {
+                var req, credentials;
+                credentials = auth.credentials();
+                req = request(app);
+                req = req.post('/groups/' + slug + '/restart');
+                req = req.set('auth-signature', credentials.signature);
+                req = req.set('auth-timestamp', credentials.timestamp);
+                req = req.set('auth-transactionId', credentials.transactionId);
+                req = req.set('auth-token', auth.token(groupOwner));
+                req.expect(200);
+                req.end(done);
+            });
+        });
+    });
+
     describe('delete', function () {
         describe('free to edit', function () {
             var slug;
