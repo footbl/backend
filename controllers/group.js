@@ -13,13 +13,14 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, async, auth, errorParser, Group, GroupMember;
+var VError, router, nconf, slug, async, mandrill, auth, errorParser, Group, GroupMember;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
+mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 auth = require('../lib/auth');
 errorParser = require('../lib/error-parser');
 Group = require('../models/group');
@@ -333,13 +334,33 @@ router
     var group;
     group = request.group;
     group.invites.push(request.param('invite', ''));
-    return group.save(function updatedGroup(error) {
+    async.series([group.save.bind(group), function (next) {
+        mandrill.messages.send({
+            'message' : {
+                'html' : [
+                    '<p>Join my group on footbl!</p>',
+                    '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
+                    '<p>footbl | wanna bet?<p>',
+                    request.session.name || request.session.username || 'A friend on footbl'
+                ].join('\n'),
+                'subject'    : 'wanna bet?',
+                'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
+                'from_email' : 'noreply@footbl.co',
+                'to'         : [{
+                    'email' : request.param('invite', ''),
+                    'type'  : 'to'
+                }]
+            },
+            'async' : true
+        });
+        next();
+    }], function (error) {
         if (error) {
             error = new VError(error, 'error inviting user');
             return next(error);
         }
         response.header('Last-Modified', group.updatedAt);
-        return response.send(200, group.invites.pop());
+        return response.send(200, group);
     });
 });
 
