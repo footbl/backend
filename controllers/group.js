@@ -364,10 +364,12 @@ router.get('/groups/:groupId/members', function (request, response) {
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
-    var group;
-    group = request.group;
+    var group, pageSize, page;
+    group     = request.group;
+    pageSize  = nconf.get('PAGE_SIZE');
+    page      = request.param('page', 0) * pageSize;
 
-    return response.send(200, group.members);
+    return response.send(200, group.members.slice(page, page + pageSize));
 });
 
 /**

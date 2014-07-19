@@ -279,13 +279,15 @@ router.get('/users/:userId/wallets/:walletId/bets', function (request, response)
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var wallet;
-    wallet = request.wallet;
+    var wallet, pageSize, page;
+    wallet    = request.wallet;
+    pageSize  = nconf.get('PAGE_SIZE');
+    page      = request.param('page', 0) * pageSize;
 
     if (!request.session) { return response.send(401, 'invalid token'); }
 
     response.header('Last-Modified', wallet.updatedAt);
-    return response.send(200, wallet.bets);
+    return response.send(200, wallet.bets.slice(page, page + pageSize));
 });
 
 /**
