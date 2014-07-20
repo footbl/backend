@@ -219,8 +219,6 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     match.guest    = request.param('guest');
     match.host     = request.param('host');
     match.round    = request.param('round');
-    match.result   = request.param('result');
-    match.finished = request.param('finished');
     match.elapsed  = request.param('elapsed');
 
     return match.save(function (error) {
