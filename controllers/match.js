@@ -220,6 +220,8 @@ router.put('/championships/:championshipId/matches/:matchId', function (request,
     match.host     = request.param('host');
     match.round    = request.param('round');
     match.elapsed  = request.param('elapsed');
+    match.finished = request.param('finished');
+    match.result   = request.param('result');
 
     return match.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
