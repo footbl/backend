@@ -484,6 +484,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.send({guest : guest._id, host : host._id, date : new Date(), round : 1});
+            req = req.send({result : {guest : 0, host : 0}, finished : false});
             req = req.expect(401);
             req.end(done);
         });
@@ -498,6 +499,7 @@ describe('match controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, round : 1});
+            req = req.send({result : {guest : 0, host : 0}, finished : false});
             req = req.expect(500);
             req = req.expect(function (response) {
                 response.body[0].should.be.equal('date is required');
@@ -515,6 +517,7 @@ describe('match controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({host : host._id, date : new Date(), round : 1});
+            req = req.send({result : {guest : 0, host : 0}, finished : false});
             req = req.expect(500);
             req = req.expect(function (response) {
                 response.body[0].should.be.equal('guest is required');
@@ -532,6 +535,7 @@ describe('match controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, date : new Date(), round : 1});
+            req = req.send({result : {guest : 0, host : 0}, finished : false});
             req = req.expect(500);
             req = req.expect(function (response) {
                 response.body[0].should.be.equal('host is required');
@@ -549,6 +553,7 @@ describe('match controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({result : {guest : 0, host : 0}, finished : false});
             req = req.expect(500);
             req = req.expect(function (response) {
                 response.body[0].should.be.equal('round is required');
@@ -566,6 +571,7 @@ describe('match controller', function () {
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
             req = req.send({guest : guest._id, host : host._id, date : new Date()});
+            req = req.send({result : {guest : 0, host : 0}, finished : false});
             req = req.expect(404);
             req.end(done);
         });
@@ -579,7 +585,7 @@ describe('match controller', function () {
             req = req.set('auth-timestamp', credentials.timestamp);
             req = req.set('auth-transactionId', credentials.transactionId);
             req = req.set('auth-token', auth.token(user));
-            req = req.send({guest : guest._id, host : host._id, date : new Date(), result : {guest : 0, host : 1}, round : 1});
+            req = req.send({guest : guest._id, host : host._id, date : new Date(), result : {guest : 0, host : 1}, round : 1, finished : false});
             req = req.expect(200);
             req.expect(function (response) {
                 response.body.should.have.property('_id');

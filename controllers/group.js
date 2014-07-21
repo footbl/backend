@@ -287,8 +287,7 @@ router.post('/groups/:groupId/invites', function (request, response) {
                 'email' : invited,
                 'type'  : 'to'
             }]
-        },
-        'async' : true
+        }
     });
 
     return group.save(function (error) {
