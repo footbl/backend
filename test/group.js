@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
-var request, app, mongoose, auth, nconf,
+var request, app, mongoose, auth, nconf, nock,
     User, Team, Championship, Match, Wallet, Group, Comment,
-    group, otherGroup, user, otherUser, memberUser, userWithoutWallet, candidateUser,invitedUser, championship, wallet, otherWallet, memberWallet, candidateWallet;
+    group, otherGroup, user, otherUser, memberUser, userWithoutWallet, candidateUser,invitedUser, championship, wallet, otherWallet, memberWallet, candidateWallet, mandrill;
 
 require('should');
 
@@ -9,6 +9,7 @@ request      = require('supertest');
 app          = require('../index.js');
 mongoose     = require('mongoose');
 nconf        = require('nconf');
+nock         = require('nock');
 auth         = require('../lib/auth');
 
 User         = require('../models/user');
@@ -18,6 +19,9 @@ Match        = require('../models/match');
 Wallet       = require('../models/wallet');
 Group        = require('../models/group');
 Comment      = require('../models/comment');
+mandrill     = nock('https://mandrillapp.com');
+
+mandrill.post('/api/1.0/messages/send.json').times(Infinity).reply(200, {});
 
 describe('group controller', function () {
     'use strict';
