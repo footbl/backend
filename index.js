@@ -28,6 +28,9 @@ app.use(function (request, response, next) {
     response.header('Expires', '0');
     next();
 });
+app.get('/', function (request, response) {
+    response.send(200, {'version' : nconf.get('VERSION')});
+});
 app.use(require('./lib/auth').signature);
 app.use(require('./lib/auth').facebook);
 app.use(require('./lib/auth').session);

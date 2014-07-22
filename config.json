@@ -13,5 +13,6 @@
     "APNS_GATEWAY"        : "gateway.sandbox.push.apple.com",
     "APNS_CERT"           : "cert-development.pem",
     "APNS_KEY"            : "key-development.pem",
-    "APNS_PASSPHRASE"     : ""
+    "APNS_PASSPHRASE"     : "",
+    "VERSION"             : "1"
 }
