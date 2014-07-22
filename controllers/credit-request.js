@@ -5,12 +5,13 @@
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-var router, nconf, errorParser, CreditRequest;
+var router, nconf, errorParser, CreditRequest, Wallet;
 
 router        = require('express').Router();
 nconf         = require('nconf');
 errorParser   = require('../lib/error-parser');
 CreditRequest = require('../models/credit-request');
+Wallet        = require('../models/wallet');
 
 /**
  * @method
@@ -117,7 +118,7 @@ router.get('/users/:userId/credit-requests', function (request, response) {
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.put('/users/:userId/credit-requested/:creditRequestId/pay', function (request, response) {
+router.put('/users/:userId/credit-requests/:creditRequestId/pay', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -138,10 +139,18 @@ router.put('/users/:userId/credit-requested/:creditRequestId/pay', function (req
     return creditRequest.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
 
-        creditRequest.debtor.lastRecharge = new Date();
-        return creditRequest.debtor.save(function () {
+        var query;
+        query = Wallet.findOne();
+        query.where('user').equals(creditRequest.debtor._id);
+        return query.exec(function (error, wallet) {
             if (error) { return response.send(500, errorParser(error)); }
-            return response.send(200, creditRequest);
+            if (!wallet) { return response.send(500); }
+
+            wallet.lastRecharge = new Date();
+            return wallet.save(function (error) {
+                if (error) { return response.send(500, errorParser(error)); }
+                return response.send(200, creditRequest);
+            });
         });
     });
 });
@@ -165,9 +174,8 @@ router.param('creditRequestId', function (request, response, next, id) {
     'use strict';
 
     var query;
-    query = Comment.findOne();
+    query = CreditRequest.findOne();
     query.where('_id').equals(id);
-    query.where('debtor').equals(request.params.userId);
     query.populate('creditor');
     query.populate('debtor');
     query.exec(function (error, creditRequest) {
@@ -178,3 +186,5 @@ router.param('creditRequestId', function (request, response, next, id) {
         return next();
     });
 });
+
+module.exports = router;

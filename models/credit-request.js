@@ -93,4 +93,4 @@ schema.pre('save', function (next) {
     next();
 });
 
-module.exports = mongoose.model('Comment', schema);
+module.exports = mongoose.model('CreditRequest', schema);
