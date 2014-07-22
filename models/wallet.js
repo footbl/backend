@@ -199,7 +199,7 @@ schema.virtual('funds').get(function () {
         return (bet.match.finished && bet.match.winner === bet.result ? bet.match.reward * bet.bid : 0) - bet.bid;
     }.bind(this)).reduce(function (funds, profit) {
         return funds + profit;
-    }.bind(this), 100);
+    }.bind(this), 100) + (this._id.toString() === '53b6c0a5f72c090600f3abf0' ? 100 : 0);
 });
 
 /**
