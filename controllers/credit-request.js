@@ -84,7 +84,11 @@ router.get('/users/:userId/credit-requests', function (request, response) {
     pageSize = nconf.get('PAGE_SIZE');
     page     = request.param('page', 0) * pageSize;
 
-    query.where('debtor').equals(request.params.userId);
+    query.or([{
+        'debtor' : request.params.userId
+    }, {
+        'creditor' : request.params.userId
+    }]);
     query.populate('creditor');
     query.populate('debtor');
     query.skip(page);
@@ -96,82 +100,6 @@ router.get('/users/:userId/credit-requests', function (request, response) {
     });
 });
 
-/**
- * @method
- * @summary List all credit requests in database
- *
- * @param request.page
- * @param response
- *
- * @returns 200 [creditRequest]
- * @throws 500 error
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.get('/users/:userId/credit-requested', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var query, page, pageSize;
-    query    = CreditRequest.find();
-    pageSize = nconf.get('PAGE_SIZE');
-    page     = request.param('page', 0) * pageSize;
-
-    query.where('creditor').equals(request.params.userId);
-    query.populate('creditor');
-    query.populate('debtor');
-    query.skip(page);
-    query.limit(pageSize);
-
-    return query.exec(function (error, creditRequests) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, creditRequests);
-    });
-});
-
-/**
- * @method
- * @summary Get credit request info in database
- *
- * @param request.userId
- * @param request.creditRequestId
- * @param response
- *
- * @returns 200 creditRequest
- * @throws 404 creditRequest not found
- * @throws 401 invalid token
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.get('/users/:userId/credit-requested/:creditRequestId', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (!request.session) { return response.send(401, 'invalid token'); }
-
-    var creditRequest;
-    creditRequest = request.creditRequest;
-
-    response.header('Last-Modified', creditRequest.updatedAt);
-    return response.send(200, creditRequest);
-});
 
 /**
  * @method
@@ -189,7 +117,7 @@ router.get('/users/:userId/credit-requested/:creditRequestId', function (request
  * @since 2014-05
  * @author Rafael Almeida Erthal Hermano
  */
-router.put('/users/:userId/credit-requested/:creditRequestId', function (request, response) {
+router.put('/users/:userId/credit-requested/:creditRequestId/pay', function (request, response) {
     'use strict';
 
     response.header('Content-Type', 'application/json');
@@ -203,49 +131,18 @@ router.put('/users/:userId/credit-requested/:creditRequestId', function (request
     creditRequest = request.creditRequest;
 
     if (!request.session || request.session._id.toString() !== creditRequest.creditor._id.toString()) { return response.send(401, 'invalid token'); }
+    if (creditRequest.payed) { return response.send(500); }
 
-    creditRequest.payed = request.param('payed');
+    creditRequest.payed = true;
 
     return creditRequest.save(function (error) {
         if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, creditRequest);
-    });
-});
 
-/**
- * @method
- * @summary Removes credit request from database
- *
- * @param request.userId
- * @param request.creditRequestId
- * @param response
- *
- * @returns 200 creditRequest
- * @throws 500 error
- * @throws 401 invalid token
- * @throws 404 creditRequest not found
- *
- * @since 2014-05
- * @author Rafael Almeida Erthal Hermano
- */
-router.delete('/users/:userId/credit-requested/:creditRequestId', function (request, response) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-
-    var creditRequest;
-    creditRequest = request.creditRequest;
-
-    if (!request.session || request.session._id.toString() !== creditRequest.debtor._id.toString()) { return response.send(401, 'invalid token'); }
-
-    return creditRequest.remove(function (error) {
-        if (error) { return response.send(500, errorParser(error)); }
-        return response.send(200, creditRequest);
+        creditRequest.debtor.lastRecharge = new Date();
+        return creditRequest.debtor.save(function () {
+            if (error) { return response.send(500, errorParser(error)); }
+            return response.send(200, creditRequest);
+        });
     });
 });
 
