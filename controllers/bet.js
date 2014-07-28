@@ -43,32 +43,29 @@ router.post('/championships/:championshipId/matches/:matchId/bets', function (re
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var wallet;
+    var wallet, query;
     wallet = request.wallet;
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
 
-    wallet.bets.push({
-        'match'        : request.params.matchId,
-        'date'         : request.param('date'),
-        'result'       : request.param('result'),
-        'bid'          : request.param('bid')
-    });
-
-    return wallet.save(function (error) {
+    query = Match.findOne();
+    query.where('_id').equals(request.params.matchId);
+    query.populate('guest');
+    query.populate('host');
+    return query.exec(function (error, match) {
         if (error) { return response.send(500, errorParser(error)); }
-
-        var query;
-        query = Match.findOne();
-        query.where('_id').equals(request.params.matchId);
-        query.populate('guest');
-        query.populate('host');
-        return query.exec(function (error, match) {
+        if (match.elapsed || match.finished) { return response.send(500); }
+        wallet.bets.push({
+            'match'        : request.params.matchId,
+            'date'         : request.param('date'),
+            'result'       : request.param('result'),
+            'bid'          : request.param('bid')
+        });
+        return wallet.save(function (error) {
             if (error) { return response.send(500, errorParser(error)); }
-            match.pot[request.param('result')] += request.param('bid') * 1;
+            match.pot[request.param('result')] += request.param('bid', 0) * 1;
             return match.save(function (error) {
                 if (error) { return response.send(500, errorParser(error)); }
-
                 var bet;
                 bet = wallet.bets.pop();
                 bet.match = match;
@@ -213,28 +210,27 @@ router.put('/championships/:championshipId/matches/:matchId/bets/:betId', functi
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var wallet, bet, oldBid, oldResult;
+    var wallet, bet, oldBid, oldResult, query;
     wallet    = request.wallet;
     bet       = wallet.bets.id(request.params.betId);
-    oldBid    = bet.bid;
-    oldResult = bet.result;
 
     if (!request.session || request.session._id.toString() !== wallet.user._id.toString()) { return response.send(401, 'invalid token'); }
     if (!bet) { return response.send(404, 'bet not found'); }
 
-    bet.date   = request.param('date');
-    bet.result = request.param('result');
-    bet.bid    = request.param('bid');
-
-    return wallet.save(function (error) {
+    oldBid    = bet.bid;
+    oldResult = bet.result;
+    query = Match.findOne();
+    query.where('_id').equals(request.params.matchId);
+    query.populate('guest');
+    query.populate('host');
+    return query.exec(function (error, match) {
         if (error) { return response.send(500, errorParser(error)); }
+        if (match.elapsed || match.finished) { return response.send(500); }
 
-        var query;
-        query = Match.findOne();
-        query.where('_id').equals(request.params.matchId);
-        query.populate('guest');
-        query.populate('host');
-        return query.exec(function (error, match) {
+        bet.date   = request.param('date');
+        bet.result = request.param('result');
+        bet.bid    = request.param('bid');
+        return wallet.save(function (error) {
             if (error) { return response.send(500, errorParser(error)); }
 
             match.pot[oldResult]               -= oldBid * 1;
@@ -276,7 +272,7 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
     response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     response.header('Access-Control-Allow-Headers', 'Content-Type');
 
-    var wallet, bet, oldBid, oldResult;
+    var wallet, bet, oldBid, oldResult, query;
     wallet = request.wallet;
     bet    = wallet.bets.id(request.params.betId);
 
@@ -285,19 +281,18 @@ router.delete('/championships/:championshipId/matches/:matchId/bets/:betId', fun
 
     oldBid    = bet.bid;
     oldResult = bet.result;
-
-    return bet.remove(function (error) {
+    query = Match.findOne();
+    query.where('_id').equals(request.params.matchId);
+    query.populate('guest');
+    query.populate('host');
+    return query.exec(function (error, match) {
         if (error) { return response.send(500, errorParser(error)); }
+        if (match.elapsed || match.finished) { return response.send(500); }
 
-        return wallet.save(function (error) {
+        return bet.remove(function (error) {
             if (error) { return response.send(500, errorParser(error)); }
 
-            var query;
-            query = Match.findOne();
-            query.where('_id').equals(request.params.matchId);
-            query.populate('guest');
-            query.populate('host');
-            return query.exec(function (error, match) {
+            wallet.save(function (error) {
                 if (error) { return response.send(500, errorParser(error)); }
 
                 match.pot[oldResult] -= oldBid * 1;
