@@ -1,10 +1,10 @@
 /*globals describe, before, it, after*/
 require('should');
-var request, app, auth,
+var supertest, app, auth,
 User, Championship, Match, Team, Bet,
 user, otherUser, guestBetter, hostBetter, drawBetter;
 
-request = require('supertest');
+supertest = require('supertest');
 app = require('../index.js');
 auth = require('../lib/auth');
 User = require('../models/user');
@@ -54,47 +54,47 @@ describe('bet controller', function () {
     });
 
     before(function (done) {
-        var req, credentials;
+        var request, credentials;
         credentials = auth.credentials();
-        req = request(app);
-        req = req.post('/championships');
-        req = req.set('auth-signature', credentials.signature);
-        req = req.set('auth-timestamp', credentials.timestamp);
-        req = req.set('auth-transactionId', credentials.transactionId);
-        req = req.set('auth-token', auth.token(user));
-        req = req.send({'name' : 'brasileirão'});
-        req = req.send({'type' : 'national league'});
-        req = req.send({'country' : 'brasil'});
-        req = req.send({'edition' : 2014});
-        req.end(done);
+        request = supertest(app);
+        request = request.post('/championships');
+        request.set('auth-signature', credentials.signature);
+        request.set('auth-timestamp', credentials.timestamp);
+        request.set('auth-transactionId', credentials.transactionId);
+        request.set('auth-token', auth.token(user));
+        request.send({'name' : 'brasileirão'});
+        request.send({'type' : 'national league'});
+        request.send({'country' : 'brasil'});
+        request.send({'edition' : 2014});
+        request.end(done);
     });
 
     before(function (done) {
-        var req, credentials;
+        var request, credentials;
         credentials = auth.credentials();
-        req = request(app);
-        req = req.post('/teams');
-        req = req.set('auth-signature', credentials.signature);
-        req = req.set('auth-timestamp', credentials.timestamp);
-        req = req.set('auth-transactionId', credentials.transactionId);
-        req = req.set('auth-token', auth.token(user));
-        req = req.send({'name' : 'fluminense'});
-        req = req.send({'picture' : 'http://pictures.com/fluminense.png'});
-        req.end(done);
+        request = supertest(app);
+        request = request.post('/teams');
+        request.set('auth-signature', credentials.signature);
+        request.set('auth-timestamp', credentials.timestamp);
+        request.set('auth-transactionId', credentials.transactionId);
+        request.set('auth-token', auth.token(user));
+        request.send({'name' : 'fluminense'});
+        request.send({'picture' : 'http://pictures.com/fluminense.png'});
+        request.end(done);
     });
 
     before(function (done) {
-        var req, credentials;
+        var request, credentials;
         credentials = auth.credentials();
-        req = request(app);
-        req = req.post('/teams');
-        req = req.set('auth-signature', credentials.signature);
-        req = req.set('auth-timestamp', credentials.timestamp);
-        req = req.set('auth-transactionId', credentials.transactionId);
-        req = req.set('auth-token', auth.token(user));
-        req = req.send({'name' : 'botafogo'});
-        req = req.send({'picture' : 'http://pictures.com/botafogo.png'});
-        req.end(done);
+        request = supertest(app);
+        request = request.post('/teams');
+        request.set('auth-signature', credentials.signature);
+        request.set('auth-timestamp', credentials.timestamp);
+        request.set('auth-transactionId', credentials.transactionId);
+        request.set('auth-token', auth.token(user));
+        request.send({'name' : 'botafogo'});
+        request.send({'picture' : 'http://pictures.com/botafogo.png'});
+        request.end(done);
     });
 
     describe('create', function () {
@@ -107,148 +107,148 @@ describe('bet controller', function () {
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '1'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '1'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '2'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req = req.send({'finished' : true});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '2'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.send({'finished' : true});
+            request.end(done);
         });
 
         it('should raise error without token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.expect(401);
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.expect(401);
+            request.end(done);
         });
 
         it('should raise error with invalid championship', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid match', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/invalid/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/invalid/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error without bid', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'result' : 'draw'});
-            req.expect(400);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'result' : 'draw'});
+            request.expect(400);
+            request.expect(function (response) {
                 response.body.should.have.property('bid').be.equal('required');
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should raise error with invalid result', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'invalid'});
-            req.expect(400);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'invalid'});
+            request.expect(400);
+            request.expect(function (response) {
                 response.body.should.have.property('result').be.equal('enum');
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should raise error without bid and invalid result', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'result' : 'invalid'});
-            req.expect(400);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'result' : 'invalid'});
+            request.expect(400);
+            request.expect(function (response) {
                 response.body.should.have.property('bid').be.equal('required');
                 response.body.should.have.property('result').be.equal('enum');
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should raise error with finished match', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-2-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.expect(400);
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-2-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.expect(400);
+            request.end(done);
         });
 
         describe('with valid result and bid', function () {
@@ -257,51 +257,51 @@ describe('bet controller', function () {
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.end(done);
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '2'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '2'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             it('should create', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 50});
-                req = req.send({'result' : 'draw'});
-                req.expect(201);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 50});
+                request.send({'result' : 'draw'});
+                request.expect(201);
+                request.expect(function (response) {
                     response.body.should.have.property('bid').be.equal(50);
                     response.body.should.have.property('result').be.equal('draw');
                     response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -318,40 +318,40 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('pot').with.property('draw').be.equal(50);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(50);
                     response.body.should.have.property('funds').be.equal(50);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
 
@@ -365,65 +365,65 @@ describe('bet controller', function () {
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.end(done);
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '2'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '2'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 50});
-                req = req.send({'result' : 'draw'});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 50});
+                request.send({'result' : 'draw'});
+                request.end(done);
             });
 
             it('should raise error with repeated bet', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 50});
-                req = req.send({'result' : 'draw'});
-                req.expect(409);
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 50});
+                request.send({'result' : 'draw'});
+                request.expect(409);
+                request.end(done);
             });
         });
 
@@ -437,64 +437,64 @@ describe('bet controller', function () {
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.end(done);
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '2'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '2'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.end(done);
             });
 
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 70});
-                req = req.send({'result' : 'draw'});
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 70});
+                request.send({'result' : 'draw'});
+                request.end(done);
             });
 
             it('should raise error', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.post('/championships/brasileirao-brasil-2014/matches/round-2-fluminense-vs-botafogo/bets');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 50});
-                req = req.send({'result' : 'draw'});
-                req.expect(400);
-                req.end(done);
+                request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches/round-2-fluminense-vs-botafogo/bets');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 50});
+                request.send({'result' : 'draw'});
+                request.expect(400);
+                request.end(done);
             });
         });
     });
@@ -509,84 +509,84 @@ describe('bet controller', function () {
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '1'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '1'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.end(done);
         });
 
         it('should raise error without token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req.expect(401);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.expect(401);
+            request.end(done);
         });
 
         it('should raise error with invalid championship', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid match', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/invalid/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/invalid/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should list', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(200);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(200);
+            request.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
                 response.body.should.have.lengthOf(1);
                 response.body.every(function (bet) {
@@ -607,25 +607,25 @@ describe('bet controller', function () {
                     bet.should.have.property('user').with.property('slug');
                 });
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should return empty in second page', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'page' : 1});
-            req.expect(200);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'page' : 1});
+            request.expect(200);
+            request.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
                 response.body.should.have.lengthOf(0);
             });
-            req.end(done);
+            request.end(done);
         });
     });
 
@@ -639,97 +639,97 @@ describe('bet controller', function () {
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '1'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '1'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.end(done);
         });
 
         it('should raise error without token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req.expect(401);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.expect(401);
+            request.end(done);
         });
 
         it('should raise error with invalid championship', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid match', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/invalid');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/invalid');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should return', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(200);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(200);
+            request.expect(function (response) {
                 response.body.should.have.property('bid').be.equal(50);
                 response.body.should.have.property('result').be.equal('draw');
                 response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -746,20 +746,20 @@ describe('bet controller', function () {
                 response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                 response.body.should.have.property('user').with.property('slug').be.equal('user');
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should return mine', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(200);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(200);
+            request.expect(function (response) {
                 response.body.should.have.property('bid').be.equal(50);
                 response.body.should.have.property('result').be.equal('draw');
                 response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -776,7 +776,7 @@ describe('bet controller', function () {
                 response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                 response.body.should.have.property('user').with.property('slug').be.equal('user');
             });
-            req.end(done);
+            request.end(done);
         });
     });
 
@@ -790,226 +790,226 @@ describe('bet controller', function () {
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '1'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '1'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.end(done);
         });
 
         it('should raise error without token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.expect(401);
-            req.end(done);
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.expect(401);
+            request.end(done);
         });
 
         it('should raise error with other user token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(otherUser));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.expect(405);
-            req.end(done);
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(otherUser));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.expect(405);
+            request.end(done);
         });
 
         it('should raise error with invalid championship', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 40});
-            req = req.send({'result' : 'host'});
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.put('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 40});
+            request.send({'result' : 'host'});
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid match', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 40});
-            req = req.send({'result' : 'host'});
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 40});
+            request.send({'result' : 'host'});
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/invalid');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 40});
-            req = req.send({'result' : 'host'});
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/invalid');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 40});
+            request.send({'result' : 'host'});
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error without bid', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'result' : 'host'});
-            req.expect(400);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'result' : 'host'});
+            request.expect(400);
+            request.expect(function (response) {
                 response.body.should.have.property('bid').be.equal('required');
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should raise error with invalid result', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 40});
-            req = req.send({'result' : 'invalid'});
-            req.expect(400);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 40});
+            request.send({'result' : 'invalid'});
+            request.expect(400);
+            request.expect(function (response) {
                 response.body.should.have.property('result').be.equal('enum');
             });
-            req.end(done);
+            request.end(done);
         });
 
         it('should raise error without bid and invalid result', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'result' : 'invalid'});
-            req.expect(400);
-            req.expect(function (response) {
+            request = supertest(app);
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'result' : 'invalid'});
+            request.expect(400);
+            request.expect(function (response) {
                 response.body.should.have.property('bid').be.equal('required');
                 response.body.should.have.property('result').be.equal('enum');
             });
-            req.end(done);
+            request.end(done);
         });
 
         describe('with finished match', function () {
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             it('should raise error', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 40});
-                req = req.send({'result' : 'host'});
-                req.expect(400);
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 40});
+                request.send({'result' : 'host'});
+                request.expect(400);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.end(done);
             });
         });
 
         describe('updating by slug', function () {
             it('should update', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 40});
-                req = req.send({'result' : 'host'});
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 40});
+                request.send({'result' : 'host'});
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('bid').be.equal(40);
                     response.body.should.have.property('result').be.equal('host');
                     response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -1026,20 +1026,20 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('bid').be.equal(40);
                     response.body.should.have.property('result').be.equal('host');
                     response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -1056,59 +1056,59 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('pot').with.property('draw').be.equal(0);
                     response.body.should.have.property('pot').with.property('guest').be.equal(0);
                     response.body.should.have.property('pot').with.property('host').be.equal(40);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(40);
                     response.body.should.have.property('funds').be.equal(60);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
 
         describe('updating by mine', function () {
             it('should update', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'bid' : 30});
-                req = req.send({'result' : 'guest'});
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 30});
+                request.send({'result' : 'guest'});
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('bid').be.equal(30);
                     response.body.should.have.property('result').be.equal('guest');
                     response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -1125,20 +1125,20 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/mine');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('bid').be.equal(30);
                     response.body.should.have.property('result').be.equal('guest');
                     response.body.should.have.property('match').with.property('slug').be.equal('round-1-fluminense-vs-botafogo');
@@ -1155,42 +1155,42 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('pot').with.property('draw').be.equal(0);
                     response.body.should.have.property('pot').with.property('guest').be.equal(30);
                     response.body.should.have.property('pot').with.property('host').be.equal(0);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(30);
                     response.body.should.have.property('funds').be.equal(70);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
     });
@@ -1205,207 +1205,207 @@ describe('bet controller', function () {
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '1'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '1'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'bid' : 50});
-            req = req.send({'result' : 'draw'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'bid' : 50});
+            request.send({'result' : 'draw'});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '2'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req = req.send({'finished' : true});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '2'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.send({'finished' : true});
+            request.end(done);
         });
 
         it('should raise error without token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req.expect(401);
-            req.end(done);
+            request = supertest(app);
+            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.expect(401);
+            request.end(done);
         });
 
         it('should raise error with other user token', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(otherUser));
-            req.expect(405);
-            req.end(done);
+            request = supertest(app);
+            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(otherUser));
+            request.expect(405);
+            request.end(done);
         });
 
         it('should raise error with invalid championship', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.del('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.del('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid match', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.del('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.del('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         it('should raise error with invalid id', function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/invalid');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req.expect(404);
-            req.end(done);
+            request = supertest(app);
+            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/invalid');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
         });
 
         describe('with finished match', function () {
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             it('should raise error', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(400);
-                req.end(done);
+                request = supertest(app);
+                request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(400);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.end(done);
             });
         });
 
         describe('with valid token', function () {
             it('should delete', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(204);
-                req.end(done);
+                request = supertest(app);
+                request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(204);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(404);
-                req.end(done);
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(404);
+                request.end(done);
             });
 
             after(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('pot').with.property('draw').be.equal(0);
                     response.body.should.have.property('pot').with.property('guest').be.equal(0);
                     response.body.should.have.property('pot').with.property('host').be.equal(0);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
     });
@@ -1420,273 +1420,273 @@ describe('bet controller', function () {
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(user));
-            req = req.send({'guest' : 'botafogo'});
-            req = req.send({'host' : 'fluminense'});
-            req = req.send({'round' : '1'});
-            req = req.send({'date' : new Date(2014, 10, 10)});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'guest' : 'botafogo'});
+            request.send({'host' : 'fluminense'});
+            request.send({'round' : '1'});
+            request.send({'date' : new Date(2014, 10, 10)});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(drawBetter));
-            req = req.send({'bid' : 20});
-            req = req.send({'result' : 'draw'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(drawBetter));
+            request.send({'bid' : 20});
+            request.send({'result' : 'draw'});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(guestBetter));
-            req = req.send({'bid' : 30});
-            req = req.send({'result' : 'guest'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(guestBetter));
+            request.send({'bid' : 30});
+            request.send({'result' : 'guest'});
+            request.end(done);
         });
 
         before(function (done) {
-            var req, credentials;
+            var request, credentials;
             credentials = auth.credentials();
-            req = request(app);
-            req = req.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
-            req = req.set('auth-signature', credentials.signature);
-            req = req.set('auth-timestamp', credentials.timestamp);
-            req = req.set('auth-transactionId', credentials.transactionId);
-            req = req.set('auth-token', auth.token(hostBetter));
-            req = req.send({'bid' : 40});
-            req = req.send({'result' : 'host'});
-            req.end(done);
+            request = supertest(app);
+            request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(hostBetter));
+            request.send({'bid' : 40});
+            request.send({'result' : 'host'});
+            request.end(done);
         });
 
         describe('draw result', function () {
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'score' : {'guest' : 1, 'host' : 1}});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'score' : {'guest' : 1, 'host' : 1}});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             it('should reward draw better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(drawBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(drawBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(170);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             it('should not reward guest better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(guestBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(guestBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(70);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             it('should not reward host better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(hostBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(hostBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(60);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
 
         describe('guest result', function () {
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'score' : {'guest' : 2, 'host' : 1}});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'score' : {'guest' : 2, 'host' : 1}});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             it('should not reward draw better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(drawBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(drawBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(80);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             it('should reward guest better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(guestBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(guestBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(160);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             it('should not reward host better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(hostBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(hostBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(60);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
 
         describe('host result', function () {
             before(function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(user));
-                req = req.send({'guest' : 'botafogo'});
-                req = req.send({'host' : 'fluminense'});
-                req = req.send({'round' : '1'});
-                req = req.send({'date' : new Date(2014, 10, 10)});
-                req = req.send({'score' : {'guest' : 1, 'host' : 2}});
-                req = req.send({'finished' : true});
-                req.end(done);
+                request = supertest(app);
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'guest' : 'botafogo'});
+                request.send({'host' : 'fluminense'});
+                request.send({'round' : '1'});
+                request.send({'date' : new Date(2014, 10, 10)});
+                request.send({'score' : {'guest' : 1, 'host' : 2}});
+                request.send({'finished' : true});
+                request.end(done);
             });
 
             it('should not reward draw better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(drawBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(drawBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(80);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             it('should not reward guest better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(guestBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(guestBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(70);
                 });
-                req.end(done);
+                request.end(done);
             });
 
             it('should reward host better', function (done) {
-                var req, credentials;
+                var request, credentials;
                 credentials = auth.credentials();
-                req = request(app);
-                req = req.get('/users/me');
-                req = req.set('auth-signature', credentials.signature);
-                req = req.set('auth-timestamp', credentials.timestamp);
-                req = req.set('auth-transactionId', credentials.transactionId);
-                req = req.set('auth-token', auth.token(hostBetter));
-                req.expect(200);
-                req.expect(function (response) {
+                request = supertest(app);
+                request = request.get('/users/me');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(hostBetter));
+                request.expect(200);
+                request.expect(function (response) {
                     response.body.should.have.property('stake').be.equal(0);
                     response.body.should.have.property('funds').be.equal(150);
                 });
-                req.end(done);
+                request.end(done);
             });
         });
     });
