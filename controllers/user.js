@@ -29,7 +29,7 @@
  * @apiSuccess (history) {Date} date Date of history creation
  * @apiSuccess (history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, crypto, auth, errorParser, User;
+var VError, router, nconf, slug, crypto, auth, User;
 
 VError = require('verror');
 router = require('express').Router();
@@ -37,7 +37,6 @@ nconf = require('nconf');
 slug = require('slug');
 crypto = require('crypto');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 User = require('../models/user');
 
 /**
@@ -242,7 +241,6 @@ router
 .route('/users/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('user'))
 .get(function getUser(request, response) {
     'use strict';
 
@@ -301,7 +299,6 @@ router
 .put(auth.signature())
 .put(auth.session())
 .put(auth.facebook())
-.put(errorParser.notFound('user'))
 .put(function validateUpdateUser(request, response, next) {
     'use strict';
 
@@ -358,7 +355,6 @@ router
 .route('/users/:id')
 .delete(auth.signature())
 .delete(auth.session())
-.delete(errorParser.notFound('user'))
 .delete(function validateRemoveUser(request, response, next) {
     'use strict';
 
@@ -478,7 +474,6 @@ router
 .route('/users/:id/recharge')
 .post(auth.signature())
 .post(auth.session())
-.post(errorParser.notFound('user'))
 .post(function validateRechargeUser(request, response, next) {
     'use strict';
 
@@ -530,11 +525,12 @@ router.param('id', function findUser(request, response, next, id) {
             error = new VError(error, 'error finding user: "$s"', id);
             return next(error);
         }
+        if (!user) {
+            return response.send(404);
+        }
         request.user = user;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

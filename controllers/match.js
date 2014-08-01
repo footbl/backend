@@ -41,7 +41,7 @@
  * @apiSuccess (host) {Date} createdAt Date of document creation.
  * @apiSuccess (host) {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, async, auth, errorParser, Match, Championship, Team;
+var VError, router, nconf, slug, async, auth, Match, Championship, Team;
 
 VError = require('verror');
 router = require('express').Router();
@@ -49,7 +49,6 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 Match = require('../models/match');
 Championship = require('../models/championship');
 Team = require('../models/team');
@@ -175,7 +174,6 @@ router
 .route('/championships/:championship/matches')
 .post(auth.signature())
 .post(auth.session('admin'))
-.post(errorParser.notFound('championship'))
 .post(function createMatch(request, response, next) {
     'use strict';
 
@@ -192,7 +190,7 @@ router
         'score'        : request.param('score')
     });
 
-    return async.series([match.save.bind(match), function populateMatchAfterSave(next) {
+    return async.series([match.save.bind(match), function (next) {
         match.populate('guest');
         match.populate('host');
         match.populate(next);
@@ -261,7 +259,6 @@ router
 .route('/championships/:championship/matches')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('championship'))
 .get(function listMatch(request, response, next) {
     'use strict';
 
@@ -337,8 +334,6 @@ router
 .route('/championships/:championship/matches/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('championship'))
-.get(errorParser.notFound('match'))
 .get(function getMatch(request, response) {
     'use strict';
 
@@ -411,8 +406,6 @@ router
 .route('/championships/:championship/matches/:id')
 .put(auth.signature())
 .put(auth.session('admin'))
-.put(errorParser.notFound('championship'))
-.put(errorParser.notFound('match'))
 .put(function updateMatch(request, response, next) {
     'use strict';
 
@@ -427,7 +420,7 @@ router
     match.elapsed = request.param('elapsed');
     match.score = request.param('score', {'guest' : 0, 'host' : 0});
 
-    return async.series([match.save.bind(match), function populateMatchAfterUpdate(next) {
+    return async.series([match.save.bind(match), function (next) {
         match.populate('guest');
         match.populate('host');
         match.populate(next);
@@ -454,8 +447,6 @@ router
 .route('/championships/:championship/matches/:id')
 .delete(auth.signature())
 .delete(auth.session('admin'))
-.delete(errorParser.notFound('championship'))
-.delete(errorParser.notFound('match'))
 .delete(function removeMatch(request, response, next) {
     'use strict';
 
@@ -480,7 +471,6 @@ router
  * @param next
  * @param id
  */
-router.param('id', errorParser.notFound('championship'));
 router.param('id', function findMatch(request, response, next, id) {
     'use strict';
 
@@ -495,6 +485,9 @@ router.param('id', function findMatch(request, response, next, id) {
         if (error) {
             error = new VError(error, 'error finding match: "$s"', id);
             return next(error);
+        }
+        if (!match) {
+            return response.send(404);
         }
         request.match = match;
         return next();
@@ -521,11 +514,12 @@ router.param('championship', function findChampionship(request, response, next, 
             error = new VError(error, 'error finding championship: "$s"', id);
             return next(error);
         }
+        if (!championship) {
+            return response.send(404);
+        }
         request.championship = championship;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

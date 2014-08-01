@@ -11,14 +11,13 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, auth, errorParser, Team;
+var VError, router, nconf, slug, auth, Team;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 Team = require('../models/team');
 
 /**
@@ -144,7 +143,6 @@ router
 .route('/teams/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('team'))
 .get(function getTeam(request, response) {
     'use strict';
 
@@ -187,7 +185,6 @@ router
 .route('/teams/:id')
 .put(auth.signature())
 .put(auth.session('admin'))
-.put(errorParser.notFound('team'))
 .put(function updateTeam(request, response, next) {
     'use strict';
 
@@ -207,19 +204,18 @@ router
 });
 
 /**
- * @api {delete} /teams/:id Removes team 
+ * @api {delete} /teams/:id Removes team
  * @apiName removeTeam
  * @apiVersion 2.0.1
  * @apiGroup team
  * @apiPermission admin
  * @apiDescription
- * Removes team 
+ * Removes team
  */
 router
 .route('/teams/:id')
 .delete(auth.signature())
 .delete(auth.session('admin'))
-.delete(errorParser.notFound('team'))
 .delete(function removeTeam(request, response, next) {
     'use strict';
 
@@ -255,11 +251,12 @@ router.param('id', function findTeam(request, response, next, id) {
             error = new VError(error, 'error finding team: "$s"', id);
             return next(error);
         }
+        if (!team) {
+            return response.send(404);
+        }
         request.team = team;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

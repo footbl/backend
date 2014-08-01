@@ -19,14 +19,13 @@
  * @apiSuccess {Number} rounds Championship number of rounds.
  * @apiSuccess {Number} currentRound Championship current round.
  */
-var VError, router, nconf, slug, auth, errorParser, Championship;
+var VError, router, nconf, slug, auth, Championship;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 Championship = require('../models/championship');
 
 /**
@@ -171,7 +170,6 @@ router
 .route('/championships/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('championship'))
 .get(function getChampionship(request, response) {
     'use strict';
 
@@ -221,7 +219,6 @@ router
 .route('/championships/:id')
 .put(auth.signature())
 .put(auth.session('admin'))
-.put(errorParser.notFound('championship'))
 .put(function updateChampionship(request, response, next) {
     'use strict';
 
@@ -256,7 +253,6 @@ router
 .route('/championships/:id')
 .delete(auth.signature())
 .delete(auth.session('admin'))
-.delete(errorParser.notFound('championship'))
 .delete(function removeChampionship(request, response, next) {
     'use strict';
 
@@ -292,11 +288,12 @@ router.param('id', function findChampionship(request, response, next, id) {
             error = new VError(error, 'error finding championship: "$s"', id);
             return next(error);
         }
+        if (!championship) {
+            return response.send(404);
+        }
         request.championship = championship;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

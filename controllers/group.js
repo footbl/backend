@@ -13,7 +13,7 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, async, mandrill, auth, errorParser, Group, GroupMember;
+var VError, router, nconf, slug, async, mandrill, auth, Group, GroupMember;
 
 VError = require('verror');
 router = require('express').Router();
@@ -22,7 +22,6 @@ slug = require('slug');
 async = require('async');
 mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 Group = require('../models/group');
 GroupMember = require('../models/group-member');
 
@@ -165,7 +164,6 @@ router
 .route('/groups/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('group'))
 .get(function getGroup(request, response) {
     'use strict';
 
@@ -208,7 +206,6 @@ router
 .route('/groups/:id')
 .put(auth.signature())
 .put(auth.session())
-.put(errorParser.notFound('group'))
 .put(function (request, response, next) {
     'use strict';
 
@@ -251,7 +248,6 @@ router
 .route('/groups/:id')
 .delete(auth.signature())
 .delete(auth.session())
-.delete(errorParser.notFound('group'))
 .delete(function (request, response, next) {
     'use strict';
 
@@ -293,7 +289,6 @@ router
 .route('/groups/:id/invite')
 .post(auth.signature())
 .post(auth.session())
-.post(errorParser.notFound('group'))
 .post(function (request, response, next) {
     'use strict';
 
@@ -354,7 +349,6 @@ router
 .route('/groups/:id/restart')
 .post(auth.signature())
 .post(auth.session())
-.post(errorParser.notFound('group'))
 .post(function (request, response, next) {
     'use strict';
 
@@ -413,11 +407,12 @@ router.param('id', function findGroup(request, response, next, id) {
             error = new VError(error, 'error finding group: "$s"', id);
             return next(error);
         }
+        if (!group) {
+            return response.send(404);
+        }
         request.group = group;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

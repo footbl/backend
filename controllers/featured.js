@@ -27,7 +27,7 @@
  * @apiSuccess (featured history) {Date} date Date of history creation
  * @apiSuccess (featured history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, async, async, auth, errorParser, User, Featured;
+var VError, router, nconf, slug, async, auth, User, Featured;
 
 VError = require('verror');
 router = require('express').Router();
@@ -35,7 +35,6 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 User = require('../models/user');
 Featured = require('../models/featured');
 
@@ -144,7 +143,6 @@ router
 .route('/users/:user/featured')
 .post(auth.signature())
 .post(auth.session())
-.post(errorParser.notFound('user'))
 .post(function (request, response, next) {
     'use strict';
 
@@ -166,7 +164,7 @@ router
         'user'     : request.session._id
     });
 
-    return async.series([featured.save.bind(featured), function populateFeaturedAfterSave(next) {
+    return async.series([featured.save.bind(featured), function (next) {
         featured.populate('featured');
         featured.populate('user');
         featured.populate(next);
@@ -251,7 +249,6 @@ router
 .route('/users/:user/featured')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('user'))
 .get(function listFeatured(request, response, next) {
     'use strict';
 
@@ -343,7 +340,6 @@ router
 .route('/users/:user/fans')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('user'))
 .get(function listFans(request, response, next) {
     'use strict';
 
@@ -434,8 +430,6 @@ router
 .route('/users/:user/featured/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('user'))
-.get(errorParser.notFound('featured'))
 .get(function getFeatured(request, response) {
     'use strict';
 
@@ -521,8 +515,6 @@ router
 .route('/users/:user/featured/:id')
 .put(auth.signature())
 .put(auth.session())
-.put(errorParser.notFound('user'))
-.put(errorParser.notFound('featured'))
 .put(function (request, response, next) {
     'use strict';
 
@@ -542,7 +534,7 @@ router
     featured.slug = request.featuredUser ? request.featuredUser.slug : null;
     featured.featured = request.featuredUser;
 
-    return async.series([featured.save.bind(featured), function populateFeaturedAfterUpdate(next) {
+    return async.series([featured.save.bind(featured), function (next) {
         featured.populate('featured');
         featured.populate('user');
         featured.populate(next);
@@ -569,8 +561,6 @@ router
 .route('/users/:user/featured/:id')
 .delete(auth.signature())
 .delete(auth.session())
-.delete(errorParser.notFound('user'))
-.delete(errorParser.notFound('featured'))
 .delete(function (request, response, next) {
     'use strict';
 
@@ -606,7 +596,6 @@ router
  * @param next
  * @param id
  */
-router.param('id', errorParser.notFound('user'));
 router.param('id', function findFeatured(request, response, next, id) {
     'use strict';
 
@@ -620,6 +609,9 @@ router.param('id', function findFeatured(request, response, next, id) {
         if (error) {
             error = new VError(error, 'error finding featured: "$s"', id);
             return next(error);
+        }
+        if (!featured) {
+            return response.send(404);
         }
         request.featured = featured;
         return next();
@@ -651,11 +643,12 @@ router.param('user', function findUser(request, response, next, id) {
             error = new VError(error, 'error finding user: "$s"', id);
             return next(error);
         }
+        if (!user) {
+            return response.send(404);
+        }
         request.user = user;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

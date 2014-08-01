@@ -60,7 +60,7 @@
  * @apiSuccess (match host) {Date} createdAt Date of document creation.
  * @apiSuccess (match host) {Date} updatedAt Date of document last change.
  */
-var VError, router, nconf, slug, async, auth, errorParser, Championship, Match, Team, Bet;
+var VError, router, nconf, slug, async, auth, Championship, Match, Team, Bet;
 
 VError = require('verror');
 router = require('express').Router();
@@ -68,7 +68,6 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 Championship = require('../models/championship');
 Match = require('../models/match');
 Team = require('../models/team');
@@ -163,8 +162,6 @@ router
 .route('/championships/:championship/matches/:match/bets')
 .post(auth.signature())
 .post(auth.session())
-.post(errorParser.notFound('championship'))
-.post(errorParser.notFound('match'))
 .post(function createBet(request, response, next) {
     'use strict';
 
@@ -177,15 +174,15 @@ router
         'result' : request.param('result')
     });
 
-    return async.series([bet.save.bind(bet), function populateBetAfterSave(next) {
+    return async.series([bet.save.bind(bet), function (next) {
         bet.populate('user');
         bet.populate('match');
         bet.populate(next);
-    }, function populateMatchAfterSave(next) {
+    }, function (next) {
         bet.match.populate('guest');
         bet.match.populate('host');
         bet.match.populate(next);
-    }, function updateMatchAfterSave(next) {
+    }, function (next) {
         Match.update({'_id' : request.match._id}, {'$inc' : {
             'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
             'pot.host'  : bet.result === 'host' ? bet.bid : 0,
@@ -286,8 +283,6 @@ router
 .route('/championships/:championship/matches/:match/bets')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('championship'))
-.get(errorParser.notFound('match'))
 .get(function listBet(request, response, next) {
     'use strict';
 
@@ -398,9 +393,6 @@ router
 .route('/championships/:championship/matches/:match/bets/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('championship'))
-.get(errorParser.notFound('match'))
-.get(errorParser.notFound('bet'))
 .get(function getBet(request, response) {
     'use strict';
 
@@ -501,9 +493,6 @@ router
 .route('/championships/:championship/matches/:match/bets/:id')
 .put(auth.signature())
 .put(auth.session())
-.put(errorParser.notFound('championship'))
-.put(errorParser.notFound('match'))
-.put(errorParser.notFound('bet'))
 .put(function (request, response, next) {
     'use strict';
 
@@ -525,15 +514,15 @@ router
     bet.bid = request.param('bid');
     bet.result = request.param('result');
 
-    return async.series([bet.save.bind(bet), function populateBetAfterUpdate(next) {
+    return async.series([bet.save.bind(bet), function (next) {
         bet.populate('user');
         bet.populate('match');
         bet.populate(next);
-    }, function populateMatchAfterUpdate(next) {
+    }, function (next) {
         bet.match.populate('guest');
         bet.match.populate('host');
         bet.match.populate(next);
-    }, function updateMatchAfterUpdate(next) {
+    }, function (next) {
         Match.update({'_id' : request.match._id}, {'$inc' : {
             'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
             'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
@@ -562,9 +551,6 @@ router
 .route('/championships/:championship/matches/:match/bets/:id')
 .delete(auth.signature())
 .delete(auth.session())
-.delete(errorParser.notFound('championship'))
-.delete(errorParser.notFound('match'))
-.delete(errorParser.notFound('bet'))
 .delete(function (request, response, next) {
     'use strict';
 
@@ -583,7 +569,7 @@ router
     bet = request.bet;
     oldBid = bet.bid;
     oldResult = bet.result;
-    return async.series([bet.remove.bind(bet), function updateMatchAfterRemove(next) {
+    return async.series([bet.remove.bind(bet), function (next) {
         Match.update({'_id' : request.match._id}, {'$inc' : {
             'pot.guest' : - (oldResult === 'guest' ? oldBid : 0),
             'pot.host'  : - (oldResult === 'host' ? oldBid : 0),
@@ -609,8 +595,6 @@ router
  * @param id
  */
 router.param('id', auth.session());
-router.param('id', errorParser.notFound('championship'));
-router.param('id', errorParser.notFound('match'));
 router.param('id', function findBet(request, response, next, id) {
     'use strict';
 
@@ -630,7 +614,7 @@ router.param('id', function findBet(request, response, next, id) {
             return next(error);
         }
         if (!bet) {
-            return next();
+            return response.send(404);
         }
         bet.match.populate('guest');
         bet.match.populate('host');
@@ -654,7 +638,6 @@ router.param('id', function findBet(request, response, next, id) {
  * @param next
  * @param id
  */
-router.param('match', errorParser.notFound('championship'));
 router.param('match', function findMatch(request, response, next, id) {
     'use strict';
 
@@ -666,6 +649,9 @@ router.param('match', function findMatch(request, response, next, id) {
         if (error) {
             error = new VError(error, 'error finding match: "$s"', id);
             return next(error);
+        }
+        if (!match) {
+            return response.send(404);
         }
         request.match = match;
         return next();
@@ -692,11 +678,12 @@ router.param('championship', function findChampionship(request, response, next, 
             error = new VError(error, 'error finding championship: "$s"', id);
             return next(error);
         }
+        if (!championship) {
+            return response.send(404);
+        }
         request.championship = championship;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;

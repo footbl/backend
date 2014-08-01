@@ -29,7 +29,7 @@
  * @apiSuccess (user history) {Date} date Date of history creation
  * @apiSuccess (user history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, async, auth, errorParser, GroupMember, Group, User;
+var VError, router, nconf, slug, async, auth, GroupMember, Group, User;
 
 VError = require('verror');
 router = require('express').Router();
@@ -37,7 +37,6 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('../lib/auth');
-errorParser = require('../lib/error-parser');
 GroupMember = require('../models/group-member');
 Group = require('../models/group');
 User = require('../models/user');
@@ -126,7 +125,6 @@ router
 .route('/groups/:group/members')
 .post(auth.signature())
 .post(auth.session())
-.post(errorParser.notFound('group'))
 .post(function (request, response, next) {
     'use strict';
 
@@ -149,7 +147,7 @@ router
         'initialFunds' : request.groupUser ? request.groupUser.funds : null
     });
 
-    return async.series([groupMember.save.bind(groupMember), function populateGroupMemberAfterSave(next) {
+    return async.series([groupMember.save.bind(groupMember), function (next) {
         groupMember.populate('user');
         groupMember.populate(next);
     }], function createdGroupMember(error) {
@@ -212,7 +210,6 @@ router
 .route('/groups/:group/members')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('group'))
 .get(function listGroupMember(request, response, next) {
     'use strict';
 
@@ -282,8 +279,6 @@ router
 .route('/groups/:group/members/:id')
 .get(auth.signature())
 .get(auth.session())
-.get(errorParser.notFound('group'))
-.get(errorParser.notFound('groupMember'))
 .get(function getGroupMember(request, response) {
     'use strict';
 
@@ -348,8 +343,6 @@ router
 .route('/groups/:group/members/:id')
 .put(auth.signature())
 .put(auth.session())
-.put(errorParser.notFound('group'))
-.put(errorParser.notFound('groupMember'))
 .put(function (request, response, next) {
     'use strict';
 
@@ -370,7 +363,7 @@ router
     groupMember.user = request.groupUser ? request.groupUser._id : null;
     groupMember.initialFunds = request.groupUser ? request.groupUser.funds : null;
 
-    return async.series([groupMember.save.bind(groupMember), function populateGroupMemberAfterUpdate(next) {
+    return async.series([groupMember.save.bind(groupMember), function (next) {
         groupMember.populate('user');
         groupMember.populate(next);
     }], function updatedGroupMember(error) {
@@ -396,8 +389,6 @@ router
 .route('/groups/:group/members/:id')
 .delete(auth.signature())
 .delete(auth.session())
-.delete(errorParser.notFound('group'))
-.delete(errorParser.notFound('groupMember'))
 .delete(function (request, response, next) {
     'use strict';
 
@@ -433,7 +424,6 @@ router
  * @param next
  * @param id
  */
-router.param('id', errorParser.notFound('group'));
 router.param('id', function findGroupMember(request, response, next, id) {
     'use strict';
 
@@ -446,6 +436,9 @@ router.param('id', function findGroupMember(request, response, next, id) {
         if (error) {
             error = new VError(error, 'error finding groupMember: "$s"', id);
             return next(error);
+        }
+        if (!groupMember) {
+            return response.send(404);
         }
         request.groupMember = groupMember;
         return next();
@@ -472,11 +465,12 @@ router.param('group', function findGroup(request, response, next, id) {
             error = new VError(error, 'error finding group: "$s"', id);
             return next(error);
         }
+        if (!group) {
+            return response.send(404);
+        }
         request.group = group;
         return next();
     });
 });
-
-router.use(errorParser.mongoose());
 
 module.exports = router;
