@@ -16,6 +16,7 @@ Bet = require('../models/bet');
 
 nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id': '111'});
 nock('https://graph.facebook.com').get('/me?access_token=invalid').times(Infinity).reply(404, {});
+nock('https://mandrillapp.com').post('/api/1.0/messages/send.json').times(Infinity).reply(200, {});
 
 describe('user controller', function () {
     'use strict';
@@ -941,6 +942,46 @@ describe('user controller', function () {
                 response.body.should.have.property('funds').be.equal(100);
                 response.body.should.have.property('stake').be.equal(0);
             });
+            request.end(done);
+        });
+    });
+
+    describe('password recovery', function () {
+        var user;
+
+        before(function (done) {
+            User.remove(done);
+        });
+
+        before(function (done) {
+            user = new User({'password' : '1234', 'type' : 'admin', 'email' : 'user1@user.com'});
+            user.save(done);
+        });
+
+        it('should raise error with invalid email', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/me/forgot-password');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
+        });
+
+        it('should send', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/me/forgot-password');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'email' : 'user1@user.com'});
+            request.expect(200);
             request.end(done);
         });
     });

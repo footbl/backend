@@ -29,12 +29,13 @@
  * @apiSuccess (history) {Date} date Date of history creation
  * @apiSuccess (history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, crypto, auth, User;
+var VError, router, nconf, slug, mandrill, crypto, auth, User;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 crypto = require('crypto');
 auth = require('../lib/auth');
 User = require('../models/user');
@@ -471,6 +472,55 @@ router
             return next(error);
         }
         return response.send(200, user);
+    });
+});
+
+/**
+ * @api {get} /users/me/forgot-password Send user email to recover password
+ * @apiName forgotPassword
+ * @apiVersion 2.0.1
+ * @apiGroup user
+ * @apiPermission none
+ * @apiDescription
+ * Send user email to recover password
+ */
+router
+.route('/users/me/forgot-password')
+.get(function forgotPassword(request, response, next) {
+    'use strict';
+
+    var query, email;
+    email = request.param('email');
+    query = User.findOne();
+    query.where('email').equals(email);
+    return query.exec(function (error, user) {
+        if (error) {
+            error = new VError(error, 'error finding user');
+            return next(error);
+        }
+        if (!user) {
+            return response.send(404);
+        }
+        mandrill.messages.send({
+            'message' : {
+                'html' : [
+                    '<p>Forgot password</p>',
+                    '<p>to change your password <a href="footbl://forgot-password?token=' + auth.token(user) + '">click here.</a><p>',
+                    '<p>footbl | wanna bet?<p>'
+                ].join('\n'),
+                'subject'    : 'footbl - password recovery',
+                'from_name'  : 'footbl',
+                'from_email' : 'noreply@footbl.co',
+                'to'         : [{
+                    'email' : request.param('email', ''),
+                    'type'  : 'to'
+                }]
+            },
+            'async' : true
+        });
+        return response.send(200, {
+            'token' : auth.token(user)
+        });
     });
 });
 
