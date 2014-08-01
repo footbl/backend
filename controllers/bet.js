@@ -172,7 +172,6 @@ router
         'bid'    : request.param('bid'),
         'result' : request.param('result')
     });
-
     return async.series([bet.save.bind(bet), function (next) {
         bet.populate('user');
         bet.populate('match');
@@ -192,8 +191,6 @@ router
             error = new VError(error, 'error creating bet: "$s"', bet._id);
             return next(error);
         }
-        response.header('Location', '/bets/' + bet.slug);
-        response.header('Last-Modified', bet.updatedAt);
         return response.send(201, bet);
     });
 });
@@ -395,7 +392,6 @@ router
 
     var bet;
     bet = request.bet;
-    response.header('Last-Modified', bet.updatedAt);
     return response.send(200, bet);
 });
 
@@ -495,7 +491,6 @@ router
     var bet;
     bet = request.bet;
     if (request.session._id.toString() !== bet.user._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -509,7 +504,6 @@ router
     oldResult = bet.result;
     bet.bid = request.param('bid');
     bet.result = request.param('result');
-
     return async.series([bet.save.bind(bet), function (next) {
         bet.populate('user');
         bet.populate('match');
@@ -529,7 +523,6 @@ router
             error = new VError(error, 'error updating bet: "$s"', bet._id);
             return next(error);
         }
-        response.header('Last-Modified', bet.updatedAt);
         return response.send(200, bet);
     });
 });
@@ -552,7 +545,6 @@ router
     var bet;
     bet = request.bet;
     if (request.session._id.toString() !== bet.user._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -575,7 +567,6 @@ router
             error = new VError(error, 'error updating bet: "$s"', bet._id);
             return next(error);
         }
-        response.header('Last-Modified', bet.updatedAt);
         return response.send(204);
     });
 });

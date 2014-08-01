@@ -90,12 +90,7 @@ router
     'use strict';
 
     var user, password;
-
-    password = !request.param('password') ? null : crypto
-    .createHash('sha1')
-    .update(request.param('password') + nconf.get('PASSWORD_SALT'))
-    .digest('hex');
-
+    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     user = new User({
         'slug'       : slug(request.param('name', 'me')),
         'email'      : request.param('email'),
@@ -103,19 +98,16 @@ router
         'name'       : request.param('name'),
         'facebookId' : request.facebook,
         'about'      : request.param('about'),
-        'password'   : password,
+        'password'   : request.param('password') ? password : null,
         'picture'    : request.param('picture'),
         'language'   : request.param('language'),
         'apnsToken'  : request.param('apnsToken')
     });
-
     return user.save(function createdUser(error) {
         if (error) {
             error = new VError(error, 'error creating user');
             return next(error);
         }
-        response.header('Location', '/users/' + user.slug);
-        response.header('Last-Modified', user.updatedAt);
         return response.send(201, user);
     });
 });
@@ -244,7 +236,6 @@ router
 
     var user;
     user = request.user;
-    response.header('Last-Modified', user.updatedAt);
     return response.send(200, user);
 });
 
@@ -302,7 +293,6 @@ router
     var user;
     user = request.user;
     if (user._id.toString() !== request.session._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -311,12 +301,7 @@ router
     'use strict';
 
     var user, password;
-
-    password = !request.param('password') ? null : crypto
-    .createHash('sha1')
-    .update(request.param('password') + nconf.get('PASSWORD_SALT'))
-    .digest('hex');
-
+    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     user = request.user;
     user.slug = slug(request.param('name', 'me'));
     user.email = request.param('email');
@@ -328,13 +313,11 @@ router
     user.picture = request.param('picture');
     user.language = request.param('language');
     user.apnsToken = request.param('apnsToken');
-
     return user.save(function updatedUser(error) {
         if (error) {
             error = new VError(error, 'error updating user');
             return next(error);
         }
-        response.header('Last-Modified', user.updatedAt);
         return response.send(200, user);
     });
 });
@@ -357,7 +340,6 @@ router
     var user;
     user = request.user;
     if (user._id.toString() !== request.session._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -372,7 +354,6 @@ router
             error = new VError(error, 'error removing user: "$s"', request.params.id);
             return next(error);
         }
-        response.header('Last-Modified', user.updatedAt);
         return response.send(204);
     });
 });
@@ -403,7 +384,7 @@ router
     var query, facebook, password, email;
     facebook = request.facebook;
     email = request.param('email');
-    password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
+    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     query = User.findOne();
     if (request.facebook) {
         query.where('facebookId').equals(facebook);
@@ -474,7 +455,6 @@ router
     var user;
     user = request.user;
     if (user._id.toString() !== request.session._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();

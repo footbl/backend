@@ -67,8 +67,6 @@ router
             error = new VError(error, 'error creating team');
             return next(error);
         }
-        response.header('Location', '/teams/' + team.slug);
-        response.header('Last-Modified', team.updatedAt);
         return response.send(201, team);
     });
 });
@@ -145,7 +143,6 @@ router
 
     var team;
     team = request.team;
-    response.header('Last-Modified', team.updatedAt);
     return response.send(200, team);
 });
 
@@ -194,7 +191,6 @@ router
             error = new VError(error, 'error updating team');
             return next(error);
         }
-        response.header('Last-Modified', team.updatedAt);
         return response.send(200, team);
     });
 });
@@ -221,7 +217,6 @@ router
             error = new VError(error, 'error removing team: "$s"', request.params.id);
             return next(error);
         }
-        response.header('Last-Modified', team.updatedAt);
         return response.send(204);
     });
 });

@@ -61,7 +61,6 @@ router
     'use strict';
 
     var group, groupMember;
-
     group = new Group({
         'name'       : request.param('name'),
         'slug'       : new Date().getTime().toString(36).substring(3),
@@ -69,21 +68,17 @@ router
         'freeToEdit' : request.param('freeToEdit', false),
         'owner'      : request.session._id
     });
-
     groupMember = new GroupMember({
         'slug'         : request.session.slug,
         'user'         : request.session._id,
         'group'        : group._id,
         'initialFunds' : request.session.funds
     });
-
     return async.series([group.save.bind(group), groupMember.save.bind(groupMember)], function (error) {
         if (error) {
             error = new VError(error, 'error creating group: "$s"', group._id);
             return next(error);
         }
-        response.header('Location', '/groups/' + group.slug);
-        response.header('Last-Modified', group.updatedAt);
         return response.send(201, group);
     });
 });
@@ -166,7 +161,6 @@ router
 
     var group;
     group = request.group;
-    response.header('Last-Modified', group.updatedAt);
     return response.send(200, group);
 });
 
@@ -208,7 +202,6 @@ router
     var group;
     group = request.group;
     if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -226,7 +219,6 @@ router
             error = new VError(error, 'error updating group: "$s"', group._id);
             return next(error);
         }
-        response.header('Last-Modified', group.updatedAt);
         return response.send(200, group);
     });
 });
@@ -249,7 +241,6 @@ router
     var group;
     group = request.group;
     if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -264,7 +255,6 @@ router
             error = new VError(error, 'error removing group: "$s"', request.params.id);
             return next(error);
         }
-        response.header('Last-Modified', group.updatedAt);
         return response.send(204);
     });
 });
@@ -289,7 +279,6 @@ router
     var group;
     group = request.group;
     if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -325,7 +314,6 @@ router
             error = new VError(error, 'error inviting user');
             return next(error);
         }
-        response.header('Last-Modified', group.updatedAt);
         return response.send(200, group);
     });
 });
@@ -348,7 +336,6 @@ router
     var group;
     group = request.group;
     if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -374,7 +361,6 @@ router
                 error = new VError(error, 'error restarting group: "%s"', request.group._id);
                 return next(error);
             }
-            response.header('Last-Modified', group.updatedAt);
             return response.send(200, group);
         });
     });

@@ -188,7 +188,6 @@ router
         'elapsed'      : request.param('elapsed'),
         'score'        : request.param('score')
     });
-
     return async.series([match.save.bind(match), function (next) {
         match.populate('guest');
         match.populate('host');
@@ -198,8 +197,6 @@ router
             error = new VError(error, 'error creating match: "$s"', match._id);
             return next(error);
         }
-        response.header('Last-Modified', match.updatedAt);
-        response.header('Location', '/matches/' + match.slug);
         return response.send(201, match);
     });
 });
@@ -336,7 +333,6 @@ router
 
     var match;
     match = request.match;
-    response.header('Last-Modified', match.updatedAt);
     return response.send(200, match);
 });
 
@@ -415,7 +411,6 @@ router
     match.finished = request.param('finished', false);
     match.elapsed = request.param('elapsed');
     match.score = request.param('score', {'guest' : 0, 'host' : 0});
-
     return async.series([match.save.bind(match), function (next) {
         match.populate('guest');
         match.populate('host');
@@ -425,7 +420,6 @@ router
             error = new VError(error, 'error updating match: "$s"', match._id);
             return next(error);
         }
-        response.header('Last-Modified', match.updatedAt);
         return response.send(200, match);
     });
 });
@@ -452,7 +446,6 @@ router
             error = new VError(error, 'error removing match: "$s"', request.params.id);
             return next(error);
         }
-        response.header('Last-Modified', match.updatedAt);
         return response.send(204);
     });
 });

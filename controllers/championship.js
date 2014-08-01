@@ -84,8 +84,6 @@ router
             error = new VError(error, 'error creating championship');
             return next(error);
         }
-        response.header('Location', '/championships/' + championship.slug);
-        response.header('Last-Modified', championship.updatedAt);
         return response.send(201, championship);
     });
 });
@@ -172,7 +170,6 @@ router
 
     var championship;
     championship = request.championship;
-    response.header('Last-Modified', championship.updatedAt);
     return response.send(200, championship);
 });
 
@@ -231,7 +228,6 @@ router
             error = new VError(error, 'error updating championship');
             return next(error);
         }
-        response.header('Last-Modified', championship.updatedAt);
         return response.send(200, championship);
     });
 });
@@ -258,7 +254,6 @@ router
             error = new VError(error, 'error removing championship: "$s"', request.params.id);
             return next(error);
         }
-        response.header('Last-Modified', championship.updatedAt);
         return response.send(204);
     });
 });

@@ -148,7 +148,6 @@ router
     var user;
     user = request.user;
     if (request.session._id.toString() !== user._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -162,7 +161,6 @@ router
         'featured' : request.featuredUser,
         'user'     : request.session._id
     });
-
     return async.series([featured.save.bind(featured), function (next) {
         featured.populate('featured');
         featured.populate('user');
@@ -172,8 +170,6 @@ router
             error = new VError(error, 'error creating featured: "$s"', featured._id);
             return next(error);
         }
-        response.header('Location', '/users/:user/featured/' + featured.slug);
-        response.header('Last-Modified', featured.updatedAt);
         return response.send(201, featured);
     });
 });
@@ -431,7 +427,6 @@ router
 
     var featured;
     featured = request.featured;
-    response.header('Last-Modified', featured.updatedAt);
     return response.send(200, featured);
 });
 
@@ -516,7 +511,6 @@ router
     var user;
     user = request.user;
     if (request.session._id.toString() !== user._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -538,7 +532,6 @@ router
             error = new VError(error, 'error updating featured: "$s"', featured._id);
             return next(error);
         }
-        response.header('Last-Modified', featured.updatedAt);
         return response.send(200, featured);
     });
 });
@@ -561,7 +554,6 @@ router
     var user;
     user = request.user;
     if (request.session._id.toString() !== user._id.toString()) {
-        response.header('Allow', 'GET');
         return response.send(405);
     }
     return next();
@@ -576,7 +568,6 @@ router
             error = new VError(error, 'error removing featured: "$s"', request.params.id);
             return next(error);
         }
-        response.header('Last-Modified', featured.updatedAt);
         return response.send(204);
     });
 });
