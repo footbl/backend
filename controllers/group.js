@@ -202,7 +202,7 @@ router
 router
 .route('/groups/:id')
 .put(auth.session())
-.put(function (request, response, next) {
+.put(function validateUpdateGroup(request, response, next) {
     'use strict';
 
     var group;
@@ -243,7 +243,7 @@ router
 router
 .route('/groups/:id')
 .delete(auth.session())
-.delete(function (request, response, next) {
+.delete(function validateRemoveGroup(request, response, next) {
     'use strict';
 
     var group;
@@ -283,7 +283,7 @@ router
 router
 .route('/groups/:id/invite')
 .post(auth.session())
-.post(function (request, response, next) {
+.post(function validateInviteGroup(request, response, next) {
     'use strict';
 
     var group;
@@ -332,7 +332,7 @@ router
 
 /**
  * @api {post} /groups/:id/restart Restarts all group members initial funds
- * @apiName inviteGroup
+ * @apiName restartGroup
  * @apiVersion 2.0.1
  * @apiGroup group
  * @apiPermission user
@@ -342,7 +342,7 @@ router
 router
 .route('/groups/:id/restart')
 .post(auth.session())
-.post(function (request, response, next) {
+.post(function validateRestartGroup(request, response, next) {
     'use strict';
 
     var group;
@@ -353,7 +353,7 @@ router
     }
     return next();
 })
-.post(function inviteGroup(request, response, next) {
+.post(function restartGroup(request, response, next) {
     'use strict';
 
     var group, query;

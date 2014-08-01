@@ -339,7 +339,7 @@ router
 router
 .route('/groups/:group/members/:id')
 .put(auth.session())
-.put(function (request, response, next) {
+.put(function validateUpdateGroupMember(request, response, next) {
     'use strict';
 
     var group;
@@ -384,7 +384,7 @@ router
 router
 .route('/groups/:group/members/:id')
 .delete(auth.session())
-.delete(function (request, response, next) {
+.delete(function validateRemoveGroupMember(request, response, next) {
     'use strict';
 
     var group;
