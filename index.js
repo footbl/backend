@@ -1,5 +1,5 @@
 'use strict';
-var express, mongoose, nconf, bodyParser, methodOverride,
+var express, mongoose, nconf, bodyParser, methodOverride, auth,
 app;
 
 express = require('express');
@@ -7,6 +7,7 @@ mongoose = require('mongoose');
 nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
+auth = require('./lib/auth');
 
 nconf.argv();
 nconf.env();
@@ -17,6 +18,7 @@ app = express();
 app.use(bodyParser());
 app.use(methodOverride());
 app.use('/docs', express.static(__dirname + '/docs'));
+app.use(auth.signature());
 app.use(function (request, response, next) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');

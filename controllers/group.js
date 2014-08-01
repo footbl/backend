@@ -56,7 +56,6 @@ GroupMember = require('../models/group-member');
  */
 router
 .route('/groups')
-.post(auth.signature())
 .post(auth.session())
 .post(function createGroup(request, response, next) {
     'use strict';
@@ -114,7 +113,6 @@ router
  */
 router
 .route('/groups')
-.get(auth.signature())
 .get(auth.session())
 .get(function listGroup(request, response, next) {
     'use strict';
@@ -162,7 +160,6 @@ router
  */
 router
 .route('/groups/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getGroup(request, response) {
     'use strict';
@@ -204,7 +201,6 @@ router
  */
 router
 .route('/groups/:id')
-.put(auth.signature())
 .put(auth.session())
 .put(function (request, response, next) {
     'use strict';
@@ -246,7 +242,6 @@ router
  */
 router
 .route('/groups/:id')
-.delete(auth.signature())
 .delete(auth.session())
 .delete(function (request, response, next) {
     'use strict';
@@ -287,7 +282,6 @@ router
  */
 router
 .route('/groups/:id/invite')
-.post(auth.signature())
 .post(auth.session())
 .post(function (request, response, next) {
     'use strict';
@@ -347,7 +341,6 @@ router
  */
 router
 .route('/groups/:id/restart')
-.post(auth.signature())
 .post(auth.session())
 .post(function (request, response, next) {
     'use strict';

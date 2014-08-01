@@ -163,7 +163,6 @@ router
  */
 router
 .route('/users')
-.get(auth.signature())
 .get(function listUser(request, response, next) {
     'use strict';
 
@@ -239,7 +238,6 @@ router
  */
 router
 .route('/users/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getUser(request, response) {
     'use strict';
@@ -296,7 +294,6 @@ router
  */
 router
 .route('/users/:id')
-.put(auth.signature())
 .put(auth.session())
 .put(auth.facebook())
 .put(function validateUpdateUser(request, response, next) {
@@ -353,7 +350,6 @@ router
  */
 router
 .route('/users/:id')
-.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateRemoveUser(request, response, next) {
     'use strict';
@@ -400,7 +396,6 @@ router
  */
 router
 .route('/users/me/auth')
-.get(auth.signature())
 .get(auth.facebook())
 .get(function authUser(request, response, next) {
     'use strict';
@@ -472,7 +467,6 @@ router
  */
 router
 .route('/users/:id/recharge')
-.post(auth.signature())
 .post(auth.session())
 .post(function validateRechargeUser(request, response, next) {
     'use strict';

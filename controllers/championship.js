@@ -66,7 +66,6 @@ Championship = require('../models/championship');
  */
 router
 .route('/championships')
-.post(auth.signature())
 .post(auth.session('admin'))
 .post(function createChampionship(request, response, next) {
     'use strict';
@@ -120,7 +119,6 @@ router
  */
 router
 .route('/championships')
-.get(auth.signature())
 .get(auth.session())
 .get(function listChampionship(request, response, next) {
     'use strict';
@@ -168,7 +166,6 @@ router
  */
 router
 .route('/championships/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getChampionship(request, response) {
     'use strict';
@@ -217,7 +214,6 @@ router
  */
 router
 .route('/championships/:id')
-.put(auth.signature())
 .put(auth.session('admin'))
 .put(function updateChampionship(request, response, next) {
     'use strict';
@@ -251,7 +247,6 @@ router
  */
 router
 .route('/championships/:id')
-.delete(auth.signature())
 .delete(auth.session('admin'))
 .delete(function removeChampionship(request, response, next) {
     'use strict';

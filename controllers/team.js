@@ -52,7 +52,6 @@ Team = require('../models/team');
  */
 router
 .route('/teams')
-.post(auth.signature())
 .post(auth.session('admin'))
 .post(function createTeam(request, response, next) {
     'use strict';
@@ -98,7 +97,6 @@ router
  */
 router
 .route('/teams')
-.get(auth.signature())
 .get(auth.session())
 .get(function listTeam(request, response, next) {
     'use strict';
@@ -141,7 +139,6 @@ router
  */
 router
 .route('/teams/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getTeam(request, response) {
     'use strict';
@@ -183,7 +180,6 @@ router
  */
 router
 .route('/teams/:id')
-.put(auth.signature())
 .put(auth.session('admin'))
 .put(function updateTeam(request, response, next) {
     'use strict';
@@ -214,7 +210,6 @@ router
  */
 router
 .route('/teams/:id')
-.delete(auth.signature())
 .delete(auth.session('admin'))
 .delete(function removeTeam(request, response, next) {
     'use strict';

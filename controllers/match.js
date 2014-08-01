@@ -172,7 +172,6 @@ router.use(function findMatchHost(request, response, next) {
  */
 router
 .route('/championships/:championship/matches')
-.post(auth.signature())
 .post(auth.session('admin'))
 .post(function createMatch(request, response, next) {
     'use strict';
@@ -257,7 +256,6 @@ router
  */
 router
 .route('/championships/:championship/matches')
-.get(auth.signature())
 .get(auth.session())
 .get(function listMatch(request, response, next) {
     'use strict';
@@ -332,7 +330,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getMatch(request, response) {
     'use strict';
@@ -404,7 +401,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:id')
-.put(auth.signature())
 .put(auth.session('admin'))
 .put(function updateMatch(request, response, next) {
     'use strict';
@@ -445,7 +441,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:id')
-.delete(auth.signature())
 .delete(auth.session('admin'))
 .delete(function removeMatch(request, response, next) {
     'use strict';
