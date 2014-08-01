@@ -44,29 +44,6 @@ User = require('../models/user');
 
 /**
  * @method
- * @summary Setups default headers
- *
- * @param request
- * @param response
- * @param next
- */
-router.use(function (request, response, next) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-    response.header('Pragma', 'no-cache');
-    response.header('Expires', '0');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
-    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
-    next();
-});
-
-/**
- * @method
  * @summary Puts requested user in request object
  *
  * @param request

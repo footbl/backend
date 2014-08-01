@@ -75,29 +75,6 @@ Team = require('../models/team');
 Bet = require('../models/bet');
 
 /**
- * @method
- * @summary Setups default headers
- *
- * @param request
- * @param response
- * @param next
- */
-router.use(function (request, response, next) {
-    'use strict';
-
-    response.header('Content-Type', 'application/json');
-    response.header('Content-Encoding', 'UTF-8');
-    response.header('Content-Language', 'en');
-    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-    response.header('Pragma', 'no-cache');
-    response.header('Expires', '0');
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
-    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
-    next();
-});
-
-/**
  * @api {post} /championships/:championship/matches/:match/bets Creates a new bet in database.
  * @apiName createBet
  * @apiVersion 2.0.1

@@ -21,6 +21,18 @@ app.use(function (error, request, response, next) {
     process.exit();
 });
 app.use('/docs', express.static(__dirname + '/docs'));
+app.use(function (request, response, next) {
+    response.header('Content-Type', 'application/json');
+    response.header('Content-Encoding', 'UTF-8');
+    response.header('Content-Language', 'en');
+    response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    response.header('Pragma', 'no-cache');
+    response.header('Expires', '0');
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', request.get('Access-Control-Request-Method'));
+    response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
+    next();
+});
 app.use(require('./controllers/user'));
 app.use(require('./controllers/featured'));
 app.use(require('./controllers/championship'));
