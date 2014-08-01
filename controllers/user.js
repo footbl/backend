@@ -86,7 +86,6 @@ User = require('../models/user');
  */
 router
 .route('/users')
-.post(auth.facebook())
 .post(function createUser(request, response, next) {
     'use strict';
 
@@ -287,7 +286,6 @@ router
 router
 .route('/users/:id')
 .put(auth.session())
-.put(auth.facebook())
 .put(function validateUpdateUser(request, response, next) {
     'use strict';
 
@@ -378,7 +376,6 @@ router
  */
 router
 .route('/users/me/auth')
-.get(auth.facebook())
 .get(function authUser(request, response, next) {
     'use strict';
 

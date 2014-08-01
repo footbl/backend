@@ -19,6 +19,7 @@ app.use(bodyParser());
 app.use(methodOverride());
 app.use('/docs', express.static(__dirname + '/docs'));
 app.use(auth.signature());
+app.use(auth.facebook());
 app.use(function (request, response, next) {
     response.header('Content-Type', 'application/json');
     response.header('Content-Encoding', 'UTF-8');
