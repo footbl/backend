@@ -58,7 +58,7 @@ describe('team controller', function () {
             request.end(done);
         });
 
-        it('should raise error without picture', function (done) {
+        it('should raise error without valid picture', function (done) {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
@@ -68,14 +68,15 @@ describe('team controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
             request.send({'name' : 'test'});
+            request.send({'picture' : 'invalid'});
             request.expect(400);
             request.expect(function (response) {
-                response.body.should.have.property('picture').be.equal('required');
+                response.body.should.have.property('picture').be.equal('regexp');
             });
             request.end(done);
         });
 
-        it('should raise error without name and picture', function (done) {
+        it('should raise error without name and valid picture', function (done) {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
@@ -84,10 +85,11 @@ describe('team controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
+            request.send({'picture' : 'invalid'});
             request.expect(400);
             request.expect(function (response) {
                 response.body.should.have.property('name').be.equal('required');
-                response.body.should.have.property('picture').be.equal('required');
+                response.body.should.have.property('picture').be.equal('regexp');
             });
             request.end(done);
         });
@@ -332,7 +334,7 @@ describe('team controller', function () {
             request.end(done);
         });
 
-        it('should raise error without picture', function (done) {
+        it('should raise error without valid picture', function (done) {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
@@ -342,14 +344,15 @@ describe('team controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
             request.send({'name' : 'test1'});
+            request.send({'picture' : 'invalid'});
             request.expect(400);
             request.expect(function (response) {
-                response.body.should.have.property('picture').be.equal('required');
+                response.body.should.have.property('picture').be.equal('regexp');
             });
             request.end(done);
         });
 
-        it('should raise error without name and picture', function (done) {
+        it('should raise error without name and valid picture', function (done) {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
@@ -358,10 +361,11 @@ describe('team controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
+            request.send({'picture' : 'invalid'});
             request.expect(400);
             request.expect(function (response) {
                 response.body.should.have.property('name').be.equal('required');
-                response.body.should.have.property('picture').be.equal('required');
+                response.body.should.have.property('picture').be.equal('regexp');
             });
             request.end(done);
         });
