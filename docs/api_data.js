@@ -24,7 +24,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "success": {
@@ -380,7 +380,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "type": "post",
@@ -774,7 +774,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "type": "get",
@@ -1140,7 +1140,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "type": "get",
@@ -1520,7 +1520,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "type": "delete",
@@ -1531,7 +1531,7 @@ define({ api: [
     "group": "bet",
     "permission": "user",
     "description": "Removes bet from database",
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "type": "put",
@@ -1925,7 +1925,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/bet.js"
+    "filename": "controllers/bet.js"
   },
   {
     "parameter": {
@@ -1974,7 +1974,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "success": {
@@ -2057,7 +2057,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "type": "post",
@@ -2200,7 +2200,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "type": "get",
@@ -2293,7 +2293,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "type": "get",
@@ -2400,7 +2400,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "type": "delete",
@@ -2411,7 +2411,7 @@ define({ api: [
     "group": "championship",
     "permission": "admin",
     "description": "Removes championship",
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "type": "put",
@@ -2554,7 +2554,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/championship.js"
+    "filename": "controllers/championship.js"
   },
   {
     "parameter": {
@@ -2574,7 +2574,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "success": {
@@ -2731,7 +2731,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "type": "post",
@@ -2919,7 +2919,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "type": "get",
@@ -3086,7 +3086,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "type": "get",
@@ -3267,7 +3267,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "type": "get",
@@ -3448,7 +3448,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "type": "delete",
@@ -3459,7 +3459,7 @@ define({ api: [
     "group": "featured",
     "permission": "user",
     "description": "Removes featured",
-    "filename": "./controllers/featured.js"
+    "filename": "controllers/featured.js"
   },
   {
     "type": "put",
@@ -3647,27 +3647,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/featured.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          }
-        ]
-      }
-    },
-    "group": "group-member.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/featured.js"
   },
   {
     "success": {
@@ -3838,7 +3818,27 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/group-member.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "user",
+            "optional": false,
+            "description": "GroupMember user"
+          }
+        ]
+      }
+    },
+    "group": "group-member.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/group-member.js"
   },
   {
     "success": {
@@ -3874,6 +3874,13 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "Tells if the group is featured."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -3893,7 +3900,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "parameter": {
@@ -3928,7 +3935,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "type": "post",
@@ -4130,7 +4137,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/group-member.js"
   },
   {
     "type": "get",
@@ -4311,7 +4318,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/group-member.js"
   },
   {
     "type": "get",
@@ -4506,7 +4513,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/group-member.js"
   },
   {
     "type": "delete",
@@ -4517,7 +4524,7 @@ define({ api: [
     "group": "groupMember",
     "permission": "user",
     "description": "Removes groupMember",
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/group-member.js"
   },
   {
     "type": "put",
@@ -4719,7 +4726,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group-member.js"
+    "filename": "controllers/group-member.js"
   },
   {
     "type": "post",
@@ -4742,7 +4749,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -4774,6 +4781,13 @@ define({ api: [
             "field": "freeToEdit",
             "optional": false,
             "description": "Tells if the group can be edited be any member."
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "Tells if the group is featured."
           },
           {
             "group": "Success 200",
@@ -4820,7 +4834,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "type": "get",
@@ -4835,7 +4849,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -4870,6 +4884,13 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "Tells if the group is featured."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -4885,18 +4906,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group.js"
-  },
-  {
-    "type": "post",
-    "url": "/groups/:id/restart",
-    "title": "Restarts all group members initial funds",
-    "name": "inviteGroup",
-    "version": "2.0.1",
-    "group": "group",
-    "permission": "user",
-    "description": "Restarts all group members initial funds.",
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "type": "post",
@@ -4920,7 +4930,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "type": "get",
@@ -4941,6 +4951,14 @@ define({ api: [
             "defaultValue": "0",
             "optional": true,
             "description": "The page to be displayed."
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "featured",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Tells if should return the user groups or the featured groups."
           }
         ]
       }
@@ -4949,7 +4967,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -4984,6 +5002,13 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "Tells if the group is featured."
+          },
+          {
+            "group": "Success 200",
             "type": "Date",
             "field": "createdAt",
             "optional": false,
@@ -4999,7 +5024,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "type": "delete",
@@ -5010,7 +5035,18 @@ define({ api: [
     "group": "group",
     "permission": "user",
     "description": "Removes group",
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
+  },
+  {
+    "type": "post",
+    "url": "/groups/:id/restart",
+    "title": "Restarts all group members initial funds",
+    "name": "restartGroup",
+    "version": "2.0.1",
+    "group": "group",
+    "permission": "user",
+    "description": "Restarts all group members initial funds.",
+    "filename": "controllers/group.js"
   },
   {
     "type": "put",
@@ -5033,7 +5069,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -5065,6 +5101,13 @@ define({ api: [
             "field": "freeToEdit",
             "optional": false,
             "description": "Tells if the group can be edited be any member."
+          },
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "Tells if the group is featured."
           },
           {
             "group": "Success 200",
@@ -5111,7 +5154,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/group.js"
+    "filename": "controllers/group.js"
   },
   {
     "parameter": {
@@ -5183,7 +5226,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "success": {
@@ -5379,7 +5422,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "type": "post",
@@ -5658,7 +5701,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "type": "get",
@@ -5864,7 +5907,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "type": "get",
@@ -6084,7 +6127,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "type": "delete",
@@ -6095,7 +6138,7 @@ define({ api: [
     "group": "match",
     "permission": "admin",
     "description": "Removes match",
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "type": "put",
@@ -6374,7 +6417,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/match.js"
+    "filename": "controllers/match.js"
   },
   {
     "parameter": {
@@ -6401,7 +6444,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "success": {
@@ -6449,7 +6492,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "type": "post",
@@ -6535,7 +6578,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "type": "get",
@@ -6593,7 +6636,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "type": "get",
@@ -6665,7 +6708,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "type": "delete",
@@ -6676,7 +6719,7 @@ define({ api: [
     "group": "team",
     "permission": "admin",
     "description": "Removes team",
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "type": "put",
@@ -6762,7 +6805,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/team.js"
+    "filename": "controllers/team.js"
   },
   {
     "parameter": {
@@ -6824,7 +6867,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "success": {
@@ -6958,7 +7001,7 @@ define({ api: [
     "type": "",
     "url": "",
     "version": "0.0.0",
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "type": "get",
@@ -6988,7 +7031,7 @@ define({ api: [
         }
       ]
     },
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "type": "post",
@@ -7195,7 +7238,18 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
+  },
+  {
+    "type": "get",
+    "url": "/users/me/forgot-password",
+    "title": "Send user email to recover password",
+    "name": "forgotPassword",
+    "version": "2.0.1",
+    "group": "user",
+    "permission": "none",
+    "description": "Send user email to recover password",
+    "filename": "controllers/user.js"
   },
   {
     "type": "get",
@@ -7339,7 +7393,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "type": "get",
@@ -7511,7 +7565,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "type": "post",
@@ -7710,7 +7764,7 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "type": "delete",
@@ -7721,7 +7775,7 @@ define({ api: [
     "group": "user",
     "permission": "user",
     "description": "Removes user",
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   },
   {
     "type": "put",
@@ -7928,6 +7982,6 @@ define({ api: [
         ]
       }
     },
-    "filename": "./controllers/user.js"
+    "filename": "controllers/user.js"
   }
 ] });
