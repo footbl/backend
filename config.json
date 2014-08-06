@@ -1,6 +1,6 @@
 {
     "MONGOHQ_URL"         : "mongodb://localhost/footbl",
-    "REDISCLOUD_URL"      : null,
+    "REDISCLOUD_URL"      : "redis://rediscloud:CWDyqsNla5Ym3Y6M@pub-redis-19503.us-east-1-2.1.ec2.garantiadata.com:19503",
     "MANDRILL_APIKEY"     : "tbBa-7QGpKRaN8o0ehSDRw",
     "PAGE_SIZE"           : 20,
     "PORT"                : 8080,
