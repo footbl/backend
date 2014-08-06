@@ -1,5 +1,5 @@
 'use strict';
-var VError, mongoose, nconf, request, async, slug, championships, Championship, Match, Team;
+var VError, mongoose, nconf, request, async, slug, championships, Championship, Match, Team, now;
 
 VError = require('verror');
 mongoose = require('mongoose');
@@ -15,6 +15,8 @@ Team = require('../models/team');
 nconf.argv();
 nconf.env();
 nconf.defaults(require('../config'));
+
+now = new Date();
 
 championships.push({
     'name'               : 'brasileirão',
@@ -112,5 +114,8 @@ module.exports = function (next) {
 
 if (require.main === module) {
     mongoose.connect(nconf.get('MONGOHQ_URL'));
-    module.exports(process.exit);
+    async.whilst(function () {
+        console.log(Date.now() - now.getTime());
+        return Date.now() - now.getTime() < 1000 * 60 * 10;
+    }, module.exports, process.exit);
 }
