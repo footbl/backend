@@ -16,6 +16,7 @@ Schema = mongoose.Schema;
  * property {freeToEdit} Tells if the group can be edited be any member
  * property {owner} Group owner
  * property {invites} Invited users to the group
+ * property {featured} Tells if the group is featured
  * property {createdAt}
  * property {updatedAt}
  */
@@ -47,6 +48,10 @@ schema = new Schema({
             'type' : String
         }
     ],
+    'featured'   : {
+        'type'    : Boolean,
+        'default' : false
+    },
     'createdAt'  : {
         'type'    : Date,
         'default' : Date.now
@@ -71,6 +76,7 @@ schema.plugin(jsonSelect, {
     'owner'      : 0,
     'invites'    : 0,
     'members'    : 0,
+    'featured'   : 1,
     'createdAt'  : 1,
     'updatedAt'  : 1
 });

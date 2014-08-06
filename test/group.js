@@ -1,8 +1,8 @@
 /*globals describe, before, it, after*/
 require('should');
 var supertest, app, auth,
-    User, Group, GroupMember,
-    groupOwner, otherGroupOwner, groupUser, otherGroupUser;
+User, Group, GroupMember,
+groupOwner, otherGroupOwner, groupUser, otherGroupUser, featuredGroup;
 
 supertest = require('supertest');
 app = require('../index.js');
@@ -104,6 +104,17 @@ describe('group controller', function () {
         });
 
         before(function (done) {
+            featuredGroup = new Group({
+                'name'       : 'macmagazine',
+                'slug'       : new Date().getTime().toString(36).substring(3),
+                'freeToEdit' : false,
+                'owner'      : groupOwner._id,
+                'featured'   : true
+            });
+            featuredGroup.save(done);
+        });
+
+        before(function (done) {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
@@ -156,6 +167,28 @@ describe('group controller', function () {
                 response.body.should.have.lengthOf(1);
                 response.body.every(function (championship) {
                     championship.should.have.property('name');
+                    championship.should.have.property('slug');
+                });
+            });
+            request.end(done);
+        });
+
+        it('should list featured groups', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/groups');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(groupOwner));
+            request.send({'featured' : true});
+            request.expect(200);
+            request.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+                response.body.every(function (championship) {
+                    championship.should.have.property('name').be.equal('macmagazine');
                     championship.should.have.property('slug');
                 });
             });

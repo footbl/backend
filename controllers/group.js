@@ -10,6 +10,7 @@
  * @apiSuccess {String} slug Group identifier.
  * @apiSuccess {String} picture Group picture for display.
  * @apiSuccess {Boolean} freeToEdit Tells if the group can be edited be any member.
+ * @apiSuccess {Boolean} featured Tells if the group is featured.
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  */
@@ -50,6 +51,7 @@ GroupMember = require('../models/group-member');
  *       "slug": "abcde",
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
+ *       "featured": false,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -93,6 +95,7 @@ router
  * List all groups.
  *
  * @apiParam {String} [page=0] The page to be displayed.
+ * @apiParam {Boolean} [featured=false] Tells if should return the user groups or the featured groups.
  * @apiStructure groupSuccess
  *
  * @apiSuccessExample
@@ -102,6 +105,7 @@ router
  *       "slug": "abcde",
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
+ *       "featured": false,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -112,23 +116,39 @@ router
 .get(function listGroup(request, response, next) {
     'use strict';
 
-    var pageSize, page, query;
+    var pageSize, page, query, featured;
     pageSize = nconf.get('PAGE_SIZE');
     page = request.param('page', 0) * pageSize;
+    featured = request.param('featured', false);
     query = GroupMember.find();
-    query.where('user').equals(request.session._id);
-    query.populate('group');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedGroup(error, groupMembers) {
-        if (error) {
-            error = new VError(error, 'error finding groups');
-            return next(error);
-        }
-        return response.send(200, groupMembers.map(function (groupMember) {
-            return groupMember.group;
-        }));
-    });
+    if (featured) {
+        query = Group.find();
+        query.where('featured').equals(true);
+        query.skip(page);
+        query.limit(pageSize);
+        return query.exec(function listedGroup(error, groups) {
+            if (error) {
+                error = new VError(error, 'error finding groups');
+                return next(error);
+            }
+            return response.send(200, groups);
+        });
+    } else {
+        query = GroupMember.find();
+        query.where('user').equals(request.session._id);
+        query.populate('group');
+        query.skip(page);
+        query.limit(pageSize);
+        return query.exec(function listedGroup(error, groupMembers) {
+            if (error) {
+                error = new VError(error, 'error finding groups');
+                return next(error);
+            }
+            return response.send(200, groupMembers.map(function (groupMember) {
+                return groupMember.group;
+            }));
+        });
+    }
 });
 
 /**
@@ -149,6 +169,7 @@ router
  *       "slug": "abcde",
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
+ *       "featured": false,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -189,6 +210,7 @@ router
  *       "slug": "abcde",
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
+ *       "featured": false,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
