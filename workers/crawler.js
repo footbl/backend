@@ -115,7 +115,6 @@ module.exports = function (next) {
 if (require.main === module) {
     mongoose.connect(nconf.get('MONGOHQ_URL'));
     async.whilst(function () {
-        console.log(Date.now() - now.getTime());
         return Date.now() - now.getTime() < 1000 * 60 * 10;
     }, module.exports, process.exit);
 }
