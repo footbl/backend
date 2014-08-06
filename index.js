@@ -17,6 +17,9 @@ mongoose.connect(nconf.get('MONGOHQ_URL'));
 app = express();
 app.use(bodyParser());
 app.use(methodOverride());
+app.get('/', function (request, response) {
+    response.send(200, {'version' : nconf.get('VERSION')});
+});
 app.use('/docs', express.static(__dirname + '/docs'));
 app.use(auth.signature());
 app.use(auth.facebook());
