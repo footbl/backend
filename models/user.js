@@ -201,6 +201,33 @@ schema.pre('save', function (next) {
 
 /**
  * @callback
+ * @summary Populates all user credit requests
+ *
+ * @param next
+ */
+schema.pre('init', function (next, data) {
+    'use strict';
+
+    var query;
+    query = require('./credit-request').find();
+    query.or([
+        {'creditor' : data._id},
+        {'debtor' : data._id}
+    ]);
+    query.populate('creditor');
+    query.populate('debtor');
+    query.exec(function (error, creditRequests) {
+        if (error) {
+            error = new VError(error, 'error populating user "%s" transfers.', data._id);
+            return next(error);
+        }
+        this.creditRequests = creditRequests;
+        return next();
+    }.bind(this));
+});
+
+/**
+ * @callback
  * @summary Populates all user bets
  *
  * @param next
@@ -265,7 +292,53 @@ schema.virtual('funds').get(function () {
         return bet.profit;
     }.bind(this)).reduce(function (stake, bid) {
         return stake + bid;
+    }.bind(this), this.credits + this.debts);
+});
+
+/**
+ * @method
+ * @summary Return wallet credits
+ * This method should return the sum of all credits the user received.
+ */
+schema.virtual('credits').get(function () {
+    'use strict';
+
+    if (!this.creditRequests) {
+        return 100;
+    }
+
+    return this.creditRequests.filter(function (creditRequest) {
+        return creditRequest.createdAt > this.lastRecharge;
+    }.bind(this)).filter(function (creditRequest) {
+        return creditRequest.creditedUser._id.toString() === this._id.toString();
+    }.bind(this)).map(function (creditRequest) {
+        return creditRequest.value;
+    }.bind(this)).reduce(function (credits, credit) {
+        return credits + credit;
     }.bind(this), 100);
+});
+
+/**
+ * @method
+ * @summary Return wallet debts
+ * This method should return the sum of all debts the user donated.
+ */
+schema.virtual('debts').get(function () {
+    'use strict';
+
+    if (!this.creditRequests) {
+        return 0;
+    }
+
+    return this.creditRequests.filter(function (creditRequest) {
+        return creditRequest.createdAt > this.lastRecharge;
+    }.bind(this)).filter(function (creditRequest) {
+        return creditRequest.chargedUser._id.toString() === this._id.toString();
+    }.bind(this)).map(function (creditRequest) {
+        return -1 * creditRequest.value;
+    }.bind(this)).reduce(function (debts, debt) {
+        return debts + debt;
+    }.bind(this), 0);
 });
 
 module.exports = mongoose.model('User', schema);
