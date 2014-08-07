@@ -142,7 +142,7 @@ router.use(function findFeaturedUser(request, response, next) {
 router
 .route('/users/:user/featured')
 .post(auth.session())
-.post(function (request, response, next) {
+.post(function validateUserToCreate(request, response, next) {
     'use strict';
 
     var user;
@@ -505,7 +505,7 @@ router
 router
 .route('/users/:user/featured/:id')
 .put(auth.session())
-.put(function (request, response, next) {
+.put(function validateUserToUpdate(request, response, next) {
     'use strict';
 
     var user;
@@ -548,7 +548,7 @@ router
 router
 .route('/users/:user/featured/:id')
 .delete(auth.session())
-.delete(function (request, response, next) {
+.delete(function validateUserToRemove(request, response, next) {
     'use strict';
 
     var user;
