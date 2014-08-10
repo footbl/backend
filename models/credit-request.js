@@ -19,33 +19,33 @@ Schema = mongoose.Schema;
  * property {updatedAt}
  */
 schema = new Schema({
-    'slug'      : {
+    'slug'         : {
         'type'   : String,
         'unique' : true
     },
-    'creditedUser'  : {
+    'creditedUser' : {
         'type'     : Schema.Types.ObjectId,
         'ref'      : 'User',
         'required' : true
     },
-    'chargedUser'    : {
+    'chargedUser'  : {
         'type'     : Schema.Types.ObjectId,
         'ref'      : 'User',
         'required' : true
     },
-    'value'     : {
-        'type' : Number,
+    'value'        : {
+        'type'     : Number,
         'required' : true
     },
-    'payed'     : {
+    'payed'        : {
         'type'    : Boolean,
         'default' : false
     },
-    'createdAt' : {
+    'createdAt'    : {
         'type'    : Date,
         'default' : Date.now
     },
-    'updatedAt' : {
+    'updatedAt'    : {
         'type' : Date
     }
 }, {
@@ -57,14 +57,14 @@ schema = new Schema({
 });
 
 schema.plugin(jsonSelect, {
-    '_id'       : 0,
-    'slug'      : 1,
-    'creditor'  : 1,
-    'debtor'    : 1,
-    'payed'     : 1,
-    'value'     : 1,
-    'createdAt' : 1,
-    'updatedAt' : 1
+    '_id'          : 0,
+    'slug'         : 1,
+    'creditedUser' : 1,
+    'chargedUser'  : 1,
+    'payed'        : 1,
+    'value'        : 1,
+    'createdAt'    : 1,
+    'updatedAt'    : 1
 });
 
 /**

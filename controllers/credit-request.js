@@ -230,7 +230,7 @@ router
     pageSize = nconf.get('PAGE_SIZE');
     page = request.param('page', 0) * pageSize;
     query = CreditRequest.find();
-    query.where('user').equals(request.user._id);
+    query.where('chargedUser').equals(request.user._id);
     query.populate('creditedUser');
     query.populate('chargedUser');
     query.skip(page);
@@ -479,7 +479,7 @@ router.param('id', function findCreditRequest(request, response, next, id) {
 
     var query;
     query = CreditRequest.findOne();
-    query.where('user').equals(request.user._id);
+    query.where('chargedUser').equals(request.user._id);
     query.where('slug').equals(id);
     query.populate('creditedUser');
     query.populate('chargedUser');
@@ -487,6 +487,9 @@ router.param('id', function findCreditRequest(request, response, next, id) {
         if (error) {
             error = new VError(error, 'error finding creditRequest: "$s"', id);
             return next(error);
+        }
+        if (!creditRequest) {
+            return response.send(404);
         }
         request.creditRequest = creditRequest;
         return next();
