@@ -92,7 +92,7 @@ router
     var user, password;
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     user = new User({
-        'slug'       : slug(request.param('name', 'me')),
+        'slug'       : slug(request.param('username', 'me')),
         'email'      : request.param('email'),
         'username'   : request.param('username'),
         'name'       : request.param('name'),
@@ -302,7 +302,7 @@ router
     var user, password;
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     user = request.user;
-    user.slug = slug(request.param('name', 'me'));
+    user.slug = slug(request.param('username', 'me'));
     user.email = request.param('email');
     user.username = request.param('username');
     user.name = request.param('name');

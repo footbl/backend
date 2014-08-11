@@ -220,7 +220,7 @@ describe('user controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.send({'password' : '1234'});
             request.send({'email' : 'user1@user.com'});
-            request.send({'name' : 'user1'});
+            request.send({'username' : 'user1'});
             request.end(done);
         });
 
@@ -234,7 +234,7 @@ describe('user controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.set('facebook-token', '1234');
             request.send({'password' : '1234'});
-            request.send({'name' : 'user2'});
+            request.send({'username' : 'user2'});
             request.end(done);
         });
 
@@ -356,7 +356,7 @@ describe('user controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.send({'password' : '1234'});
             request.send({'email' : 'user1@user.com'});
-            request.send({'name' : 'user1'});
+            request.send({'username' : 'user1'});
             request.end(done);
         });
 
@@ -443,7 +443,7 @@ describe('user controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.send({'password' : '1234'});
             request.send({'email' : 'user1@user.com'});
-            request.send({'name' : 'user1'});
+            request.send({'username' : 'user1'});
             request.end(done);
         });
 
@@ -496,11 +496,11 @@ describe('user controller', function () {
             request.set('auth-token', auth.token(user));
             request.send({'password' : '1234'});
             request.send({'email' : 'user2@user.com'});
-            request.send({'name' : 'user2'});
+            request.send({'username' : 'user2'});
             request.expect(200);
             request.expect(function (response) {
                 response.body.should.have.property('slug').be.equal('user2');
-                response.body.should.have.property('name').be.equal('user2');
+                response.body.should.have.property('username').be.equal('user2');
                 response.body.should.have.property('email').be.equal('user2@user.com');
                 response.body.should.have.property('verified').be.equal(false);
                 response.body.should.have.property('featured').be.equal(false);
@@ -520,7 +520,7 @@ describe('user controller', function () {
             request.expect(200);
             request.expect(function (response) {
                 response.body.should.have.property('slug').be.equal('user2');
-                response.body.should.have.property('name').be.equal('user2');
+                response.body.should.have.property('username').be.equal('user2');
                 response.body.should.have.property('email').be.equal('user2@user.com');
                 response.body.should.have.property('verified').be.equal(false);
                 response.body.should.have.property('featured').be.equal(false);
@@ -551,7 +551,7 @@ describe('user controller', function () {
             request.set('auth-transactionId', credentials.transactionId);
             request.send({'password' : '1234'});
             request.send({'email' : 'user1@user.com'});
-            request.send({'name' : 'user1'});
+            request.send({'username' : 'user1'});
             request.end(done);
         });
 
