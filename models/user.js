@@ -54,9 +54,7 @@ schema = new Schema({
         'required' : true
     },
     'name'            : {
-        'type'   : String,
-        'unique' : true,
-        'sparse' : true
+        'type'   : String
     },
     'about'           : {
         'type' : String
