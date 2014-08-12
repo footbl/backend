@@ -14,7 +14,7 @@ Team = require('../models/team');
 Match = require('../models/match');
 Bet = require('../models/bet');
 
-nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id': '111'});
+nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '111'});
 nock('https://graph.facebook.com').get('/me?access_token=invalid').times(Infinity).reply(404, {});
 nock('https://mandrillapp.com').post('/api/1.0/messages/send.json').times(Infinity).reply(200, {});
 
@@ -159,7 +159,7 @@ describe('user controller', function () {
             });
         });
 
-        describe('with registered name', function () {
+        describe('with registered username', function () {
             before(function (done) {
                 User.remove(done);
             });
@@ -173,11 +173,11 @@ describe('user controller', function () {
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
                 request.send({'password' : '1234'});
-                request.send({'name' : 'test'});
+                request.send({'username' : 'test'});
                 request.end(done);
             });
 
-            it('should raise error with repeated name', function (done) {
+            it('should raise error with repeated username', function (done) {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
@@ -186,7 +186,7 @@ describe('user controller', function () {
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
                 request.send({'password' : '1234'});
-                request.send({'name' : 'test'});
+                request.send({'username' : 'test'});
                 request.expect(409);
                 request.end(done);
             });
