@@ -19,8 +19,16 @@ crawler = require('../workers/crawler');
 
 
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(Infinity).reply(200, require('./crawler-mock.json'));
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=1').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=2').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=3').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=4').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=5').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=11').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=10').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=18').times(Infinity).reply(200, {Games : []});
 
-describe('group ranking', function () {
+describe('crawler', function () {
     'use strict';
 
     before(function (done) {
@@ -74,12 +82,11 @@ describe('group ranking', function () {
         });
         request.end(done);
     });
-
     after(function (done) {
         var request, credentials;
         credentials = auth.credentials();
         request = supertest(app);
-        request = request.get('/championships/brasileirao-brasil-2014/matches/round-12-Atletico-Paranaense-vs-Fluminense');
+        request = request.get('/championships/Serie-A-Brasil-2014/matches/round-12-Atletico-PR-vs-Fluminense');
         request.set('auth-signature', credentials.signature);
         request.set('auth-timestamp', credentials.timestamp);
         request.set('auth-transactionId', credentials.transactionId);
@@ -88,8 +95,8 @@ describe('group ranking', function () {
         request.expect(function (response) {
             response.body.should.have.property('guest').with.property('name').be.equal('Fluminense');
             response.body.should.have.property('guest').with.property('slug').be.equal('Fluminense');
-            response.body.should.have.property('host').with.property('name').be.equal('Atletico Paranaense');
-            response.body.should.have.property('host').with.property('slug').be.equal('Atletico-Paranaense');
+            response.body.should.have.property('host').with.property('name').be.equal('Atlético PR');
+            response.body.should.have.property('host').with.property('slug').be.equal('Atletico-PR');
             response.body.should.have.property('round').be.equal(12);
             response.body.should.have.property('elapsed').be.equal(null);
             response.body.should.have.property('date');
@@ -104,14 +111,14 @@ describe('group ranking', function () {
         var request, credentials;
         credentials = auth.credentials();
         request = supertest(app);
-        request = request.get('/championships/brasileirao-brasil-2014/matches/round-13-Fluminense-vs-Goias');
+        request = request.get('/championships/Serie-A-Brasil-2014/matches/round-13-Fluminense-vs-Goias');
         request.set('auth-signature', credentials.signature);
         request.set('auth-timestamp', credentials.timestamp);
         request.set('auth-transactionId', credentials.transactionId);
         request.set('auth-token', auth.token(user));
         request.expect(200);
         request.expect(function (response) {
-            response.body.should.have.property('guest').with.property('name').be.equal('Goias');
+            response.body.should.have.property('guest').with.property('name').be.equal('Goiás');
             response.body.should.have.property('guest').with.property('slug').be.equal('Goias');
             response.body.should.have.property('host').with.property('name').be.equal('Fluminense');
             response.body.should.have.property('host').with.property('slug').be.equal('Fluminense');
@@ -129,7 +136,7 @@ describe('group ranking', function () {
         var request, credentials;
         credentials = auth.credentials();
         request = supertest(app);
-        request = request.get('/championships/brasileirao-brasil-2014/matches/round-14-Atletico-Mineiro-vs-Palmeiras');
+        request = request.get('/championships/Serie-A-Brasil-2014/matches/round-14-Atletico-MG-vs-Palmeiras');
         request.set('auth-signature', credentials.signature);
         request.set('auth-timestamp', credentials.timestamp);
         request.set('auth-transactionId', credentials.transactionId);
@@ -138,8 +145,8 @@ describe('group ranking', function () {
         request.expect(function (response) {
             response.body.should.have.property('guest').with.property('name').be.equal('Palmeiras');
             response.body.should.have.property('guest').with.property('slug').be.equal('Palmeiras');
-            response.body.should.have.property('host').with.property('name').be.equal('Atletico Mineiro');
-            response.body.should.have.property('host').with.property('slug').be.equal('Atletico-Mineiro');
+            response.body.should.have.property('host').with.property('name').be.equal('Atlético MG');
+            response.body.should.have.property('host').with.property('slug').be.equal('Atletico-MG');
             response.body.should.have.property('round').be.equal(14);
             response.body.should.have.property('elapsed').be.equal(null);
             response.body.should.have.property('date');
