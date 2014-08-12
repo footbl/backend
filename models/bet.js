@@ -16,8 +16,7 @@ Schema = mongoose.Schema;
  */
 schema = new Schema({
     'slug'      : {
-        'type'   : String,
-        'unique' : true
+        'type' : String
     },
     'user'      : {
         'type'     : Schema.Types.ObjectId,
