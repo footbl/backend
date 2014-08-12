@@ -1144,7 +1144,7 @@ define({ api: [
   },
   {
     "type": "get",
-    "url": "/user/:id/bets",
+    "url": "/championships/:championship/matches/:match/bets",
     "title": "List all bets in database",
     "name": "listBet",
     "version": "2.0.1",
@@ -1524,9 +1524,9 @@ define({ api: [
   },
   {
     "type": "get",
-    "url": "/championships/:championship/matches/:match/bets",
+    "url": "/user/:id/bets",
     "title": "List all bets in database",
-    "name": "listBet",
+    "name": "listUserBet",
     "version": "2.0.1",
     "group": "bet",
     "permission": "user",

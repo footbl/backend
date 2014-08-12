@@ -486,7 +486,7 @@ router
 router
 .route('/championships/:championship/matches/:match/bets/:id')
 .put(auth.session())
-.put(function (request, response, next) {
+.put(function validateUserToUpdate(request, response, next) {
     'use strict';
 
     var bet;
@@ -540,7 +540,7 @@ router
 router
 .route('/championships/:championship/matches/:match/bets/:id')
 .delete(auth.session())
-.delete(function (request, response, next) {
+.delete(function validateUserToRemove(request, response, next) {
     'use strict';
 
     var bet;
@@ -574,7 +574,7 @@ router
 
 /**
  * @api {get} /user/:id/bets List all bets in database
- * @apiName listBet
+ * @apiName listUserBet
  * @apiVersion 2.0.1
  * @apiGroup bet
  * @apiPermission user
@@ -654,7 +654,7 @@ router
  */
 router
 .route('/users/:user/bets')
-.get(function (request, response, next) {
+.get(function listUserBets(request, response, next) {
     'use strict';
 
     var pageSize, page, query;
@@ -666,7 +666,7 @@ router
     query.populate('match');
     query.skip(page);
     query.limit(pageSize);
-    return query.exec(function listedBet(error, bets) {
+    return query.exec(function listedUserBet(error, bets) {
         if (error) {
             error = new VError(error, 'error finding bets');
             return next(error);
