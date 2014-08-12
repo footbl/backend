@@ -1144,6 +1144,386 @@
   },
   {
     "type": "get",
+    "url": "/user/:id/bets",
+    "title": "List all bets in database",
+    "name": "listBet",
+    "version": "2.0.1",
+    "group": "bet",
+    "permission": "user",
+    "description": "List all bets in database.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"match\": {\n       \"slug\": \"brasilerao-brasil-2014-3-fluminense-vs-botafogo\"\n       \"guest\": {\n         \"name\": \"fluminense\",\n         \"slug\": \"fluminense\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"host\": {\n         \"name\": \"botafogo\",\n         \"slug\": \"botafogo\",\n         \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n         \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n         \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n       },\n       \"round\": 3,\n       \"date\": \"2014-07-01T12:22:25.058Z\",\n       \"finished\": true,\n       \"elapsed\": null,\n       \"score\": {\n         \"guest\": 0,\n         \"host\" 0\n       },\n       \"pot\": {\n         \"guest\": 0,\n         \"host\" 0,\n         \"draw\" 0\n       },\n       \"winner\": \"draw\",\n       \"jackpot\": 0,\n       \"reward\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"bid\": 50,\n     \"result\": \"draw\",\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Bet identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "bid",
+            "optional": false,
+            "description": "Bet bid"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "result",
+            "optional": false,
+            "description": "Bet result"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "user history": [
+          {
+            "group": "user history",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Date of history creation"
+          },
+          {
+            "group": "user history",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "Funds in history"
+          }
+        ],
+        "match": [
+          {
+            "group": "match",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Match identifier."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "round",
+            "optional": false,
+            "description": "Match round."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "date",
+            "optional": false,
+            "description": "Match date."
+          },
+          {
+            "group": "match",
+            "type": "Boolean",
+            "field": "finished",
+            "optional": false,
+            "description": "Match status."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "elapsed",
+            "optional": false,
+            "description": "Match elapsed time."
+          },
+          {
+            "group": "match",
+            "type": "String",
+            "field": "winner",
+            "optional": false,
+            "description": "Match winner."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "jackpot",
+            "optional": false,
+            "description": "Match total pot."
+          },
+          {
+            "group": "match",
+            "type": "Number",
+            "field": "reward",
+            "optional": false,
+            "description": "Match reward."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match score": [
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest team score."
+          },
+          {
+            "group": "match score",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host team score."
+          }
+        ],
+        "match pot": [
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "guest",
+            "optional": false,
+            "description": "Match guest total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "host",
+            "optional": false,
+            "description": "Match host total bets."
+          },
+          {
+            "group": "match pot",
+            "type": "Number",
+            "field": "draw",
+            "optional": false,
+            "description": "Match draw total bets."
+          }
+        ],
+        "match guest": [
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Guest team name."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Guest team picture."
+          },
+          {
+            "group": "match guest",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Guest team identifier."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match guest",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "match host": [
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Host team name."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Host team picture."
+          },
+          {
+            "group": "match host",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Host team identifier."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "match host",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "controllers/bet.js"
+  },
+  {
+    "type": "get",
     "url": "/championships/:championship/matches/:match/bets",
     "title": "List all bets in database",
     "name": "listBet",
@@ -2557,6 +2937,26 @@
     "filename": "controllers/championship.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "value",
+            "optional": false,
+            "description": "Credit request value"
+          }
+        ]
+      }
+    },
+    "group": "credit-request.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/credit-request.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -2801,26 +3201,6 @@
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
-          }
-        ]
-      }
-    },
-    "group": "credit-request.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/credit-request.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "value",
-            "optional": false,
-            "description": "Credit request value"
           }
         ]
       }
