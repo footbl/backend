@@ -109,7 +109,8 @@ schema = new Schema({
         'default' : Date.now
     },
     'createdAt'       : {
-        'type' : Date
+        'type' : Date,
+        'default' : Date.now
     },
     'updatedAt'       : {
         'type' : Date
