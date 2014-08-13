@@ -1,5 +1,5 @@
 'use strict';
-var express, mongoose, nconf, bodyParser, methodOverride, auth,
+var express, mongoose, nconf, bodyParser, methodOverride, prettyError, auth,
 app;
 
 express = require('express');
@@ -7,12 +7,31 @@ mongoose = require('mongoose');
 nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
+prettyError = new (require('pretty-error'))();
 auth = require('./lib/auth');
 
 nconf.argv();
 nconf.env();
 nconf.defaults(require('./config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
+
+prettyError.skipPackage('mongoose', 'express');
+prettyError.skipNodeFiles();
+prettyError.appendStyle({
+    'pretty-error > header > title > kind' : {
+        display : 'none'
+    },
+    'pretty-error > header > colon'        : {
+        display : 'none'
+    },
+    'pretty-error > header > message'      : {
+        color      : 'bright-white',
+        background : 'red'
+    },
+    'pretty-error > trace > item'          : {
+        margin : 0
+    }
+});
 
 app = express();
 app.use(bodyParser());
@@ -66,7 +85,7 @@ app.use(function (error, request, response, next) {
             return response.send(400);
         }
     }
-    console.error(error);
+    console.error(prettyError.render(error));
     response.send(500);
     return process.exit();
 });
