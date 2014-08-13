@@ -124,6 +124,7 @@ router
     if (featured) {
         query = Group.find();
         query.where('featured').equals(true);
+        query.populate('owner');
         query.skip(page);
         query.limit(pageSize);
         return query.exec(function listedGroup(error, groups) {
@@ -144,9 +145,14 @@ router
                 error = new VError(error, 'error finding groups');
                 return next(error);
             }
-            return response.send(200, groupMembers.map(function (groupMember) {
-                return groupMember.group;
-            }));
+            return async.map(groupMembers, function populateGroupOwner(groupMember, next) {
+                var group;
+                group = groupMember.group;
+                group.populate('owner');
+                group.populate(next);
+            }, function populatedGroupOwner(error, groups) {
+                return response.send(200, groups);
+            });
         });
     }
 });
@@ -223,7 +229,7 @@ router
 
     var group;
     group = request.group;
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
         return response.send(405);
     }
     return next();
@@ -235,7 +241,7 @@ router
     group = request.group;
     group.name = request.param('name');
     group.picture = request.param('picture');
-    group.freeToEdit = request.session._id.toString() === group.owner.toString() ? request.param('freeToEdit', false) : group.freeToEdit;
+    group.freeToEdit = request.session._id.toString() === group.owner._id.toString() ? request.param('freeToEdit', false) : group.freeToEdit;
     return group.save(function updatedGroup(error) {
         if (error) {
             error = new VError(error, 'error updating group: "$s"', group._id);
@@ -262,7 +268,7 @@ router
 
     var group;
     group = request.group;
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
         return response.send(405);
     }
     return next();
@@ -300,7 +306,7 @@ router
 
     var group;
     group = request.group;
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
         return response.send(405);
     }
     return next();
@@ -314,7 +320,7 @@ router
     async.series([group.save.bind(group), function (next) {
         mandrill.messages.send({
             'message' : {
-                'html' : [
+                'html'       : [
                     '<p>Join my group on footbl!</p>',
                     '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
                     '<p>footbl | wanna bet?<p>',
@@ -323,12 +329,14 @@ router
                 'subject'    : 'wanna bet?',
                 'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
                 'from_email' : 'noreply@footbl.co',
-                'to'         : [{
-                    'email' : request.param('invite', ''),
-                    'type'  : 'to'
-                }]
+                'to'         : [
+                    {
+                        'email' : request.param('invite', ''),
+                        'type'  : 'to'
+                    }
+                ]
             },
-            'async' : true
+            'async'   : true
         });
         next();
     }], function (error) {
@@ -357,7 +365,7 @@ router
 
     var group;
     group = request.group;
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+    if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
         return response.send(405);
     }
     return next();
@@ -403,6 +411,7 @@ router.param('id', function findGroup(request, response, next, id) {
     var query;
     query = Group.findOne();
     query.where('slug').equals(id.toLowerCase());
+    query.populate('owner');
     return query.exec(function foundGroup(error, group) {
         if (error) {
             error = new VError(error, 'error finding group: "$s"', id);

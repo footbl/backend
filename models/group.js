@@ -73,7 +73,7 @@ schema.plugin(jsonSelect, {
     'slug'       : 1,
     'picture'    : 1,
     'freeToEdit' : 1,
-    'owner'      : 0,
+    'owner'      : 1,
     'invites'    : 0,
     'members'    : 0,
     'featured'   : 1,

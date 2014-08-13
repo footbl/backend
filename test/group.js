@@ -187,9 +187,9 @@ describe('group controller', function () {
             request.expect(function (response) {
                 response.body.should.be.instanceOf(Array);
                 response.body.should.have.lengthOf(1);
-                response.body.every(function (championship) {
-                    championship.should.have.property('name').be.equal('macmagazine');
-                    championship.should.have.property('slug');
+                response.body.every(function (group) {
+                    group.should.have.property('name').be.equal('macmagazine');
+                    group.should.have.property('slug');
                 });
             });
             request.end(done);
