@@ -1,5 +1,5 @@
 'use strict';
-var express, mongoose, nconf, bodyParser, methodOverride, prettyError, longjohn, auth,
+var express, mongoose, nconf, bodyParser, methodOverride, prettyError, auth,
 app;
 
 express = require('express');
@@ -8,7 +8,6 @@ nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
 prettyError = new (require('pretty-error'))();
-longjohn = require('longjohn');
 auth = require('./lib/auth');
 
 nconf.argv();
@@ -16,7 +15,6 @@ nconf.env();
 nconf.defaults(require('./config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-longjohn.async_trace_limit = -1;
 prettyError.skipPackage('mongoose', 'express', 'redis');
 prettyError.skipNodeFiles();
 prettyError.appendStyle({
