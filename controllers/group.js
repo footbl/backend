@@ -145,7 +145,9 @@ router
                 error = new VError(error, 'error finding groups');
                 return next(error);
             }
-            return async.map(groupMembers, function populateGroupOwner(groupMember, next) {
+            return async.map(groupMembers.filter(function (groupMember) {
+                return !!groupMember.group;
+            }), function populateGroupOwner(groupMember, next) {
                 var group;
                 group = groupMember.group;
                 group.populate('owner');
