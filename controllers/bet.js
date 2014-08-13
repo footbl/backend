@@ -167,7 +167,7 @@ router
 
     var bet;
     bet = new Bet({
-        'slug'   : request.session.slug,
+        'slug'   : request.match.slug + '-' + request.session.slug,
         'user'   : request.session._id,
         'match'  : request.match._id,
         'bid'    : request.param('bid'),

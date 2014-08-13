@@ -706,7 +706,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -718,7 +718,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.get('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -731,7 +731,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
+            request = request.get('/championships/brasileirao-brasil-2014/matches/invalid/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -757,7 +757,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -857,7 +857,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -871,7 +871,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -886,7 +886,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.put('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -901,7 +901,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
+            request = request.put('/championships/brasileirao-brasil-2014/matches/invalid/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -931,7 +931,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -948,7 +948,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -966,7 +966,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -1002,7 +1002,7 @@ describe('bet controller', function () {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
-                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
                 request.set('auth-signature', credentials.signature);
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
@@ -1035,7 +1035,7 @@ describe('bet controller', function () {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
-                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
                 request.set('auth-signature', credentials.signature);
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
@@ -1289,7 +1289,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -1301,7 +1301,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -1314,7 +1314,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/user');
+            request = request.del('/championships/invalid/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -1327,7 +1327,7 @@ describe('bet controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/championships/brasileirao-brasil-2014/matches/invalid/bets/user');
+            request = request.del('/championships/brasileirao-brasil-2014/matches/invalid/bets/round-1-fluminense-vs-botafogo-user');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -1371,7 +1371,7 @@ describe('bet controller', function () {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
-                request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
                 request.set('auth-signature', credentials.signature);
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
@@ -1402,7 +1402,7 @@ describe('bet controller', function () {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
-                request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request = request.del('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
                 request.set('auth-signature', credentials.signature);
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
@@ -1415,7 +1415,7 @@ describe('bet controller', function () {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
-                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/user');
+                request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets/round-1-fluminense-vs-botafogo-user');
                 request.set('auth-signature', credentials.signature);
                 request.set('auth-timestamp', credentials.timestamp);
                 request.set('auth-transactionId', credentials.transactionId);
