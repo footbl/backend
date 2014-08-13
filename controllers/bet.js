@@ -165,8 +165,6 @@ router
 .post(function createBet(request, response, next) {
     'use strict';
 
-    return next(new VError('teste de erro'));
-
     var bet;
     bet = new Bet({
         'slug'   : request.session.slug,
