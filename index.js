@@ -15,7 +15,8 @@ nconf.env();
 nconf.defaults(require('./config'));
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 
-prettyError.skipPackage('mongoose', 'express');
+require('longjohn');
+prettyError.skipPackage('mongoose', 'express', 'redis');
 prettyError.skipNodeFiles();
 prettyError.appendStyle({
     'pretty-error > header > title > kind' : {
