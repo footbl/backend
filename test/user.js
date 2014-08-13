@@ -298,6 +298,24 @@ describe('user controller', function () {
             request.end(done);
         });
 
+        it('should filter by username', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.send({'usernames' : ['user1']});
+            request.expect(200);
+            request.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+                response.body[0].should.have.property('slug').be.equal('user1');
+            });
+            request.end(done);
+        });
+
         it('should filter by facebookId and email', function (done) {
             var request, credentials;
             credentials = auth.credentials();

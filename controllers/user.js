@@ -174,6 +174,8 @@ router
         query.where('email').in(request.param('emails', []));
     } else if (request.param('facebookIds')) {
         query.where('facebookId').in(request.param('facebookIds', []));
+    } else if (request.param('usernames')) {
+        query.where('username').in(request.param('usernames', []));
     } else if (request.param('featured')) {
         query.where('featured').equals(true);
     } else {
