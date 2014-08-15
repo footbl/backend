@@ -133,7 +133,7 @@ schema.plugin(require('mongoose-json-select'), {
     'email'           : 1,
     'username'        : 1,
     'name'            : 1,
-    'facebookId'      : 0,
+    'facebookId'      : 1,
     'about'           : 1,
     'verified'        : 1,
     'featured'        : 1,
