@@ -4347,6 +4347,974 @@ define({ api: [
             "type": "String",
             "field": "slug",
             "optional": false,
+            "description": "Entry identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "championship": [
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Championship name."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Championship identifier."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Championship picture for display."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "year",
+            "optional": false,
+            "description": "Championship year of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "type",
+            "optional": false,
+            "description": "Championship type."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "country",
+            "optional": false,
+            "description": "Championship country of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "rounds",
+            "optional": false,
+            "description": "Championship number of rounds."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "currentRound",
+            "optional": false,
+            "description": "Championship current round."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "entry.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/entry.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "championship",
+            "optional": false,
+            "description": "Entry championship"
+          }
+        ]
+      }
+    },
+    "group": "entry.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/entry.js"
+  },
+  {
+    "type": "post",
+    "url": "/users/:user/entries",
+    "title": "Creates a new entry in database.",
+    "name": "createEntry",
+    "version": "2.0.1",
+    "group": "entry",
+    "permission": "none",
+    "description": "Creates a new entry in database.",
+    "error": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 400 Bad Request",
+          "content": "   {\n     \"championship\": \"required\"\n   }\n"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 201 Created",
+          "content": "   {\n     \"slug\": \"brasileirao-brasil-2014\",\n     \"championship\": {\n       \"name\": \"Brasileirão\",\n       \"slug\": \"brasileirao-brasil-2014\",\n       \"country\" : \"brasil\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"edition\": 2014,\n       \"type\": \"national league\",\n       \"rounds\": 7,\n       \"currentRound\" : 4,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Entry identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "championship": [
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Championship name."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Championship identifier."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Championship picture for display."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "year",
+            "optional": false,
+            "description": "Championship year of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "type",
+            "optional": false,
+            "description": "Championship type."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "country",
+            "optional": false,
+            "description": "Championship country of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "rounds",
+            "optional": false,
+            "description": "Championship number of rounds."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "currentRound",
+            "optional": false,
+            "description": "Championship current round."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "championship",
+            "optional": false,
+            "description": "Entry championship"
+          }
+        ]
+      }
+    },
+    "filename": "controllers/entry.js"
+  },
+  {
+    "type": "get",
+    "url": "/users/:user/entries/:id",
+    "title": "Get entry info in database",
+    "name": "getEntry",
+    "version": "2.0.1",
+    "group": "entry",
+    "permission": "none",
+    "description": "Get entry info in database.",
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   {\n     \"slug\": \"brasileirao-brasil-2014\",\n     \"championship\": {\n       \"name\": \"Brasileirão\",\n       \"slug\": \"brasileirao-brasil-2014\",\n       \"country\" : \"brasil\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"edition\": 2014,\n       \"type\": \"national league\",\n       \"rounds\": 7,\n       \"currentRound\" : 4,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Entry identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "championship": [
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Championship name."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Championship identifier."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Championship picture for display."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "year",
+            "optional": false,
+            "description": "Championship year of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "type",
+            "optional": false,
+            "description": "Championship type."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "country",
+            "optional": false,
+            "description": "Championship country of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "rounds",
+            "optional": false,
+            "description": "Championship number of rounds."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "currentRound",
+            "optional": false,
+            "description": "Championship current round."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "controllers/entry.js"
+  },
+  {
+    "type": "get",
+    "url": "/users/:user/entries",
+    "title": "List all entries in database",
+    "name": "listEntry",
+    "version": "2.0.1",
+    "group": "entry",
+    "permission": "none",
+    "description": "List all entries in database.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"brasileirao-brasil-2014\",\n     \"championship\": {\n       \"name\": \"Brasileirão\",\n       \"slug\": \"brasileirao-brasil-2014\",\n       \"country\" : \"brasil\",\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"edition\": 2014,\n       \"type\": \"national league\",\n       \"rounds\": 7,\n       \"currentRound\" : 4,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Entry identifier"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "championship": [
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Championship name."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "Championship identifier."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "Championship picture for display."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "year",
+            "optional": false,
+            "description": "Championship year of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "type",
+            "optional": false,
+            "description": "Championship type."
+          },
+          {
+            "group": "championship",
+            "type": "String",
+            "field": "country",
+            "optional": false,
+            "description": "Championship country of occurrence."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "championship",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "rounds",
+            "optional": false,
+            "description": "Championship number of rounds."
+          },
+          {
+            "group": "championship",
+            "type": "Number",
+            "field": "currentRound",
+            "optional": false,
+            "description": "Championship current round."
+          }
+        ],
+        "user": [
+          {
+            "group": "user",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "user",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "user",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "user",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "user",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "controllers/entry.js"
+  },
+  {
+    "type": "delete",
+    "url": "/users/:user/entries/:id",
+    "title": "Removes entry from database",
+    "name": "removeEntry",
+    "version": "2.0.1",
+    "group": "entry",
+    "permission": "none",
+    "description": "Removes entry from database",
+    "filename": "controllers/entry.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
+          }
+        ]
+      }
+    },
+    "group": "featured.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/featured.js"
+  },
+  {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
             "description": "Featured identifier"
           },
           {
@@ -4485,26 +5453,6 @@ define({ api: [
             "field": "funds",
             "optional": false,
             "description": "Funds in history"
-          }
-        ]
-      }
-    },
-    "group": "featured.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/featured.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
           }
         ]
       }
@@ -5244,192 +6192,24 @@ define({ api: [
     "filename": "controllers/featured.js"
   },
   {
-    "type": "put",
-    "url": "/users/:user/featured/:id",
-    "title": "Updates featured info",
-    "name": "updateFeatured",
-    "version": "2.0.1",
-    "group": "featured",
-    "permission": "user",
-    "description": "Updates featured info.",
-    "error": {
-      "examples": [
-        {
-          "title": "    HTTP/1.1 400 Bad Request",
-          "content": "   {\n     \"featured\": \"required\"\n   }\n"
-        }
-      ]
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"featured\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"user\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
-        }
-      ],
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "slug",
-            "optional": false,
-            "description": "Featured identifier"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "field": "createdAt",
-            "optional": false,
-            "description": "Date of document creation."
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "field": "updatedAt",
-            "optional": false,
-            "description": "Date of document last change."
-          }
-        ],
-        "featured": [
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "slug",
-            "optional": false,
-            "description": "User identifier"
-          },
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "email",
-            "optional": false,
-            "description": "User email"
-          },
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "username",
-            "optional": false,
-            "description": "User username"
-          },
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "User name"
-          },
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "about",
-            "optional": false,
-            "description": "User about"
-          },
-          {
-            "group": "featured",
-            "type": "Boolean",
-            "field": "verified",
-            "optional": false,
-            "description": "User verified"
-          },
-          {
-            "group": "featured",
-            "type": "Boolean",
-            "field": "featured",
-            "optional": false,
-            "description": "User featured"
-          },
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "picture",
-            "optional": false,
-            "description": "User picture"
-          },
-          {
-            "group": "featured",
-            "type": "String",
-            "field": "apnsToken",
-            "optional": false,
-            "description": "User apnsToken"
-          },
-          {
-            "group": "featured",
-            "type": "Number",
-            "field": "ranking",
-            "optional": false,
-            "description": "User current ranking"
-          },
-          {
-            "group": "featured",
-            "type": "Number",
-            "field": "previousRanking",
-            "optional": false,
-            "description": "User previous ranking"
-          },
-          {
-            "group": "featured",
-            "type": "Number",
-            "field": "funds",
-            "optional": false,
-            "description": "User funds"
-          },
-          {
-            "group": "featured",
-            "type": "Number",
-            "field": "stake",
-            "optional": false,
-            "description": "User stake"
-          },
-          {
-            "group": "featured",
-            "type": "Date",
-            "field": "createdAt",
-            "optional": false,
-            "description": "Date of document creation."
-          },
-          {
-            "group": "featured",
-            "type": "Date",
-            "field": "updatedAt",
-            "optional": false,
-            "description": "Date of document last change."
-          }
-        ],
-        "featured history": [
-          {
-            "group": "featured history",
-            "type": "Date",
-            "field": "date",
-            "optional": false,
-            "description": "Date of history creation"
-          },
-          {
-            "group": "featured history",
-            "type": "Number",
-            "field": "funds",
-            "optional": false,
-            "description": "Funds in history"
-          }
-        ]
-      }
-    },
     "parameter": {
       "fields": {
         "Parameter": [
           {
             "group": "Parameter",
             "type": "String",
-            "field": "featured",
+            "field": "user",
             "optional": false,
-            "description": "Featured user"
+            "description": "GroupMember user"
           }
         ]
       }
     },
-    "filename": "controllers/featured.js"
+    "group": "group-member.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/group-member.js"
   },
   {
     "success": {
@@ -5603,61 +6383,6 @@ define({ api: [
     "filename": "controllers/group-member.js"
   },
   {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          }
-        ]
-      }
-    },
-    "group": "group-member.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/group-member.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "Group name."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "picture",
-            "optional": true,
-            "description": "Group picture for display."
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "freeToEdit",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Tells if the group can be edited be any member."
-          }
-        ]
-      }
-    },
-    "group": "group.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/group.js"
-  },
-  {
     "success": {
       "fields": {
         "Success 200": [
@@ -5709,6 +6434,148 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
+          }
+        ],
+        "owner": [
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "group": "group.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/group.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Group name."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "Group picture for display."
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "freeToEdit",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Tells if the group can be edited be any member."
           }
         ]
       }
@@ -6309,208 +7176,6 @@ define({ api: [
     "filename": "controllers/group-member.js"
   },
   {
-    "type": "put",
-    "url": "/groups/:group/members/:id",
-    "title": "Updates groupMember info",
-    "name": "updateGroupMember",
-    "version": "2.0.1",
-    "group": "groupMember",
-    "permission": "user",
-    "description": "Updates groupMember info.",
-    "error": {
-      "examples": [
-        {
-          "title": "    HTTP/1.1 400 Bad Request",
-          "content": "   {\n     \"user\": \"required\"\n   }\n"
-        }
-      ]
-    },
-    "success": {
-      "examples": [
-        {
-          "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"slug\": \"vandoren\",\n     \"user\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"ranking\": 1,\n     \"previousRanking\": 1,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
-        }
-      ],
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "String",
-            "field": "slug",
-            "optional": false,
-            "description": "GroupMember identifier."
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "ranking",
-            "optional": false,
-            "description": "GroupMember current ranking"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number",
-            "field": "previousRanking",
-            "optional": false,
-            "description": "GroupMember previous ranking"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "field": "createdAt",
-            "optional": false,
-            "description": "Date of document creation."
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "field": "updatedAt",
-            "optional": false,
-            "description": "Date of document last change."
-          }
-        ],
-        "user": [
-          {
-            "group": "user",
-            "type": "String",
-            "field": "slug",
-            "optional": false,
-            "description": "User identifier"
-          },
-          {
-            "group": "user",
-            "type": "String",
-            "field": "email",
-            "optional": false,
-            "description": "User email"
-          },
-          {
-            "group": "user",
-            "type": "String",
-            "field": "username",
-            "optional": false,
-            "description": "User username"
-          },
-          {
-            "group": "user",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "User name"
-          },
-          {
-            "group": "user",
-            "type": "String",
-            "field": "about",
-            "optional": false,
-            "description": "User about"
-          },
-          {
-            "group": "user",
-            "type": "Boolean",
-            "field": "verified",
-            "optional": false,
-            "description": "User verified"
-          },
-          {
-            "group": "user",
-            "type": "Boolean",
-            "field": "featured",
-            "optional": false,
-            "description": "User featured"
-          },
-          {
-            "group": "user",
-            "type": "String",
-            "field": "picture",
-            "optional": false,
-            "description": "User picture"
-          },
-          {
-            "group": "user",
-            "type": "String",
-            "field": "apnsToken",
-            "optional": false,
-            "description": "User apnsToken"
-          },
-          {
-            "group": "user",
-            "type": "Number",
-            "field": "ranking",
-            "optional": false,
-            "description": "User current ranking"
-          },
-          {
-            "group": "user",
-            "type": "Number",
-            "field": "previousRanking",
-            "optional": false,
-            "description": "User previous ranking"
-          },
-          {
-            "group": "user",
-            "type": "Number",
-            "field": "funds",
-            "optional": false,
-            "description": "User funds"
-          },
-          {
-            "group": "user",
-            "type": "Number",
-            "field": "stake",
-            "optional": false,
-            "description": "User stake"
-          },
-          {
-            "group": "user",
-            "type": "Date",
-            "field": "createdAt",
-            "optional": false,
-            "description": "Date of document creation."
-          },
-          {
-            "group": "user",
-            "type": "Date",
-            "field": "updatedAt",
-            "optional": false,
-            "description": "Date of document last change."
-          }
-        ],
-        "user history": [
-          {
-            "group": "user history",
-            "type": "Date",
-            "field": "date",
-            "optional": false,
-            "description": "Date of history creation"
-          },
-          {
-            "group": "user history",
-            "type": "Number",
-            "field": "funds",
-            "optional": false,
-            "description": "Funds in history"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "user",
-            "optional": false,
-            "description": "GroupMember user"
-          }
-        ]
-      }
-    },
-    "filename": "controllers/group-member.js"
-  },
-  {
     "type": "post",
     "url": "/groups",
     "title": "Creates a new group.",
@@ -6531,7 +7196,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 201 Created",
-          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"owner\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -6580,6 +7245,113 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "owner": [
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "owner",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -6631,7 +7403,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"owner\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -6680,6 +7452,113 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "owner": [
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "owner",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
@@ -6749,7 +7628,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   [{\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+          "content": "   [{\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"owner\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
         }
       ],
       "fields": {
@@ -6803,6 +7682,113 @@ define({ api: [
             "optional": false,
             "description": "Date of document last change."
           }
+        ],
+        "owner": [
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
         ]
       }
     },
@@ -6851,7 +7837,7 @@ define({ api: [
       "examples": [
         {
           "title": "    HTTP/1.1 200 Ok",
-          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
+          "content": "   {\n     \"name\": \"College Buddies\",\n     \"slug\": \"abcde\",\n     \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n     \"freeToEdit\": false,\n     \"featured\": false,\n     \"owner\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }\n"
         }
       ],
       "fields": {
@@ -6900,6 +7886,113 @@ define({ api: [
           },
           {
             "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "owner": [
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "owner",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "owner",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "owner",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "owner",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "owner",
             "type": "Date",
             "field": "updatedAt",
             "optional": false,
