@@ -189,6 +189,90 @@ describe('featured controller', function () {
         });
     });
 
+    describe('list request credits', function () {
+        before(function (done) {
+            CreditRequest.remove(done);
+        });
+
+        before(function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.post('/users/credit-requested-user/credit-requests');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'value' : 40});
+            request.end(done);
+        });
+
+        it('should raise error without token', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/user/requested-credits');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.expect(401);
+            request.end(done);
+        });
+
+        it('should raise error with invalid user id', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/invalid/requested-credits');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
+        });
+
+        it('should list', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/user/requested-credits');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(200);
+            request.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+                response.body.every(function (creditRequest) {
+                    creditRequest.should.have.property('value');
+                    creditRequest.should.have.property('creditedUser');
+                    creditRequest.should.have.property('chargedUser');
+                });
+            });
+            request.end(done);
+        });
+
+        it('should return empty in second page', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/user/requested-credits');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'page' : 1});
+            request.expect(200);
+            request.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(0);
+            });
+            request.end(done);
+        });
+    });
+
     describe('details', function () {
         before(function (done) {
             CreditRequest.remove(done);

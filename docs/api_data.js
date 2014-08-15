@@ -2308,55 +2308,6 @@ define({ api: [
     "filename": "controllers/bet.js"
   },
   {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "Championship name."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "picture",
-            "optional": true,
-            "description": "Championship picture for display."
-          },
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "field": "year",
-            "optional": false,
-            "description": "Championship year of occurrence."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "type",
-            "defaultValue": "national league",
-            "optional": true,
-            "description": "Championship type."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "country",
-            "optional": false,
-            "description": "Championship country of occurrence."
-          }
-        ]
-      }
-    },
-    "group": "championship.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/championship.js"
-  },
-  {
     "success": {
       "fields": {
         "Success 200": [
@@ -2429,6 +2380,55 @@ define({ api: [
             "field": "currentRound",
             "optional": false,
             "description": "Championship current round."
+          }
+        ]
+      }
+    },
+    "group": "championship.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/championship.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Championship name."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "Championship picture for display."
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "field": "year",
+            "optional": false,
+            "description": "Championship year of occurrence."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "type",
+            "defaultValue": "national league",
+            "optional": true,
+            "description": "Championship type."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "country",
+            "optional": false,
+            "description": "Championship country of occurrence."
           }
         ]
       }
@@ -4042,6 +4042,285 @@ define({ api: [
     "filename": "controllers/credit-request.js"
   },
   {
+    "type": "get",
+    "url": "/users/:user/requested-credits",
+    "title": "List all creditRequests in database",
+    "name": "listRequestedCredits",
+    "version": "2.0.1",
+    "group": "creditRequest",
+    "permission": "none",
+    "description": "List all creditRequests in database.",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "page",
+            "defaultValue": "0",
+            "optional": true,
+            "description": "The page to be displayed."
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "    HTTP/1.1 200 Ok",
+          "content": "   [{\n     \"slug\": \"vandoren\",\n     \"value\": 10,\n     \"payed\": false,\n     \"creditedUser\": {\n       \"slug\": \"vandoren\",\n       \"email\": \"vandoren@vandoren.com\",\n       \"username\": \"vandoren\",\n       \"name\": \"Van Doren\",\n       \"about\": \"footbl fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"2\",\n       \"previousRanking\": \"1\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"chargedUser\": {\n       \"slug\": \"fan\",\n       \"email\": \"fan@vandoren.com\",\n       \"username\": \"fan\",\n       \"name\": \"Fan\",\n       \"about\": \"vandoren fan\",\n       \"verified\": false,\n       \"featured\": false,\n       \"picture\": \"http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png\",\n       \"ranking\": \"3\",\n       \"previousRanking\": \"2\",\n       \"history\": [{\n         \"date\": \"2014-07-01T12:22:25.058Z\",\n         \"funds\": 100\n       },{\n         \"date\": \"2014-07-03T12:22:25.058Z\",\n         \"funds\": 120\n       }],\n       \"funds\": 100,\n       \"stake\": 0,\n       \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n       \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n     },\n     \"createdAt\": \"2014-07-01T12:22:25.058Z\",\n     \"updatedAt\": \"2014-07-01T12:22:25.058Z\"\n   }]\n"
+        }
+      ],
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Boolean",
+            "field": "payed",
+            "optional": false,
+            "description": "Credit request status"
+          },
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "field": "value",
+            "optional": false,
+            "description": "Credit request value"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "creditedUser": [
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "creditedUser",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "creditedUser",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "creditedUser",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ],
+        "chargedUser": [
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "slug",
+            "optional": false,
+            "description": "User identifier"
+          },
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "email",
+            "optional": false,
+            "description": "User email"
+          },
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "username",
+            "optional": false,
+            "description": "User username"
+          },
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "User name"
+          },
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "about",
+            "optional": false,
+            "description": "User about"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Boolean",
+            "field": "verified",
+            "optional": false,
+            "description": "User verified"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Boolean",
+            "field": "featured",
+            "optional": false,
+            "description": "User featured"
+          },
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "picture",
+            "optional": false,
+            "description": "User picture"
+          },
+          {
+            "group": "chargedUser",
+            "type": "String",
+            "field": "apnsToken",
+            "optional": false,
+            "description": "User apnsToken"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Number",
+            "field": "ranking",
+            "optional": false,
+            "description": "User current ranking"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Number",
+            "field": "previousRanking",
+            "optional": false,
+            "description": "User previous ranking"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Number",
+            "field": "funds",
+            "optional": false,
+            "description": "User funds"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Number",
+            "field": "stake",
+            "optional": false,
+            "description": "User stake"
+          },
+          {
+            "group": "chargedUser",
+            "type": "Date",
+            "field": "createdAt",
+            "optional": false,
+            "description": "Date of document creation."
+          },
+          {
+            "group": "chargedUser",
+            "type": "Date",
+            "field": "updatedAt",
+            "optional": false,
+            "description": "Date of document last change."
+          }
+        ]
+      }
+    },
+    "filename": "controllers/credit-request.js"
+  },
+  {
     "type": "delete",
     "url": "/users/:user/credit-requests/:id",
     "title": "Removes creditRequest from database",
@@ -5287,26 +5566,6 @@ define({ api: [
     "filename": "controllers/entry.js"
   },
   {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "featured",
-            "optional": false,
-            "description": "Featured user"
-          }
-        ]
-      }
-    },
-    "group": "featured.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/featured.js"
-  },
-  {
     "success": {
       "fields": {
         "Success 200": [
@@ -5453,6 +5712,26 @@ define({ api: [
             "field": "funds",
             "optional": false,
             "description": "Funds in history"
+          }
+        ]
+      }
+    },
+    "group": "featured.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/featured.js"
+  },
+  {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "featured",
+            "optional": false,
+            "description": "Featured user"
           }
         ]
       }
@@ -6383,6 +6662,41 @@ define({ api: [
     "filename": "controllers/group-member.js"
   },
   {
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "name",
+            "optional": false,
+            "description": "Group name."
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "field": "picture",
+            "optional": true,
+            "description": "Group picture for display."
+          },
+          {
+            "group": "Parameter",
+            "type": "Boolean",
+            "field": "freeToEdit",
+            "defaultValue": "false",
+            "optional": true,
+            "description": "Tells if the group can be edited be any member."
+          }
+        ]
+      }
+    },
+    "group": "group.js",
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "controllers/group.js"
+  },
+  {
     "success": {
       "fields": {
         "Success 200": [
@@ -6541,41 +6855,6 @@ define({ api: [
             "field": "updatedAt",
             "optional": false,
             "description": "Date of document last change."
-          }
-        ]
-      }
-    },
-    "group": "group.js",
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "controllers/group.js"
-  },
-  {
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "name",
-            "optional": false,
-            "description": "Group name."
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "field": "picture",
-            "optional": true,
-            "description": "Group picture for display."
-          },
-          {
-            "group": "Parameter",
-            "type": "Boolean",
-            "field": "freeToEdit",
-            "defaultValue": "false",
-            "optional": true,
-            "description": "Tells if the group can be edited be any member."
           }
         ]
       }

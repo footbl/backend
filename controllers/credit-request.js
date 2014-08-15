@@ -245,6 +245,98 @@ router
 });
 
 /**
+ * @api {get} /users/:user/requested-credits List all creditRequests in database
+ * @apiName listRequestedCredits
+ * @apiVersion 2.0.1
+ * @apiGroup creditRequest
+ * @apiPermission none
+ * @apiDescription
+ * List all creditRequests in database.
+ *
+ * @apiParam {String} [page=0] The page to be displayed.
+ * @apiStructure creditRequestSuccess
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "slug": "vandoren",
+ *       "value": 10,
+ *       "payed": false,
+ *       "creditedUser": {
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "chargedUser": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
+ */
+router
+.route('/users/:user/requested-credits')
+.get(auth.session())
+.get(function listRequestedCredits(request, response, next) {
+    'use strict';
+
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = CreditRequest.find();
+    query.where('creditedUser').equals(request.user._id);
+    query.populate('creditedUser');
+    query.populate('chargedUser');
+    query.skip(page);
+    query.limit(pageSize);
+    return query.exec(function listedRequestedCredits(error, creditRequests) {
+        if (error) {
+            error = new VError(error, 'error finding creditRequests');
+            return next(error);
+        }
+        return response.send(200, creditRequests);
+    });
+});
+
+/**
  * @api {get} /users/:user/credit-requests/:id Get creditRequest info in database
  * @apiName getCreditRequest
  * @apiVersion 2.0.1
