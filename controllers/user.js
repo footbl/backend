@@ -395,7 +395,6 @@ router
         query.where('password').equals(password);
     }
     return query.exec(function (error, user) {
-        console.log('------------------',error, user, facebook);
         if (error) {
             error = new VError(error, 'error signing up user');
             return next(error);
