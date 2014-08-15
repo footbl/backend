@@ -115,7 +115,10 @@ router
         'group'        : group._id,
         'initialFunds' : request.session.funds
     });
-    return async.series([group.save.bind(group), groupMember.save.bind(groupMember)], function (error) {
+    return async.series([group.save.bind(group), groupMember.save.bind(groupMember), function (next) {
+        group.populate('owner');
+        group.populate(next);
+    }], function (error) {
         if (error) {
             error = new VError(error, 'error creating group: "$s"', group._id);
             return next(error);
