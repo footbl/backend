@@ -67,7 +67,7 @@ app.use(require('./controllers/entry'));
 app.use(function (error, request, response, next) {
     var errors, prop;
     if (error && error.cause && error.cause()) {
-        if (error.cause().code === 11000) {
+        if ([11001, 11000].indexOf(error.cause().code) !== -1) {
             return response.send(409);
         }
         if (error.cause().errors) {
