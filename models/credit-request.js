@@ -80,4 +80,29 @@ schema.pre('save', function setCreditRequestUpdatedAt(next) {
     next();
 });
 
+/**
+ * @callback
+ * @summary Ensures sufficient funds
+ *
+ * @param next
+ */
+schema.pre('save', function validateSufficientFundsBeforeSave(next) {
+    'use strict';
+
+    var query;
+    query = require('./user').findOne();
+    query.where('_id').equals(this.chargedUser);
+    query.exec(function (error, user) {
+        if (error || !user) {
+            error = new VError(error, 'error finding user: "%s"', this._id);
+            return next(error);
+        }
+        if (this.value > user.funds && this.payed) {
+            error = new VError('insufficient funds');
+            return next(error);
+        }
+        return next();
+    }.bind(this));
+});
+
 module.exports = mongoose.model('CreditRequest', schema);
