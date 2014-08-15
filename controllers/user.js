@@ -386,7 +386,6 @@ router
     email = request.param('email');
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     query = User.findOne();
-    console.log(facebook);
     if (facebook) {
         query.where('facebookId').equals(facebook);
     } else if (email) {
@@ -396,6 +395,7 @@ router
         query.where('password').equals(password);
     }
     return query.exec(function (error, user) {
+        console.log('------------------',error, user, facebook);
         if (error) {
             error = new VError(error, 'error signing up user');
             return next(error);
