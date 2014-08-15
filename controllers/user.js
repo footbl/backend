@@ -86,6 +86,34 @@ User = require('../models/user');
  */
 router
 .route('/users')
+.post(function validateIfUserIsInactiveAccountToCreate(request, response, next) {
+    'use strict';
+
+    var query;
+    if (!request.facebook) {
+        return next();
+    }
+    query = User.findOne();
+    query.where('active').equals(false);
+    query.where('facebookId').equals(request.facebook);
+    return query.exec(function retrievedInactiveUserToCreate(error, user) {
+        if (error) {
+            error = new VError(error, 'error finding inactive user to create user');
+            return next(error);
+        }
+        if (!user) {
+            return next();
+        }
+        user.activate = true;
+        return user.save(function (error) {
+            if (error) {
+                error = new VError(error, 'error activating user');
+                return next(error);
+            }
+            return response.send(201, user);
+        });
+    });
+})
 .post(function createUser(request, response, next) {
     'use strict';
 
@@ -165,6 +193,7 @@ router
     query.sort('ranking');
     query.skip(page);
     query.limit(pageSize);
+    query.where('active').ne(false);
     if (request.param('emails') && request.param('facebookIds')) {
         query.where('email').or([
             { 'email' : {'$in' : request.param('emails', [])} },
@@ -288,6 +317,34 @@ router
 router
 .route('/users/:id')
 .put(auth.session())
+.put(function validateIfUserIsInactiveAccountToUpdate(request, response, next) {
+    'use strict';
+
+    var query;
+    if (!request.facebook) {
+        return next();
+    }
+    query = User.findOne();
+    query.where('active').equals(false);
+    query.where('facebookId').equals(request.facebook);
+    return query.exec(function retrievedInactiveUserToCreate(error, user) {
+        if (error) {
+            error = new VError(error, 'error finding inactive user to create user');
+            return next(error);
+        }
+        if (!user) {
+            return next();
+        }
+        user.activate = true;
+        return user.save(function (error) {
+            if (error) {
+                error = new VError(error, 'error activating user');
+                return next(error);
+            }
+            return response.send(200, user);
+        });
+    });
+})
 .put(function validateUpdateUser(request, response, next) {
     'use strict';
 
@@ -350,7 +407,8 @@ router
 
     var user;
     user = request.user;
-    return user.remove(function removedUser(error) {
+    user.active = false;
+    return user.save(function removedUser(error) {
         if (error) {
             error = new VError(error, 'error removing user: "$s"', request.params.id);
             return next(error);
@@ -502,7 +560,7 @@ router
         }
         mandrill.messages.send({
             'message' : {
-                'html' : [
+                'html'       : [
                     '<p>Forgot password</p>',
                     '<p>to change your password <a href="footbl://forgot-password?token=' + auth.token(user) + '">click here.</a><p>',
                     '<p>footbl | wanna bet?<p>'
@@ -510,12 +568,14 @@ router
                 'subject'    : 'footbl - password recovery',
                 'from_name'  : 'footbl',
                 'from_email' : 'noreply@footbl.co',
-                'to'         : [{
-                    'email' : request.param('email', ''),
-                    'type'  : 'to'
-                }]
+                'to'         : [
+                    {
+                        'email' : request.param('email', ''),
+                        'type'  : 'to'
+                    }
+                ]
             },
-            'async' : true
+            'async'   : true
         });
         return response.send(200, {
             'token' : auth.token(user)

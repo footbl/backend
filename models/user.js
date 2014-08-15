@@ -54,7 +54,7 @@ schema = new Schema({
         'required' : true
     },
     'name'            : {
-        'type'   : String
+        'type' : String
     },
     'about'           : {
         'type' : String
@@ -108,8 +108,12 @@ schema = new Schema({
         'type'    : Date,
         'default' : Date.now
     },
+    'active'          : {
+        'type'    : Boolean,
+        'default' : true
+    },
     'createdAt'       : {
-        'type' : Date,
+        'type'    : Date,
         'default' : Date.now
     },
     'updatedAt'       : {
@@ -144,6 +148,7 @@ schema.plugin(require('mongoose-json-select'), {
     'history'         : 1,
     'notifications'   : 1,
     'lastRecharge'    : 1,
+    'active'          : 1,
     'stake'           : 1,
     'funds'           : 1,
     'createdAt'       : 1,

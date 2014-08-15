@@ -127,8 +127,39 @@ CreditRequest = require('../models/credit-request');
  *     }
  */
 router
-.route('/users/:user/credit-requests')
+.route('/users/:userOrFacebookId/credit-requests')
 .post(auth.session())
+.post(function createUserIfNotExistsToCreate(request, response, next) {
+    'use strict';
+
+    var query, id;
+    query = User.findOne();
+    id = request.params.userOrFacebookId;
+    if (id === 'me') {
+        request.user = request.session;
+        return next();
+    }
+    query.or([
+        {'slug' : id},
+        {'facebookId' : id}
+    ]);
+    return query.exec(function (error, user) {
+        if (error) {
+            error = new VError(error, 'error finding user: "$s"', id);
+            return next(error);
+        }
+        if (!user) {
+            request.user = new User({
+                'facebookId' : request.params.user,
+                'password'   : 'temp',
+                'active'     : false
+            });
+            return request.user.save(next);
+        }
+        request.user = user;
+        return next();
+    });
+})
 .post(function createCreditRequest(request, response, next) {
     'use strict';
 
