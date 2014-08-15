@@ -13,6 +13,22 @@
  * @apiSuccess {Boolean} featured Tells if the group is featured.
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (owner) {String} slug User identifier
+ * @apiSuccess (owner) {String} email User email
+ * @apiSuccess (owner) {String} username User username
+ * @apiSuccess (owner) {String} name User name
+ * @apiSuccess (owner) {String} about User about
+ * @apiSuccess (owner) {Boolean} verified User verified
+ * @apiSuccess (owner) {Boolean} featured User featured
+ * @apiSuccess (owner) {String} picture User picture
+ * @apiSuccess (owner) {String} apnsToken User apnsToken
+ * @apiSuccess (owner) {Number} ranking User current ranking
+ * @apiSuccess (owner) {Number} previousRanking User previous ranking
+ * @apiSuccess (owner) {Number} funds User funds
+ * @apiSuccess (owner) {Number} stake User stake
+ * @apiSuccess (owner) {Date} createdAt Date of document creation.
+ * @apiSuccess (owner) {Date} updatedAt Date of document last change.
  */
 var VError, router, nconf, slug, async, mandrill, auth, Group, GroupMember;
 
@@ -52,6 +68,29 @@ GroupMember = require('../models/group-member');
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
  *       "featured": false,
+ *       "owner": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -106,6 +145,29 @@ router
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
  *       "featured": false,
+ *       "owner": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -178,6 +240,29 @@ router
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
  *       "featured": false,
+ *       "owner": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -219,6 +304,29 @@ router
  *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
  *       "freeToEdit": false,
  *       "featured": false,
+ *       "owner": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
