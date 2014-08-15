@@ -386,7 +386,8 @@ router
     email = request.param('email');
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     query = User.findOne();
-    if (request.facebook) {
+    console.log(facebook);
+    if (facebook) {
         query.where('facebookId').equals(facebook);
     } else if (email) {
         query.where('email').equals(email);
