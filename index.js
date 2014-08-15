@@ -63,6 +63,7 @@ app.use(require('./controllers/team'));
 app.use(require('./controllers/group'));
 app.use(require('./controllers/group-member'));
 app.use(require('./controllers/credit-request'));
+app.use(require('./controllers/entry'));
 app.use(function (error, request, response, next) {
     var errors, prop;
     if (error && error.cause && error.cause()) {
