@@ -50,24 +50,7 @@ describe('featured controller', function () {
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
-            request.send({'value' : 40});
             request.expect(401);
-            request.end(done);
-        });
-
-        it('should raise error without value', function (done) {
-            var request, credentials;
-            credentials = auth.credentials();
-            request = supertest(app);
-            request = request.post('/users/credit-requested-user/credit-requests');
-            request.set('auth-signature', credentials.signature);
-            request.set('auth-timestamp', credentials.timestamp);
-            request.set('auth-transactionId', credentials.transactionId);
-            request.set('auth-token', auth.token(user));
-            request.expect(400);
-            request.expect(function (response) {
-                response.body.should.have.property('value').be.equal('required');
-            });
             request.end(done);
         });
 
@@ -80,10 +63,8 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.expect(201);
             request.expect(function (response) {
-                response.body.should.have.property('value');
                 response.body.should.have.property('creditedUser');
                 response.body.should.have.property('chargedUser');
             });
@@ -99,7 +80,6 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.expect(201);
             request.end(done);
         });
@@ -119,7 +99,6 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.end(done);
         });
 
@@ -162,7 +141,6 @@ describe('featured controller', function () {
                 response.body.should.be.instanceOf(Array);
                 response.body.should.have.lengthOf(1);
                 response.body.every(function (creditRequest) {
-                    creditRequest.should.have.property('value');
                     creditRequest.should.have.property('creditedUser');
                     creditRequest.should.have.property('chargedUser');
                 });
@@ -203,7 +181,6 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.end(done);
         });
 
@@ -246,7 +223,6 @@ describe('featured controller', function () {
                 response.body.should.be.instanceOf(Array);
                 response.body.should.have.lengthOf(1);
                 response.body.every(function (creditRequest) {
-                    creditRequest.should.have.property('value');
                     creditRequest.should.have.property('creditedUser');
                     creditRequest.should.have.property('chargedUser');
                 });
@@ -287,7 +263,6 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.end(done);
         });
 
@@ -340,7 +315,6 @@ describe('featured controller', function () {
             request.set('auth-token', auth.token(user));
             request.expect(200);
             request.expect(function (response) {
-                response.body.should.have.property('value');
                 response.body.should.have.property('creditedUser');
                 response.body.should.have.property('chargedUser');
             });
@@ -348,7 +322,7 @@ describe('featured controller', function () {
         });
     });
 
-    describe('update', function () {
+    describe('approve', function () {
         before(function (done) {
             CreditRequest.remove(done);
         });
@@ -362,7 +336,6 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.end(done);
         });
 
@@ -370,12 +343,10 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user');
+            request = request.put('/users/credit-requested-user/credit-requests/user/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
-            request.send({'payed' : false});
-            request.send({'value' : 10});
             request.expect(401);
             request.end(done);
         });
@@ -384,13 +355,11 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user');
+            request = request.put('/users/credit-requested-user/credit-requests/user/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'payed' : false});
-            request.send({'value' : 10});
             request.expect(405);
             request.end(done);
         });
@@ -399,13 +368,11 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/invalid/credit-requests/user');
+            request = request.put('/users/invalid/credit-requests/user/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(creditRequestedUser));
-            request.send({'payed' : false});
-            request.send({'value' : 10});
             request.expect(404);
             request.end(done);
         });
@@ -414,48 +381,26 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/invalid');
+            request = request.put('/users/credit-requested-user/credit-requests/invalid/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(creditRequestedUser));
-            request.send({'payed' : false});
-            request.send({'value' : 10});
             request.expect(404);
             request.end(done);
         });
 
-        it('should raise without value', function (done) {
+        it('should approve', function (done) {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user');
+            request = request.put('/users/credit-requested-user/credit-requests/user/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(creditRequestedUser));
-            request.send({'payed' : false});
-            request.expect(400);
-            request.expect(function (response) {
-                response.body.should.have.property('value').be.equal('required');
-            });
-            request.end(done);
-        });
-
-        it('should update', function (done) {
-            var request, credentials;
-            credentials = auth.credentials();
-            request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user');
-            request.set('auth-signature', credentials.signature);
-            request.set('auth-timestamp', credentials.timestamp);
-            request.set('auth-transactionId', credentials.transactionId);
-            request.set('auth-token', auth.token(creditRequestedUser));
-            request.send({'payed' : false});
-            request.send({'value' : 10});
             request.expect(200);
             request.expect(function (response) {
-                response.body.should.have.property('value');
                 response.body.should.have.property('payed');
                 response.body.should.have.property('creditedUser');
                 response.body.should.have.property('chargedUser');
@@ -478,7 +423,6 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
-            request.send({'value' : 40});
             request.end(done);
         });
 

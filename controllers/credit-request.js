@@ -1,6 +1,5 @@
 /**
  * @apiDefineStructure creditRequestParams
- * @apiParam {Number} value Credit request value
  */
 /**
  * @apiDefineStructure creditRequestSuccess
@@ -150,7 +149,7 @@ router
         }
         if (!user) {
             request.user = new User({
-                'facebookId' : request.params.user,
+                'facebookId' : id,
                 'password'   : 'temp',
                 'active'     : false
             });
@@ -167,8 +166,7 @@ router
     creditRequest = new CreditRequest({
         'slug'         : request.session.slug,
         'creditedUser' : request.session._id,
-        'chargedUser'  : request.user._id,
-        'value'        : request.param('value')
+        'chargedUser'  : request.user._id
     });
     return async.series([creditRequest.save.bind(creditRequest), function (next) {
         creditRequest.populate('creditedUser');
@@ -446,8 +444,8 @@ router
 });
 
 /**
- * @api {put} /users/:user/credit-requests/:id Updates creditRequest info in database
- * @apiName updateCreditRequest
+ * @api {put} /users/:user/credit-requests/:id/approve Approves creditRequest info in database
+ * @apiName approveCreditRequest
  * @apiVersion 2.0.1
  * @apiGroup creditRequest
  * @apiPermission none
@@ -520,9 +518,9 @@ router
  *     }
  */
 router
-.route('/users/:user/credit-requests/:id')
+.route('/users/:user/credit-requests/:id/approve')
 .put(auth.session())
-.put(function validateUserToUpdate(request, response, next) {
+.put(function validateUserToApprove(request, response, next) {
     'use strict';
 
     var user;
@@ -532,14 +530,24 @@ router
     }
     return next();
 })
-.put(function updateCreditRequest(request, response, next) {
+.put(function approveCreditRequest(request, response, next) {
     'use strict';
 
     var creditRequest;
     creditRequest = request.creditRequest;
-    creditRequest.value = request.param('value');
-    creditRequest.payed = request.param('payed');
+    creditRequest.value = creditRequest.creditedUser.funds < 100 ? 100 - creditRequest.creditedUser.funds : 0;
+    creditRequest.payed = true;
     return async.series([creditRequest.save.bind(creditRequest), function (next) {
+        var query;
+        query = CreditRequest.find();
+        query.where('creditedUser').equals(creditRequest.creditedUser._id);
+        query.where('payed').equals(false);
+        query.exec(function (error, creditRequests) {
+            async.each(creditRequests, function (creditRequest, next) {
+                creditRequest.remove(next);
+            }, next);
+        });
+    }, function (next) {
         creditRequest.populate('creditedUser');
         creditRequest.populate('chargedUser');
         creditRequest.populate(next);

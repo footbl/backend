@@ -33,8 +33,7 @@ schema = new Schema({
         'required' : true
     },
     'value'        : {
-        'type'     : Number,
-        'required' : true
+        'type'     : Number
     },
     'payed'        : {
         'type'    : Boolean,
