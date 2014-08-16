@@ -162,9 +162,10 @@ router
 .post(function createCreditRequest(request, response, next) {
     'use strict';
 
-    var creditRequest;
+    var creditRequest, now;
+    now = new Date();
     creditRequest = new CreditRequest({
-        'slug'         : request.session.slug,
+        'slug'         : request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
         'creditedUser' : request.session._id,
         'chargedUser'  : request.user._id
     });
