@@ -36,7 +36,7 @@ prettyError.appendStyle({
 app = express();
 app.use(bodyParser());
 app.use(methodOverride());
-app.enable('trust proxy')
+app.enable('trust proxy');
 app.get('/', function (request, response) {
     response.send(200, {'version' : nconf.get('VERSION')});
 });
