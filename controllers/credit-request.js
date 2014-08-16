@@ -165,7 +165,7 @@ router
     var creditRequest, now;
     now = new Date();
     creditRequest = new CreditRequest({
-        'slug'         : request.user.slug + '-' + request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
+        'slug'         : request.params.userOrFacebookId + '-' + request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
         'creditedUser' : request.session._id,
         'chargedUser'  : request.user._id
     });
