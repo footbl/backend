@@ -419,6 +419,20 @@ describe('credit request controller', function () {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
+                request = request.post('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo/bets');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(user));
+                request.send({'bid' : 70});
+                request.send({'result' : 'draw'});
+                request.end(done);
+            });
+
+            before(function (done) {
+                var request, credentials;
+                credentials = auth.credentials();
+                request = supertest(app);
                 request = request.post('/users/credit-requested-user/credit-requests');
                 request.set('auth-signature', credentials.signature);
                 request.set('auth-timestamp', credentials.timestamp);
@@ -495,6 +509,38 @@ describe('credit request controller', function () {
                     response.body.should.have.property('payed');
                     response.body.should.have.property('creditedUser');
                     response.body.should.have.property('chargedUser');
+                });
+                request.end(done);
+            });
+
+            after(function (done) {
+                var request, credentials;
+                credentials = auth.credentials();
+                request = supertest(app);
+                request = request.get('/users/credit-requested-user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(creditRequestedUser));
+                request.expect(200);
+                request.expect(function (response) {
+                    response.body.should.have.property('funds').be.equal(30);
+                });
+                request.end(done);
+            });
+
+            after(function (done) {
+                var request, credentials;
+                credentials = auth.credentials();
+                request = supertest(app);
+                request = request.get('/users/user');
+                request.set('auth-signature', credentials.signature);
+                request.set('auth-timestamp', credentials.timestamp);
+                request.set('auth-transactionId', credentials.transactionId);
+                request.set('auth-token', auth.token(creditRequestedUser));
+                request.expect(200);
+                request.expect(function (response) {
+                    response.body.should.have.property('funds').be.equal(100);
                 });
                 request.end(done);
             });
