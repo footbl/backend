@@ -215,11 +215,9 @@ schema.pre('init', function (next, data) {
     var query;
     query = require('./credit-request').find();
     query.or([
-        {'creditor' : data._id},
-        {'debtor' : data._id}
+        {'creditedUser' : data._id},
+        {'chargedUser' : data._id}
     ]);
-    query.populate('creditor');
-    query.populate('debtor');
     query.exec(function (error, creditRequests) {
         if (error) {
             error = new VError(error, 'error populating user "%s" transfers.', data._id);
@@ -314,7 +312,7 @@ schema.virtual('credits').get(function () {
     return this.creditRequests.filter(function (creditRequest) {
         return creditRequest.createdAt > this.lastRecharge;
     }.bind(this)).filter(function (creditRequest) {
-        return creditRequest.creditedUser._id.toString() === this._id.toString();
+        return creditRequest.creditedUser.toString() === this._id.toString() && creditRequest.payed;
     }.bind(this)).map(function (creditRequest) {
         return creditRequest.value;
     }.bind(this)).reduce(function (credits, credit) {
@@ -337,7 +335,7 @@ schema.virtual('debts').get(function () {
     return this.creditRequests.filter(function (creditRequest) {
         return creditRequest.createdAt > this.lastRecharge;
     }.bind(this)).filter(function (creditRequest) {
-        return creditRequest.chargedUser._id.toString() === this._id.toString();
+        return creditRequest.chargedUser.toString() === this._id.toString() && creditRequest.payed;
     }.bind(this)).map(function (creditRequest) {
         return -1 * creditRequest.value;
     }.bind(this)).reduce(function (debts, debt) {

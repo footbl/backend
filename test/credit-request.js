@@ -10,7 +10,7 @@ auth = require('../lib/auth');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
 
-describe('featured controller', function () {
+describe('credit request controller', function () {
     'use strict';
 
     before(function (done) {
@@ -250,6 +250,8 @@ describe('featured controller', function () {
     });
 
     describe('details', function () {
+        var id;
+
         before(function (done) {
             CreditRequest.remove(done);
         });
@@ -263,6 +265,9 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
+            request.expect(function (response) {
+                id = response.body.slug;
+            });
             request.end(done);
         });
 
@@ -270,7 +275,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/users/credit-requested-user/credit-requests/user');
+            request = request.get('/users/credit-requested-user/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -282,7 +287,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/users/invalid/credit-requests/user');
+            request = request.get('/users/invalid/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -308,7 +313,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.get('/users/credit-requested-user/credit-requests/user');
+            request = request.get('/users/credit-requested-user/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -323,6 +328,8 @@ describe('featured controller', function () {
     });
 
     describe('approve', function () {
+        var id;
+
         before(function (done) {
             CreditRequest.remove(done);
         });
@@ -336,6 +343,9 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
+            request.expect(function (response) {
+                id = response.body.slug;
+            });
             request.end(done);
         });
 
@@ -343,7 +353,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user/approve');
+            request = request.put('/users/credit-requested-user/credit-requests/' + id + '/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -355,7 +365,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user/approve');
+            request = request.put('/users/credit-requested-user/credit-requests/' + id + '/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -368,7 +378,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/invalid/credit-requests/user/approve');
+            request = request.put('/users/invalid/credit-requests/' + id + '/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -394,7 +404,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.put('/users/credit-requested-user/credit-requests/user/approve');
+            request = request.put('/users/credit-requested-user/credit-requests/' + id + '/approve');
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -410,6 +420,8 @@ describe('featured controller', function () {
     });
 
     describe('delete', function () {
+        var id;
+
         before(function (done) {
             CreditRequest.remove(done);
         });
@@ -423,6 +435,9 @@ describe('featured controller', function () {
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
             request.set('auth-token', auth.token(user));
+            request.expect(function (response) {
+                id = response.body.slug;
+            });
             request.end(done);
         });
 
@@ -430,7 +445,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/users/credit-requested-user/credit-requests/user');
+            request = request.del('/users/credit-requested-user/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -442,7 +457,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/users/credit-requested-user/credit-requests/user');
+            request = request.del('/users/credit-requested-user/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -455,7 +470,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/users/invalid/credit-requests/user');
+            request = request.del('/users/invalid/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
@@ -481,7 +496,7 @@ describe('featured controller', function () {
             var request, credentials;
             credentials = auth.credentials();
             request = supertest(app);
-            request = request.del('/users/credit-requested-user/credit-requests/user');
+            request = request.del('/users/credit-requested-user/credit-requests/' + id);
             request.set('auth-signature', credentials.signature);
             request.set('auth-timestamp', credentials.timestamp);
             request.set('auth-transactionId', credentials.transactionId);
