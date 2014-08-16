@@ -576,6 +576,19 @@ describe('bet controller', function () {
             request.end(done);
         });
 
+        it('should raise error with invalid user id', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/invalid/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(404);
+            request.end(done);
+        })
+
         it('should list', function (done) {
             var request, credentials;
             credentials = auth.credentials();
