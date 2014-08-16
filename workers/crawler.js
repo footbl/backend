@@ -352,7 +352,7 @@ module.exports = function (next) {
                         'date'         : date,
                         'finished'     : finished,
                         'elapsed'      : elapsed,
-                        'score'        : {
+                        'result'        : {
                             'guest' : guestScore,
                             'host'  : hostScore
                         }

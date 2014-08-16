@@ -41,8 +41,8 @@
  * @apiSuccess (match) {Date} createdAt Date of document creation.
  * @apiSuccess (match) {Date} updatedAt Date of document last change.
  *
- * @apiSuccess (match score) {Number} guest Match guest team score.
- * @apiSuccess (match score) {Number} host Match host team score.
+ * @apiSuccess (match result) {Number} guest Match guest team result.
+ * @apiSuccess (match result) {Number} host Match host team result.
  *
  * @apiSuccess (match pot) {Number} guest Match guest total bets.
  * @apiSuccess (match pot) {Number} host Match host total bets.
@@ -140,7 +140,7 @@ User = require('../models/user');
  *         "date": "2014-07-01T12:22:25.058Z",
  *         "finished": true,
  *         "elapsed": null,
- *         "score": {
+ *         "result": {
  *           "guest": 0,
  *           "host" 0
  *         },
@@ -255,7 +255,7 @@ router
  *         "date": "2014-07-01T12:22:25.058Z",
  *         "finished": true,
  *         "elapsed": null,
- *         "score": {
+ *         "result": {
  *           "guest": 0,
  *           "host" 0
  *         },
@@ -364,7 +364,7 @@ router
  *         "date": "2014-07-01T12:22:25.058Z",
  *         "finished": true,
  *         "elapsed": null,
- *         "score": {
+ *         "result": {
  *           "guest": 0,
  *           "host" 0
  *         },
@@ -462,7 +462,7 @@ router
  *         "date": "2014-07-01T12:22:25.058Z",
  *         "finished": true,
  *         "elapsed": null,
- *         "score": {
+ *         "result": {
  *           "guest": 0,
  *           "host" 0
  *         },
@@ -631,7 +631,7 @@ router
  *         "date": "2014-07-01T12:22:25.058Z",
  *         "finished": true,
  *         "elapsed": null,
- *         "score": {
+ *         "result": {
  *           "guest": 0,
  *           "host" 0
  *         },

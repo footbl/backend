@@ -452,8 +452,8 @@ describe('match controller', function () {
                 response.body.should.have.property('round').be.equal(1);
                 response.body.should.have.property('date');
                 response.body.should.have.property('finished').be.equal(false);
-                response.body.should.have.property('score').with.property('guest').be.equal(0);
-                response.body.should.have.property('score').with.property('host').be.equal(0);
+                response.body.should.have.property('result').with.property('guest').be.equal(0);
+                response.body.should.have.property('result').with.property('host').be.equal(0);
             });
             request.end(done);
         });
@@ -568,8 +568,8 @@ describe('match controller', function () {
                     match.should.have.property('round');
                     match.should.have.property('date');
                     match.should.have.property('finished');
-                    match.should.have.property('score').with.property('guest');
-                    match.should.have.property('score').with.property('host');
+                    match.should.have.property('result').with.property('guest');
+                    match.should.have.property('result').with.property('host');
                 });
             });
             request.end(done);
@@ -674,8 +674,8 @@ describe('match controller', function () {
                 response.body.should.have.property('round').be.equal(1);
                 response.body.should.have.property('date');
                 response.body.should.have.property('finished').be.equal(false);
-                response.body.should.have.property('score').with.property('guest').be.equal(0);
-                response.body.should.have.property('score').with.property('host').be.equal(0);
+                response.body.should.have.property('result').with.property('guest').be.equal(0);
+                response.body.should.have.property('result').with.property('host').be.equal(0);
             });
             request.end(done);
         });
@@ -1063,8 +1063,8 @@ describe('match controller', function () {
                 response.body.should.have.property('round').be.equal(2);
                 response.body.should.have.property('date');
                 response.body.should.have.property('finished').be.equal(false);
-                response.body.should.have.property('score').with.property('guest').be.equal(0);
-                response.body.should.have.property('score').with.property('host').be.equal(0);
+                response.body.should.have.property('result').with.property('guest').be.equal(0);
+                response.body.should.have.property('result').with.property('host').be.equal(0);
             });
             request.end(done);
         });
@@ -1090,8 +1090,8 @@ describe('match controller', function () {
                 response.body.should.have.property('round').be.equal(2);
                 response.body.should.have.property('date');
                 response.body.should.have.property('finished').be.equal(false);
-                response.body.should.have.property('score').with.property('guest').be.equal(0);
-                response.body.should.have.property('score').with.property('host').be.equal(0);
+                response.body.should.have.property('result').with.property('guest').be.equal(0);
+                response.body.should.have.property('result').with.property('host').be.equal(0);
             });
             request.end(done);
         });

@@ -6,8 +6,8 @@
  * @apiParam {Date} date Match date
  * @apiParam {Boolean} [finished=false] Match status
  * @apiParam {Number} [elapsed] Match elapsed time
- * @apiParam {Number} [score.guest=0] Match guest team score
- * @apiParam {Number} [score.host=0] Match host team score
+ * @apiParam {Number} [result.guest=0] Match guest team result
+ * @apiParam {Number} [result.host=0] Match host team result
  */
 /**
  * @apiDefineStructure matchSuccess
@@ -22,8 +22,8 @@
  * @apiSuccess {Date} createdAt Date of document creation.
  * @apiSuccess {Date} updatedAt Date of document last change.
  *
- * @apiSuccess (score) {Number} guest Match guest team score.
- * @apiSuccess (score) {Number} host Match host team score.
+ * @apiSuccess (result) {Number} guest Match guest team result.
+ * @apiSuccess (result) {Number} host Match host team result.
  *
  * @apiSuccess (pot) {Number} guest Match guest total bets.
  * @apiSuccess (pot) {Number} host Match host total bets.
@@ -154,7 +154,7 @@ router.use(function findMatchHost(request, response, next) {
  *       "date": "2014-07-01T12:22:25.058Z",
  *       "finished": true,
  *       "elapsed": null,
- *       "score": {
+ *       "result": {
  *         "guest": 0,
  *         "host" 0
  *       },
@@ -186,7 +186,7 @@ router
         'date'         : request.param('date'),
         'finished'     : request.param('finished', false),
         'elapsed'      : request.param('elapsed'),
-        'score'        : request.param('score')
+        'result'        : request.param('result')
     });
     return async.series([match.save.bind(match), function (next) {
         match.populate('guest');
@@ -235,7 +235,7 @@ router
  *       "date": "2014-07-01T12:22:25.058Z",
  *       "finished": true,
  *       "elapsed": null,
- *       "score": {
+ *       "result": {
  *         "guest": 0,
  *         "host" 0
  *       },
@@ -309,7 +309,7 @@ router
  *       "date": "2014-07-01T12:22:25.058Z",
  *       "finished": true,
  *       "elapsed": null,
- *       "score": {
+ *       "result": {
  *         "guest": 0,
  *         "host" 0
  *       },
@@ -379,7 +379,7 @@ router
  *       "date": "2014-07-01T12:22:25.058Z",
  *       "finished": true,
  *       "elapsed": null,
- *       "score": {
+ *       "result": {
  *         "guest": 0,
  *         "host" 0
  *       },
@@ -410,7 +410,7 @@ router
     match.date = request.param('date');
     match.finished = request.param('finished', false);
     match.elapsed = request.param('elapsed');
-    match.score = request.param('score', {'guest' : 0, 'host' : 0});
+    match.result = request.param('result', {'guest' : 0, 'host' : 0});
     return async.series([match.save.bind(match), function (next) {
         match.populate('guest');
         match.populate('host');

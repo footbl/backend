@@ -252,7 +252,7 @@ describe('group ranking', function () {
         request.send({'host' : 'fluminense'});
         request.send({'round' : '1'});
         request.send({'date' : new Date(2014, 10, 10)});
-        request.send({'score' : {'guest' : 1, 'host' : 2}});
+        request.send({'result' : {'guest' : 1, 'host' : 2}});
         request.send({'finished' : true});
         request.end(done);
     });

@@ -101,8 +101,8 @@ describe('crawler', function () {
             response.body.should.have.property('elapsed').be.equal(null);
             response.body.should.have.property('date');
             response.body.should.have.property('finished').be.equal(true);
-            response.body.should.have.property('score').with.property('guest').be.equal(3);
-            response.body.should.have.property('score').with.property('host').be.equal(0);
+            response.body.should.have.property('result').with.property('guest').be.equal(3);
+            response.body.should.have.property('result').with.property('host').be.equal(0);
         });
         request.end(done);
     });
@@ -126,8 +126,8 @@ describe('crawler', function () {
             response.body.should.have.property('elapsed').be.equal(70);
             response.body.should.have.property('date');
             response.body.should.have.property('finished').be.equal(false);
-            response.body.should.have.property('score').with.property('guest').be.equal(0);
-            response.body.should.have.property('score').with.property('host').be.equal(2);
+            response.body.should.have.property('result').with.property('guest').be.equal(0);
+            response.body.should.have.property('result').with.property('host').be.equal(2);
         });
         request.end(done);
     });
@@ -151,8 +151,8 @@ describe('crawler', function () {
             response.body.should.have.property('elapsed').be.equal(null);
             response.body.should.have.property('date');
             response.body.should.have.property('finished').be.equal(false);
-            response.body.should.have.property('score').with.property('guest').be.equal(0);
-            response.body.should.have.property('score').with.property('host').be.equal(0);
+            response.body.should.have.property('result').with.property('guest').be.equal(0);
+            response.body.should.have.property('result').with.property('host').be.equal(0);
         });
         request.end(done);
     });

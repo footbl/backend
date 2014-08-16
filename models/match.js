@@ -18,9 +18,9 @@ Schema = mongoose.Schema;
  * property {date} Match date
  * property {finished} Match status
  * property {elapsed} Match elapsed time
- * property {score} Match score
- * property {score.guest} Guest number of gols
- * property {score.host} Host number of gols
+ * property {result} Match result
+ * property {result.guest} Guest number of gols
+ * property {result.host} Host number of gols
  * property {pot} Match pot
  * property {pot.guest} Guest total bets
  * property {pot.host} Host total bets
@@ -63,7 +63,7 @@ schema = new Schema({
     'elapsed'      : {
         'type' : Number
     },
-    'score'        : {
+    'result'       : {
         'guest' : {
             'type'     : Number,
             'required' : true,
@@ -123,7 +123,7 @@ schema.plugin(jsonSelect, {
     'date'         : 1,
     'finished'     : 1,
     'elapsed'      : 1,
-    'score'        : 1,
+    'result'       : 1,
     'pot'          : 1,
     'winner'       : 1,
     'jackpot'      : 1,
@@ -148,7 +148,7 @@ schema.pre('save', function setMatchUpdatedAt(next) {
 /**
  * @method
  * @summary Return match winner
- * This method should compare the match score and see which team has won the match, the team with higher number of gols,
+ * This method should compare the match result and see which team has won the match, the team with higher number of gols,
  * should be the winner and if the gols are equal, then the result is draw.
  */
 schema.virtual('winner').get(function () {
@@ -157,10 +157,10 @@ schema.virtual('winner').get(function () {
     if (!this.finished) {
         return null;
     }
-    if (this.score.guest > this.score.host) {
+    if (this.result.guest > this.result.host) {
         return 'guest';
     }
-    if (this.score.guest < this.score.host) {
+    if (this.result.guest < this.result.host) {
         return 'host';
     }
     return 'draw';
@@ -193,17 +193,11 @@ schema.virtual('reward').get(function () {
 
     switch (this.winner) {
         case 'guest' :
-        {
             return this.jackpot / this.pot.guest;
-        }
         case 'host'  :
-        {
             return this.jackpot / this.pot.host;
-        }
         default      :
-        {
             return this.jackpot / this.pot.draw;
-        }
     }
 });
 

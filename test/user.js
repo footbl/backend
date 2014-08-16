@@ -1,7 +1,7 @@
 /*globals describe, before, it, after*/
 require('should');
 var supertest, app, auth, nock,
-User, Championship, Team, Match, Bet,
+User, Championship, Team, Match, Bet, Entry,
 user, otherUser;
 
 supertest = require('supertest');
@@ -13,11 +13,13 @@ Championship = require('../models/championship');
 Team = require('../models/team');
 Match = require('../models/match');
 Bet = require('../models/bet');
+Entry = require('../models/entry');
 
 nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '111'});
 nock('https://graph.facebook.com').get('/me?access_token=invalid').times(Infinity).reply(404, {});
 nock('https://mandrillapp.com').post('/api/1.0/messages/send.json').times(Infinity).reply(200, {});
 nock('http://freegeoip.net').get('/json/127.0.0.1').times(Infinity).reply(200, {'country_name' : 'Brazil'});
+nock('http://freegeoip.net').get('/json/undefined').times(Infinity).reply(200, {'country_name' : ''});
 
 describe('user controller', function () {
     'use strict';
@@ -25,6 +27,10 @@ describe('user controller', function () {
     describe('create', function () {
         before(function (done) {
             User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
         });
 
         it('should raise error without password', function (done) {
@@ -53,7 +59,7 @@ describe('user controller', function () {
             request.send({'password' : '1234'});
             request.expect(201);
             request.expect(function (response) {
-                response.body.should.have.property('slug').be.equal('me');
+                response.body.should.have.property('slug');
                 response.body.should.have.property('verified').be.equal(false);
                 response.body.should.have.property('featured').be.equal(false);
             });
@@ -194,9 +200,101 @@ describe('user controller', function () {
         });
     });
 
+    describe('default entry', function () {
+        before(function (done) {
+            Championship.remove(done);
+        });
+
+        before(function (done) {
+            User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
+        });
+
+        before(function (done) {
+            user = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user'});
+            user.save(done);
+        });
+
+        before(function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.post('/championships');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'name' : 'brasileirão'});
+            request.send({'type' : 'national league'});
+            request.send({'country' : 'Brazil'});
+            request.send({'edition' : 2014});
+            request.end(done);
+        });
+
+        before(function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.post('/championships');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.send({'name' : 'premier league'});
+            request.send({'type' : 'national league'});
+            request.send({'country' : 'United Kingdom'});
+            request.send({'edition' : 2014});
+            request.end(done);
+        });
+
+        it('should create', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.post('/users');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.send({'password' : '1234'});
+            request.send({'username' : 'entry-user'});
+            request.expect(201);
+            request.end(done);
+        });
+
+        after(function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/entry-user/entries/brasileirao-Brazil-2014');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(200);
+            request.expect(function (response) {
+                response.body.should.have.property('user').with.property('slug').be.equal('entry-user');
+                response.body.should.have.property('user').with.property('username').be.equal('entry-user');
+                response.body.should.have.property('championship').with.property('name').be.equal('brasileirão');
+                response.body.should.have.property('championship').with.property('slug').be.equal('brasileirao-Brazil-2014');
+                response.body.should.have.property('championship').with.property('type').be.equal('national league');
+                response.body.should.have.property('championship').with.property('edition').be.equal(2014);
+                response.body.should.have.property('championship').with.property('rounds').be.equal(1);
+                response.body.should.have.property('championship').with.property('currentRound').be.equal(1);
+            });
+            request.end(done);
+        });
+    });
+
     describe('list', function () {
         before(function (done) {
             User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
         });
 
         before(function (done) {
@@ -361,6 +459,10 @@ describe('user controller', function () {
         });
 
         before(function (done) {
+            Entry.remove(done);
+        });
+
+        before(function (done) {
             user = new User({'password' : '1234', 'type' : 'admin'});
             user.save(done);
         });
@@ -445,6 +547,10 @@ describe('user controller', function () {
 
         before(function (done) {
             User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
         });
 
         before(function (done) {
@@ -556,6 +662,10 @@ describe('user controller', function () {
         });
 
         before(function (done) {
+            Entry.remove(done);
+        });
+
+        before(function (done) {
             user = new User({'password' : '1234', 'type' : 'admin'});
             user.save(done);
         });
@@ -633,6 +743,10 @@ describe('user controller', function () {
             });
 
             before(function (done) {
+                Entry.remove(done);
+            });
+
+            before(function (done) {
                 var request, credentials;
                 credentials = auth.credentials();
                 request = supertest(app);
@@ -677,6 +791,10 @@ describe('user controller', function () {
         describe('facebook user', function () {
             before(function (done) {
                 User.remove(done);
+            });
+
+            before(function (done) {
+                Entry.remove(done);
             });
 
             before(function (done) {
@@ -725,6 +843,10 @@ describe('user controller', function () {
         describe('registred user', function () {
             before(function (done) {
                 User.remove(done);
+            });
+
+            before(function (done) {
+                Entry.remove(done);
             });
 
             before(function (done) {
@@ -807,6 +929,10 @@ describe('user controller', function () {
     describe('recharge', function () {
         before(function (done) {
             User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
         });
 
         before(function (done) {
@@ -970,6 +1096,10 @@ describe('user controller', function () {
 
         before(function (done) {
             User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
         });
 
         before(function (done) {

@@ -314,8 +314,8 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('round').be.equal(1);
                     response.body.should.have.property('match').with.property('date');
                     response.body.should.have.property('match').with.property('finished').be.equal(false);
-                    response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                    response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
                 request.end(done);
@@ -602,8 +602,8 @@ describe('bet controller', function () {
                     bet.should.have.property('match').with.property('round');
                     bet.should.have.property('match').with.property('date');
                     bet.should.have.property('match').with.property('finished');
-                    bet.should.have.property('match').with.property('score').with.property('guest');
-                    bet.should.have.property('match').with.property('score').with.property('host');
+                    bet.should.have.property('match').with.property('result').with.property('guest');
+                    bet.should.have.property('match').with.property('result').with.property('host');
                     bet.should.have.property('user').with.property('slug');
                 });
             });
@@ -636,8 +636,8 @@ describe('bet controller', function () {
                     bet.should.have.property('match').with.property('round');
                     bet.should.have.property('match').with.property('date');
                     bet.should.have.property('match').with.property('finished');
-                    bet.should.have.property('match').with.property('score').with.property('guest');
-                    bet.should.have.property('match').with.property('score').with.property('host');
+                    bet.should.have.property('match').with.property('result').with.property('guest');
+                    bet.should.have.property('match').with.property('result').with.property('host');
                     bet.should.have.property('user').with.property('slug');
                 });
             });
@@ -776,8 +776,8 @@ describe('bet controller', function () {
                 response.body.should.have.property('match').with.property('round').be.equal(1);
                 response.body.should.have.property('match').with.property('date');
                 response.body.should.have.property('match').with.property('finished').be.equal(false);
-                response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                 response.body.should.have.property('user').with.property('slug').be.equal('user');
             });
             request.end(done);
@@ -806,8 +806,8 @@ describe('bet controller', function () {
                 response.body.should.have.property('match').with.property('round').be.equal(1);
                 response.body.should.have.property('match').with.property('date');
                 response.body.should.have.property('match').with.property('finished').be.equal(false);
-                response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                 response.body.should.have.property('user').with.property('slug').be.equal('user');
             });
             request.end(done);
@@ -1056,8 +1056,8 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('round').be.equal(1);
                     response.body.should.have.property('match').with.property('date');
                     response.body.should.have.property('match').with.property('finished').be.equal(false);
-                    response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                    response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
                 request.end(done);
@@ -1086,8 +1086,8 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('round').be.equal(1);
                     response.body.should.have.property('match').with.property('date');
                     response.body.should.have.property('match').with.property('finished').be.equal(false);
-                    response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                    response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
                 request.end(done);
@@ -1155,8 +1155,8 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('round').be.equal(1);
                     response.body.should.have.property('match').with.property('date');
                     response.body.should.have.property('match').with.property('finished').be.equal(false);
-                    response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                    response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
                 request.end(done);
@@ -1185,8 +1185,8 @@ describe('bet controller', function () {
                     response.body.should.have.property('match').with.property('round').be.equal(1);
                     response.body.should.have.property('match').with.property('date');
                     response.body.should.have.property('match').with.property('finished').be.equal(false);
-                    response.body.should.have.property('match').with.property('score').with.property('guest').be.equal(0);
-                    response.body.should.have.property('match').with.property('score').with.property('host').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('guest').be.equal(0);
+                    response.body.should.have.property('match').with.property('result').with.property('host').be.equal(0);
                     response.body.should.have.property('user').with.property('slug').be.equal('user');
                 });
                 request.end(done);
@@ -1525,7 +1525,7 @@ describe('bet controller', function () {
                 request.send({'host' : 'fluminense'});
                 request.send({'round' : '1'});
                 request.send({'date' : new Date(2014, 10, 10)});
-                request.send({'score' : {'guest' : 1, 'host' : 1}});
+                request.send({'result' : {'guest' : 1, 'host' : 1}});
                 request.send({'finished' : true});
                 request.end(done);
             });
@@ -1596,7 +1596,7 @@ describe('bet controller', function () {
                 request.send({'host' : 'fluminense'});
                 request.send({'round' : '1'});
                 request.send({'date' : new Date(2014, 10, 10)});
-                request.send({'score' : {'guest' : 2, 'host' : 1}});
+                request.send({'result' : {'guest' : 2, 'host' : 1}});
                 request.send({'finished' : true});
                 request.end(done);
             });
@@ -1667,7 +1667,7 @@ describe('bet controller', function () {
                 request.send({'host' : 'fluminense'});
                 request.send({'round' : '1'});
                 request.send({'date' : new Date(2014, 10, 10)});
-                request.send({'score' : {'guest' : 1, 'host' : 2}});
+                request.send({'result' : {'guest' : 1, 'host' : 2}});
                 request.send({'finished' : true});
                 request.end(done);
             });

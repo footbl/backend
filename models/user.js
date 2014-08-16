@@ -25,7 +25,7 @@ Schema = mongoose.Schema;
  * property {apnsToken} User apnsToken
  * property {ranking} User current ranking
  * property {previousRanking} User previous ranking
- * property {history} User score history
+ * property {history} User result history
  * property {createdAt}
  * property {updatedAt}
  */
@@ -112,6 +112,9 @@ schema = new Schema({
         'type'    : Boolean,
         'default' : true
     },
+    'country'         : {
+        'type' : String
+    },
     'createdAt'       : {
         'type'    : Date,
         'default' : Date.now
@@ -132,27 +135,25 @@ schema.plugin(require('mongoose-json-select'), {
     'slug'            : 1,
     'email'           : 1,
     'username'        : 1,
-    'name'            : 1,
     'facebookId'      : 1,
+    'password'        : 0,
+    'name'            : 1,
     'about'           : 1,
     'verified'        : 1,
     'featured'        : 1,
-    'password'        : 0,
     'picture'         : 1,
-    'language'        : 1,
-    'country'         : 1,
     'type'            : 0,
     'apnsToken'       : 0,
     'ranking'         : 1,
     'previousRanking' : 1,
     'history'         : 1,
-    'notifications'   : 1,
-    'lastRecharge'    : 1,
-    'active'          : 1,
-    'stake'           : 1,
-    'funds'           : 1,
+    'lastRecharge'    : 0,
+    'active'          : 0,
+    'country'         : 1,
     'createdAt'       : 1,
-    'updatedAt'       : 1
+    'updatedAt'       : 1,
+    'stake'           : 1,
+    'funds'           : 1
 });
 
 /**
@@ -201,6 +202,45 @@ schema.pre('save', function (next) {
             groupMember.save(next);
         }.bind(this), next);
     }.bind(this));
+});
+
+/**
+ * @callback
+ * @summary Puts user in his championship's country
+ *
+ * @param next
+ */
+schema.pre('save', function (next) {
+    'use strict';
+
+    if (!this.isNew) {
+        return next();
+    }
+
+    return async.waterfall([function (next) {
+        var query;
+        query = require('./championship').find();
+        query.or([
+            {'country' : this.country},
+            {'country' : 'United Kingdom'}
+        ]);
+        return query.exec(next);
+    }.bind(this), function (championships, next) {
+        var championship, entry;
+        if (championships.length === 2) {
+            championship = championships[0].country === 'United Kingdom' ? championships[1] : championships[0];
+        } else if (championships.length === 1) {
+            championship = championships[0];
+        } else {
+            return next();
+        }
+        entry = new (require('./entry'))({
+            'slug'         : championship ? championship.slug : null,
+            'championship' : championship._id,
+            'user'         : this._id
+        });
+        return entry.save(next);
+    }.bind(this)], next);
 });
 
 /**

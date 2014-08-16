@@ -29,7 +29,7 @@
  * @apiSuccess (history) {Date} date Date of history creation
  * @apiSuccess (history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User, Championship, Entry;
+var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User;
 
 VError = require('verror');
 router = require('express').Router();
@@ -41,8 +41,6 @@ mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 crypto = require('crypto');
 auth = require('../lib/auth');
 User = require('../models/user');
-Championship = require('../models/championship');
-Entry = require('../models/entry');
 
 /**
  * @api {post} /users Creates a new user.
@@ -90,13 +88,24 @@ Entry = require('../models/entry');
  */
 router
 .route('/users')
-.post(function validateIfUserIsInactiveAccountToCreate(request, response, next) {
+.post(function detectUserCountry(request, response, next) {
+    'use strict';
+
+    var property;
+    property = 'country_name';
+    freegeoip.getLocation(request.ip, function detectedUserCountry(error, location) {
+        if (error) {
+            error = new VError(error, 'error finding user country');
+            return next(error);
+        }
+        request.country = location[property];
+        return next();
+    });
+})
+.post(function createUser(request, response, next) {
     'use strict';
 
     var query;
-    if (!request.facebook) {
-        return next();
-    }
     query = User.findOne();
     query.where('active').equals(false);
     query.where('facebookId').equals(request.facebook);
@@ -106,7 +115,7 @@ router
             return next(error);
         }
         if (!user) {
-            return next();
+            user = new User({});
         }
         user.slug = slug(request.param('username', 'me'));
         user.email = request.param('email');
@@ -114,71 +123,19 @@ router
         user.name = request.param('name');
         user.facebookId = request.facebook ? request.facebook : user.facebookId;
         user.about = request.param('about');
-        user.password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+        user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
         user.picture = request.param('picture');
         user.language = request.param('language');
         user.apnsToken = request.param('apnsToken');
+        user.country = request.country;
         user.active = true;
-        return user.save(function (error) {
+        return user.save(function createdUser(error) {
             if (error) {
                 error = new VError(error, 'error activating user');
                 return next(error);
             }
             return response.send(201, user);
         });
-    });
-})
-.post(function createUser(request, response, next) {
-    'use strict';
-
-    var user, password;
-    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
-    user = new User({
-        'slug'       : slug(request.param('username', 'me')),
-        'email'      : request.param('email'),
-        'username'   : request.param('username'),
-        'name'       : request.param('name'),
-        'facebookId' : request.facebook,
-        'about'      : request.param('about'),
-        'password'   : request.param('password') ? password : null,
-        'picture'    : request.param('picture'),
-        'language'   : request.param('language'),
-        'apnsToken'  : request.param('apnsToken')
-    });
-    async.series([user.save.bind(user), function (next) {
-        async.waterfall([function (next) {
-            freegeoip.getLocation(request.ip, next);
-        }, function (location, next) {
-            var query, property;
-            property = 'country_name';
-            query = Championship.find();
-            query.or([
-                {'country' : location[property]},
-                {'country' : 'United Kingdom'}
-            ]);
-            query.exec(next);
-        }, function (championships, next) {
-            var championship, entry;
-            if (championships.length === 2) {
-                championship = championships[0].country === 'United Kingdom' ? championships[1] : championships[0];
-            } else if (championships.length === 1) {
-                championship = championships[0];
-            } else {
-                return next();
-            }
-            entry = new Entry({
-                'slug'         : championship ? championship.slug : null,
-                'championship' : championship._id,
-                'user'         : user._id
-            });
-            return entry.save(next);
-        }], next);
-    }], function (error) {
-        if (error) {
-            error = new VError(error, 'error creating user');
-            return next(error);
-        }
-        return response.send(201, user);
     });
 });
 
