@@ -134,10 +134,6 @@ router
     var query, id;
     query = User.findOne();
     id = request.params.userOrFacebookId;
-    if (id === 'me') {
-        request.user = request.session;
-        return next();
-    }
     query.or([
         {'slug' : id},
         {'facebookId' : id}
