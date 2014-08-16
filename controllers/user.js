@@ -385,7 +385,6 @@ router
     user.picture = request.param('picture');
     user.language = request.param('language');
     user.apnsToken = request.param('apnsToken');
-    user.active = true;
     return user.save(function updatedUser(error) {
         if (error) {
             error = new VError(error, 'error updating user');
@@ -459,6 +458,7 @@ router
     email = request.param('email');
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
     query = User.findOne();
+    query.where('active').ne(false);
     if (facebook) {
         query.where('facebookId').equals(facebook);
     } else if (email) {
