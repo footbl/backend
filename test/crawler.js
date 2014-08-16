@@ -86,7 +86,7 @@ describe('crawler', function () {
         var request, credentials;
         credentials = auth.credentials();
         request = supertest(app);
-        request = request.get('/championships/Serie-A-Brasil-2014/matches/round-12-Atletico-PR-vs-Fluminense');
+        request = request.get('/championships/Serie-A-Brazil-2014/matches/round-12-Atletico-PR-vs-Fluminense');
         request.set('auth-signature', credentials.signature);
         request.set('auth-timestamp', credentials.timestamp);
         request.set('auth-transactionId', credentials.transactionId);
@@ -111,7 +111,7 @@ describe('crawler', function () {
         var request, credentials;
         credentials = auth.credentials();
         request = supertest(app);
-        request = request.get('/championships/Serie-A-Brasil-2014/matches/round-13-Fluminense-vs-Goias');
+        request = request.get('/championships/Serie-A-Brazil-2014/matches/round-13-Fluminense-vs-Goias');
         request.set('auth-signature', credentials.signature);
         request.set('auth-timestamp', credentials.timestamp);
         request.set('auth-transactionId', credentials.transactionId);
@@ -136,7 +136,7 @@ describe('crawler', function () {
         var request, credentials;
         credentials = auth.credentials();
         request = supertest(app);
-        request = request.get('/championships/Serie-A-Brasil-2014/matches/round-14-Atletico-MG-vs-Palmeiras');
+        request = request.get('/championships/Serie-A-Brazil-2014/matches/round-14-Atletico-MG-vs-Palmeiras');
         request.set('auth-signature', credentials.signature);
         request.set('auth-timestamp', credentials.timestamp);
         request.set('auth-transactionId', credentials.transactionId);

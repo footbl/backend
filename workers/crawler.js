@@ -20,7 +20,7 @@ now = new Date();
 championships = [
     {
         'name'               : 'Premier League',
-        'country'            : 'England',
+        'country'            : 'United Kingdom',
         'type'               : 'national league',
         'picture'            : '',
         'edition'            : 2014,
@@ -74,7 +74,7 @@ championships = [
     },
     {
         'name'               : 'Serie A',
-        'country'            : 'Brasil',
+        'country'            : 'Brazil',
         'type'               : 'national league',
         'picture'            : '',
         'edition'            : 2014,
@@ -92,7 +92,7 @@ championships = [
     },
     {
         'name'               : 'MLS',
-        'country'            : 'USA',
+        'country'            : 'United States',
         'type'               : 'national league',
         'picture'            : '',
         'edition'            : 2014,

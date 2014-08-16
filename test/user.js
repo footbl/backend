@@ -17,6 +17,7 @@ Bet = require('../models/bet');
 nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '111'});
 nock('https://graph.facebook.com').get('/me?access_token=invalid').times(Infinity).reply(404, {});
 nock('https://mandrillapp.com').post('/api/1.0/messages/send.json').times(Infinity).reply(200, {});
+nock('http://freegeoip.net').get('/json/127.0.0.1').times(Infinity).reply(200, {'country_name' : 'Brazil'});
 
 describe('user controller', function () {
     'use strict';

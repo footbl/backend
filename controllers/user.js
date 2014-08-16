@@ -29,16 +29,20 @@
  * @apiSuccess (history) {Date} date Date of history creation
  * @apiSuccess (history) {Number} funds Funds in history
  */
-var VError, router, nconf, slug, mandrill, crypto, auth, User;
+var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User, Championship, Entry;
 
 VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
+async = require('async');
+freegeoip = require('node-freegeoip');
 mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 crypto = require('crypto');
 auth = require('../lib/auth');
 User = require('../models/user');
+Championship = require('../models/championship');
+Entry = require('../models/entry');
 
 /**
  * @api {post} /users Creates a new user.
@@ -104,7 +108,17 @@ router
         if (!user) {
             return next();
         }
-        user.activate = true;
+        user.slug = slug(request.param('username', 'me'));
+        user.email = request.param('email');
+        user.username = request.param('username');
+        user.name = request.param('name');
+        user.facebookId = request.facebook ? request.facebook : user.facebookId;
+        user.about = request.param('about');
+        user.password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+        user.picture = request.param('picture');
+        user.language = request.param('language');
+        user.apnsToken = request.param('apnsToken');
+        user.active = true;
         return user.save(function (error) {
             if (error) {
                 error = new VError(error, 'error activating user');
@@ -131,7 +145,35 @@ router
         'language'   : request.param('language'),
         'apnsToken'  : request.param('apnsToken')
     });
-    return user.save(function createdUser(error) {
+    async.series([user.save.bind(user), function (next) {
+        async.waterfall([function (next) {
+            freegeoip.getLocation(request.ip, next);
+        }, function (location, next) {
+            var query, property;
+            property = 'country_name';
+            query = Championship.find();
+            query.or([
+                {'country' : location[property]},
+                {'country' : 'United Kingdom'}
+            ]);
+            query.exec(next);
+        }, function (championships, next) {
+            var championship, entry;
+            if (championships.length === 2) {
+                championship = championships[0].country === 'United Kingdom' ? championships[1] : championships[0];
+            } else if (championships.length === 1) {
+                championship = championships[0];
+            } else {
+                return next();
+            }
+            entry = new Entry({
+                'slug'         : championship ? championship.slug : null,
+                'championship' : championship._id,
+                'user'         : user._id
+            });
+            return entry.save(next);
+        }], next);
+    }], function (error) {
         if (error) {
             error = new VError(error, 'error creating user');
             return next(error);
@@ -317,34 +359,6 @@ router
 router
 .route('/users/:id')
 .put(auth.session())
-.put(function validateIfUserIsInactiveAccountToUpdate(request, response, next) {
-    'use strict';
-
-    var query;
-    if (!request.facebook) {
-        return next();
-    }
-    query = User.findOne();
-    query.where('active').equals(false);
-    query.where('facebookId').equals(request.facebook);
-    return query.exec(function retrievedInactiveUserToCreate(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding inactive user to create user');
-            return next(error);
-        }
-        if (!user) {
-            return next();
-        }
-        user.activate = true;
-        return user.save(function (error) {
-            if (error) {
-                error = new VError(error, 'error activating user');
-                return next(error);
-            }
-            return response.send(200, user);
-        });
-    });
-})
 .put(function validateUpdateUser(request, response, next) {
     'use strict';
 
@@ -371,6 +385,7 @@ router
     user.picture = request.param('picture');
     user.language = request.param('language');
     user.apnsToken = request.param('apnsToken');
+    user.active = true;
     return user.save(function updatedUser(error) {
         if (error) {
             error = new VError(error, 'error updating user');

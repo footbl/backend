@@ -31,6 +31,7 @@
     "mongoose": "3.x.x",
     "mongoose-json-select": "0.2.x",
     "nconf": "0.6.x",
+    "node-freegeoip": "0.0.1",
     "pretty-error": "^1.1.1",
     "redis": "0.10.x",
     "request": "^2.39.0",
