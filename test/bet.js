@@ -657,6 +657,40 @@ describe('bet controller', function () {
             request.end(done);
         });
 
+        it('should list mine bets', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.get('/users/me/bets');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(200);
+            request.expect(function (response) {
+                response.body.should.be.instanceOf(Array);
+                response.body.should.have.lengthOf(1);
+                response.body.every(function (bet) {
+                    bet.should.have.property('bid');
+                    bet.should.have.property('result');
+                    bet.should.have.property('match').with.property('slug');
+                    bet.should.have.property('match').with.property('guest').with.property('name');
+                    bet.should.have.property('match').with.property('guest').with.property('slug');
+                    bet.should.have.property('match').with.property('guest').with.property('picture');
+                    bet.should.have.property('match').with.property('host').with.property('name');
+                    bet.should.have.property('match').with.property('host').with.property('slug');
+                    bet.should.have.property('match').with.property('host').with.property('picture');
+                    bet.should.have.property('match').with.property('round');
+                    bet.should.have.property('match').with.property('date');
+                    bet.should.have.property('match').with.property('finished');
+                    bet.should.have.property('match').with.property('result').with.property('guest');
+                    bet.should.have.property('match').with.property('result').with.property('host');
+                    bet.should.have.property('user').with.property('slug');
+                });
+            });
+            request.end(done);
+        });
+
         it('should return empty in second page', function (done) {
             var request, credentials;
             credentials = auth.credentials();
