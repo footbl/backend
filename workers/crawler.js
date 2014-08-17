@@ -1,5 +1,5 @@
 'use strict';
-var VError, mongoose, nconf, request, async, slug, championships, teams, Championship, Match, Team, now;
+var VError, mongoose, nconf, request, async, slug, championships, teams, Championship, Match, Team, now, today;
 
 VError = require('verror');
 mongoose = require('mongoose');
@@ -16,6 +16,7 @@ nconf.env();
 nconf.defaults(require('../config'));
 
 now = new Date();
+today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
 championships = [
     {
@@ -317,7 +318,10 @@ module.exports = function (next) {
                 guestScore = (data.Events || []).filter(function (event) {
                     return event.Type === 0 && event.Comp === 2;
                 }).length;
-                async.waterfall([function (next) {
+                if (date < today && !finished) {
+                    return next();
+                }
+                return async.waterfall([function (next) {
                     Team.findOneAndUpdate({
                         'name' : guest
                     }, {'$set' : {
@@ -352,7 +356,7 @@ module.exports = function (next) {
                         'date'         : date,
                         'finished'     : finished,
                         'elapsed'      : elapsed,
-                        'result'        : {
+                        'result'       : {
                             'guest' : guestScore,
                             'host'  : hostScore
                         }

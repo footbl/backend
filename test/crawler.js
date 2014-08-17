@@ -18,7 +18,7 @@ GroupMember = require('../models/group-member');
 crawler = require('../workers/crawler');
 
 
-nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(Infinity).reply(200, require('./crawler-mock.json'));
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(Infinity).reply(200, require('./crawler-mock.js'));
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=1').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=2').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=3').times(Infinity).reply(200, {Games : []});
@@ -82,6 +82,7 @@ describe('crawler', function () {
         });
         request.end(done);
     });
+
     after(function (done) {
         var request, credentials;
         credentials = auth.credentials();
@@ -131,7 +132,7 @@ describe('crawler', function () {
         });
         request.end(done);
     });
-
+    /*
     after(function (done) {
         var request, credentials;
         credentials = auth.credentials();
@@ -155,5 +156,5 @@ describe('crawler', function () {
             response.body.should.have.property('result').with.property('host').be.equal(0);
         });
         request.end(done);
-    });
+    });*/
 });

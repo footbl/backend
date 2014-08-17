@@ -1,4 +1,5 @@
-{
+var now = new Date();
+module.exports = {
 
     "LastUpdateID"      : 77721894,
     "Games"             : [
@@ -213,7 +214,7 @@
             "Active"  : false,
             "STID"    : 2,
             "GT"      : -1,
-            "STime"   : "10-08-2014 21:30",
+            "STime"   : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
             "Comps"   : [
                 {
                     "ID"   : 1209,
@@ -2802,7 +2803,7 @@
             "STID"              : 3,
             "GT"                : 70,
             "GTD"               : "70'",
-            "STime"             : "03-08-2014 21:30",
+            "STime"             : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
             "Comps"             : [
                 {
                     "ID"   : 1216,
