@@ -736,6 +736,49 @@ describe('user controller', function () {
         });
     });
 
+    describe('activate inactive account', function () {
+        before(function (done) {
+            User.remove(done);
+        });
+
+        before(function (done) {
+            Entry.remove(done);
+        });
+
+        before(function (done) {
+            user = new User({'password' : '1234', 'type' : 'admin', 'facebookId' : '111', 'username' : 'test', 'slug' : 'test'});
+            user.save(done);
+        });
+
+        before(function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.del('/users/me');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('auth-token', auth.token(user));
+            request.expect(204);
+            request.end(done);
+        });
+
+        it('should reactivate', function (done) {
+            var request, credentials;
+            credentials = auth.credentials();
+            request = supertest(app);
+            request = request.post('/users');
+            request.set('auth-signature', credentials.signature);
+            request.set('auth-timestamp', credentials.timestamp);
+            request.set('auth-transactionId', credentials.transactionId);
+            request.set('facebook-token', '1234');
+            request.send({'password' : '1234'});
+            request.send({'username' : 'user'});
+            request.expect(201);
+            request.end(done);
+        });
+    });
+
     describe('login', function () {
         describe('anonymous user', function () {
             before(function (done) {
