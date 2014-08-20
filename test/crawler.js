@@ -132,7 +132,7 @@ describe('crawler', function () {
         });
         request.end(done);
     });
-    /*
+
     after(function (done) {
         var request, credentials;
         credentials = auth.credentials();
@@ -156,5 +156,5 @@ describe('crawler', function () {
             response.body.should.have.property('result').with.property('host').be.equal(0);
         });
         request.end(done);
-    });*/
+    });
 });

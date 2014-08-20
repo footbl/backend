@@ -35,7 +35,7 @@ championships = [
         'picture'            : '',
         'edition'            : 2014,
         '365scoresCountryId' : 2,
-        '365scoresCompId'    : 0 /*@TODO falta o id da liga*/
+        '365scoresCompId'    : 11
     },
     {
         'name'               : 'Serie A',
@@ -53,7 +53,7 @@ championships = [
         'picture'            : '',
         'edition'            : 2014,
         '365scoresCountryId' : 4,
-        '365scoresCompId'    : 0 /*@TODO falta o id da liga*/
+        '365scoresCompId'    : 25
     },
     {
         'name'               : 'Ligue 1',
