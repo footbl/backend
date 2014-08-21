@@ -263,7 +263,7 @@ teams = {
     "Chivas USA"             : "Chivas USA",
     "Colorado Rapids"        : "Colorado R.",
     "Columbus Crew"          : "Columbus C.",
-    "Dc United"              : "DC United",
+    "DC United"              : "DC United",
     "FC Dallas"              : "FC Dallas",
     "Houston Dynamo"         : "Houston D.",
     "Los Angeles Galaxy"     : "LA Galaxy",
@@ -276,7 +276,7 @@ teams = {
     "San Jose"               : "San Jose E.",
     "Seattle Sounders"       : "Seattle S.",
     "Sporting Kansas City"   : "S. Kansas C.",
-    "Toronto Fc"             : "Toronto FC",
+    "Toronto FC"             : "Toronto FC",
     "Vancouver Whitecaps"    : "Vancouver W."
 };
 
@@ -320,6 +320,9 @@ module.exports = function (next) {
                 }).length;
                 if (date < today && !finished) {
                     return next();
+                }
+                if (!guest) {
+                    console.log(data);
                 }
                 return async.waterfall([function (next) {
                     Team.findOneAndUpdate({
