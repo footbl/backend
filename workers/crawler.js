@@ -29,7 +29,7 @@ championships = [
         '365scoresCompId'    : 7
     },
     {
-        'name'               : 'Primera Division',
+        'name'               : 'Primera División',
         'country'            : 'Spain',
         'type'               : 'national league',
         'picture'            : '',
@@ -65,7 +65,7 @@ championships = [
         '365scoresCompId'    : 35
     },
     {
-        'name'               : 'Liga portugal',
+        'name'               : 'Liga Portugal',
         'country'            : 'Portugal',
         'type'               : 'national league',
         'picture'            : '',
@@ -74,7 +74,7 @@ championships = [
         '365scoresCompId'    : 0 /*@TODO falta o id da liga*/
     },
     {
-        'name'               : 'Serie A',
+        'name'               : 'Série A',
         'country'            : 'Brazil',
         'type'               : 'national league',
         'picture'            : '',
@@ -83,7 +83,7 @@ championships = [
         '365scoresCompId'    : 113
     },
     {
-        'name'               : 'Primera Division',
+        'name'               : 'Primera División',
         'country'            : 'Argentina',
         'type'               : 'national league',
         'picture'            : '',
