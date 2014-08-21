@@ -321,9 +321,6 @@ module.exports = function (next) {
                 if (date < today && !finished) {
                     return next();
                 }
-                if (!guest) {
-                    console.log(data);
-                }
                 return async.waterfall([function (next) {
                     Team.findOneAndUpdate({
                         'name' : guest
