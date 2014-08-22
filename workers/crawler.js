@@ -65,13 +65,13 @@ championships = [
         '365scoresCompId'    : 35
     },
     {
-        'name'               : 'Liga Portugal',
+        'name'               : 'Primeira Liga',
         'country'            : 'Portugal',
         'type'               : 'national league',
         'picture'            : '',
         'edition'            : 2014,
         '365scoresCountryId' : 11,
-        '365scoresCompId'    : 0 /*@TODO falta o id da liga*/
+        '365scoresCompId'    : 73
     },
     {
         'name'               : 'Série A',
