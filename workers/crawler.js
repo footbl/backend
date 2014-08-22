@@ -305,8 +305,8 @@ module.exports = function (next) {
                 return match.Comp === championship['365scoresCompId'];
             }), function (data, next) {
                 var guest, guestId, host, hostId, round, dateMask, date, finished, elapsed, guestScore, hostScore;
-                host = teams[data.Comps[0].Name];
-                guest = teams[data.Comps[1].Name];
+                host = teams[data.Comps[0].Name] || data.Comps[0].Name;
+                guest = teams[data.Comps[1].Name] || data.Comps[1].Name;
                 round = data.Round || 1;
                 dateMask = data.STime.split(/-|\s|:/).map(Number);
                 date = new Date(dateMask[2], dateMask[1] - 1, dateMask[0], dateMask[3], dateMask[4]);
