@@ -371,5 +371,12 @@ if (require.main === module) {
     mongoose.connect(nconf.get('MONGOHQ_URL'));
     async.whilst(function () {
         return Date.now() - now.getTime() < 1000 * 60 * 10;
-    }, module.exports, process.exit);
+    }, function (next) {
+        module.exports(function (error) {
+            if (error) {
+                console.error(error);
+            }
+            setTimeout(next, 30000);
+        });
+    }, process.exit);
 }
