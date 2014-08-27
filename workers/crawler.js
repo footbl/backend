@@ -44,7 +44,7 @@ championships = [
         'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/Italy_jn9gec.png',
         'edition'            : 2014,
         '365scoresCountryId' : 3,
-        '365scoresCompId'    : 0 /*@TODO falta o id da liga*/
+        '365scoresCompId'    : 17
     },
     {
         'name'               : 'Bundesliga',
