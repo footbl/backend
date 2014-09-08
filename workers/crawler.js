@@ -164,7 +164,7 @@ flags = {
     "Udinese"                : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409101641/Udinese_ayqxme.png",
     "Verona"                 : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409101641/Verona_oyskc7.png",
     "Bayern Munich"          : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409099818/B_M%C3%BCnchen_sunmv7.png",
-    "Bor. Dortmund"          : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409099818/Bor_Dortmund_ih2dc2.pngx",
+    "Bor. Dortmund"          : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409099818/Bor_Dortmund_ih2dc2.png",
     "Eintracht Frankfurt"    : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409099818/E_Frankfurt_iueuww.png",
     "Hertha Berlin"          : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409099819/Hertha_mx4k6h.png",
     "Augsburg"               : "http://res.cloudinary.com/hivstsgwo/image/upload/v1409099818/Augsburg_h3mowp.png",
