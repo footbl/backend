@@ -484,8 +484,8 @@ module.exports = function (next) {
                 return match.Comp === championship['365scoresCompId'];
             }), function (data, next) {
                 var guest, guestId, host, hostId, round, dateMask, date, finished, elapsed, guestScore, hostScore;
-                host = teams[data.Comps[0].Name] || data.Comps[0].Name;
-                guest = teams[data.Comps[1].Name] || data.Comps[1].Name;
+                host = teams[data.Comps[0].Name];
+                guest = teams[data.Comps[1].Name];
                 round = data.Round || 1;
                 dateMask = data.STime.split(/-|\s|:/).map(Number);
                 date = new Date(dateMask[2], dateMask[1] - 1, dateMask[0], dateMask[3], dateMask[4]);
@@ -498,6 +498,10 @@ module.exports = function (next) {
                     return event.Type === 0 && event.Comp === 2;
                 }).length;
                 if (date < today && !finished) {
+                    return next();
+                }
+                if (!guest || !host) {
+                    console.log(!guest ? data.Comps[0].Name : '', !host ? data.Comps[1].Name : '');
                     return next();
                 }
                 return async.waterfall([function (next) {
