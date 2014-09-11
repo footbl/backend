@@ -22,7 +22,7 @@ module.exports = function (next) {
         query.exec(next);
     }, function (users, next) {
         async.sortBy(users, function (user, next) {
-            next(null, user.funds * -1);
+            next(null, (user.funds + user.stake) * -1);
         }, next);
     }, function (users, next) {
         var ranking;
