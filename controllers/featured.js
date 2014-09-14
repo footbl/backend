@@ -48,23 +48,23 @@ Featured = require('../models/featured');
  * @param id
  */
 router.use(function findFeaturedUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, user;
-    user = request.param('featured');
-    if (!user) {
-        return next();
+  var query, user;
+  user = request.param('featured');
+  if (!user) {
+    return next();
+  }
+  query = User.findOne();
+  query.where('slug').equals(user);
+  return query.exec(function (error, user) {
+    if (error) {
+      error = new VError(error, 'error finding featured: "$s"', user);
+      return next(error);
     }
-    query = User.findOne();
-    query.where('slug').equals(user);
-    return query.exec(function (error, user) {
-        if (error) {
-            error = new VError(error, 'error finding featured: "$s"', user);
-            return next(error);
-        }
-        request.featuredUser = user;
-        return next();
-    });
+    request.featuredUser = user;
+    return next();
+  });
 });
 
 /**
@@ -143,35 +143,35 @@ router
 .route('/users/:user/featured')
 .post(auth.session())
 .post(function validateUserToCreate(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (request.session._id.toString() !== user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .post(function createFeatured(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var featured;
-    featured = new Featured({
-        'slug'     : request.featuredUser ? request.featuredUser.slug : null,
-        'featured' : request.featuredUser,
-        'user'     : request.session._id
-    });
-    return async.series([featured.save.bind(featured), function (next) {
-        featured.populate('featured');
-        featured.populate('user');
-        featured.populate(next);
-    }], function createdFeature(error) {
-        if (error) {
-            error = new VError(error, 'error creating featured: "$s"', featured._id);
-            return next(error);
-        }
-        return response.send(201, featured);
-    });
+  var featured;
+  featured = new Featured({
+    'slug'     : request.featuredUser ? request.featuredUser.slug : null,
+    'featured' : request.featuredUser,
+    'user'     : request.session._id
+  });
+  return async.series([featured.save.bind(featured), function (next) {
+    featured.populate('featured');
+    featured.populate('user');
+    featured.populate(next);
+  }], function createdFeature(error) {
+    if (error) {
+      error = new VError(error, 'error creating featured: "$s"', featured._id);
+      return next(error);
+    }
+    return response.send(201, featured);
+  });
 });
 
 /**
@@ -244,24 +244,24 @@ router
 .route('/users/:user/featured')
 .get(auth.session())
 .get(function listFeatured(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Featured.find();
-    query.where('user').equals(request.user._id);
-    query.populate('featured');
-    query.populate('user');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedFeatured(error, featured) {
-        if (error) {
-            error = new VError(error, 'error finding featured');
-            return next(error);
-        }
-        return response.send(200, featured);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Featured.find();
+  query.where('user').equals(request.user._id);
+  query.populate('featured');
+  query.populate('user');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedFeatured(error, featured) {
+    if (error) {
+      error = new VError(error, 'error finding featured');
+      return next(error);
+    }
+    return response.send(200, featured);
+  });
 });
 
 /**
@@ -334,24 +334,24 @@ router
 .route('/users/:user/fans')
 .get(auth.session())
 .get(function listFans(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Featured.find();
-    query.where('featured').equals(request.user._id);
-    query.populate('featured');
-    query.populate('user');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedFeatured(error, featured) {
-        if (error) {
-            error = new VError(error, 'error finding featured');
-            return next(error);
-        }
-        return response.send(200, featured);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Featured.find();
+  query.where('featured').equals(request.user._id);
+  query.populate('featured');
+  query.populate('user');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedFeatured(error, featured) {
+    if (error) {
+      error = new VError(error, 'error finding featured');
+      return next(error);
+    }
+    return response.send(200, featured);
+  });
 });
 
 /**
@@ -423,11 +423,11 @@ router
 .route('/users/:user/featured/:id')
 .get(auth.session())
 .get(function getFeatured(request, response) {
-    'use strict';
+  'use strict';
 
-    var featured;
-    featured = request.featured;
-    return response.send(200, featured);
+  var featured;
+  featured = request.featured;
+  return response.send(200, featured);
 });
 
 /**
@@ -443,91 +443,73 @@ router
 .route('/users/:user/featured/:id')
 .delete(auth.session())
 .delete(function validateUserToRemove(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (request.session._id.toString() !== user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .delete(function removeFeatured(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var featured;
-    featured = request.featured;
-    return featured.remove(function removedFeatured(error) {
-        if (error) {
-            error = new VError(error, 'error removing featured: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var featured;
+  featured = request.featured;
+  return featured.remove(function removedFeatured(error) {
+    if (error) {
+      error = new VError(error, 'error removing featured: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
-/**
- * @method
- * @summary Puts requested featured in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', function findFeatured(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Featured.findOne();
-    query.where('user').equals(request.user._id);
-    query.where('slug').equals(id);
-    query.populate('featured');
-    query.populate('user');
-    query.exec(function foundFeatured(error, featured) {
-        if (error) {
-            error = new VError(error, 'error finding featured: "$s"', id);
-            return next(error);
-        }
-        if (!featured) {
-            return response.send(404);
-        }
-        request.featured = featured;
-        return next();
-    });
+  var query;
+  query = Featured.findOne();
+  query.where('user').equals(request.user._id);
+  query.where('slug').equals(id);
+  query.populate('featured');
+  query.populate('user');
+  query.exec(function foundFeatured(error, featured) {
+    if (error) {
+      error = new VError(error, 'error finding featured: "$s"', id);
+      return next(error);
+    }
+    if (!featured) {
+      return response.send(404);
+    }
+    request.featured = featured;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = User.findOne();
-    if (id === 'me') {
-        request.user = request.session;
-        return next();
+  var query;
+  query = User.findOne();
+  if (id === 'me') {
+    request.user = request.session;
+    return next();
+  }
+  query.where('slug').equals(id);
+  return query.exec(function foundUser(error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', id);
+      return next(error);
     }
-    query.where('slug').equals(id);
-    return query.exec(function foundUser(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', id);
-            return next(error);
-        }
-        if (!user) {
-            return response.send(404);
-        }
-        request.user = user;
-        return next();
-    });
+    if (!user) {
+      return response.send(404);
+    }
+    request.user = user;
+    return next();
+  });
 });
 
 module.exports = router;

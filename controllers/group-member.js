@@ -41,33 +41,24 @@ GroupMember = require('../models/group-member');
 Group = require('../models/group');
 User = require('../models/user');
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.use(function findGroupUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, user;
-    user = request.param('user');
-    if (!user) {
-        return next();
+  var query, user;
+  user = request.param('user');
+  if (!user) {
+    return next();
+  }
+  query = User.findOne();
+  query.where('slug').equals(user);
+  return query.exec(function (error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', user);
+      return next(error);
     }
-    query = User.findOne();
-    query.where('slug').equals(user);
-    return query.exec(function (error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', user);
-            return next(error);
-        }
-        request.groupUser = user;
-        return next();
-    });
+    request.groupUser = user;
+    return next();
+  });
 });
 
 /**
@@ -125,35 +116,35 @@ router
 .route('/groups/:group/members')
 .post(auth.session())
 .post(function (request, response, next) {
-    'use strict';
+  'use strict';
 
-    var group;
-    group = request.group;
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var group;
+  group = request.group;
+  if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .post(function createGroupMember(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var groupMember;
-    groupMember = new GroupMember({
-        'slug'         : request.groupUser ? request.groupUser.slug : null,
-        'group'        : request.group ? request.group._id : null,
-        'user'         : request.groupUser ? request.groupUser._id : null,
-        'initialFunds' : request.groupUser ? request.groupUser.funds : null
-    });
-    return async.series([groupMember.save.bind(groupMember), function (next) {
-        groupMember.populate('user');
-        groupMember.populate(next);
-    }], function createdGroupMember(error) {
-        if (error) {
-            error = new VError(error, 'error creating group member: "$s"', groupMember._id);
-            return next(error);
-        }
-        return response.send(201, groupMember);
-    });
+  var groupMember;
+  groupMember = new GroupMember({
+    'slug'         : request.groupUser ? request.groupUser.slug : null,
+    'group'        : request.group ? request.group._id : null,
+    'user'         : request.groupUser ? request.groupUser._id : null,
+    'initialFunds' : request.groupUser ? request.groupUser.funds : null
+  });
+  return async.series([groupMember.save.bind(groupMember), function (next) {
+    groupMember.populate('user');
+    groupMember.populate(next);
+  }], function createdGroupMember(error) {
+    if (error) {
+      error = new VError(error, 'error creating group member: "$s"', groupMember._id);
+      return next(error);
+    }
+    return response.send(201, groupMember);
+  });
 });
 
 /**
@@ -205,24 +196,24 @@ router
 .route('/groups/:group/members')
 .get(auth.session())
 .get(function listGroupMember(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = GroupMember.find();
-    query.where('group').equals(request.group._id);
-    query.sort('ranking');
-    query.populate('user');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedGroupMember(error, groupMembers) {
-        if (error) {
-            error = new VError(error, 'error finding groupMembers');
-            return next(error);
-        }
-        return response.send(200, groupMembers);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = GroupMember.find();
+  query.where('group').equals(request.group._id);
+  query.sort('ranking');
+  query.populate('user');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedGroupMember(error, groupMembers) {
+    if (error) {
+      error = new VError(error, 'error finding groupMembers');
+      return next(error);
+    }
+    return response.send(200, groupMembers);
+  });
 });
 
 /**
@@ -273,11 +264,11 @@ router
 .route('/groups/:group/members/:id')
 .get(auth.session())
 .get(function getGroupMember(request, response) {
-    'use strict';
+  'use strict';
 
-    var groupMember;
-    groupMember = request.groupMember;
-    return response.send(200, groupMember);
+  var groupMember;
+  groupMember = request.groupMember;
+  return response.send(200, groupMember);
 });
 
 /**
@@ -293,85 +284,67 @@ router
 .route('/groups/:group/members/:id')
 .delete(auth.session())
 .delete(function validateRemoveGroupMember(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var group;
-    group = request.group;
-    if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var group;
+  group = request.group;
+  if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .delete(function removeGroupMember(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var groupMember;
-    groupMember = request.groupMember;
-    return groupMember.remove(function removedGroupMember(error) {
-        if (error) {
-            error = new VError(error, 'error removing groupMember: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var groupMember;
+  groupMember = request.groupMember;
+  return groupMember.remove(function removedGroupMember(error) {
+    if (error) {
+      error = new VError(error, 'error removing groupMember: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
-/**
- * @method
- * @summary Puts requested groupMember in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', function findGroupMember(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = GroupMember.findOne();
-    query.where('group').equals(request.group._id);
-    query.where('slug').equals(id);
-    query.populate('user');
-    query.exec(function foundGroupMember(error, groupMember) {
-        if (error) {
-            error = new VError(error, 'error finding groupMember: "$s"', id);
-            return next(error);
-        }
-        if (!groupMember) {
-            return response.send(404);
-        }
-        request.groupMember = groupMember;
-        return next();
-    });
+  var query;
+  query = GroupMember.findOne();
+  query.where('group').equals(request.group._id);
+  query.where('slug').equals(id);
+  query.populate('user');
+  query.exec(function foundGroupMember(error, groupMember) {
+    if (error) {
+      error = new VError(error, 'error finding groupMember: "$s"', id);
+      return next(error);
+    }
+    if (!groupMember) {
+      return response.send(404);
+    }
+    request.groupMember = groupMember;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested group in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('group', function findGroup(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Group.findOne();
-    query.where('slug').equals(id);
-    return query.exec(function foundChampionship(error, group) {
-        if (error) {
-            error = new VError(error, 'error finding group: "$s"', id);
-            return next(error);
-        }
-        if (!group) {
-            return response.send(404);
-        }
-        request.group = group;
-        return next();
-    });
+  var query;
+  query = Group.findOne();
+  query.where('slug').equals(id);
+  return query.exec(function foundChampionship(error, group) {
+    if (error) {
+      error = new VError(error, 'error finding group: "$s"', id);
+      return next(error);
+    }
+    if (!group) {
+      return response.send(404);
+    }
+    request.group = group;
+    return next();
+  });
 });
 
 module.exports = router;

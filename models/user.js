@@ -7,380 +7,310 @@ nconf = require('nconf');
 async = require('async');
 Schema = mongoose.Schema;
 
-/**
- * @class
- * @summary System user entity
- *
- * property {slug} User slug
- * property {email} User email
- * property {username} User username
- * property {facebookId} User facebookId
- * property {password} User password
- * property {name} User name
- * property {about} User about
- * property {verified} User verified
- * property {featured} User featured
- * property {picture} User picture
- * property {type} User type
- * property {apnsToken} User apnsToken
- * property {ranking} User current ranking
- * property {previousRanking} User previous ranking
- * property {history} User result history
- * property {createdAt}
- * property {updatedAt}
- */
 schema = new Schema({
-    'slug'            : {
-        'type' : String
-    },
-    'email'           : {
-        'type'   : String,
-        'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-        'unique' : true,
-        'sparse' : true
-    },
-    'username'        : {
-        'type'   : String,
-        'unique' : true,
-        'sparse' : true
-    },
-    'facebookId'      : {
-        'type'   : String,
-        'unique' : true,
-        'sparse' : true
-    },
-    'password'        : {
-        'type'     : String,
+  'slug'            : {
+    'type' : String
+  },
+  'email'           : {
+    'type'   : String,
+    'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+    'unique' : true,
+    'sparse' : true
+  },
+  'username'        : {
+    'type'   : String,
+    'unique' : true,
+    'sparse' : true
+  },
+  'facebookId'      : {
+    'type'   : String,
+    'unique' : true,
+    'sparse' : true
+  },
+  'password'        : {
+    'type'     : String,
+    'required' : true
+  },
+  'name'            : {
+    'type' : String
+  },
+  'about'           : {
+    'type' : String
+  },
+  'verified'        : {
+    'type'     : Boolean,
+    'required' : true,
+    'default'  : false
+  },
+  'featured'        : {
+    'type'     : Boolean,
+    'required' : true,
+    'default'  : false
+  },
+  'picture'         : {
+    'type'  : String,
+    'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+  },
+  'type'            : {
+    'type'     : String,
+    'required' : true,
+    'default'  : 'user',
+    'enum'     : ['user', 'admin']
+  },
+  'apnsToken'       : {
+    'type' : String
+  },
+  'ranking'         : {
+    'type'     : Number,
+    'required' : true,
+    'default'  : Infinity
+  },
+  'previousRanking' : {
+    'type'     : Number,
+    'required' : true,
+    'default'  : Infinity
+  },
+  'history'         : [
+    {
+      'date'  : {
+        'type'     : Date,
         'required' : true
-    },
-    'name'            : {
-        'type' : String
-    },
-    'about'           : {
-        'type' : String
-    },
-    'verified'        : {
-        'type'     : Boolean,
-        'required' : true,
-        'default'  : false
-    },
-    'featured'        : {
-        'type'     : Boolean,
-        'required' : true,
-        'default'  : false
-    },
-    'picture'         : {
-        'type'  : String,
-        'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-    },
-    'type'            : {
-        'type'     : String,
-        'required' : true,
-        'default'  : 'user',
-        'enum'     : ['user', 'admin']
-    },
-    'apnsToken'       : {
-        'type' : String
-    },
-    'ranking'         : {
+      },
+      'funds' : {
         'type'     : Number,
-        'required' : true,
-        'default'  : Infinity
-    },
-    'previousRanking' : {
-        'type'     : Number,
-        'required' : true,
-        'default'  : Infinity
-    },
-    'history'         : [
-        {
-            'date'  : {
-                'type'     : Date,
-                'required' : true
-            },
-            'funds' : {
-                'type'     : Number,
-                'required' : true
-            }
-        }
-    ],
-    'lastRecharge'    : {
-        'type'    : Date,
-        'default' : Date.now
-    },
-    'active'          : {
-        'type'    : Boolean,
-        'default' : true
-    },
-    'country'         : {
-        'type' : String
-    },
-    'createdAt'       : {
-        'type'    : Date,
-        'default' : Date.now
-    },
-    'updatedAt'       : {
-        'type' : Date
+        'required' : true
+      }
     }
+  ],
+  'lastRecharge'    : {
+    'type'    : Date,
+    'default' : Date.now
+  },
+  'active'          : {
+    'type'    : Boolean,
+    'default' : true
+  },
+  'country'         : {
+    'type' : String
+  },
+  'createdAt'       : {
+    'type'    : Date,
+    'default' : Date.now
+  },
+  'updatedAt'       : {
+    'type' : Date
+  }
 }, {
-    'collection' : 'users',
-    'strict'     : true,
-    'toJSON'     : {
-        'virtuals' : true
-    }
+  'collection' : 'users',
+  'strict'     : true,
+  'toJSON'     : {
+    'virtuals' : true
+  }
 });
 
 schema.plugin(require('mongoose-json-select'), {
-    '_id'             : 0,
-    'slug'            : 1,
-    'email'           : 1,
-    'username'        : 1,
-    'facebookId'      : 1,
-    'password'        : 0,
-    'name'            : 1,
-    'about'           : 1,
-    'verified'        : 1,
-    'featured'        : 1,
-    'picture'         : 1,
-    'type'            : 0,
-    'apnsToken'       : 0,
-    'ranking'         : 1,
-    'previousRanking' : 1,
-    'history'         : 1,
-    'lastRecharge'    : 0,
-    'active'          : 0,
-    'country'         : 1,
-    'createdAt'       : 1,
-    'updatedAt'       : 1,
-    'stake'           : 1,
-    'funds'           : 1
+  '_id'             : 0,
+  'slug'            : 1,
+  'email'           : 1,
+  'username'        : 1,
+  'facebookId'      : 1,
+  'password'        : 0,
+  'name'            : 1,
+  'about'           : 1,
+  'verified'        : 1,
+  'featured'        : 1,
+  'picture'         : 1,
+  'type'            : 0,
+  'apnsToken'       : 0,
+  'ranking'         : 1,
+  'previousRanking' : 1,
+  'history'         : 1,
+  'lastRecharge'    : 0,
+  'active'          : 0,
+  'country'         : 1,
+  'createdAt'       : 1,
+  'updatedAt'       : 1,
+  'stake'           : 1,
+  'funds'           : 1
 });
 
-/**
- * @callback
- * @summary Setups updatedAt
- *
- * @param next
- */
 schema.pre('save', function setUserUpdatedAt(next) {
-    'use strict';
+  'use strict';
 
-    this.updatedAt = new Date();
-    next();
+  this.updatedAt = new Date();
+  next();
 });
 
-/**
- * @callback
- * @summary Puts user in all invited groups
- * When a user registers an account, all group invites that the user received must be removed and the user must be
- * placed as a group member.
- *
- * @param next
- */
-schema.pre('save', function (next) {
-    'use strict';
+schema.pre('save', function insertUserIntoInvitedGroups(next) {
+  'use strict';
 
-    if (!this.facebookId && !this.email) {
-        return next();
+  if (!this.facebookId && !this.email) {
+    return next();
+  }
+
+  var Group, GroupMember, query;
+  Group = require('./group');
+  GroupMember = require('./group-member');
+  query = Group.find();
+  query.where('invites').equals(this.facebookId ? this.facebookId : this.email);
+  return query.exec(function (error, groups) {
+    if (error) {
+      error = new VError(error, 'error finding user "%s" invited groups.', this._id);
+      return next(error);
     }
-
-    var query;
-    query = require('./group').find();
-    query.where('invites').equals(this.facebookId ? this.facebookId : this.email);
-    return query.exec(function (error, groups) {
-        if (error) {
-            error = new VError(error, 'error finding user "%s" invited groups.', this._id);
-            return next(error);
-        }
-        return async.each(groups, function (group, next) {
-            var groupMember, GroupMember;
-            GroupMember = require('./group-member');
-            groupMember = new GroupMember({
-                'user'  : this._id,
-                'group' : group._id
-            });
-            groupMember.save(next);
-        }.bind(this), next);
-    }.bind(this));
+    return async.each(groups, function (group, next) {
+      var groupMember;
+      groupMember = new GroupMember({
+        'user'  : this._id,
+        'group' : group._id
+      });
+      groupMember.save(next);
+    }.bind(this), next);
+  }.bind(this));
 });
 
-/**
- * @callback
- * @summary Puts user in his championship's country
- *
- * @param next
- */
-schema.pre('save', function (next) {
-    'use strict';
+schema.pre('save', function setUserDefaultEntry(next) {
+  'use strict';
 
-    if (!this.isNew) {
-        return next();
-    }
+  if (!this.isNew) {
+    return next();
+  }
 
-    return async.waterfall([function (next) {
-        var query;
-        query = require('./championship').find();
-        query.or([
-            {'country' : this.country},
-            {'country' : 'United Kingdom'}
-        ]);
-        return query.exec(next);
-    }.bind(this), function (championships, next) {
-        var championship, entry;
-        if (championships.length === 2) {
-            championship = championships[0].country === 'United Kingdom' ? championships[1] : championships[0];
-        } else if (championships.length === 1) {
-            championship = championships[0];
-        } else {
-            return next();
-        }
-        entry = new (require('./entry'))({
-            'slug'         : championship ? championship.slug : null,
-            'championship' : championship._id,
-            'user'         : this._id
-        });
-        return entry.save(next);
-    }.bind(this)], next);
-});
-
-/**
- * @callback
- * @summary Populates all user credit requests
- *
- * @param next
- */
-schema.pre('init', function (next, data) {
-    'use strict';
-
+  var Championship, Entry;
+  Championship = require('./championship');
+  Entry = require('./entry');
+  return async.waterfall([function (next) {
     var query;
-    query = require('./credit-request').find();
+    query = Championship.find();
     query.or([
-        {'creditedUser' : data._id},
-        {'chargedUser' : data._id}
+      {'country' : this.country},
+      {'country' : 'United Kingdom'}
     ]);
-    query.exec(function (error, creditRequests) {
-        if (error) {
-            error = new VError(error, 'error populating user "%s" transfers.', data._id);
-            return next(error);
-        }
-        this.creditRequests = creditRequests;
-        return next();
-    }.bind(this));
-});
-
-/**
- * @callback
- * @summary Populates all user bets
- *
- * @param next
- */
-schema.pre('init', function (next, data) {
-    'use strict';
-
-    var query;
-    query = require('./bet').find();
-    query.where('user').equals(data._id);
-    query.populate('match');
-    query.exec(function (error, bets) {
-        if (error) {
-            error = new VError(error, 'error populating user "%s" bets.', data._id);
-            return next(error);
-        }
-        this.bets = bets;
-        return next();
-    }.bind(this));
-});
-
-/**
- * @method
- * @summary Return wallet stake
- * This method should return the wallets funds at stake, this is calculated by summing all bets bid in the wallet which
- * the bet isn't finished yet.
- */
-schema.virtual('stake').get(function () {
-    'use strict';
-
-    if (!this.bets) {
-        return 0;
+    return query.exec(next);
+  }.bind(this), function (championships, next) {
+    var championship, entry;
+    if (championships.length === 2) {
+      championship = championships[0].country === 'United Kingdom' ? championships[1] : championships[0];
+    } else if (championships.length === 1) {
+      championship = championships[0];
+    } else {
+      return next();
     }
-
-    return this.bets.filter(function (bet) {
-        return bet.createdAt > this.lastRecharge;
-    }.bind(this)).filter(function (bet) {
-        return !bet.match.finished;
-    }.bind(this)).map(function (bet) {
-        return bet.bid;
-    }.bind(this)).reduce(function (stake, bid) {
-        return stake + bid;
-    }.bind(this), 0);
+    entry = new Entry({
+      'slug'         : championship ? championship.slug : null,
+      'championship' : championship._id,
+      'user'         : this._id
+    });
+    return entry.save(next);
+  }.bind(this)], next);
 });
 
-/**
- * @method
- * @summary Return wallet available funds
- * This method should return the wallets available funds, this is calculated by summing all bets rewards in the wallet
- * which the bet is finished.
- */
-schema.virtual('funds').get(function () {
-    'use strict';
+schema.pre('init', function populateUserCreditRequests(next, data) {
+  'use strict';
 
-    if (!this.bets) {
-        return 100;
+  var CreditRequest, query;
+  CreditRequest = require('./credit-request');
+  query = CreditRequest.find();
+  query.or([
+    {'creditedUser' : data._id},
+    {'chargedUser' : data._id}
+  ]);
+  query.exec(function (error, creditRequests) {
+    if (error) {
+      error = new VError(error, 'error populating user "%s" transfers.', data._id);
+      return next(error);
     }
-
-    return this.bets.filter(function (bet) {
-        return bet.createdAt > this.lastRecharge;
-    }.bind(this)).map(function (bet) {
-        return bet.profit;
-    }.bind(this)).reduce(function (stake, bid) {
-        return stake + bid;
-    }.bind(this), this.credits + this.debts);
+    this.creditRequests = creditRequests;
+    return next();
+  }.bind(this));
 });
 
-/**
- * @method
- * @summary Return wallet credits
- * This method should return the sum of all credits the user received.
- */
-schema.virtual('credits').get(function () {
-    'use strict';
+schema.pre('init', function populateUserBets(next, data) {
+  'use strict';
 
-    if (!this.creditRequests) {
-        return 100;
+  var Bet, query;
+  Bet = require('./bet');
+  query = Bet.find();
+  query.where('user').equals(data._id);
+  query.populate('match');
+  query.exec(function (error, bets) {
+    if (error) {
+      error = new VError(error, 'error populating user "%s" bets.', data._id);
+      return next(error);
     }
-
-    return this.creditRequests.filter(function (creditRequest) {
-        return creditRequest.createdAt > this.lastRecharge;
-    }.bind(this)).filter(function (creditRequest) {
-        return creditRequest.creditedUser.toString() === this._id.toString() && creditRequest.payed;
-    }.bind(this)).map(function (creditRequest) {
-        return creditRequest.value;
-    }.bind(this)).reduce(function (credits, credit) {
-        return credits + credit;
-    }.bind(this), 100);
+    this.bets = bets;
+    return next();
+  }.bind(this));
 });
 
-/**
- * @method
- * @summary Return wallet debts
- * This method should return the sum of all debts the user donated.
- */
-schema.virtual('debts').get(function () {
-    'use strict';
+schema.virtual('stake').get(function getUserStake() {
+  'use strict';
 
-    if (!this.creditRequests) {
-        return 0;
-    }
+  if (!this.bets) {
+    return 0;
+  }
 
-    return this.creditRequests.filter(function (creditRequest) {
-        return creditRequest.createdAt > this.lastRecharge;
-    }.bind(this)).filter(function (creditRequest) {
-        return creditRequest.chargedUser.toString() === this._id.toString() && creditRequest.payed;
-    }.bind(this)).map(function (creditRequest) {
-        return -1 * creditRequest.value;
-    }.bind(this)).reduce(function (debts, debt) {
-        return debts + debt;
-    }.bind(this), 0);
+  return this.bets.filter(function (bet) {
+    return bet.createdAt > this.lastRecharge;
+  }.bind(this)).filter(function (bet) {
+    return !bet.match.finished;
+  }.bind(this)).map(function (bet) {
+    return bet.bid;
+  }.bind(this)).reduce(function (stake, bid) {
+    return stake + bid;
+  }.bind(this), 0);
+});
+
+schema.virtual('funds').get(function getUserFunds() {
+  'use strict';
+
+  if (!this.bets) {
+    return 100;
+  }
+
+  return this.bets.filter(function (bet) {
+    return bet.createdAt > this.lastRecharge;
+  }.bind(this)).map(function (bet) {
+    return bet.profit;
+  }.bind(this)).reduce(function (stake, bid) {
+    return stake + bid;
+  }.bind(this), this.credits + this.debts);
+});
+
+schema.virtual('credits').get(function getUserCredits() {
+  'use strict';
+
+  if (!this.creditRequests) {
+    return 100;
+  }
+
+  return this.creditRequests.filter(function (creditRequest) {
+    return creditRequest.createdAt > this.lastRecharge;
+  }.bind(this)).filter(function (creditRequest) {
+    return creditRequest.creditedUser.toString() === this._id.toString() && creditRequest.payed;
+  }.bind(this)).map(function (creditRequest) {
+    return creditRequest.value;
+  }.bind(this)).reduce(function (credits, credit) {
+    return credits + credit;
+  }.bind(this), 100);
+});
+
+schema.virtual('debts').get(function getUserDebts() {
+  'use strict';
+
+  if (!this.creditRequests) {
+    return 0;
+  }
+
+  return this.creditRequests.filter(function (creditRequest) {
+    return creditRequest.createdAt > this.lastRecharge;
+  }.bind(this)).filter(function (creditRequest) {
+    return creditRequest.chargedUser.toString() === this._id.toString() && creditRequest.payed;
+  }.bind(this)).map(function (creditRequest) {
+    return -1 * creditRequest.value;
+  }.bind(this)).reduce(function (debts, debt) {
+    return debts + debt;
+  }.bind(this), 0);
 });
 
 module.exports = mongoose.model('User', schema);

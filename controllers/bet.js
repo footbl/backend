@@ -163,37 +163,37 @@ router
 .route('/championships/:championship/matches/:match/bets')
 .post(auth.session())
 .post(function createBet(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var bet;
-    bet = new Bet({
-        'slug'   : request.match.slug + '-' + request.session.slug,
-        'user'   : request.session._id,
-        'match'  : request.match._id,
-        'bid'    : request.param('bid'),
-        'result' : request.param('result')
-    });
-    return async.series([bet.save.bind(bet), function (next) {
-        bet.populate('user');
-        bet.populate('match');
-        bet.populate(next);
-    }, function (next) {
-        bet.match.populate('guest');
-        bet.match.populate('host');
-        bet.match.populate(next);
-    }, function (next) {
-        Match.update({'_id' : request.match._id}, {'$inc' : {
-            'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
-            'pot.host'  : bet.result === 'host' ? bet.bid : 0,
-            'pot.draw'  : bet.result === 'draw' ? bet.bid : 0
-        }}, next);
-    }], function createdBet(error) {
-        if (error) {
-            error = new VError(error, 'error creating bet: "$s"', bet._id);
-            return next(error);
-        }
-        return response.send(201, bet);
-    });
+  var bet;
+  bet = new Bet({
+    'slug'   : request.match.slug + '-' + request.session.slug,
+    'user'   : request.session._id,
+    'match'  : request.match._id,
+    'bid'    : request.param('bid'),
+    'result' : request.param('result')
+  });
+  return async.series([bet.save.bind(bet), function (next) {
+    bet.populate('user');
+    bet.populate('match');
+    bet.populate(next);
+  }, function (next) {
+    bet.match.populate('guest');
+    bet.match.populate('host');
+    bet.match.populate(next);
+  }, function (next) {
+    Match.update({'_id' : request.match._id}, {'$inc' : {
+      'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
+      'pot.host'  : bet.result === 'host' ? bet.bid : 0,
+      'pot.draw'  : bet.result === 'draw' ? bet.bid : 0
+    }}, next);
+  }], function createdBet(error) {
+    if (error) {
+      error = new VError(error, 'error creating bet: "$s"', bet._id);
+      return next(error);
+    }
+    return response.send(201, bet);
+  });
 });
 
 /**
@@ -280,30 +280,30 @@ router
 .route('/championships/:championship/matches/:match/bets')
 .get(auth.session())
 .get(function listBet(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Bet.find();
-    query.where('match').equals(request.match._id);
-    query.populate('user');
-    query.populate('match');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedBet(error, bets) {
-        if (error) {
-            error = new VError(error, 'error finding bets');
-            return next(error);
-        }
-        return Team.populate(bets, {'path' : 'match.guest match.host'}, function (error) {
-            if (error) {
-                error = new VError(error, 'error populating bets');
-                return next(error);
-            }
-            return response.send(200, bets);
-        });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Bet.find();
+  query.where('match').equals(request.match._id);
+  query.populate('user');
+  query.populate('match');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedBet(error, bets) {
+    if (error) {
+      error = new VError(error, 'error finding bets');
+      return next(error);
+    }
+    return Team.populate(bets, {'path' : 'match.guest match.host'}, function (error) {
+      if (error) {
+        error = new VError(error, 'error populating bets');
+        return next(error);
+      }
+      return response.send(200, bets);
     });
+  });
 });
 
 /**
@@ -389,11 +389,11 @@ router
 .route('/championships/:championship/matches/:match/bets/:id')
 .get(auth.session())
 .get(function getBet(request, response) {
-    'use strict';
+  'use strict';
 
-    var bet;
-    bet = request.bet;
-    return response.send(200, bet);
+  var bet;
+  bet = request.bet;
+  return response.send(200, bet);
 });
 
 /**
@@ -487,45 +487,45 @@ router
 .route('/championships/:championship/matches/:match/bets/:id')
 .put(auth.session())
 .put(function validateUserToUpdate(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var bet;
-    bet = request.bet;
-    if (request.session._id.toString() !== bet.user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var bet;
+  bet = request.bet;
+  if (request.session._id.toString() !== bet.user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .put(function updateBet(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var bet, oldResult, oldBid;
-    bet = request.bet;
-    oldBid = bet.bid;
-    oldResult = bet.result;
-    bet.bid = request.param('bid');
-    bet.result = request.param('result');
-    return async.series([bet.save.bind(bet), function (next) {
-        bet.populate('user');
-        bet.populate('match');
-        bet.populate(next);
-    }, function (next) {
-        bet.match.populate('guest');
-        bet.match.populate('host');
-        bet.match.populate(next);
-    }, function (next) {
-        Match.update({'_id' : request.match._id}, {'$inc' : {
-            'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
-            'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
-            'pot.draw'  : (bet.result === 'draw' ? bet.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
-        }}, next);
-    }], function updatedBet(error) {
-        if (error) {
-            error = new VError(error, 'error updating bet: "$s"', bet._id);
-            return next(error);
-        }
-        return response.send(200, bet);
-    });
+  var bet, oldResult, oldBid;
+  bet = request.bet;
+  oldBid = bet.bid;
+  oldResult = bet.result;
+  bet.bid = request.param('bid');
+  bet.result = request.param('result');
+  return async.series([bet.save.bind(bet), function (next) {
+    bet.populate('user');
+    bet.populate('match');
+    bet.populate(next);
+  }, function (next) {
+    bet.match.populate('guest');
+    bet.match.populate('host');
+    bet.match.populate(next);
+  }, function (next) {
+    Match.update({'_id' : request.match._id}, {'$inc' : {
+      'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
+      'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
+      'pot.draw'  : (bet.result === 'draw' ? bet.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
+    }}, next);
+  }], function updatedBet(error) {
+    if (error) {
+      error = new VError(error, 'error updating bet: "$s"', bet._id);
+      return next(error);
+    }
+    return response.send(200, bet);
+  });
 });
 
 /**
@@ -541,35 +541,35 @@ router
 .route('/championships/:championship/matches/:match/bets/:id')
 .delete(auth.session())
 .delete(function validateUserToRemove(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var bet;
-    bet = request.bet;
-    if (request.session._id.toString() !== bet.user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var bet;
+  bet = request.bet;
+  if (request.session._id.toString() !== bet.user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .delete(function removeBet(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var bet, oldResult, oldBid;
-    bet = request.bet;
-    oldBid = bet.bid;
-    oldResult = bet.result;
-    return async.series([bet.remove.bind(bet), function (next) {
-        Match.update({'_id' : request.match._id}, {'$inc' : {
-            'pot.guest' : - (oldResult === 'guest' ? oldBid : 0),
-            'pot.host'  : - (oldResult === 'host' ? oldBid : 0),
-            'pot.draw'  : - (oldResult === 'draw' ? oldBid : 0)
-        }}, next);
-    }], function removedBet(error) {
-        if (error) {
-            error = new VError(error, 'error updating bet: "$s"', bet._id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var bet, oldResult, oldBid;
+  bet = request.bet;
+  oldBid = bet.bid;
+  oldResult = bet.result;
+  return async.series([bet.remove.bind(bet), function (next) {
+    Match.update({'_id' : request.match._id}, {'$inc' : {
+      'pot.guest' : -(oldResult === 'guest' ? oldBid : 0),
+      'pot.host'  : -(oldResult === 'host' ? oldBid : 0),
+      'pot.draw'  : -(oldResult === 'draw' ? oldBid : 0)
+    }}, next);
+  }], function removedBet(error) {
+    if (error) {
+      error = new VError(error, 'error updating bet: "$s"', bet._id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
 /**
@@ -655,164 +655,128 @@ router
 router
 .route('/users/:user/bets')
 .get(function listUserBets(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Bet.find();
-    query.where('user').equals(request.user._id);
-    query.populate('user');
-    query.populate('match');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedUserBet(error, bets) {
-        if (error) {
-            error = new VError(error, 'error finding bets');
-            return next(error);
-        }
-        return Team.populate(bets, {'path' : 'match.guest match.host'}, function (error) {
-            if (error) {
-                error = new VError(error, 'error populating bets');
-                return next(error);
-            }
-            return response.send(200, bets);
-        });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Bet.find();
+  query.where('user').equals(request.user._id);
+  query.populate('user');
+  query.populate('match');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedUserBet(error, bets) {
+    if (error) {
+      error = new VError(error, 'error finding bets');
+      return next(error);
+    }
+    return Team.populate(bets, {'path' : 'match.guest match.host'}, function (error) {
+      if (error) {
+        error = new VError(error, 'error populating bets');
+        return next(error);
+      }
+      return response.send(200, bets);
     });
+  });
 });
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = User.findOne();
-    if (id === 'me') {
-        request.user = request.session;
-        return next();
+  var query;
+  query = User.findOne();
+  if (id === 'me') {
+    request.user = request.session;
+    return next();
+  }
+  query.where('slug').equals(id);
+  return query.exec(function foundUser(error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', id);
+      return next(error);
     }
-    query.where('slug').equals(id);
-    return query.exec(function foundUser(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', id);
-            return next(error);
-        }
-        if (!user) {
-            return response.send(404);
-        }
-        request.user = user;
-        return next();
-    });
+    if (!user) {
+      return response.send(404);
+    }
+    request.user = user;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested bet in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', auth.session());
 router.param('id', function findBet(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Bet.findOne();
-    query.populate('user');
-    query.populate('match');
-    query.where('match').equals(request.match._id);
-    if (id === 'mine') {
-        query.where('user').equals(request.session._id);
-    } else {
-        query.where('slug').equals(id);
+  var query;
+  query = Bet.findOne();
+  query.populate('user');
+  query.populate('match');
+  query.where('match').equals(request.match._id);
+  if (id === 'mine') {
+    query.where('user').equals(request.session._id);
+  } else {
+    query.where('slug').equals(id);
+  }
+  query.exec(function foundBet(error, bet) {
+    if (error) {
+      error = new VError(error, 'error finding bet: "$s"', id);
+      return next(error);
     }
-    query.exec(function foundBet(error, bet) {
-        if (error) {
-            error = new VError(error, 'error finding bet: "$s"', id);
-            return next(error);
-        }
-        if (!bet) {
-            return response.send(404);
-        }
-        bet.match.populate('guest');
-        bet.match.populate('host');
-        return bet.match.populate(function (error) {
-            if (error) {
-                error = new VError(error, 'error populating bet: "$s"', bet._id);
-                return next(error);
-            }
-            request.bet = bet;
-            return next();
-        });
+    if (!bet) {
+      return response.send(404);
+    }
+    bet.match.populate('guest');
+    bet.match.populate('host');
+    return bet.match.populate(function (error) {
+      if (error) {
+        error = new VError(error, 'error populating bet: "$s"', bet._id);
+        return next(error);
+      }
+      request.bet = bet;
+      return next();
     });
+  });
 });
 
-/**
- * @method
- * @summary Puts requested match in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('match', function findMatch(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Match.findOne();
-    query.where('championship').equals(request.championship._id);
-    query.where('slug').equals(id);
-    return query.exec(function foundMatch(error, match) {
-        if (error) {
-            error = new VError(error, 'error finding match: "$s"', id);
-            return next(error);
-        }
-        if (!match) {
-            return response.send(404);
-        }
-        request.match = match;
-        return next();
-    });
+  var query;
+  query = Match.findOne();
+  query.where('championship').equals(request.championship._id);
+  query.where('slug').equals(id);
+  return query.exec(function foundMatch(error, match) {
+    if (error) {
+      error = new VError(error, 'error finding match: "$s"', id);
+      return next(error);
+    }
+    if (!match) {
+      return response.send(404);
+    }
+    request.match = match;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested championship in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('championship', function findChampionship(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Championship.findOne();
-    query.where('slug').equals(id);
-    return query.exec(function foundChampionship(error, championship) {
-        if (error) {
-            error = new VError(error, 'error finding championship: "$s"', id);
-            return next(error);
-        }
-        if (!championship) {
-            return response.send(404);
-        }
-        request.championship = championship;
-        return next();
-    });
+  var query;
+  query = Championship.findOne();
+  query.where('slug').equals(id);
+  return query.exec(function foundChampionship(error, championship) {
+    if (error) {
+      error = new VError(error, 'error finding championship: "$s"', id);
+      return next(error);
+    }
+    if (!championship) {
+      return response.send(404);
+    }
+    request.championship = championship;
+    return next();
+  });
 });
 
 module.exports = router;

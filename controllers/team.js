@@ -54,21 +54,21 @@ router
 .route('/teams')
 .post(auth.session('admin'))
 .post(function createTeam(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var team;
-    team = new Team({
-        'slug'    : slug(request.param('name', '')),
-        'name'    : request.param('name'),
-        'picture' : request.param('picture')
-    });
-    return team.save(function createdTeam(error) {
-        if (error) {
-            error = new VError(error, 'error creating team');
-            return next(error);
-        }
-        return response.send(201, team);
-    });
+  var team;
+  team = new Team({
+    'slug'    : slug(request.param('name', '')),
+    'name'    : request.param('name'),
+    'picture' : request.param('picture')
+  });
+  return team.save(function createdTeam(error) {
+    if (error) {
+      error = new VError(error, 'error creating team');
+      return next(error);
+    }
+    return response.send(201, team);
+  });
 });
 
 /**
@@ -97,21 +97,21 @@ router
 .route('/teams')
 .get(auth.session())
 .get(function listTeam(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Team.find();
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedTeam(error, teams) {
-        if (error) {
-            error = new VError(error, 'error finding teams');
-            return next(error);
-        }
-        return response.send(200, teams);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Team.find();
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedTeam(error, teams) {
+    if (error) {
+      error = new VError(error, 'error finding teams');
+      return next(error);
+    }
+    return response.send(200, teams);
+  });
 });
 
 /**
@@ -139,11 +139,11 @@ router
 .route('/teams/:id')
 .get(auth.session())
 .get(function getTeam(request, response) {
-    'use strict';
+  'use strict';
 
-    var team;
-    team = request.team;
-    return response.send(200, team);
+  var team;
+  team = request.team;
+  return response.send(200, team);
 });
 
 /**
@@ -179,20 +179,20 @@ router
 .route('/teams/:id')
 .put(auth.session('admin'))
 .put(function updateTeam(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var team;
-    team = request.team;
-    team.slug = slug(request.param('name', ''));
-    team.name = request.param('name');
-    team.picture = request.param('picture');
-    return team.save(function updatedTeam(error) {
-        if (error) {
-            error = new VError(error, 'error updating team');
-            return next(error);
-        }
-        return response.send(200, team);
-    });
+  var team;
+  team = request.team;
+  team.slug = slug(request.param('name', ''));
+  team.name = request.param('name');
+  team.picture = request.param('picture');
+  return team.save(function updatedTeam(error) {
+    if (error) {
+      error = new VError(error, 'error updating team');
+      return next(error);
+    }
+    return response.send(200, team);
+  });
 });
 
 /**
@@ -208,45 +208,36 @@ router
 .route('/teams/:id')
 .delete(auth.session('admin'))
 .delete(function removeTeam(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var team;
-    team = request.team;
-    return team.remove(function removedTeam(error) {
-        if (error) {
-            error = new VError(error, 'error removing team: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var team;
+  team = request.team;
+  return team.remove(function removedTeam(error) {
+    if (error) {
+      error = new VError(error, 'error removing team: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
-/**
- * @method
- * @summary Puts requested team in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', function findTeam(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Team.findOne();
-    query.where('slug').equals(id);
-    return query.exec(function foundTeam(error, team) {
-        if (error) {
-            error = new VError(error, 'error finding team: "$s"', id);
-            return next(error);
-        }
-        if (!team) {
-            return response.send(404);
-        }
-        request.team = team;
-        return next();
-    });
+  var query;
+  query = Team.findOne();
+  query.where('slug').equals(id);
+  return query.exec(function foundTeam(error, team) {
+    if (error) {
+      error = new VError(error, 'error finding team: "$s"', id);
+      return next(error);
+    }
+    if (!team) {
+      return response.send(404);
+    }
+    request.team = team;
+    return next();
+  });
 });
 
 module.exports = router;

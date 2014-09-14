@@ -89,54 +89,54 @@ User = require('../models/user');
 router
 .route('/users')
 .post(function detectUserCountry(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var property;
-    property = 'country_name';
-    freegeoip.getLocation(request.ip, function detectedUserCountry(error, location) {
-        if (error) {
-            error = new VError(error, 'error finding user country');
-            return next(error);
-        }
-        request.country = location[property];
-        return next();
-    });
+  var property;
+  property = 'country_name';
+  freegeoip.getLocation(request.ip, function detectedUserCountry(error, location) {
+    if (error) {
+      error = new VError(error, 'error finding user country');
+      return next(error);
+    }
+    request.country = location[property];
+    return next();
+  });
 })
 .post(function createUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = User.findOne();
-    query.where('active').equals(false);
-    query.where('facebookId').equals(request.facebook);
-    return query.exec(function retrievedInactiveUserToCreate(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding inactive user to create user');
-            return next(error);
-        }
-        if (!user) {
-            user = new User({});
-        }
-        user.slug = slug(request.param('username', 'me'));
-        user.email = request.param('email');
-        user.username = request.param('username');
-        user.name = request.param('name');
-        user.facebookId = request.facebook ? request.facebook : user.facebookId;
-        user.about = request.param('about');
-        user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
-        user.picture = request.param('picture');
-        user.language = request.param('language');
-        user.apnsToken = request.param('apnsToken');
-        user.country = request.country;
-        user.active = true;
-        return user.save(function createdUser(error) {
-            if (error) {
-                error = new VError(error, 'error activating user');
-                return next(error);
-            }
-            return response.send(201, user);
-        });
+  var query;
+  query = User.findOne();
+  query.where('active').equals(false);
+  query.where('facebookId').equals(request.facebook);
+  return query.exec(function retrievedInactiveUserToCreate(error, user) {
+    if (error) {
+      error = new VError(error, 'error finding inactive user to create user');
+      return next(error);
+    }
+    if (!user) {
+      user = new User({});
+    }
+    user.slug = slug(request.param('username', 'me'));
+    user.email = request.param('email');
+    user.username = request.param('username');
+    user.name = request.param('name');
+    user.facebookId = request.facebook ? request.facebook : user.facebookId;
+    user.about = request.param('about');
+    user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
+    user.picture = request.param('picture');
+    user.language = request.param('language');
+    user.apnsToken = request.param('apnsToken');
+    user.country = request.country;
+    user.active = true;
+    return user.save(function createdUser(error) {
+      if (error) {
+        error = new VError(error, 'error activating user');
+        return next(error);
+      }
+      return response.send(201, user);
     });
+  });
 });
 
 /**
@@ -183,42 +183,42 @@ router
 router
 .route('/users')
 .get(function listUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = User.find();
-    query.sort('ranking');
-    query.skip(page);
-    query.limit(pageSize);
-    query.where('active').ne(false);
-    if (request.param('emails') && request.param('facebookIds')) {
-        query.where('email').or([
-            { 'email' : {'$in' : request.param('emails', [])} },
-            { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
-        ]);
-    } else if (request.param('emails')) {
-        query.where('email').in(request.param('emails', []));
-    } else if (request.param('facebookIds')) {
-        query.where('facebookId').in(request.param('facebookIds', []));
-    } else if (request.param('usernames')) {
-        query.where('username').in(request.param('usernames', []));
-    } else if (request.param('featured')) {
-        query.where('featured').equals(true);
-    } else {
-        query.or([
-            {'email' : {'$exists' : true}},
-            {'facebookId' : {'$exists' : true}}
-        ]);
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = User.find();
+  query.sort('ranking');
+  query.skip(page);
+  query.limit(pageSize);
+  query.where('active').ne(false);
+  if (request.param('emails') && request.param('facebookIds')) {
+    query.where('email').or([
+      { 'email' : {'$in' : request.param('emails', [])} },
+      { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
+    ]);
+  } else if (request.param('emails')) {
+    query.where('email').in(request.param('emails', []));
+  } else if (request.param('facebookIds')) {
+    query.where('facebookId').in(request.param('facebookIds', []));
+  } else if (request.param('usernames')) {
+    query.where('username').in(request.param('usernames', []));
+  } else if (request.param('featured')) {
+    query.where('featured').equals(true);
+  } else {
+    query.or([
+      {'email' : {'$exists' : true}},
+      {'facebookId' : {'$exists' : true}}
+    ]);
+  }
+  return query.exec(function listedUser(error, users) {
+    if (error) {
+      error = new VError(error, 'error finding users');
+      return next(error);
     }
-    return query.exec(function listedUser(error, users) {
-        if (error) {
-            error = new VError(error, 'error finding users');
-            return next(error);
-        }
-        return response.send(200, users);
-    });
+    return response.send(200, users);
+  });
 });
 
 /**
@@ -262,11 +262,11 @@ router
 .route('/users/:id')
 .get(auth.session())
 .get(function getUser(request, response) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    return response.send(200, user);
+  var user;
+  user = request.user;
+  return response.send(200, user);
 });
 
 /**
@@ -317,38 +317,38 @@ router
 .route('/users/:id')
 .put(auth.session())
 .put(function validateUpdateUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (user._id.toString() !== request.session._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (user._id.toString() !== request.session._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .put(function updateUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user, password;
-    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
-    user = request.user;
-    user.slug = slug(request.param('username', 'me'));
-    user.email = request.param('email');
-    user.username = request.param('username');
-    user.name = request.param('name');
-    user.facebookId = request.facebook ? request.facebook : user.facebookId;
-    user.about = request.param('about');
-    user.password = request.param('password') ? password : user.password;
-    user.picture = request.param('picture');
-    user.language = request.param('language');
-    user.apnsToken = request.param('apnsToken');
-    return user.save(function updatedUser(error) {
-        if (error) {
-            error = new VError(error, 'error updating user');
-            return next(error);
-        }
-        return response.send(200, user);
-    });
+  var user, password;
+  password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+  user = request.user;
+  user.slug = slug(request.param('username', 'me'));
+  user.email = request.param('email');
+  user.username = request.param('username');
+  user.name = request.param('name');
+  user.facebookId = request.facebook ? request.facebook : user.facebookId;
+  user.about = request.param('about');
+  user.password = request.param('password') ? password : user.password;
+  user.picture = request.param('picture');
+  user.language = request.param('language');
+  user.apnsToken = request.param('apnsToken');
+  return user.save(function updatedUser(error) {
+    if (error) {
+      error = new VError(error, 'error updating user');
+      return next(error);
+    }
+    return response.send(200, user);
+  });
 });
 
 /**
@@ -364,28 +364,28 @@ router
 .route('/users/:id')
 .delete(auth.session())
 .delete(function validateRemoveUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (user._id.toString() !== request.session._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (user._id.toString() !== request.session._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .delete(function removeUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    user.active = false;
-    return user.save(function removedUser(error) {
-        if (error) {
-            error = new VError(error, 'error removing user: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var user;
+  user = request.user;
+  user.active = false;
+  return user.save(function removedUser(error) {
+    if (error) {
+      error = new VError(error, 'error removing user: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
 /**
@@ -408,34 +408,34 @@ router
 router
 .route('/users/me/auth')
 .get(function authUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, facebook, password, email;
-    facebook = request.facebook;
-    email = request.param('email');
-    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
-    query = User.findOne();
-    query.where('active').ne(false);
-    if (facebook) {
-        query.where('facebookId').equals(facebook);
-    } else if (email) {
-        query.where('email').equals(email);
-        query.where('password').equals(password);
-    } else {
-        query.where('password').equals(password);
+  var query, facebook, password, email;
+  facebook = request.facebook;
+  email = request.param('email');
+  password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+  query = User.findOne();
+  query.where('active').ne(false);
+  if (facebook) {
+    query.where('facebookId').equals(facebook);
+  } else if (email) {
+    query.where('email').equals(email);
+    query.where('password').equals(password);
+  } else {
+    query.where('password').equals(password);
+  }
+  return query.exec(function (error, user) {
+    if (error) {
+      error = new VError(error, 'error signing up user');
+      return next(error);
     }
-    return query.exec(function (error, user) {
-        if (error) {
-            error = new VError(error, 'error signing up user');
-            return next(error);
-        }
-        if (!user) {
-            return response.send(403);
-        }
-        return response.send(200, {
-            'token' : auth.token(user)
-        });
+    if (!user) {
+      return response.send(403);
+    }
+    return response.send(200, {
+      'token' : auth.token(user)
     });
+  });
 });
 
 /**
@@ -480,28 +480,28 @@ router
 .route('/users/:id/recharge')
 .post(auth.session())
 .post(function validateRechargeUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (user._id.toString() !== request.session._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (user._id.toString() !== request.session._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .post(function createUser(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    user.lastRecharge = new Date();
-    return user.save(function (error) {
-        if (error) {
-            error = new VError(error, 'error recharging user: "$s"', user._id);
-            return next(error);
-        }
-        return response.send(200, user);
-    });
+  var user;
+  user = request.user;
+  user.lastRecharge = new Date();
+  return user.save(function (error) {
+    if (error) {
+      error = new VError(error, 'error recharging user: "$s"', user._id);
+      return next(error);
+    }
+    return response.send(200, user);
+  });
 });
 
 /**
@@ -516,76 +516,67 @@ router
 router
 .route('/users/me/forgot-password')
 .get(function forgotPassword(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, email;
-    email = request.param('email');
-    query = User.findOne();
-    query.where('email').equals(email);
-    return query.exec(function (error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user');
-            return next(error);
-        }
-        if (!user) {
-            return response.send(404);
-        }
-        mandrill.messages.send({
-            'message' : {
-                'html'       : [
-                    '<p>Forgot password</p>',
-                    '<p>to change your password <a href="footbl://forgot-password?token=' + auth.token(user) + '">click here.</a><p>',
-                    '<p>footbl | wanna bet?<p>'
-                ].join('\n'),
-                'subject'    : 'footbl - password recovery',
-                'from_name'  : 'footbl',
-                'from_email' : 'noreply@footbl.co',
-                'to'         : [
-                    {
-                        'email' : request.param('email', ''),
-                        'type'  : 'to'
-                    }
-                ]
-            },
-            'async'   : true
-        });
-        return response.send(200, {
-            'token' : auth.token(user)
-        });
+  var query, email;
+  email = request.param('email');
+  query = User.findOne();
+  query.where('email').equals(email);
+  return query.exec(function (error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user');
+      return next(error);
+    }
+    if (!user) {
+      return response.send(404);
+    }
+    mandrill.messages.send({
+      'message' : {
+        'html'       : [
+          '<p>Forgot password</p>',
+          '<p>to change your password <a href="footbl://forgot-password?token=' + auth.token(user) + '">click here.</a><p>',
+          '<p>footbl | wanna bet?<p>'
+        ].join('\n'),
+        'subject'    : 'footbl - password recovery',
+        'from_name'  : 'footbl',
+        'from_email' : 'noreply@footbl.co',
+        'to'         : [
+          {
+            'email' : request.param('email', ''),
+            'type'  : 'to'
+          }
+        ]
+      },
+      'async'   : true
     });
+    return response.send(200, {
+      'token' : auth.token(user)
+    });
+  });
 });
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', auth.session());
 router.param('id', function findUser(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = User.findOne();
-    if (id === 'me') {
-        request.user = request.session;
-        return next();
+  var query;
+  query = User.findOne();
+  if (id === 'me') {
+    request.user = request.session;
+    return next();
+  }
+  query.where('slug').equals(id);
+  return query.exec(function foundUser(error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', id);
+      return next(error);
     }
-    query.where('slug').equals(id);
-    return query.exec(function foundUser(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', id);
-            return next(error);
-        }
-        if (!user) {
-            return response.send(404);
-        }
-        request.user = user;
-        return next();
-    });
+    if (!user) {
+      return response.send(404);
+    }
+    request.user = user;
+    return next();
+  });
 });
 
 module.exports = router;

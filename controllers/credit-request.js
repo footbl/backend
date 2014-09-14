@@ -129,53 +129,53 @@ router
 .route('/users/:userOrFacebookId/credit-requests')
 .post(auth.session())
 .post(function createUserIfNotExistsToCreate(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, id;
-    query = User.findOne();
-    id = request.params.userOrFacebookId;
-    query.or([
-        {'slug' : id},
-        {'facebookId' : id}
-    ]);
-    return query.exec(function (error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', id);
-            return next(error);
-        }
-        if (!user) {
-            request.user = new User({
-                'facebookId' : id,
-                'password'   : 'temp',
-                'active'     : false
-            });
-            return request.user.save(next);
-        }
-        request.user = user;
-        return next();
-    });
+  var query, id;
+  query = User.findOne();
+  id = request.params.userOrFacebookId;
+  query.or([
+    {'slug' : id},
+    {'facebookId' : id}
+  ]);
+  return query.exec(function (error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', id);
+      return next(error);
+    }
+    if (!user) {
+      request.user = new User({
+        'facebookId' : id,
+        'password'   : 'temp',
+        'active'     : false
+      });
+      return request.user.save(next);
+    }
+    request.user = user;
+    return next();
+  });
 })
 .post(function createCreditRequest(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var creditRequest, now;
-    now = new Date();
-    creditRequest = new CreditRequest({
-        'slug'         : request.params.userOrFacebookId + '-' + request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
-        'creditedUser' : request.session._id,
-        'chargedUser'  : request.user._id
-    });
-    return async.series([creditRequest.save.bind(creditRequest), function (next) {
-        creditRequest.populate('creditedUser');
-        creditRequest.populate('chargedUser');
-        creditRequest.populate(next);
-    }], function createdCreditRequest(error) {
-        if (error) {
-            error = new VError(error, 'error creating creditRequest');
-            return next(error);
-        }
-        return response.send(201, creditRequest);
-    });
+  var creditRequest, now;
+  now = new Date();
+  creditRequest = new CreditRequest({
+    'slug'         : request.params.userOrFacebookId + '-' + request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
+    'creditedUser' : request.session._id,
+    'chargedUser'  : request.user._id
+  });
+  return async.series([creditRequest.save.bind(creditRequest), function (next) {
+    creditRequest.populate('creditedUser');
+    creditRequest.populate('chargedUser');
+    creditRequest.populate(next);
+  }], function createdCreditRequest(error) {
+    if (error) {
+      error = new VError(error, 'error creating creditRequest');
+      return next(error);
+    }
+    return response.send(201, creditRequest);
+  });
 });
 
 /**
@@ -250,24 +250,24 @@ router
 .route('/users/:user/credit-requests')
 .get(auth.session())
 .get(function listCreditRequest(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = CreditRequest.find();
-    query.where('chargedUser').equals(request.user._id);
-    query.populate('creditedUser');
-    query.populate('chargedUser');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedCreditRequest(error, creditRequests) {
-        if (error) {
-            error = new VError(error, 'error finding creditRequests');
-            return next(error);
-        }
-        return response.send(200, creditRequests);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = CreditRequest.find();
+  query.where('chargedUser').equals(request.user._id);
+  query.populate('creditedUser');
+  query.populate('chargedUser');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedCreditRequest(error, creditRequests) {
+    if (error) {
+      error = new VError(error, 'error finding creditRequests');
+      return next(error);
+    }
+    return response.send(200, creditRequests);
+  });
 });
 
 /**
@@ -342,24 +342,24 @@ router
 .route('/users/:user/requested-credits')
 .get(auth.session())
 .get(function listRequestedCredits(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = CreditRequest.find();
-    query.where('creditedUser').equals(request.user._id);
-    query.populate('creditedUser');
-    query.populate('chargedUser');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedRequestedCredits(error, creditRequests) {
-        if (error) {
-            error = new VError(error, 'error finding creditRequests');
-            return next(error);
-        }
-        return response.send(200, creditRequests);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = CreditRequest.find();
+  query.where('creditedUser').equals(request.user._id);
+  query.populate('creditedUser');
+  query.populate('chargedUser');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedRequestedCredits(error, creditRequests) {
+    if (error) {
+      error = new VError(error, 'error finding creditRequests');
+      return next(error);
+    }
+    return response.send(200, creditRequests);
+  });
 });
 
 /**
@@ -433,11 +433,11 @@ router
 .route('/users/:user/credit-requests/:id')
 .get(auth.session())
 .get(function getCreditRequest(request, response) {
-    'use strict';
+  'use strict';
 
-    var creditRequest;
-    creditRequest = request.creditRequest;
-    return response.send(200, creditRequest);
+  var creditRequest;
+  creditRequest = request.creditRequest;
+  return response.send(200, creditRequest);
 });
 
 /**
@@ -518,43 +518,43 @@ router
 .route('/users/:user/credit-requests/:id/approve')
 .put(auth.session())
 .put(function validateUserToApprove(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (request.session._id.toString() !== user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .put(function approveCreditRequest(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var creditRequest;
-    creditRequest = request.creditRequest;
-    creditRequest.value = creditRequest.creditedUser.funds < 100 ? 100 - creditRequest.creditedUser.funds : 0;
-    creditRequest.payed = true;
-    return async.series([creditRequest.save.bind(creditRequest), function (next) {
-        var query;
-        query = CreditRequest.find();
-        query.where('creditedUser').equals(creditRequest.creditedUser._id);
-        query.where('payed').equals(false);
-        query.exec(function (error, creditRequests) {
-            async.each(creditRequests, function (creditRequest, next) {
-                creditRequest.remove(next);
-            }, next);
-        });
-    }, function (next) {
-        creditRequest.populate('creditedUser');
-        creditRequest.populate('chargedUser');
-        creditRequest.populate(next);
-    }], function updatedCreditRequest(error) {
-        if (error) {
-            error = new VError(error, 'error updating creditRequest');
-            return next(error);
-        }
-        return response.send(200, creditRequest);
+  var creditRequest;
+  creditRequest = request.creditRequest;
+  creditRequest.value = creditRequest.creditedUser.funds < 100 ? 100 - creditRequest.creditedUser.funds : 0;
+  creditRequest.payed = true;
+  return async.series([creditRequest.save.bind(creditRequest), function (next) {
+    var query;
+    query = CreditRequest.find();
+    query.where('creditedUser').equals(creditRequest.creditedUser._id);
+    query.where('payed').equals(false);
+    query.exec(function (error, creditRequests) {
+      async.each(creditRequests, function (creditRequest, next) {
+        creditRequest.remove(next);
+      }, next);
     });
+  }, function (next) {
+    creditRequest.populate('creditedUser');
+    creditRequest.populate('chargedUser');
+    creditRequest.populate(next);
+  }], function updatedCreditRequest(error) {
+    if (error) {
+      error = new VError(error, 'error updating creditRequest');
+      return next(error);
+    }
+    return response.send(200, creditRequest);
+  });
 });
 
 /**
@@ -570,91 +570,73 @@ router
 .route('/users/:user/credit-requests/:id')
 .delete(auth.session())
 .delete(function validateUserToDelete(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (request.session._id.toString() !== user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .delete(function removeCreditRequest(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var creditRequest;
-    creditRequest = request.creditRequest;
-    return creditRequest.remove(function removedCreditRequest(error) {
-        if (error) {
-            error = new VError(error, 'error removing creditRequest: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var creditRequest;
+  creditRequest = request.creditRequest;
+  return creditRequest.remove(function removedCreditRequest(error) {
+    if (error) {
+      error = new VError(error, 'error removing creditRequest: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
-/**
- * @method
- * @summary Puts requested creditRequest in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', function findCreditRequest(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = CreditRequest.findOne();
-    query.where('chargedUser').equals(request.user._id);
-    query.where('slug').equals(id);
-    query.populate('creditedUser');
-    query.populate('chargedUser');
-    query.exec(function foundCreditRequest(error, creditRequest) {
-        if (error) {
-            error = new VError(error, 'error finding creditRequest: "$s"', id);
-            return next(error);
-        }
-        if (!creditRequest) {
-            return response.send(404);
-        }
-        request.creditRequest = creditRequest;
-        return next();
-    });
+  var query;
+  query = CreditRequest.findOne();
+  query.where('chargedUser').equals(request.user._id);
+  query.where('slug').equals(id);
+  query.populate('creditedUser');
+  query.populate('chargedUser');
+  query.exec(function foundCreditRequest(error, creditRequest) {
+    if (error) {
+      error = new VError(error, 'error finding creditRequest: "$s"', id);
+      return next(error);
+    }
+    if (!creditRequest) {
+      return response.send(404);
+    }
+    request.creditRequest = creditRequest;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = User.findOne();
-    if (id === 'me') {
-        request.user = request.session;
-        return next();
+  var query;
+  query = User.findOne();
+  if (id === 'me') {
+    request.user = request.session;
+    return next();
+  }
+  query.where('slug').equals(id);
+  return query.exec(function foundUser(error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', id);
+      return next(error);
     }
-    query.where('slug').equals(id);
-    return query.exec(function foundUser(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', id);
-            return next(error);
-        }
-        if (!user) {
-            return response.send(404);
-        }
-        request.user = user;
-        return next();
-    });
+    if (!user) {
+      return response.send(404);
+    }
+    request.user = user;
+    return next();
+  });
 });
 
 module.exports = router;

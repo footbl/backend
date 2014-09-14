@@ -68,24 +68,24 @@ router
 .route('/championships')
 .post(auth.session('admin'))
 .post(function createChampionship(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var championship;
-    championship = new Championship({
-        'slug'    : slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', ''),
-        'name'    : request.param('name'),
-        'picture' : request.param('picture'),
-        'edition' : request.param('edition'),
-        'type'    : request.param('type', 'national league'),
-        'country' : request.param('country')
-    });
-    return championship.save(function createdChampionship(error) {
-        if (error) {
-            error = new VError(error, 'error creating championship');
-            return next(error);
-        }
-        return response.send(201, championship);
-    });
+  var championship;
+  championship = new Championship({
+    'slug'    : slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', ''),
+    'name'    : request.param('name'),
+    'picture' : request.param('picture'),
+    'edition' : request.param('edition'),
+    'type'    : request.param('type', 'national league'),
+    'country' : request.param('country')
+  });
+  return championship.save(function createdChampionship(error) {
+    if (error) {
+      error = new VError(error, 'error creating championship');
+      return next(error);
+    }
+    return response.send(201, championship);
+  });
 });
 
 /**
@@ -119,21 +119,21 @@ router
 .route('/championships')
 .get(auth.session())
 .get(function listChampionship(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Championship.find();
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedChampionship(error, championships) {
-        if (error) {
-            error = new VError(error, 'error finding championships');
-            return next(error);
-        }
-        return response.send(200, championships);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Championship.find();
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedChampionship(error, championships) {
+    if (error) {
+      error = new VError(error, 'error finding championships');
+      return next(error);
+    }
+    return response.send(200, championships);
+  });
 });
 
 /**
@@ -166,11 +166,11 @@ router
 .route('/championships/:id')
 .get(auth.session())
 .get(function getChampionship(request, response) {
-    'use strict';
+  'use strict';
 
-    var championship;
-    championship = request.championship;
-    return response.send(200, championship);
+  var championship;
+  championship = request.championship;
+  return response.send(200, championship);
 });
 
 /**
@@ -213,77 +213,68 @@ router
 .route('/championships/:id')
 .put(auth.session('admin'))
 .put(function updateChampionship(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var championship;
-    championship = request.championship;
-    championship.slug = slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', '');
-    championship.name = request.param('name');
-    championship.picture = request.param('picture');
-    championship.edition = request.param('edition');
-    championship.type = request.param('type', 'national league');
-    championship.country = request.param('country');
-    return championship.save(function updatedChampionship(error) {
-        if (error) {
-            error = new VError(error, 'error updating championship');
-            return next(error);
-        }
-        return response.send(200, championship);
-    });
+  var championship;
+  championship = request.championship;
+  championship.slug = slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', '');
+  championship.name = request.param('name');
+  championship.picture = request.param('picture');
+  championship.edition = request.param('edition');
+  championship.type = request.param('type', 'national league');
+  championship.country = request.param('country');
+  return championship.save(function updatedChampionship(error) {
+    if (error) {
+      error = new VError(error, 'error updating championship');
+      return next(error);
+    }
+    return response.send(200, championship);
+  });
 });
 
 /**
- * @api {delete} /championships/:id Removes championship 
+ * @api {delete} /championships/:id Removes championship
  * @apiName removeChampionship
  * @apiVersion 2.0.1
  * @apiGroup championship
  * @apiPermission admin
  * @apiDescription
- * Removes championship 
+ * Removes championship
  */
 router
 .route('/championships/:id')
 .delete(auth.session('admin'))
 .delete(function removeChampionship(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var championship;
-    championship = request.championship;
-    return championship.remove(function removedChampionship(error) {
-        if (error) {
-            error = new VError(error, 'error removing championship: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var championship;
+  championship = request.championship;
+  return championship.remove(function removedChampionship(error) {
+    if (error) {
+      error = new VError(error, 'error removing championship: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
-/**
- * @method
- * @summary Puts requested championship in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', function findChampionship(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Championship.findOne();
-    query.where('slug').equals(id);
-    return query.exec(function foundChampionship(error, championship) {
-        if (error) {
-            error = new VError(error, 'error finding championship: "$s"', id);
-            return next(error);
-        }
-        if (!championship) {
-            return response.send(404);
-        }
-        request.championship = championship;
-        return next();
-    });
+  var query;
+  query = Championship.findOne();
+  query.where('slug').equals(id);
+  return query.exec(function foundChampionship(error, championship) {
+    if (error) {
+      error = new VError(error, 'error finding championship: "$s"', id);
+      return next(error);
+    }
+    if (!championship) {
+      return response.send(404);
+    }
+    request.championship = championship;
+    return next();
+  });
 });
 
 module.exports = router;

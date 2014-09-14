@@ -57,23 +57,23 @@ Entry = require('../models/entry');
  * @param id
  */
 router.use(function findChampionship(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, championship;
-    championship = request.param('championship');
-    if (!championship) {
-        return next();
+  var query, championship;
+  championship = request.param('championship');
+  if (!championship) {
+    return next();
+  }
+  query = Championship.findOne();
+  query.where('slug').equals(championship);
+  return query.exec(function (error, championship) {
+    if (error) {
+      error = new VError(error, 'error finding championship: "$s"', championship);
+      return next(error);
     }
-    query = Championship.findOne();
-    query.where('slug').equals(championship);
-    return query.exec(function (error, championship) {
-        if (error) {
-            error = new VError(error, 'error finding championship: "$s"', championship);
-            return next(error);
-        }
-        request.championship = championship;
-        return next();
-    });
+    request.championship = championship;
+    return next();
+  });
 });
 
 /**
@@ -141,35 +141,35 @@ router
 .route('/users/:user/entries')
 .post(auth.session())
 .post(function validateUserToCreate(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (request.session._id.toString() !== user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .post(function createEntry(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var entry;
-    entry = new Entry({
-        'slug'         : request.championship ? request.championship.slug : null,
-        'championship' : request.championship,
-        'user'         : request.session._id
-    });
-    return async.series([entry.save.bind(entry), function (next) {
-        entry.populate('championship');
-        entry.populate('user');
-        entry.populate(next);
-    }], function createdEntry(error) {
-        if (error) {
-            error = new VError(error, 'error creating entry');
-            return next(error);
-        }
-        return response.send(201, entry);
-    });
+  var entry;
+  entry = new Entry({
+    'slug'         : request.championship ? request.championship.slug : null,
+    'championship' : request.championship,
+    'user'         : request.session._id
+  });
+  return async.series([entry.save.bind(entry), function (next) {
+    entry.populate('championship');
+    entry.populate('user');
+    entry.populate(next);
+  }], function createdEntry(error) {
+    if (error) {
+      error = new VError(error, 'error creating entry');
+      return next(error);
+    }
+    return response.send(201, entry);
+  });
 });
 
 /**
@@ -231,24 +231,24 @@ router
 .route('/users/:user/entries')
 .get(auth.session())
 .get(function listEntry(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Entry.find();
-    query.where('user').equals(request.user._id);
-    query.populate('championship');
-    query.populate('user');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedEntry(error, entries) {
-        if (error) {
-            error = new VError(error, 'error finding entries');
-            return next(error);
-        }
-        return response.send(200, entries);
-    });
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Entry.find();
+  query.where('user').equals(request.user._id);
+  query.populate('championship');
+  query.populate('user');
+  query.skip(page);
+  query.limit(pageSize);
+  return query.exec(function listedEntry(error, entries) {
+    if (error) {
+      error = new VError(error, 'error finding entries');
+      return next(error);
+    }
+    return response.send(200, entries);
+  });
 });
 
 /**
@@ -309,11 +309,11 @@ router
 .route('/users/:user/entries/:id')
 .get(auth.session())
 .get(function getEntry(request, response) {
-    'use strict';
+  'use strict';
 
-    var entry;
-    entry = request.entry;
-    return response.send(200, entry);
+  var entry;
+  entry = request.entry;
+  return response.send(200, entry);
 });
 
 /**
@@ -329,91 +329,73 @@ router
 .route('/users/:user/entries/:id')
 .delete(auth.session())
 .delete(function validateEntryToDelete(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var user;
-    user = request.user;
-    if (request.session._id.toString() !== user._id.toString()) {
-        return response.send(405);
-    }
-    return next();
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.send(405);
+  }
+  return next();
 })
 .delete(function removeEntry(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var entry;
-    entry = request.entry;
-    return entry.remove(function removedEntry(error) {
-        if (error) {
-            error = new VError(error, 'error removing entry: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var entry;
+  entry = request.entry;
+  return entry.remove(function removedEntry(error) {
+    if (error) {
+      error = new VError(error, 'error removing entry: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
-/**
- * @method
- * @summary Puts requested entry in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('id', function findEntry(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Entry.findOne();
-    query.where('user').equals(request.user._id);
-    query.where('slug').equals(id);
-    query.populate('championship');
-    query.populate('user');
-    query.exec(function foundEntry(error, entry) {
-        if (error) {
-            error = new VError(error, 'error finding entry: "$s"', id);
-            return next(error);
-        }
-        if (!entry) {
-            return response.send(404);
-        }
-        request.entry = entry;
-        return next();
-    });
+  var query;
+  query = Entry.findOne();
+  query.where('user').equals(request.user._id);
+  query.where('slug').equals(id);
+  query.populate('championship');
+  query.populate('user');
+  query.exec(function foundEntry(error, entry) {
+    if (error) {
+      error = new VError(error, 'error finding entry: "$s"', id);
+      return next(error);
+    }
+    if (!entry) {
+      return response.send(404);
+    }
+    request.entry = entry;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = User.findOne();
-    if (id === 'me') {
-        request.user = request.session;
-        return next();
+  var query;
+  query = User.findOne();
+  if (id === 'me') {
+    request.user = request.session;
+    return next();
+  }
+  query.where('slug').equals(id);
+  return query.exec(function foundUser(error, user) {
+    if (error) {
+      error = new VError(error, 'error finding user: "$s"', id);
+      return next(error);
     }
-    query.where('slug').equals(id);
-    return query.exec(function foundUser(error, user) {
-        if (error) {
-            error = new VError(error, 'error finding user: "$s"', id);
-            return next(error);
-        }
-        if (!user) {
-            return response.send(404);
-        }
-        request.user = user;
-        return next();
-    });
+    if (!user) {
+      return response.send(404);
+    }
+    request.user = user;
+    return next();
+  });
 });
 
 module.exports = router;

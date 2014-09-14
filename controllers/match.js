@@ -53,62 +53,44 @@ Match = require('../models/match');
 Championship = require('../models/championship');
 Team = require('../models/team');
 
-/**
- * @method
- * @summary Puts requested guest in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.use(function findMatchGuest(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, guest;
-    guest = request.param('guest');
-    if (!guest) {
-        return next();
+  var query, guest;
+  guest = request.param('guest');
+  if (!guest) {
+    return next();
+  }
+  query = Team.findOne();
+  query.where('slug').equals(guest);
+  return query.exec(function (error, team) {
+    if (error) {
+      error = new VError(error, 'error finding guest: "$s"', guest);
+      return next(error);
     }
-    query = Team.findOne();
-    query.where('slug').equals(guest);
-    return query.exec(function (error, team) {
-        if (error) {
-            error = new VError(error, 'error finding guest: "$s"', guest);
-            return next(error);
-        }
-        request.guestTeam = team;
-        return next();
-    });
+    request.guestTeam = team;
+    return next();
+  });
 });
 
-/**
- * @method
- * @summary Puts requested host in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.use(function findMatchHost(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var query, host;
-    host = request.param('host');
-    if (!host) {
-        return next();
+  var query, host;
+  host = request.param('host');
+  if (!host) {
+    return next();
+  }
+  query = Team.findOne();
+  query.where('slug').equals(host);
+  return query.exec(function (error, team) {
+    if (error) {
+      error = new VError(error, 'error finding host: "$s"', host);
+      return next(error);
     }
-    query = Team.findOne();
-    query.where('slug').equals(host);
-    return query.exec(function (error, team) {
-        if (error) {
-            error = new VError(error, 'error finding host: "$s"', host);
-            return next(error);
-        }
-        request.hostTeam = team;
-        return next();
-    });
+    request.hostTeam = team;
+    return next();
+  });
 });
 
 /**
@@ -174,31 +156,31 @@ router
 .route('/championships/:championship/matches')
 .post(auth.session('admin'))
 .post(function createMatch(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var match;
-    match = new Match({
-        'slug'         : 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : ''),
-        'championship' : request.championship._id,
-        'guest'        : request.guestTeam ? request.guestTeam._id : null,
-        'host'         : request.hostTeam ? request.hostTeam._id : null,
-        'round'        : request.param('round'),
-        'date'         : request.param('date'),
-        'finished'     : request.param('finished', false),
-        'elapsed'      : request.param('elapsed'),
-        'result'        : request.param('result')
-    });
-    return async.series([match.save.bind(match), function (next) {
-        match.populate('guest');
-        match.populate('host');
-        match.populate(next);
-    }], function (error) {
-        if (error) {
-            error = new VError(error, 'error creating match: "$s"', match._id);
-            return next(error);
-        }
-        return response.send(201, match);
-    });
+  var match;
+  match = new Match({
+    'slug'         : 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : ''),
+    'championship' : request.championship._id,
+    'guest'        : request.guestTeam ? request.guestTeam._id : null,
+    'host'         : request.hostTeam ? request.hostTeam._id : null,
+    'round'        : request.param('round'),
+    'date'         : request.param('date'),
+    'finished'     : request.param('finished', false),
+    'elapsed'      : request.param('elapsed'),
+    'result'       : request.param('result')
+  });
+  return async.series([match.save.bind(match), function (next) {
+    match.populate('guest');
+    match.populate('host');
+    match.populate(next);
+  }], function (error) {
+    if (error) {
+      error = new VError(error, 'error creating match: "$s"', match._id);
+      return next(error);
+    }
+    return response.send(201, match);
+  });
 });
 
 /**
@@ -255,25 +237,25 @@ router
 .route('/championships/:championship/matches')
 .get(auth.session())
 .get(function listMatch(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var pageSize, page, query, championship;
-    championship = request.championship;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Match.find();
-    query.where('championship').equals(championship._id);
-    query.skip(page);
-    query.populate('guest');
-    query.populate('host');
-    query.limit(pageSize);
-    return query.exec(function listedMatch(error, matches) {
-        if (error) {
-            error = new VError(error, 'error finding matches');
-            return next(error);
-        }
-        return response.send(200, matches);
-    });
+  var pageSize, page, query, championship;
+  championship = request.championship;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Match.find();
+  query.where('championship').equals(championship._id);
+  query.skip(page);
+  query.populate('guest');
+  query.populate('host');
+  query.limit(pageSize);
+  return query.exec(function listedMatch(error, matches) {
+    if (error) {
+      error = new VError(error, 'error finding matches');
+      return next(error);
+    }
+    return response.send(200, matches);
+  });
 });
 
 /**
@@ -329,11 +311,11 @@ router
 .route('/championships/:championship/matches/:id')
 .get(auth.session())
 .get(function getMatch(request, response) {
-    'use strict';
+  'use strict';
 
-    var match;
-    match = request.match;
-    return response.send(200, match);
+  var match;
+  match = request.match;
+  return response.send(200, match);
 });
 
 /**
@@ -399,55 +381,55 @@ router
 .route('/championships/:championship/matches/:id')
 .put(auth.session('admin'))
 .put(function updateMatch(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var match;
-    match = request.match;
-    match.slug = 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : '');
-    match.guest = request.guestTeam ? request.guestTeam._id : null;
-    match.host = request.hostTeam ? request.hostTeam._id : null;
-    match.round = request.param('round');
-    match.date = request.param('date');
-    match.finished = request.param('finished', false);
-    match.elapsed = request.param('elapsed');
-    match.result = request.param('result', {'guest' : 0, 'host' : 0});
-    return async.series([match.save.bind(match), function (next) {
-        match.populate('guest');
-        match.populate('host');
-        match.populate(next);
-    }], function updatedMatch(error) {
-        if (error) {
-            error = new VError(error, 'error updating match: "$s"', match._id);
-            return next(error);
-        }
-        return response.send(200, match);
-    });
+  var match;
+  match = request.match;
+  match.slug = 'round-' + request.param('round', '') + '-' + slug(request.hostTeam ? request.hostTeam.name || '' : '') + '-vs-' + slug(request.guestTeam ? request.guestTeam.name || '' : '');
+  match.guest = request.guestTeam ? request.guestTeam._id : null;
+  match.host = request.hostTeam ? request.hostTeam._id : null;
+  match.round = request.param('round');
+  match.date = request.param('date');
+  match.finished = request.param('finished', false);
+  match.elapsed = request.param('elapsed');
+  match.result = request.param('result', {'guest' : 0, 'host' : 0});
+  return async.series([match.save.bind(match), function (next) {
+    match.populate('guest');
+    match.populate('host');
+    match.populate(next);
+  }], function updatedMatch(error) {
+    if (error) {
+      error = new VError(error, 'error updating match: "$s"', match._id);
+      return next(error);
+    }
+    return response.send(200, match);
+  });
 });
 
 /**
- * @api {delete} /championships/:championship/matches/:id Removes match 
+ * @api {delete} /championships/:championship/matches/:id Removes match
  * @apiName removeMatch
  * @apiVersion 2.0.1
  * @apiGroup match
  * @apiPermission admin
  * @apiDescription
- * Removes match 
+ * Removes match
  */
 router
 .route('/championships/:championship/matches/:id')
 .delete(auth.session('admin'))
 .delete(function removeMatch(request, response, next) {
-    'use strict';
+  'use strict';
 
-    var match;
-    match = request.match;
-    return match.remove(function removedMatch(error) {
-        if (error) {
-            error = new VError(error, 'error removing match: "$s"', request.params.id);
-            return next(error);
-        }
-        return response.send(204);
-    });
+  var match;
+  match = request.match;
+  return match.remove(function removedMatch(error) {
+    if (error) {
+      error = new VError(error, 'error removing match: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.send(204);
+  });
 });
 
 /**
@@ -460,26 +442,26 @@ router
  * @param id
  */
 router.param('id', function findMatch(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query, championship;
-    championship = request.championship;
-    query = Match.findOne();
-    query.where('slug').equals(id);
-    query.where('championship').equals(championship._id);
-    query.populate('guest');
-    query.populate('host');
-    return query.exec(function foundMatch(error, match) {
-        if (error) {
-            error = new VError(error, 'error finding match: "$s"', id);
-            return next(error);
-        }
-        if (!match) {
-            return response.send(404);
-        }
-        request.match = match;
-        return next();
-    });
+  var query, championship;
+  championship = request.championship;
+  query = Match.findOne();
+  query.where('slug').equals(id);
+  query.where('championship').equals(championship._id);
+  query.populate('guest');
+  query.populate('host');
+  return query.exec(function foundMatch(error, match) {
+    if (error) {
+      error = new VError(error, 'error finding match: "$s"', id);
+      return next(error);
+    }
+    if (!match) {
+      return response.send(404);
+    }
+    request.match = match;
+    return next();
+  });
 });
 
 /**
@@ -492,22 +474,22 @@ router.param('id', function findMatch(request, response, next, id) {
  * @param id
  */
 router.param('championship', function findChampionship(request, response, next, id) {
-    'use strict';
+  'use strict';
 
-    var query;
-    query = Championship.findOne();
-    query.where('slug').equals(id);
-    return query.exec(function foundChampionship(error, championship) {
-        if (error) {
-            error = new VError(error, 'error finding championship: "$s"', id);
-            return next(error);
-        }
-        if (!championship) {
-            return response.send(404);
-        }
-        request.championship = championship;
-        return next();
-    });
+  var query;
+  query = Championship.findOne();
+  query.where('slug').equals(id);
+  return query.exec(function foundChampionship(error, championship) {
+    if (error) {
+      error = new VError(error, 'error finding championship: "$s"', id);
+      return next(error);
+    }
+    if (!championship) {
+      return response.send(404);
+    }
+    request.championship = championship;
+    return next();
+  });
 });
 
 module.exports = router;
