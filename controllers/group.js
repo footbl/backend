@@ -123,7 +123,7 @@ router
       error = new VError(error, 'error creating group: "$s"', group._id);
       return next(error);
     }
-    return response.send(201, group);
+    return response.status(201).send(group);
   });
 });
 
@@ -197,7 +197,7 @@ router
         error = new VError(error, 'error finding groups');
         return next(error);
       }
-      return response.send(200, groups);
+      return response.status(200).send(groups);
     });
   } else {
     query = GroupMember.find();
@@ -218,7 +218,7 @@ router
         group.populate('owner');
         group.populate(next);
       }, function populatedGroupOwner(error, groups) {
-        return response.send(200, groups);
+        return response.status(200).send(groups);
       });
     });
   }
@@ -278,7 +278,7 @@ router
 
   var group;
   group = request.group;
-  return response.send(200, group);
+  return response.status(200).send(group);
 });
 
 /**
@@ -343,7 +343,7 @@ router
   var group;
   group = request.group;
   if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -360,7 +360,7 @@ router
       error = new VError(error, 'error updating group: "$s"', group._id);
       return next(error);
     }
-    return response.send(200, group);
+    return response.status(200).send(group);
   });
 });
 
@@ -382,7 +382,7 @@ router
   var group;
   group = request.group;
   if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -396,7 +396,7 @@ router
       error = new VError(error, 'error removing group: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -420,7 +420,7 @@ router
   var group;
   group = request.group;
   if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -457,7 +457,7 @@ router
       error = new VError(error, 'error inviting user');
       return next(error);
     }
-    return response.send(200, group);
+    return response.status(200).send(group);
   });
 });
 
@@ -479,7 +479,7 @@ router
   var group;
   group = request.group;
   if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -504,7 +504,7 @@ router
         error = new VError(error, 'error restarting group: "%s"', request.group._id);
         return next(error);
       }
-      return response.send(200, group);
+      return response.status(200).send(group);
     });
   });
 });
@@ -522,7 +522,7 @@ router.param('id', function findGroup(request, response, next, id) {
       return next(error);
     }
     if (!group) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.group = group;
     return next();

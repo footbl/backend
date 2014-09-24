@@ -134,7 +134,7 @@ router
         error = new VError(error, 'error activating user');
         return next(error);
       }
-      return response.send(201, user);
+      return response.status(201).send(user);
     });
   });
 });
@@ -217,7 +217,7 @@ router
       error = new VError(error, 'error finding users');
       return next(error);
     }
-    return response.send(200, users);
+    return response.status(200).send(users);
   });
 });
 
@@ -266,7 +266,7 @@ router
 
   var user;
   user = request.user;
-  return response.send(200, user);
+  return response.status(200).send(user);
 });
 
 /**
@@ -322,7 +322,7 @@ router
   var user;
   user = request.user;
   if (user._id.toString() !== request.session._id.toString()) {
-    return response.send(405);
+    return response.status(405).end();
   }
   return next();
 })
@@ -347,7 +347,7 @@ router
       error = new VError(error, 'error updating user');
       return next(error);
     }
-    return response.send(200, user);
+    return response.status(200).send(user);
   });
 });
 
@@ -369,7 +369,7 @@ router
   var user;
   user = request.user;
   if (user._id.toString() !== request.session._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -384,7 +384,7 @@ router
       error = new VError(error, 'error removing user: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -430,9 +430,9 @@ router
       return next(error);
     }
     if (!user) {
-      return response.send(403);
+      return response.status(403).end();
     }
-    return response.send(200, {
+    return response.status(200).send({
       'token' : auth.token(user)
     });
   });
@@ -485,7 +485,7 @@ router
   var user;
   user = request.user;
   if (user._id.toString() !== request.session._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -500,7 +500,7 @@ router
       error = new VError(error, 'error recharging user: "$s"', user._id);
       return next(error);
     }
-    return response.send(200, user);
+    return response.status(200).send(user);
   });
 });
 
@@ -528,7 +528,7 @@ router
       return next(error);
     }
     if (!user) {
-      return response.send(404);
+      return response.status(404).end();
     }
     mandrill.messages.send({
       'message' : {
@@ -549,7 +549,7 @@ router
       },
       'async'   : true
     });
-    return response.send(200, {
+    return response.status(200).send({
       'token' : auth.token(user)
     });
   });
@@ -572,7 +572,7 @@ router.param('id', function findUser(request, response, next, id) {
       return next(error);
     }
     if (!user) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.user = user;
     return next();

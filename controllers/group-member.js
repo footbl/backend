@@ -121,7 +121,7 @@ router
   var group;
   group = request.group;
   if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -143,7 +143,7 @@ router
       error = new VError(error, 'error creating group member: "$s"', groupMember._id);
       return next(error);
     }
-    return response.send(201, groupMember);
+    return response.status(201).send(groupMember);
   });
 });
 
@@ -212,7 +212,7 @@ router
       error = new VError(error, 'error finding groupMembers');
       return next(error);
     }
-    return response.send(200, groupMembers);
+    return response.status(200).send(groupMembers);
   });
 });
 
@@ -268,7 +268,7 @@ router
 
   var groupMember;
   groupMember = request.groupMember;
-  return response.send(200, groupMember);
+  return response.status(200).send(groupMember);
 });
 
 /**
@@ -289,7 +289,7 @@ router
   var group;
   group = request.group;
   if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -303,7 +303,7 @@ router
       error = new VError(error, 'error removing groupMember: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -321,7 +321,7 @@ router.param('id', function findGroupMember(request, response, next, id) {
       return next(error);
     }
     if (!groupMember) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.groupMember = groupMember;
     return next();
@@ -340,7 +340,7 @@ router.param('group', function findGroup(request, response, next, id) {
       return next(error);
     }
     if (!group) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.group = group;
     return next();

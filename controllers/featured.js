@@ -148,7 +148,7 @@ router
   var user;
   user = request.user;
   if (request.session._id.toString() !== user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -170,7 +170,7 @@ router
       error = new VError(error, 'error creating featured: "$s"', featured._id);
       return next(error);
     }
-    return response.send(201, featured);
+    return response.status(201).send(featured);
   });
 });
 
@@ -260,7 +260,7 @@ router
       error = new VError(error, 'error finding featured');
       return next(error);
     }
-    return response.send(200, featured);
+    return response.status(200).send(featured);
   });
 });
 
@@ -350,7 +350,7 @@ router
       error = new VError(error, 'error finding featured');
       return next(error);
     }
-    return response.send(200, featured);
+    return response.status(200).send(featured);
   });
 });
 
@@ -427,7 +427,7 @@ router
 
   var featured;
   featured = request.featured;
-  return response.send(200, featured);
+  return response.status(200).send(featured);
 });
 
 /**
@@ -448,7 +448,7 @@ router
   var user;
   user = request.user;
   if (request.session._id.toString() !== user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -462,7 +462,7 @@ router
       error = new VError(error, 'error removing featured: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -481,7 +481,7 @@ router.param('id', function findFeatured(request, response, next, id) {
       return next(error);
     }
     if (!featured) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.featured = featured;
     return next();
@@ -505,7 +505,7 @@ router.param('user', function findUser(request, response, next, id) {
       return next(error);
     }
     if (!user) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.user = user;
     return next();

@@ -67,7 +67,7 @@ router
       error = new VError(error, 'error creating team');
       return next(error);
     }
-    return response.send(201, team);
+    return response.status(201).send(team);
   });
 });
 
@@ -110,7 +110,7 @@ router
       error = new VError(error, 'error finding teams');
       return next(error);
     }
-    return response.send(200, teams);
+    return response.status(200).send(teams);
   });
 });
 
@@ -143,7 +143,7 @@ router
 
   var team;
   team = request.team;
-  return response.send(200, team);
+  return response.status(200).send(team);
 });
 
 /**
@@ -191,7 +191,7 @@ router
       error = new VError(error, 'error updating team');
       return next(error);
     }
-    return response.send(200, team);
+    return response.status(200).send(team);
   });
 });
 
@@ -217,7 +217,7 @@ router
       error = new VError(error, 'error removing team: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -233,7 +233,7 @@ router.param('id', function findTeam(request, response, next, id) {
       return next(error);
     }
     if (!team) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.team = team;
     return next();

@@ -179,7 +179,7 @@ router
       error = new VError(error, 'error creating match: "$s"', match._id);
       return next(error);
     }
-    return response.send(201, match);
+    return response.status(201).send(match);
   });
 });
 
@@ -254,7 +254,7 @@ router
       error = new VError(error, 'error finding matches');
       return next(error);
     }
-    return response.send(200, matches);
+    return response.status(200).send(matches);
   });
 });
 
@@ -315,7 +315,7 @@ router
 
   var match;
   match = request.match;
-  return response.send(200, match);
+  return response.status(200).send(match);
 });
 
 /**
@@ -402,7 +402,7 @@ router
       error = new VError(error, 'error updating match: "$s"', match._id);
       return next(error);
     }
-    return response.send(200, match);
+    return response.status(200).send(match);
   });
 });
 
@@ -428,7 +428,7 @@ router
       error = new VError(error, 'error removing match: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -457,7 +457,7 @@ router.param('id', function findMatch(request, response, next, id) {
       return next(error);
     }
     if (!match) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.match = match;
     return next();
@@ -485,7 +485,7 @@ router.param('championship', function findChampionship(request, response, next, 
       return next(error);
     }
     if (!championship) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.championship = championship;
     return next();

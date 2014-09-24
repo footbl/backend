@@ -69,7 +69,7 @@ app.use(function (error, request, response, next) {
   var errors, prop;
   if (error && error.cause && error.cause()) {
     if ([11001, 11000].indexOf(error.cause().code) !== -1) {
-      return response.send(409);
+      return response.status(409).end();
     }
     if (error.cause().errors) {
       errors = {};
@@ -78,13 +78,13 @@ app.use(function (error, request, response, next) {
           errors[prop] = error.cause().errors[prop].type;
         }
       }
-      return response.send(400, errors);
+      return response.status(400).send(errors);
     }
     if (error.message.indexOf('match already started') > -1) {
-      return response.send(400);
+      return response.status(400).end();
     }
     if (error.message.indexOf('insufficient funds') > -1) {
-      return response.send(400);
+      return response.status(400).end();
     }
   }
   console.error(prettyError.render(error));

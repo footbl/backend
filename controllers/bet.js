@@ -192,7 +192,7 @@ router
       error = new VError(error, 'error creating bet: "$s"', bet._id);
       return next(error);
     }
-    return response.send(201, bet);
+    return response.status(201).send(bet);
   });
 });
 
@@ -301,7 +301,7 @@ router
         error = new VError(error, 'error populating bets');
         return next(error);
       }
-      return response.send(200, bets);
+      return response.status(200).send(bets);
     });
   });
 });
@@ -393,7 +393,7 @@ router
 
   var bet;
   bet = request.bet;
-  return response.send(200, bet);
+  return response.status(200).send(bet);
 });
 
 /**
@@ -492,7 +492,7 @@ router
   var bet;
   bet = request.bet;
   if (request.session._id.toString() !== bet.user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -524,7 +524,7 @@ router
       error = new VError(error, 'error updating bet: "$s"', bet._id);
       return next(error);
     }
-    return response.send(200, bet);
+    return response.status(200).send(bet);
   });
 });
 
@@ -546,7 +546,7 @@ router
   var bet;
   bet = request.bet;
   if (request.session._id.toString() !== bet.user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -568,7 +568,7 @@ router
       error = new VError(error, 'error updating bet: "$s"', bet._id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -676,7 +676,7 @@ router
         error = new VError(error, 'error populating bets');
         return next(error);
       }
-      return response.send(200, bets);
+      return response.status(200).send(bets);
     });
   });
 });
@@ -698,7 +698,7 @@ router.param('user', function findUser(request, response, next, id) {
       return next(error);
     }
     if (!user) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.user = user;
     return next();
@@ -725,7 +725,7 @@ router.param('id', function findBet(request, response, next, id) {
       return next(error);
     }
     if (!bet) {
-      return response.send(404);
+      return response.status(404).end();
     }
     bet.match.populate('guest');
     bet.match.populate('host');
@@ -753,7 +753,7 @@ router.param('match', function findMatch(request, response, next, id) {
       return next(error);
     }
     if (!match) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.match = match;
     return next();
@@ -772,7 +772,7 @@ router.param('championship', function findChampionship(request, response, next, 
       return next(error);
     }
     if (!championship) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.championship = championship;
     return next();

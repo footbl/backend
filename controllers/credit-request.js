@@ -174,7 +174,7 @@ router
       error = new VError(error, 'error creating creditRequest');
       return next(error);
     }
-    return response.send(201, creditRequest);
+    return response.status(201).send(creditRequest);
   });
 });
 
@@ -266,7 +266,7 @@ router
       error = new VError(error, 'error finding creditRequests');
       return next(error);
     }
-    return response.send(200, creditRequests);
+    return response.status(200).send(creditRequests);
   });
 });
 
@@ -358,7 +358,7 @@ router
       error = new VError(error, 'error finding creditRequests');
       return next(error);
     }
-    return response.send(200, creditRequests);
+    return response.status(200).send(creditRequests);
   });
 });
 
@@ -437,7 +437,7 @@ router
 
   var creditRequest;
   creditRequest = request.creditRequest;
-  return response.send(200, creditRequest);
+  return response.status(200).send(creditRequest);
 });
 
 /**
@@ -523,7 +523,7 @@ router
   var user;
   user = request.user;
   if (request.session._id.toString() !== user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -553,7 +553,7 @@ router
       error = new VError(error, 'error updating creditRequest');
       return next(error);
     }
-    return response.send(200, creditRequest);
+    return response.status(200).send(creditRequest);
   });
 });
 
@@ -575,7 +575,7 @@ router
   var user;
   user = request.user;
   if (request.session._id.toString() !== user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -589,7 +589,7 @@ router
       error = new VError(error, 'error removing creditRequest: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -608,7 +608,7 @@ router.param('id', function findCreditRequest(request, response, next, id) {
       return next(error);
     }
     if (!creditRequest) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.creditRequest = creditRequest;
     return next();
@@ -632,7 +632,7 @@ router.param('user', function findUser(request, response, next, id) {
       return next(error);
     }
     if (!user) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.user = user;
     return next();

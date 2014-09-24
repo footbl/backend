@@ -146,7 +146,7 @@ router
   var user;
   user = request.user;
   if (request.session._id.toString() !== user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -168,7 +168,7 @@ router
       error = new VError(error, 'error creating entry');
       return next(error);
     }
-    return response.send(201, entry);
+    return response.status(201).send(entry);
   });
 });
 
@@ -247,7 +247,7 @@ router
       error = new VError(error, 'error finding entries');
       return next(error);
     }
-    return response.send(200, entries);
+    return response.status(200).send(entries);
   });
 });
 
@@ -313,7 +313,7 @@ router
 
   var entry;
   entry = request.entry;
-  return response.send(200, entry);
+  return response.status(200).send(entry);
 });
 
 /**
@@ -334,7 +334,7 @@ router
   var user;
   user = request.user;
   if (request.session._id.toString() !== user._id.toString()) {
-    return response.send(405);
+    return response.status(405).end()
   }
   return next();
 })
@@ -348,7 +348,7 @@ router
       error = new VError(error, 'error removing entry: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -367,7 +367,7 @@ router.param('id', function findEntry(request, response, next, id) {
       return next(error);
     }
     if (!entry) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.entry = entry;
     return next();
@@ -391,7 +391,7 @@ router.param('user', function findUser(request, response, next, id) {
       return next(error);
     }
     if (!user) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.user = user;
     return next();

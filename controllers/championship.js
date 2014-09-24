@@ -84,7 +84,7 @@ router
       error = new VError(error, 'error creating championship');
       return next(error);
     }
-    return response.send(201, championship);
+    return response.status(201).send(championship);
   });
 });
 
@@ -132,7 +132,7 @@ router
       error = new VError(error, 'error finding championships');
       return next(error);
     }
-    return response.send(200, championships);
+    return response.status(200).send(championships);
   });
 });
 
@@ -170,7 +170,7 @@ router
 
   var championship;
   championship = request.championship;
-  return response.send(200, championship);
+  return response.status(200).send(championship);
 });
 
 /**
@@ -228,7 +228,7 @@ router
       error = new VError(error, 'error updating championship');
       return next(error);
     }
-    return response.send(200, championship);
+    return response.status(200).send(championship);
   });
 });
 
@@ -254,7 +254,7 @@ router
       error = new VError(error, 'error removing championship: "$s"', request.params.id);
       return next(error);
     }
-    return response.send(204);
+    return response.status(204).end();
   });
 });
 
@@ -270,7 +270,7 @@ router.param('id', function findChampionship(request, response, next, id) {
       return next(error);
     }
     if (!championship) {
-      return response.send(404);
+      return response.status(404).end();
     }
     request.championship = championship;
     return next();
