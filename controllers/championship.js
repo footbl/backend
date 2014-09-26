@@ -19,7 +19,7 @@
  * @apiSuccess {Number} rounds Championship number of rounds.
  * @apiSuccess {Number} currentRound Championship current round.
  */
-var VError, router, nconf, slug, auth, Championship;
+var VError, router, nconf, slug, auth, Championship, Match;
 
 VError = require('verror');
 router = require('express').Router();
@@ -27,66 +27,7 @@ nconf = require('nconf');
 slug = require('slug');
 auth = require('../lib/auth');
 Championship = require('../models/championship');
-
-/**
- * @api {post} /championships Creates a new championship.
- * @apiName createChampionship
- * @apiVersion 2.0.1
- * @apiGroup championship
- * @apiPermission admin
- * @apiDescription
- * Creates a new championship.
- *
- * @apiStructure championshipParams
- * @apiStructure championshipSuccess
- *
- * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "name": "required",
- *       "edition": "required",
- *       "country": "required",
- *       "type": "enum"
- *     }
- *
- * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "name": "Brasileirão",
- *       "slug": "brasileirao-brasil-2014",
- *       "country" : "brasil",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "edition": 2014,
- *       "type": "national league",
- *       "rounds": 7,
- *       "currentRound" : 4,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
- */
-router
-.route('/championships')
-.post(auth.session('admin'))
-.post(function createChampionship(request, response, next) {
-  'use strict';
-
-  var championship;
-  championship = new Championship({
-    'slug'    : slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', ''),
-    'name'    : request.param('name'),
-    'picture' : request.param('picture'),
-    'edition' : request.param('edition'),
-    'type'    : request.param('type', 'national league'),
-    'country' : request.param('country')
-  });
-  return championship.save(function createdChampionship(error) {
-    if (error) {
-      error = new VError(error, 'error creating championship');
-      return next(error);
-    }
-    return response.status(201).send(championship);
-  });
-});
+Match = require('../models/match');
 
 /**
  * @api {get} /championships List all championships
@@ -163,7 +104,7 @@ router
  *     }
  */
 router
-.route('/championships/:id')
+.route('/championships/:championship')
 .get(auth.session())
 .get(function getChampionship(request, response) {
   'use strict';
@@ -174,91 +115,164 @@ router
 });
 
 /**
- * @api {put} /championships/:id Updates championship info
- * @apiName updateChampionship
+ * @api {get} /championships/:championship/matches List all matches
+ * @apiName listMatch
  * @apiVersion 2.0.1
- * @apiGroup championship
- * @apiPermission admin
+ * @apiGroup match
+ * @apiPermission user
  * @apiDescription
- * Updates championship info.
+ * List all matches.
  *
- * @apiStructure championshipParams
- * @apiStructure championshipSuccess
+ * @apiParam {String} [page=0] The page to be displayed.
+ * @apiStructure matchSuccess
  *
- * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "name": "required",
- *       "edition": "required",
- *       "country": "required",
- *       "type": "enum"
- *     }
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *       "guest": {
+ *         "name": "fluminense",
+ *         "slug": "fluminense",
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "host": {
+ *         "name": "botafogo",
+ *         "slug": "botafogo",
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "round": 3,
+ *       "date": "2014-07-01T12:22:25.058Z",
+ *       "finished": true,
+ *       "elapsed": null,
+ *       "result": {
+ *         "guest": 0,
+ *         "host" 0
+ *       },
+ *       "pot": {
+ *         "guest": 0,
+ *         "host" 0,
+ *         "draw" 0
+ *       },
+ *       "winner": "draw",
+ *       "jackpot": 0,
+ *       "reward": 0,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
+ */
+router
+.route('/championships/:championship/matches')
+.get(auth.session())
+.get(function listMatch(request, response, next) {
+  'use strict';
+
+  var pageSize, page, query, championship;
+  championship = request.championship;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
+  query = Match.find();
+  query.where('championship').equals(championship._id);
+  query.skip(page);
+  query.populate('guest');
+  query.populate('host');
+  query.limit(pageSize);
+  return query.exec(function listedMatch(error, matches) {
+    if (error) {
+      error = new VError(error, 'error finding matches');
+      return next(error);
+    }
+    return response.status(200).send(matches);
+  });
+});
+
+/**
+ * @api {get} /championships/:championship/matches/:match Get match info
+ * @apiName getMatch
+ * @apiVersion 2.0.1
+ * @apiGroup match
+ * @apiPermission user
+ * @apiDescription
+ * Get match info.
+ *
+ * @apiStructure matchSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
  *     {
- *       "name": "Brasileirão",
- *       "slug": "brasileirao-brasil-2014",
- *       "country" : "brasil",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "edition": 2014,
- *       "type": "national league",
- *       "rounds": 7,
- *       "currentRound" : 4,
+ *       "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *       "guest": {
+ *         "name": "fluminense",
+ *         "slug": "fluminense",
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "host": {
+ *         "name": "botafogo",
+ *         "slug": "botafogo",
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "round": 3,
+ *       "date": "2014-07-01T12:22:25.058Z",
+ *       "finished": true,
+ *       "elapsed": null,
+ *       "result": {
+ *         "guest": 0,
+ *         "host" 0
+ *       },
+ *       "pot": {
+ *         "guest": 0,
+ *         "host" 0,
+ *         "draw" 0
+ *       },
+ *       "winner": "draw",
+ *       "jackpot": 0,
+ *       "reward": 0,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
  */
 router
-.route('/championships/:id')
-.put(auth.session('admin'))
-.put(function updateChampionship(request, response, next) {
+.route('/championships/:championship/matches/:match')
+.get(auth.session())
+.get(function getMatch(request, response) {
   'use strict';
 
-  var championship;
+  var match;
+  match = request.match;
+  return response.status(200).send(match);
+});
+
+router.param('match', function findMatch(request, response, next, id) {
+  'use strict';
+
+  var query, championship;
   championship = request.championship;
-  championship.slug = slug(request.param('name', '')) + '-' + slug(request.param('country', '')) + '-' + request.param('edition', '');
-  championship.name = request.param('name');
-  championship.picture = request.param('picture');
-  championship.edition = request.param('edition');
-  championship.type = request.param('type', 'national league');
-  championship.country = request.param('country');
-  return championship.save(function updatedChampionship(error) {
+  query = Match.findOne();
+  query.where('slug').equals(id);
+  query.where('championship').equals(championship._id);
+  query.populate('guest');
+  query.populate('host');
+  return query.exec(function foundMatch(error, match) {
     if (error) {
-      error = new VError(error, 'error updating championship');
+      error = new VError(error, 'error finding match: "$s"', id);
       return next(error);
     }
-    return response.status(200).send(championship);
+    if (!match) {
+      return response.status(404).end();
+    }
+    request.match = match;
+    return next();
   });
 });
 
-/**
- * @api {delete} /championships/:id Removes championship
- * @apiName removeChampionship
- * @apiVersion 2.0.1
- * @apiGroup championship
- * @apiPermission admin
- * @apiDescription
- * Removes championship
- */
-router
-.route('/championships/:id')
-.delete(auth.session('admin'))
-.delete(function removeChampionship(request, response, next) {
-  'use strict';
-
-  var championship;
-  championship = request.championship;
-  return championship.remove(function removedChampionship(error) {
-    if (error) {
-      error = new VError(error, 'error removing championship: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
-});
-
-router.param('id', function findChampionship(request, response, next, id) {
+router.param('championship', function findChampionship(request, response, next, id) {
   'use strict';
 
   var query;

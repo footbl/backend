@@ -2,7 +2,7 @@
 require('should');
 var supertest, app, auth,
 User, Championship, Match, Team, Bet, ranking, previousRanking, userHistory,
-user, otherUser, guestBetter, hostBetter, drawBetter;
+user, otherUser, guestBetter, hostBetter, drawBetter, championship, guestTeam, hostTeam, match;
 
 supertest = require('supertest');
 app = require('../index.js');
@@ -51,63 +51,44 @@ describe('world ranking', function () {
   });
 
   before(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
-    request = request.post('/championships');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.send({'name' : 'brasileirão'});
-    request.send({'type' : 'national league'});
-    request.send({'country' : 'brasil'});
-    request.send({'edition' : 2014});
-    request.end(done);
+    championship = new Championship({
+      'name'    : 'brasileirão',
+      'slug'    : 'brasileirao-brasil-2014',
+      'type'    : 'national league',
+      'country' : 'brasil',
+      'edition' : 2014
+    });
+    championship.save(done);
   });
 
   before(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
-    request = request.post('/teams');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.send({'name' : 'fluminense'});
-    request.send({'picture' : 'http://pictures.com/fluminense.png'});
-    request.end(done);
+    hostTeam = new Team({
+      'name'    : 'fluminense',
+      'slug'    : 'fluminense',
+      'picture' : 'http://pictures.com/fluminense.png'
+    });
+    hostTeam.save(done);
   });
 
   before(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
-    request = request.post('/teams');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.send({'name' : 'botafogo'});
-    request.send({'picture' : 'http://pictures.com/botafogo.png'});
-    request.end(done);
+    guestTeam = new Team({
+      'name'    : 'botafogo',
+      'slug'    : 'botafogo',
+      'picture' : 'http://pictures.com/botafogo.png'
+    });
+    guestTeam.save(done);
   });
 
   before(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
-    request = request.post('/championships/brasileirao-brasil-2014/matches');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.send({'guest' : 'botafogo'});
-    request.send({'host' : 'fluminense'});
-    request.send({'round' : '1'});
-    request.send({'date' : new Date(2014, 10, 10)});
-    request.end(done);
+    match = new Match({
+      'round'        : 1,
+      'date'         : new Date(2014, 10, 10),
+      'guest'        : guestTeam._id,
+      'host'         : hostTeam._id,
+      'championship' : championship._id,
+      'slug'         : 'round-1-fluminense-vs-botafogo'
+    });
+    match.save(done);
   });
 
   before(function (done) {
@@ -153,21 +134,9 @@ describe('world ranking', function () {
   });
 
   before(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
-    request = request.put('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.send({'guest' : 'botafogo'});
-    request.send({'host' : 'fluminense'});
-    request.send({'round' : '1'});
-    request.send({'date' : new Date(2014, 10, 10)});
-    request.send({'result' : {'guest' : 1, 'host' : 2}});
-    request.send({'finished' : true});
-    request.end(done);
+    match.finished = true;
+    match.result = {'guest' : 1, 'host' : 2};
+    match.save(done);
   });
 
   it('should sort', ranking);

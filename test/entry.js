@@ -28,19 +28,13 @@ describe('entry controller', function () {
   });
 
   before(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
-    request = request.post('/championships');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.send({'name' : 'brasileirão'});
-    request.send({'type' : 'national league'});
-    request.send({'country' : 'brasil'});
-    request.send({'edition' : 2014});
-    request.end(done);
+    new Championship({
+      'name'    : 'brasileirão',
+      'slug'    : 'brasileirao-brasil-2014',
+      'type'    : 'national league',
+      'country' : 'brasil',
+      'edition' : 2014
+    }).save(done);
   });
 
   describe('create', function () {

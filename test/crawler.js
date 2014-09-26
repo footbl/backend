@@ -49,23 +49,6 @@ describe('crawler', function () {
     var request, credentials;
     credentials = auth.credentials();
     request = supertest(app);
-    request = request.get('/teams/Flamengo');
-    request.set('auth-signature', credentials.signature);
-    request.set('auth-timestamp', credentials.timestamp);
-    request.set('auth-transactionId', credentials.transactionId);
-    request.set('auth-token', auth.token(user));
-    request.expect(200);
-    request.expect(function (response) {
-      response.body.should.have.property('slug').be.equal('Flamengo');
-      response.body.should.have.property('name').be.equal('Flamengo');
-    });
-    request.end(done);
-  });
-
-  after(function (done) {
-    var request, credentials;
-    credentials = auth.credentials();
-    request = supertest(app);
     request = request.get('/championships/Serie-A-Brazil-2014/matches/round-12-Atletico-PR-vs-Fluminense');
     request.set('auth-signature', credentials.signature);
     request.set('auth-timestamp', credentials.timestamp);

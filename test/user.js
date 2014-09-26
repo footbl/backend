@@ -2,7 +2,7 @@
 require('should');
 var supertest, app, auth, nock,
 User, Championship, Team, Match, Bet, Entry,
-user, otherUser;
+user, otherUser, championship, guestTeam, hostTeam;
 
 supertest = require('supertest');
 app = require('../index.js');
@@ -198,35 +198,23 @@ describe('user controller', function () {
     });
 
     before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/championships');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'name' : 'brasileirão'});
-      request.send({'type' : 'national league'});
-      request.send({'country' : 'Brazil'});
-      request.send({'edition' : 2014});
-      request.end(done);
+      new Championship({
+        'name'    : 'brasileirão',
+        'slug'    : 'brasileirao-Brazil-2014',
+        'type'    : 'national league',
+        'country' : 'Brazil',
+        'edition' : 2014
+      }).save(done);
     });
 
     before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/championships');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'name' : 'premier league'});
-      request.send({'type' : 'national league'});
-      request.send({'country' : 'United Kingdom'});
-      request.send({'edition' : 2014});
-      request.end(done);
+      new Championship({
+        'name'    : 'premier league',
+        'slug'    : 'premier-league-United-Kingdom-2014',
+        'type'    : 'national league',
+        'country' : 'United Kingdom',
+        'edition' : 2014
+      }).save(done);
     });
 
     it('should create', function (done) {
@@ -927,63 +915,43 @@ describe('user controller', function () {
     });
 
     before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/championships');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'name' : 'brasileirão'});
-      request.send({'type' : 'national league'});
-      request.send({'country' : 'brasil'});
-      request.send({'edition' : 2014});
-      request.end(done);
+      championship = new Championship({
+        'name'    : 'brasileirão',
+        'slug'    : 'brasileirao-brasil-2014',
+        'type'    : 'national league',
+        'country' : 'brasil',
+        'edition' : 2014
+      });
+      championship.save(done);
     });
 
     before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/teams');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'name' : 'fluminense'});
-      request.send({'picture' : 'http://pictures.com/fluminense.png'});
-      request.end(done);
+      hostTeam = new Team({
+        'name'    : 'fluminense',
+        'slug'    : 'fluminense',
+        'picture' : 'http://pictures.com/fluminense.png'
+      });
+      hostTeam.save(done);
     });
 
     before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/teams');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'name' : 'botafogo'});
-      request.send({'picture' : 'http://pictures.com/botafogo.png'});
-      request.end(done);
+      guestTeam = new Team({
+        'name'    : 'botafogo',
+        'slug'    : 'botafogo',
+        'picture' : 'http://pictures.com/botafogo.png'
+      });
+      guestTeam.save(done);
     });
 
     before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/championships/brasileirao-brasil-2014/matches');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'guest' : 'botafogo'});
-      request.send({'host' : 'fluminense'});
-      request.send({'round' : '1'});
-      request.send({'date' : new Date(2014, 10, 10)});
-      request.end(done);
+      new Match({
+        'round'        : 1,
+        'date'         : new Date(2014, 10, 10),
+        'guest'        : guestTeam._id,
+        'host'         : hostTeam._id,
+        'championship' : championship._id,
+        'slug'         : 'round-1-fluminense-vs-botafogo'
+      }).save(done);
     });
 
     before(function (done) {
