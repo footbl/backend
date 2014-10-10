@@ -89,6 +89,7 @@ app.use(function (error, request, response, next) {
   response.send(500);
   return process.exit();
 });
+
 app.listen(nconf.get('PORT'));
 
 module.exports = app;
