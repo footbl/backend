@@ -8,37 +8,43 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'name'      : {
+  'name'         : {
     'type'     : String,
     'required' : true
   },
-  'slug'      : {
+  'slug'         : {
     'type'   : String,
     'unique' : true
   },
-  'picture'   : {
+  'picture'      : {
     'type'  : String,
     'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
   },
-  'edition'   : {
+  'edition'      : {
     'type'     : Number,
     'required' : true
   },
-  'type'      : {
+  'type'         : {
     'type'     : String,
     'required' : true,
     'enum'     : ['national league', 'continental league', 'world cup'],
     'default'  : 'national league'
   },
-  'country'   : {
+  'country'      : {
     'type'     : String,
     'required' : true
   },
-  'createdAt' : {
+  'rounds'       : {
+    'type' : Number
+  },
+  'currentRound' : {
+    'type' : Number
+  },
+  'createdAt'    : {
     'type'    : Date,
     'default' : Date.now
   },
-  'updatedAt' : {
+  'updatedAt'    : {
     'type' : Date
   }
 }, {
@@ -69,61 +75,6 @@ schema.pre('save', function setChampionshipUpdatedAt(next) {
 
   this.updatedAt = new Date();
   next();
-});
-
-schema.pre('init', function populateChampionshipMatches(next, data) {
-  'use strict';
-
-  var Match, query;
-  Match = require('./match');
-  query = Match.find();
-  query.where('championship').equals(data._id);
-  query.exec(function (error, matches) {
-    if (error) {
-      error = new VError(error, 'error populating championship "%s" matches.', data._id);
-      return next(error);
-    }
-    this.matches = matches;
-    return next();
-  }.bind(this));
-});
-
-schema.virtual('rounds').get(function getChampionshipRounds() {
-  'use strict';
-
-  var lastRound, matches;
-  matches = this.matches || [];
-  lastRound = matches.sort(function (a, b) {
-    return b.round - a.round;
-  }.bind(this))[0];
-  return lastRound ? lastRound.round : 1;
-});
-
-schema.virtual('currentRound').get(function getChampionshipCurrentRound() {
-  'use strict';
-
-  var lastFinishedRound, lastFinishedRoundIsActive, hasUnfinishedMatch, matches;
-  matches = this.matches || [];
-  lastFinishedRound = matches.filter(function (match) {
-    return match.finished;
-  }.bind(this)).sort(function (a, b) {
-    return b.round - a.round;
-  }.bind(this))[0];
-
-  lastFinishedRound = !lastFinishedRound ? 1 : lastFinishedRound.round;
-  lastFinishedRoundIsActive = matches.some(function (match) {
-    return match.round === lastFinishedRound && !match.finished;
-  }.bind(this));
-
-  hasUnfinishedMatch = matches.some(function (match) {
-    return !match.finished;
-  });
-
-  if (lastFinishedRoundIsActive || !hasUnfinishedMatch) {
-    return lastFinishedRound;
-  } else {
-    return lastFinishedRound + 1;
-  }
 });
 
 module.exports = mongoose.model('Championship', schema);

@@ -84,8 +84,6 @@ describe('championship controller', function () {
           championship.should.have.property('slug');
           championship.should.have.property('type');
           championship.should.have.property('edition');
-          championship.should.have.property('rounds');
-          championship.should.have.property('currentRound');
         });
       });
       request.end(done);
@@ -164,8 +162,6 @@ describe('championship controller', function () {
         response.body.should.have.property('type').be.equal('national league');
         response.body.should.have.property('country').be.equal('brasil');
         response.body.should.have.property('edition').be.equal(2014);
-        response.body.should.have.property('rounds').be.equal(1);
-        response.body.should.have.property('currentRound').be.equal(1);
       });
       request.end(done);
     });

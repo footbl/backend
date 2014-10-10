@@ -26,6 +26,7 @@ nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=11').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=10').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=18').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=19').times(Infinity).reply(200, {Games : []});
 
 describe('crawler', function () {
   'use strict';
@@ -44,6 +45,23 @@ describe('crawler', function () {
   });
 
   it('should populate database', crawler);
+
+  after(function (done) {
+    var request, credentials;
+    credentials = auth.credentials();
+    request = supertest(app);
+    request = request.get('/championships/Serie-A-Brazil-2014');
+    request.set('auth-signature', credentials.signature);
+    request.set('auth-timestamp', credentials.timestamp);
+    request.set('auth-transactionId', credentials.transactionId);
+    request.set('auth-token', auth.token(user));
+    request.expect(200);
+    request.expect(function (response) {
+      response.body.should.have.property('rounds').be.equal(38);
+      response.body.should.have.property('currentRound').be.equal(14);
+    });
+    request.end(done);
+  });
 
   after(function (done) {
     var request, credentials;

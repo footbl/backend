@@ -25,6 +25,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/England_pu515s.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 1,
     '365scoresCompId'    : 7
   },
@@ -34,6 +35,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099446/Spain_fbtjci.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 2,
     '365scoresCompId'    : 11
   },
@@ -43,6 +45,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/Italy_jn9gec.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 3,
     '365scoresCompId'    : 17
   },
@@ -52,6 +55,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/Germany_ogmgq3.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 4,
     '365scoresCompId'    : 25
   },
@@ -61,6 +65,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/France_kc8cke.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 5,
     '365scoresCompId'    : 35
   },
@@ -70,6 +75,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/Portugal_j8oclj.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 11,
     '365scoresCompId'    : 73
   },
@@ -79,6 +85,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/Brazil_b4izf9.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 21,
     '365scoresCompId'    : 113
   },
@@ -88,6 +95,7 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099445/Argentina_o4arz3.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 10,
     '365scoresCompId'    : 72
   },
@@ -97,8 +105,19 @@ championships = [
     'type'               : 'national league',
     'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099446/USA_pnjeel.png',
     'edition'            : 2014,
+    'rounds'             : 38,
     '365scoresCountryId' : 18,
     '365scoresCompId'    : 104
+  },
+  {
+    'name'               : 'Champions League',
+    'country'            : 'Europe',
+    'type'               : 'continental league',
+    'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099446/USA_pnjeel.png',
+    'edition'            : 2014,
+    'rounds'             : 38,
+    '365scoresCountryId' : 19,
+    '365scoresCompId'    : 572
   }
 ];
 
@@ -472,7 +491,8 @@ module.exports = function (next) {
         'country' : championship.country,
         'type'    : championship.type,
         'picture' : championship.picture,
-        'edition' : championship.edition
+        'edition' : championship.edition,
+        'rounds'  : championship.rounds
       }}, {'upsert' : true}, next);
     }, function (champ, next) {
       championship._id = champ._id;
@@ -546,6 +566,16 @@ module.exports = function (next) {
               'host'  : hostScore
             }
           }}, {'upsert' : true}, next);
+        }, function (match, next) {
+          Championship.findOneAndUpdate({
+            'slug' : slug(championship.name) + '-' + slug(championship.country) + '-' + championship.edition,
+            '$or'  : [
+              {'currentRound' : {'$lt' : round}},
+              {'currentRound' : null}
+            ]
+          }, {'$set' : {
+            'currentRound' : round
+          }}, next);
         }], next);
       }, next);
     }], next);

@@ -248,8 +248,6 @@ describe('user controller', function () {
         response.body.should.have.property('championship').with.property('slug').be.equal('brasileirao-Brazil-2014');
         response.body.should.have.property('championship').with.property('type').be.equal('national league');
         response.body.should.have.property('championship').with.property('edition').be.equal(2014);
-        response.body.should.have.property('championship').with.property('rounds').be.equal(1);
-        response.body.should.have.property('championship').with.property('currentRound').be.equal(1);
       });
       request.end(done);
     });
