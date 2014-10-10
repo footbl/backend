@@ -113,7 +113,7 @@ championships = [
     'name'               : 'Champions League',
     'country'            : 'Europe',
     'type'               : 'continental league',
-    'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409099446/USA_pnjeel.png',
+    'picture'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904170/Europe_r12tpr.png',
     'edition'            : 2014,
     'rounds'             : 38,
     '365scoresCountryId' : 19,
@@ -296,7 +296,20 @@ flags = {
   'Seattle Sounders'       : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409101923/Seattle_S_lqxihr.png',
   'Sporting Kansas City'   : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409101924/S_Kansas_C_qlgtow.png',
   'Toronto FC'             : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409101923/Toronto_FC_dqrnn8.png',
-  'Vancouver Whitecaps'    : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409101924/Vancouver_W_iaz3ht.png'
+  'Vancouver Whitecaps'    : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1409101924/Vancouver_W_iaz3ht.png',
+  'Ajax'                   : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904842/Ajax_sidxdc.png',
+  'RSC Anderlecht'         : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904873/Anderlecht_ad7tfx.png',
+  'Apoel Nicosia'          : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904890/Apoel_lfvxtq.png',
+  'Basel'                  : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904905/Basel_heqrom.png',
+  'Bate Borisov'           : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904924/Bate_y6eg94.png',
+  'CSKA Moscow'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904943/CSKA_Moscow_gervsg.png',
+  'Galatasaray'            : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904978/Galatasaray_o3mhqe.png',
+  'Ludogorets'             : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412904995/Ludogorets_z1bn9v.png',
+  'Malmo FF'               : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412905010/Malmo_qx8gtm.png',
+  'Maribor'                : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412905028/Maribor_bwpugd.png',
+  'Olympiakos'             : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412905045/Olympiacos_ogiyfm.png',
+  'Shakhter Donetsk'       : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412905074/Shakhtar_Don_fc63id.png',
+  'Zenit Petersburg'       : 'http://res.cloudinary.com/hivstsgwo/image/upload/v1412905091/Zenit_e3w6mh.png'
 };
 
 teams = {
@@ -474,7 +487,20 @@ teams = {
   'Seattle Sounders'       : 'Seattle S.',
   'Sporting Kansas City'   : 'S. Kansas C.',
   'Toronto FC'             : 'Toronto FC',
-  'Vancouver Whitecaps'    : 'Vancouver W.'
+  'Vancouver Whitecaps'    : 'Vancouver W.',
+  'Ajax'                   : 'Ajax',
+  'RSC Anderlecht'         : 'Anderlecht',
+  'Apoel Nicosia'          : 'Apoel',
+  'Basel'                  : 'Basel',
+  'Bate Borisov'           : 'Bate Borisov',
+  'CSKA Moscow'            : 'CSKA Moscow',
+  'Galatasaray'            : 'Galatasaray',
+  'Ludogorets'             : 'Ludogorets',
+  'Malmo FF'               : 'Malmo FF',
+  'Maribor'                : 'Maribor',
+  'Olympiakos'             : 'Olympiakos',
+  'Shakhter Donetsk'       : 'Shakhter Donetsk',
+  'Zenit Petersburg'       : 'Zenit Petersburg'
 };
 
 module.exports = function (next) {
