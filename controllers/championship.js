@@ -176,7 +176,10 @@ router
   page = request.param('page', 0) * pageSize;
   query = Match.find();
   query.where('championship').equals(championship._id);
-  query.where('round').gte((championship.currentRound || 1) - 1);
+  query.or([
+    {'round' : {'$gte' : (championship.currentRound || 1) - 1}},
+    {'finished' : false}
+  ]);
   query.skip(page);
   query.populate('guest');
   query.populate('host');
