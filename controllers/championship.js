@@ -177,7 +177,7 @@ router
   query = Match.find();
   query.where('championship').equals(championship._id);
   query.or([
-    {'round' : {'$gte' : (championship.currentRound || 1) - 1}},
+    {'round' : {'$gte' : (championship.currentRound || 1) - 2}},
     {'finished' : false}
   ]);
   query.skip(page);
