@@ -522,6 +522,7 @@ module.exports = function (next) {
       }}, {'upsert' : true}, next);
     }, function (champ, next) {
       championship._id = champ._id;
+      championship.currentRound = champ.currentRound || 1;
       request('http://ws.365scores.com?action=1&Sid=1&curr_season=true&CountryID=' + championship['365scoresCountryId'], next);
     }, function (response, body, next) {
       var matches;
@@ -543,6 +544,9 @@ module.exports = function (next) {
         guestScore = (data.Events || []).filter(function (event) {
           return event.Type === 0 && event.Comp === 2;
         }).length;
+        if (round < championship.currentRound - 4) {
+          return next();
+        }
         if (date < today && !finished) {
           return next();
         }
