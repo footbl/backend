@@ -55,6 +55,7 @@ app.use(function (request, response, next) {
   response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
   next();
 });
+
 app.use(require('./controllers/user'));
 app.use(require('./controllers/featured'));
 app.use(require('./controllers/championship'));
@@ -63,6 +64,7 @@ app.use(require('./controllers/group'));
 app.use(require('./controllers/group-member'));
 app.use(require('./controllers/credit-request'));
 app.use(require('./controllers/entry'));
+
 app.use(function (error, request, response, next) {
   var errors, prop;
   if (error && error.cause && error.cause()) {
