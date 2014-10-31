@@ -19,6 +19,49 @@
  * @apiSuccess {Number} rounds Championship number of rounds.
  * @apiSuccess {Number} currentRound Championship current round.
  */
+/**
+ * @apiDefineStructure matchParams
+ * @apiParam {String} guest Match guest team slug
+ * @apiParam {String} host Match host team slug
+ * @apiParam {Number} round Match round
+ * @apiParam {Date} date Match date
+ * @apiParam {Boolean} [finished=false] Match status
+ * @apiParam {Number} [elapsed] Match elapsed time
+ * @apiParam {Number} [result.guest=0] Match guest team result
+ * @apiParam {Number} [result.host=0] Match host team result
+ */
+/**
+ * @apiDefineStructure matchSuccess
+ * @apiSuccess {String} slug Match identifier.
+ * @apiSuccess {Number} round Match round.
+ * @apiSuccess {Date} date Match date.
+ * @apiSuccess {Boolean} finished Match status.
+ * @apiSuccess {Number} elapsed Match elapsed time.
+ * @apiSuccess {String} winner Match winner.
+ * @apiSuccess {Number} jackpot Match total pot.
+ * @apiSuccess {Number} reward Match reward.
+ * @apiSuccess {Date} createdAt Date of document creation.
+ * @apiSuccess {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (result) {Number} guest Match guest team result.
+ * @apiSuccess (result) {Number} host Match host team result.
+ *
+ * @apiSuccess (pot) {Number} guest Match guest total bets.
+ * @apiSuccess (pot) {Number} host Match host total bets.
+ * @apiSuccess (pot) {Number} draw Match draw total bets.
+ *
+ * @apiSuccess (guest) {String} name Guest team name.
+ * @apiSuccess (guest) {String} picture Guest team picture.
+ * @apiSuccess (guest) {String} slug Guest team identifier.
+ * @apiSuccess (guest) {Date} createdAt Date of document creation.
+ * @apiSuccess (guest) {Date} updatedAt Date of document last change.
+ *
+ * @apiSuccess (host) {String} name Host team name.
+ * @apiSuccess (host) {String} picture Host team picture.
+ * @apiSuccess (host) {String} slug Host team identifier.
+ * @apiSuccess (host) {Date} createdAt Date of document creation.
+ * @apiSuccess (host) {Date} updatedAt Date of document last change.
+ */
 var VError, router, nconf, slug, auth, Championship, Match;
 
 VError = require('verror');
