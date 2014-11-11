@@ -99,7 +99,6 @@ User = require('../models/user');
  */
 router
 .route('/championships/:championship/matches/:match/bets')
-.post(auth.signature())
 .post(auth.session())
 .post(function createBet(request, response, next) {
   'use strict';
@@ -216,7 +215,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:match/bets')
-.get(auth.signature())
 .get(auth.session())
 .get(function listBet(request, response, next) {
   'use strict';
@@ -324,7 +322,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:match/bets/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getBet(request, response) {
   'use strict';
@@ -423,7 +420,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:match/bets/:id')
-.put(auth.signature())
 .put(auth.session())
 .put(function validateUserToUpdate(request, response, next) {
   'use strict';
@@ -478,7 +474,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:match/bets/:id')
-.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateUserToRemove(request, response, next) {
   'use strict';
@@ -593,7 +588,6 @@ router
  */
 router
 .route('/users/:user/bets')
-.get(auth.signature())
 .get(auth.session())
 .get(function listUserBets(request, response, next) {
   'use strict';

@@ -10,9 +10,6 @@ User = require('../models/user');
 Championship = require('../models/championship');
 Entry = require('../models/entry');
 
-router.use(auth.signature());
-router.use(auth.session());
-
 router.use(function findChampionship(request, response, next) {
   'use strict';
 
@@ -95,7 +92,6 @@ router.use(function findChampionship(request, response, next) {
  */
 router
 .route('/users/:user/entries')
-.post(auth.signature())
 .post(auth.session())
 .post(function validateUserToCreate(request, response, next) {
   'use strict';
@@ -185,7 +181,6 @@ router
  */
 router
 .route('/users/:user/entries')
-.get(auth.signature())
 .get(auth.session())
 .get(function listEntry(request, response, next) {
   'use strict';
@@ -262,7 +257,6 @@ router
  */
 router
 .route('/users/:user/entries/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getEntry(request, response) {
   'use strict';
@@ -283,7 +277,6 @@ router
  */
 router
 .route('/users/:user/entries/:id')
-.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateEntryToDelete(request, response, next) {
   'use strict';

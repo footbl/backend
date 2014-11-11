@@ -58,6 +58,7 @@ app.use(function (request, response, next) {
 });
 
 app.use(require('./controllers/championship'));
+app.use(auth.signature());
 app.use(require('./controllers/user'));
 app.use(require('./controllers/featured'));
 app.use(require('./controllers/bet'));

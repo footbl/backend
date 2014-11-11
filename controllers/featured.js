@@ -9,9 +9,6 @@ auth = require('auth');
 User = require('../models/user');
 Featured = require('../models/featured');
 
-router.use(auth.signature());
-router.use(auth.session());
-
 router.use(function findFeaturedUser(request, response, next) {
   'use strict';
 
@@ -105,7 +102,6 @@ router.use(function findFeaturedUser(request, response, next) {
  */
 router
 .route('/users/:user/featured')
-.post(auth.signature())
 .post(auth.session())
 .post(function validateUserToCreate(request, response, next) {
   'use strict';
@@ -206,7 +202,6 @@ router
  */
 router
 .route('/users/:user/featured')
-.get(auth.signature())
 .get(auth.session())
 .get(function listFeatured(request, response, next) {
   'use strict';
@@ -296,7 +291,6 @@ router
  */
 router
 .route('/users/:user/fans')
-.get(auth.signature())
 .get(auth.session())
 .get(function listFans(request, response, next) {
   'use strict';
@@ -384,7 +378,6 @@ router
  */
 router
 .route('/users/:user/featured/:id')
-.get(auth.signature())
 .get(auth.session())
 .get(function getFeatured(request, response) {
   'use strict';
@@ -405,7 +398,6 @@ router
  */
 router
 .route('/users/:user/featured/:id')
-.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateUserToRemove(request, response, next) {
   'use strict';
