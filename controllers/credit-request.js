@@ -5,9 +5,12 @@ router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
+
+router.use(auth.signature());
+router.use(auth.session());
 
 /**
  * @api {post} /users/:user/credit-requests Creates a new creditRequest in database.
@@ -82,6 +85,7 @@ CreditRequest = require('../models/credit-request');
  */
 router
 .route('/users/:userOrFacebookId/credit-requests')
+.post(auth.signature())
 .post(auth.session())
 .post(function createUserIfNotExistsToCreate(request, response, next) {
   'use strict';
@@ -202,6 +206,7 @@ router
  */
 router
 .route('/users/:user/credit-requests')
+.get(auth.signature())
 .get(auth.session())
 .get(function listCreditRequest(request, response, next) {
   'use strict';
@@ -293,6 +298,7 @@ router
  */
 router
 .route('/users/:user/requested-credits')
+.get(auth.signature())
 .get(auth.session())
 .get(function listRequestedCredits(request, response, next) {
   'use strict';
@@ -382,6 +388,7 @@ router
  */
 router
 .route('/users/:user/credit-requests/:id')
+.get(auth.signature())
 .get(auth.session())
 .get(function getCreditRequest(request, response) {
   'use strict';
@@ -466,6 +473,7 @@ router
  */
 router
 .route('/users/:user/credit-requests/:id/approve')
+.put(auth.signature())
 .put(auth.session())
 .put(function validateUserToApprove(request, response, next) {
   'use strict';
@@ -518,6 +526,7 @@ router
  */
 router
 .route('/users/:user/credit-requests/:id')
+.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateUserToDelete(request, response, next) {
   'use strict';

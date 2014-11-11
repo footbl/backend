@@ -5,10 +5,13 @@ router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
-auth = require('../lib/auth');
+auth = require('auth');
 GroupMember = require('../models/group-member');
 Group = require('../models/group');
 User = require('../models/user');
+
+router.use(auth.signature());
+router.use(auth.session());
 
 router.use(function findGroupUser(request, response, next) {
   'use strict';
@@ -82,6 +85,7 @@ router.use(function findGroupUser(request, response, next) {
  */
 router
 .route('/groups/:group/members')
+.post(auth.signature())
 .post(auth.session())
 .post(function (request, response, next) {
   'use strict';
@@ -161,6 +165,7 @@ router
  */
 router
 .route('/groups/:group/members')
+.get(auth.signature())
 .get(auth.session())
 .get(function listGroupMember(request, response, next) {
   'use strict';
@@ -227,6 +232,7 @@ router
  */
 router
 .route('/groups/:group/members/:id')
+.get(auth.signature())
 .get(auth.session())
 .get(function getGroupMember(request, response) {
   'use strict';
@@ -247,6 +253,7 @@ router
  */
 router
 .route('/groups/:group/members/:id')
+.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateRemoveGroupMember(request, response, next) {
   'use strict';

@@ -6,7 +6,7 @@ user, otherUser;
 
 supertest = require('supertest');
 app = require('../index.js');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 Entry = require('../models/entry');
 Championship = require('../models/championship');

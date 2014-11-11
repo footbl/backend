@@ -6,7 +6,7 @@ groupOwner, otherGroupOwner, groupUser, otherGroupUser, featuredGroup;
 
 supertest = require('supertest');
 app = require('../index.js');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 Group = require('../models/group');
 GroupMember = require('../models/group-member');

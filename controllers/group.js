@@ -6,9 +6,12 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
-auth = require('../lib/auth');
+auth = require('auth');
 Group = require('../models/group');
 GroupMember = require('../models/group-member');
+
+router.use(auth.signature());
+router.use(auth.session());
 
 /**
  * @api {post} /groups Creates a new group.
@@ -66,6 +69,7 @@ GroupMember = require('../models/group-member');
  */
 router
 .route('/groups')
+.post(auth.signature())
 .post(auth.session())
 .post(function createGroup(request, response, next) {
   'use strict';
@@ -145,6 +149,7 @@ router
  */
 router
 .route('/groups')
+.get(auth.signature())
 .get(auth.session())
 .get(function listGroup(request, response, next) {
   'use strict';
@@ -238,6 +243,7 @@ router
  */
 router
 .route('/groups/:id')
+.get(auth.signature())
 .get(auth.session())
 .get(function getGroup(request, response) {
   'use strict';
@@ -303,6 +309,7 @@ router
  */
 router
 .route('/groups/:id')
+.put(auth.signature())
 .put(auth.session())
 .put(function validateUpdateGroup(request, response, next) {
   'use strict';
@@ -342,6 +349,7 @@ router
  */
 router
 .route('/groups/:id')
+.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateRemoveGroup(request, response, next) {
   'use strict';
@@ -380,6 +388,7 @@ router
  */
 router
 .route('/groups/:id/invite')
+.post(auth.signature())
 .post(auth.session())
 .post(function validateInviteGroup(request, response, next) {
   'use strict';
@@ -439,6 +448,7 @@ router
  */
 router
 .route('/groups/:id/restart')
+.post(auth.signature())
 .post(auth.session())
 .post(function validateRestartGroup(request, response, next) {
   'use strict';

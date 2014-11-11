@@ -6,7 +6,7 @@ user, otherUser, creditRequestedUser, otherCreditRequestedUser, championship, gu
 
 supertest = require('supertest');
 app = require('../index.js');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
 Championship = require('../models/championship');

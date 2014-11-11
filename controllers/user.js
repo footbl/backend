@@ -8,7 +8,7 @@ async = require('async');
 freegeoip = require('node-freegeoip');
 mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 crypto = require('crypto');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 
 /**
@@ -71,6 +71,8 @@ User = require('../models/user');
  */
 router
 .route('/users')
+.post(auth.signature())
+.post(auth.facebook())
 .post(function detectUserCountry(request, response, next) {
   'use strict';
 
@@ -164,6 +166,7 @@ router
  */
 router
 .route('/users')
+.get(auth.signature())
 .get(function listUser(request, response, next) {
   'use strict';
 
@@ -242,6 +245,7 @@ router
  */
 router
 .route('/users/:id')
+.get(auth.signature())
 .get(auth.session())
 .get(function getUser(request, response) {
   'use strict';
@@ -303,6 +307,8 @@ router
  */
 router
 .route('/users/:id')
+.put(auth.signature())
+.put(auth.facebook())
 .put(auth.session())
 .put(function validateUpdateUser(request, response, next) {
   'use strict';
@@ -351,6 +357,7 @@ router
  */
 router
 .route('/users/:id')
+.delete(auth.signature())
 .delete(auth.session())
 .delete(function validateRemoveUser(request, response, next) {
   'use strict';
@@ -400,6 +407,8 @@ router
  */
 router
 .route('/users/me/auth')
+.get(auth.signature())
+.get(auth.facebook())
 .get(function authUser(request, response, next) {
   'use strict';
 
@@ -438,7 +447,7 @@ router
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * This route will upadte the user's last recharge to the current date, so, only the bets with date higher than the new
+ * This route will update the user's last recharge to the current date, so, only the bets with date higher than the new
  * date will impact in the user funds.
  *
  * @apiSuccessExample
@@ -469,6 +478,7 @@ router
  */
 router
 .route('/users/:id/recharge')
+.post(auth.signature())
 .post(auth.session())
 .post(function validateRechargeUser(request, response, next) {
   'use strict';
@@ -509,6 +519,7 @@ router
  */
 router
 .route('/users/me/forgot-password')
+.get(auth.signature())
 .get(function forgotPassword(request, response, next) {
   'use strict';
 

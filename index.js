@@ -8,12 +8,15 @@ nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
 prettyError = new (require('pretty-error'))();
-auth = require('./lib/auth');
+auth = require('auth');
 
 nconf.argv();
 nconf.env();
 nconf.defaults(require('./config'));
+
 mongoose.connect(nconf.get('MONGOHQ_URL'));
+
+auth.connect(nconf.get('REDISCLOUD_URL'), nconf.get('KEY'), require('./models/user'));
 
 prettyError.skipPackage('mongoose', 'express', 'redis');
 prettyError.skipNodeFiles();
@@ -41,8 +44,6 @@ app.get('/', function (request, response) {
   response.send(200, {'version' : nconf.get('VERSION')});
 });
 app.use('/docs', express.static(__dirname + '/docs'));
-app.use(auth.signature());
-app.use(auth.facebook());
 app.use(function (request, response, next) {
   response.header('Content-Type', 'application/json');
   response.header('Content-Encoding', 'UTF-8');
@@ -56,9 +57,9 @@ app.use(function (request, response, next) {
   next();
 });
 
+app.use(require('./controllers/championship'));
 app.use(require('./controllers/user'));
 app.use(require('./controllers/featured'));
-app.use(require('./controllers/championship'));
 app.use(require('./controllers/bet'));
 app.use(require('./controllers/group'));
 app.use(require('./controllers/group-member'));
@@ -88,7 +89,7 @@ app.use(function (error, request, response, next) {
     }
   }
   console.error(prettyError.render(error));
-  response.send(500);
+  response.status(500).end();
   return process.exit();
 });
 

@@ -6,7 +6,7 @@ user, groupOwner, otherUser, guestBetter, hostBetter, drawBetter, slug, champion
 
 supertest = require('supertest');
 app = require('../index.js');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 Championship = require('../models/championship');
 Match = require('../models/match');

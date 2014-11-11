@@ -6,7 +6,7 @@ user, otherUser, championship, guestTeam, hostTeam;
 
 supertest = require('supertest');
 app = require('../index.js');
-auth = require('../lib/auth');
+auth = require('auth');
 nock = require('nock');
 User = require('../models/user');
 Championship = require('../models/championship');

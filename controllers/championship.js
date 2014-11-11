@@ -4,7 +4,7 @@ VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
-auth = require('../lib/auth');
+auth = require('auth');
 Championship = require('../models/championship');
 Match = require('../models/match');
 
@@ -36,7 +36,6 @@ Match = require('../models/match');
  */
 router
 .route('/championships')
-.get(auth.session())
 .get(function listChampionship(request, response, next) {
   'use strict';
 
@@ -81,7 +80,6 @@ router
  */
 router
 .route('/championships/:championship')
-.get(auth.session())
 .get(function getChampionship(request, response) {
   'use strict';
 
@@ -141,7 +139,6 @@ router
  */
 router
 .route('/championships/:championship/matches')
-.get(auth.session())
 .get(function listMatch(request, response, next) {
   'use strict';
 
@@ -217,7 +214,6 @@ router
  */
 router
 .route('/championships/:championship/matches/:match')
-.get(auth.session())
 .get(function getMatch(request, response) {
   'use strict';
 

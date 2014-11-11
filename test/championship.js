@@ -6,7 +6,7 @@ user, championship, guestTeam, hostTeam;
 
 supertest = require('supertest');
 app = require('../index.js');
-auth = require('../lib/auth');
+auth = require('auth');
 User = require('../models/user');
 Championship = require('../models/championship');
 Match = require('../models/match');
@@ -52,18 +52,6 @@ describe('championship controller', function () {
         'country' : 'brasil',
         'edition' : 2014
       }).save(done);
-    });
-
-    it('should raise error without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/championships');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.expect(401);
-      request.end(done);
     });
 
     it('should list', function (done) {
@@ -119,18 +107,6 @@ describe('championship controller', function () {
         'country' : 'brasil',
         'edition' : 2014
       }).save(done);
-    });
-
-    it('should raise error without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/championships/brasileirao-brasil-2014');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.expect(401);
-      request.end(done);
     });
 
     it('should raise error with invalid id', function (done) {
@@ -191,18 +167,6 @@ describe('championship controller', function () {
         'championship' : championship._id,
         'slug'         : 'round-1-fluminense-vs-botafogo'
       }).save(done);
-    });
-
-    it('should raise error without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/championships/brasileirao-brasil-2014/matches');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.expect(401);
-      request.end(done);
     });
 
     it('should raise error with invalid championship', function (done) {
@@ -292,18 +256,6 @@ describe('championship controller', function () {
         'championship' : championship._id,
         'slug'         : 'round-1-fluminense-vs-botafogo'
       }).save(done);
-    });
-
-    it('should raise error without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/championships/brasileirao-brasil-2014/matches/round-1-fluminense-vs-botafogo');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.expect(401);
-      request.end(done);
     });
 
     it('should raise error with invalid championship', function (done) {
