@@ -107,6 +107,7 @@ schema.plugin(jsonSelect, {
   'winner'       : 1,
   'jackpot'      : 1,
   'reward'       : 1,
+  'bet'          : 1,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });
@@ -116,6 +117,23 @@ schema.pre('save', function setMatchUpdatedAt(next) {
 
   this.updatedAt = new Date();
   next();
+});
+
+schema.methods.findBet = function (user, next) {
+  var Bet, query;
+  Bet = require('./bet');
+  query = Bet.findOne();
+  query.where('match').equals(this._id);
+  query.where('user').equals(user);
+  query.populate('user');
+  query.exec(function (error, bet) {
+    this._bet = bet;
+    next(error);
+  }.bind(this));
+};
+
+schema.virtual('bet').get(function getMatchBet() {
+  return this._bet;
 });
 
 schema.virtual('winner').get(function getMatchWinner() {
