@@ -75,4 +75,12 @@ schema.pre('save', function setGroupUpdatedAt(next) {
   next();
 });
 
+schema.pre('remove', function deleteCascadeMembers(next) {
+  'use strict';
+
+  var Members;
+  Members = require('./group-member');
+  Members.remove({'group' : this._id}, next);
+});
+
 module.exports = mongoose.model('Group', schema);

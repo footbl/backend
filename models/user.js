@@ -205,6 +205,50 @@ schema.pre('save', function setUserDefaultEntry(next) {
   }.bind(this)], next);
 });
 
+schema.pre('save', function updateCascadeBets(next) {
+  'use strict';
+
+  var Bet;
+  Bet = require('./bet');
+  async.waterfall([function (next) {
+    var query;
+    query = Bet.find();
+    query.where('user').equals(this._id);
+    query.populate('match');
+    query.exec(next);
+  }.bind(this), function (bets, next) {
+    async.each(bets, function (bet, next) {
+      Bet.update({'_id' : bet._id}, {'$set' : {
+        'slug' : bet.match.slug + '-' + this.slug
+      }}, next);
+    }.bind(this), next)
+  }.bind(this)], next);
+});
+
+schema.pre('save', function updateCascadeFeatureds(next) {
+  'use strict';
+
+  var Featured;
+  Featured = require('./featured');
+  Featured.update({
+    'featured' : this._id
+  }, {'$set' : {
+    'slug' : this.slug || 'me'
+  }}, {'multi' : true}, next);
+});
+
+schema.pre('save', function updateCascadeMembers(next) {
+  'use strict';
+
+  var Member;
+  Member = require('./group-member');
+  Member.update({
+    'user' : this._id
+  }, {'$set' : {
+    'slug' : this.slug || 'me'
+  }}, {'multi' : true}, next);
+});
+
 schema.pre('init', function populateUserCreditRequests(next, data) {
   'use strict';
 
