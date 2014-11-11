@@ -1,35 +1,3 @@
-/**
- * @apiDefineStructure groupParams
- * @apiParam {String} name Group name.
- * @apiParam {String} [picture] Group picture for display.
- * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited be any member.
- */
-/**
- * @apiDefineStructure groupSuccess
- * @apiSuccess {String} name Group name.
- * @apiSuccess {String} slug Group identifier.
- * @apiSuccess {String} picture Group picture for display.
- * @apiSuccess {Boolean} freeToEdit Tells if the group can be edited be any member.
- * @apiSuccess {Boolean} featured Tells if the group is featured.
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (owner) {String} slug User identifier
- * @apiSuccess (owner) {String} email User email
- * @apiSuccess (owner) {String} username User username
- * @apiSuccess (owner) {String} name User name
- * @apiSuccess (owner) {String} about User about
- * @apiSuccess (owner) {Boolean} verified User verified
- * @apiSuccess (owner) {Boolean} featured User featured
- * @apiSuccess (owner) {String} picture User picture
- * @apiSuccess (owner) {String} apnsToken User apnsToken
- * @apiSuccess (owner) {Number} ranking User current ranking
- * @apiSuccess (owner) {Number} previousRanking User previous ranking
- * @apiSuccess (owner) {Number} funds User funds
- * @apiSuccess (owner) {Number} stake User stake
- * @apiSuccess (owner) {Date} createdAt Date of document creation.
- * @apiSuccess (owner) {Date} updatedAt Date of document last change.
- */
 var VError, router, nconf, slug, async, mandrill, auth, Group, GroupMember;
 
 VError = require('verror');
@@ -51,8 +19,9 @@ GroupMember = require('../models/group-member');
  * @apiDescription
  * Creates a new group.
  *
- * @apiStructure groupParams
- * @apiStructure groupSuccess
+ * @apiParam {String} name Group name.
+ * @apiParam {String} [picture] Group picture for display.
+ * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited be any member.
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -138,7 +107,6 @@ router
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiParam {Boolean} [featured=false] Tells if should return the user groups or the featured groups.
- * @apiStructure groupSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -233,8 +201,6 @@ router
  * @apiDescription
  * Get group info.
  *
- * @apiStructure groupSuccess
- *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
  *     {
@@ -290,8 +256,9 @@ router
  * @apiDescription
  * Updates group info.
  *
- * @apiStructure groupParams
- * @apiStructure groupSuccess
+ * @apiParam {String} name Group name.
+ * @apiParam {String} [picture] Group picture for display.
+ * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited be any member.
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request

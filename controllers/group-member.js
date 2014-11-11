@@ -1,34 +1,3 @@
-/**
- * @apiDefineStructure groupMemberParams
- * @apiParam {String} user GroupMember user
- */
-/**
- * @apiDefineStructure groupMemberSuccess
- * @apiSuccess {String} slug GroupMember identifier.
- * @apiSuccess {Number} ranking GroupMember current ranking
- * @apiSuccess {Number} previousRanking GroupMember previous ranking
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (user) {String} slug User identifier
- * @apiSuccess (user) {String} email User email
- * @apiSuccess (user) {String} username User username
- * @apiSuccess (user) {String} name User name
- * @apiSuccess (user) {String} about User about
- * @apiSuccess (user) {Boolean} verified User verified
- * @apiSuccess (user) {Boolean} featured User featured
- * @apiSuccess (user) {String} picture User picture
- * @apiSuccess (user) {String} apnsToken User apnsToken
- * @apiSuccess (user) {Number} ranking User current ranking
- * @apiSuccess (user) {Number} previousRanking User previous ranking
- * @apiSuccess (user) {Number} funds User funds
- * @apiSuccess (user) {Number} stake User stake
- * @apiSuccess (user) {Date} createdAt Date of document creation.
- * @apiSuccess (user) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (user history) {Date} date Date of history creation
- * @apiSuccess (user history) {Number} funds Funds in history
- */
 var VError, router, nconf, slug, async, auth, GroupMember, Group, User;
 
 VError = require('verror');
@@ -70,8 +39,7 @@ router.use(function findGroupUser(request, response, next) {
  * @apiDescription
  * Creates a new groupMember.
  *
- * @apiStructure groupMemberParams
- * @apiStructure groupMemberSuccess
+ * @apiParam {String} user GroupMember user
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -157,7 +125,6 @@ router
  * List all groupMembers.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure groupMemberSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -224,8 +191,6 @@ router
  * @apiPermission user
  * @apiDescription
  * Get groupMember info.
- *
- * @apiStructure groupMemberSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok

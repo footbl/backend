@@ -1,65 +1,3 @@
-/**
- * @apiDefineStructure betParams
- * @apiParam {Number} bid Bet bid
- * @apiParam {String} result Bet result
- */
-/**
- * @apiDefineStructure betSuccess
- * @apiSuccess {String} slug Bet identifier
- * @apiSuccess {Number} bid Bet bid
- * @apiSuccess {String} result Bet result
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (user) {String} slug User identifier
- * @apiSuccess (user) {String} email User email
- * @apiSuccess (user) {String} username User username
- * @apiSuccess (user) {String} name User name
- * @apiSuccess (user) {String} about User about
- * @apiSuccess (user) {Boolean} verified User verified
- * @apiSuccess (user) {Boolean} featured User featured
- * @apiSuccess (user) {String} picture User picture
- * @apiSuccess (user) {String} apnsToken User apnsToken
- * @apiSuccess (user) {Number} ranking User current ranking
- * @apiSuccess (user) {Number} previousRanking User previous ranking
- * @apiSuccess (user) {Number} funds User funds
- * @apiSuccess (user) {Number} stake User stake
- * @apiSuccess (user) {Date} createdAt Date of document creation.
- * @apiSuccess (user) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (user history) {Date} date Date of history creation
- * @apiSuccess (user history) {Number} funds Funds in history
- *
- * @apiSuccess (match) {String} slug Match identifier.
- * @apiSuccess (match) {Number} round Match round.
- * @apiSuccess (match) {Date} date Match date.
- * @apiSuccess (match) {Boolean} finished Match status.
- * @apiSuccess (match) {Number} elapsed Match elapsed time.
- * @apiSuccess (match) {String} winner Match winner.
- * @apiSuccess (match) {Number} jackpot Match total pot.
- * @apiSuccess (match) {Number} reward Match reward.
- * @apiSuccess (match) {Date} createdAt Date of document creation.
- * @apiSuccess (match) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (match result) {Number} guest Match guest team result.
- * @apiSuccess (match result) {Number} host Match host team result.
- *
- * @apiSuccess (match pot) {Number} guest Match guest total bets.
- * @apiSuccess (match pot) {Number} host Match host total bets.
- * @apiSuccess (match pot) {Number} draw Match draw total bets.
- *
- * @apiSuccess (match guest) {String} name Guest team name.
- * @apiSuccess (match guest) {String} picture Guest team picture.
- * @apiSuccess (match guest) {String} slug Guest team identifier.
- * @apiSuccess (match guest) {Date} createdAt Date of document creation.
- * @apiSuccess (match guest) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (match host) {String} name Host team name.
- * @apiSuccess (match host) {String} picture Host team picture.
- * @apiSuccess (match host) {String} slug Host team identifier.
- * @apiSuccess (match host) {Date} createdAt Date of document creation.
- * @apiSuccess (match host) {Date} updatedAt Date of document last change.
- */
 var VError, router, nconf, slug, async, auth, Championship, Match, Team, Bet, User;
 
 VError = require('verror');
@@ -83,8 +21,8 @@ User = require('../models/user');
  * @apiDescription
  * Creates a new bet in database.
  *
- * @apiStructure betParams
- * @apiStructure betSuccess
+ * @apiParam {Number} bid Bet bid
+ * @apiParam {String} result Bet result
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -206,7 +144,6 @@ router
  * List all bets in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure betSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -315,8 +252,6 @@ router
  * @apiDescription
  * Get bet info in database.
  *
- * @apiStructure betSuccess
- *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
  *     {
@@ -405,8 +340,8 @@ router
  * @apiDescription
  * Updates bet info in database.
  *
- * @apiStructure betParams
- * @apiStructure betSuccess
+ * @apiParam {Number} bid Bet bid
+ * @apiParam {String} result Bet result
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -582,7 +517,6 @@ router
  * List all bets in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure betSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok

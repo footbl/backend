@@ -1,40 +1,3 @@
-/**
- * @apiDefineStructure entryParams
- * @apiParam {String} championship Entry championship
- */
-/**
- * @apiDefineStructure entrySuccess
- * @apiSuccess {String} slug Entry identifier
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (championship) {String} name Championship name.
- * @apiSuccess (championship) {String} slug Championship identifier.
- * @apiSuccess (championship) {String} picture Championship picture for display.
- * @apiSuccess (championship) {Number} year Championship year of occurrence.
- * @apiSuccess (championship) {String} type Championship type.
- * @apiSuccess (championship) {String} country Championship country of occurrence.
- * @apiSuccess (championship) {Date} createdAt Date of document creation.
- * @apiSuccess (championship) {Date} updatedAt Date of document last change.
- * @apiSuccess (championship) {Number} rounds Championship number of rounds.
- * @apiSuccess (championship) {Number} currentRound Championship current round.
- *
- * @apiSuccess (user) {String} slug User identifier
- * @apiSuccess (user) {String} email User email
- * @apiSuccess (user) {String} username User username
- * @apiSuccess (user) {String} name User name
- * @apiSuccess (user) {String} about User about
- * @apiSuccess (user) {Boolean} verified User verified
- * @apiSuccess (user) {Boolean} featured User featured
- * @apiSuccess (user) {String} picture User picture
- * @apiSuccess (user) {String} apnsToken User apnsToken
- * @apiSuccess (user) {Number} ranking User current ranking
- * @apiSuccess (user) {Number} previousRanking User previous ranking
- * @apiSuccess (user) {Number} funds User funds
- * @apiSuccess (user) {Number} stake User stake
- * @apiSuccess (user) {Date} createdAt Date of document creation.
- * @apiSuccess (user) {Date} updatedAt Date of document last change.
- */
 var VError, router, nconf, slug, async, auth, User, Championship, Entry;
 
 VError = require('verror');
@@ -47,15 +10,6 @@ User = require('../models/user');
 Championship = require('../models/championship');
 Entry = require('../models/entry');
 
-/**
- * @method
- * @summary Puts requested championship in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.use(function findChampionship(request, response, next) {
   'use strict';
 
@@ -85,8 +39,7 @@ router.use(function findChampionship(request, response, next) {
  * @apiDescription
  * Creates a new entry in database.
  *
- * @apiStructure entryParams
- * @apiStructure entrySuccess
+ * @apiParam {String} championship Entry championship
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -182,7 +135,6 @@ router
  * List all entries in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure entrySuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -259,8 +211,6 @@ router
  * @apiPermission none
  * @apiDescription
  * Get entry info in database.
- *
- * @apiStructure entrySuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok

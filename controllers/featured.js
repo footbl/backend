@@ -1,32 +1,3 @@
-/**
- * @apiDefineStructure featuredParams
- * @apiParam {String} featured Featured user
- */
-/**
- * @apiDefineStructure featuredSuccess
- * @apiSuccess {String} slug Featured identifier
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (featured) {String} slug User identifier
- * @apiSuccess (featured) {String} email User email
- * @apiSuccess (featured) {String} username User username
- * @apiSuccess (featured) {String} name User name
- * @apiSuccess (featured) {String} about User about
- * @apiSuccess (featured) {Boolean} verified User verified
- * @apiSuccess (featured) {Boolean} featured User featured
- * @apiSuccess (featured) {String} picture User picture
- * @apiSuccess (featured) {String} apnsToken User apnsToken
- * @apiSuccess (featured) {Number} ranking User current ranking
- * @apiSuccess (featured) {Number} previousRanking User previous ranking
- * @apiSuccess (featured) {Number} funds User funds
- * @apiSuccess (featured) {Number} stake User stake
- * @apiSuccess (featured) {Date} createdAt Date of document creation.
- * @apiSuccess (featured) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (featured history) {Date} date Date of history creation
- * @apiSuccess (featured history) {Number} funds Funds in history
- */
 var VError, router, nconf, slug, async, auth, User, Featured;
 
 VError = require('verror');
@@ -38,15 +9,6 @@ auth = require('../lib/auth');
 User = require('../models/user');
 Featured = require('../models/featured');
 
-/**
- * @method
- * @summary Puts requested user in request object
- *
- * @param request
- * @param response
- * @param next
- * @param id
- */
 router.use(function findFeaturedUser(request, response, next) {
   'use strict';
 
@@ -76,8 +38,7 @@ router.use(function findFeaturedUser(request, response, next) {
  * @apiDescription
  * Creates a new featured.
  *
- * @apiStructure featuredParams
- * @apiStructure featuredSuccess
+ * @apiParam {String} featured Featured user
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -184,7 +145,6 @@ router
  * List all featured.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure featuredSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -274,7 +234,6 @@ router
  * List all featured.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure featuredSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -362,8 +321,6 @@ router
  * @apiPermission user
  * @apiDescription
  * Get featured info.
- *
- * @apiStructure featuredSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok

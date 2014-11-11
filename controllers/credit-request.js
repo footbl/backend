@@ -1,45 +1,3 @@
-/**
- * @apiDefineStructure creditRequestParams
- */
-/**
- * @apiDefineStructure creditRequestSuccess
- * @apiSuccess {Boolean} payed Credit request status
- * @apiSuccess {Number} value Credit request value
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (creditedUser) {String} slug User identifier
- * @apiSuccess (creditedUser) {String} email User email
- * @apiSuccess (creditedUser) {String} username User username
- * @apiSuccess (creditedUser) {String} name User name
- * @apiSuccess (creditedUser) {String} about User about
- * @apiSuccess (creditedUser) {Boolean} verified User verified
- * @apiSuccess (creditedUser) {Boolean} featured User featured
- * @apiSuccess (creditedUser) {String} picture User picture
- * @apiSuccess (creditedUser) {String} apnsToken User apnsToken
- * @apiSuccess (creditedUser) {Number} ranking User current ranking
- * @apiSuccess (creditedUser) {Number} previousRanking User previous ranking
- * @apiSuccess (creditedUser) {Number} funds User funds
- * @apiSuccess (creditedUser) {Number} stake User stake
- * @apiSuccess (creditedUser) {Date} createdAt Date of document creation.
- * @apiSuccess (creditedUser) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (chargedUser) {String} slug User identifier
- * @apiSuccess (chargedUser) {String} email User email
- * @apiSuccess (chargedUser) {String} username User username
- * @apiSuccess (chargedUser) {String} name User name
- * @apiSuccess (chargedUser) {String} about User about
- * @apiSuccess (chargedUser) {Boolean} verified User verified
- * @apiSuccess (chargedUser) {Boolean} featured User featured
- * @apiSuccess (chargedUser) {String} picture User picture
- * @apiSuccess (chargedUser) {String} apnsToken User apnsToken
- * @apiSuccess (chargedUser) {Number} ranking User current ranking
- * @apiSuccess (chargedUser) {Number} previousRanking User previous ranking
- * @apiSuccess (chargedUser) {Number} funds User funds
- * @apiSuccess (chargedUser) {Number} stake User stake
- * @apiSuccess (chargedUser) {Date} createdAt Date of document creation.
- * @apiSuccess (chargedUser) {Date} updatedAt Date of document last change.
- */
 var VError, router, nconf, slug, async, auth, User, CreditRequest;
 
 VError = require('verror');
@@ -59,9 +17,6 @@ CreditRequest = require('../models/credit-request');
  * @apiPermission none
  * @apiDescription
  * Creates a new creditRequest in database.
- *
- * @apiStructure creditRequestParams
- * @apiStructure creditRequestSuccess
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -188,7 +143,6 @@ router
  * List all creditRequests in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure creditRequestSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -280,7 +234,6 @@ router
  * List all creditRequests in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure creditRequestSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -371,8 +324,6 @@ router
  * @apiDescription
  * Get creditRequest info in database.
  *
- * @apiStructure creditRequestSuccess
- *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
  *     {
@@ -449,8 +400,7 @@ router
  * @apiDescription
  * Updates creditRequest info in database.
  *
- * @apiStructure creditRequestParams
- * @apiStructure creditRequestSuccess
+ * @apiParam {Number} value Credit request value.
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request

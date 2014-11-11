@@ -1,67 +1,3 @@
-/**
- * @apiDefineStructure championshipParams
- * @apiParam {String} name Championship name.
- * @apiParam {String} [picture] Championship picture for display.
- * @apiParam {Number} year Championship year of occurrence.
- * @apiParam {String} [type='national league'] Championship type.
- * @apiParam {String} country Championship country of occurrence.
- */
-/**
- * @apiDefineStructure championshipSuccess
- * @apiSuccess {String} name Championship name.
- * @apiSuccess {String} slug Championship identifier.
- * @apiSuccess {String} picture Championship picture for display.
- * @apiSuccess {Number} year Championship year of occurrence.
- * @apiSuccess {String} type Championship type.
- * @apiSuccess {String} country Championship country of occurrence.
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- * @apiSuccess {Number} rounds Championship number of rounds.
- * @apiSuccess {Number} currentRound Championship current round.
- */
-/**
- * @apiDefineStructure matchParams
- * @apiParam {String} guest Match guest team slug
- * @apiParam {String} host Match host team slug
- * @apiParam {Number} round Match round
- * @apiParam {Date} date Match date
- * @apiParam {Boolean} [finished=false] Match status
- * @apiParam {Number} [elapsed] Match elapsed time
- * @apiParam {Number} [result.guest=0] Match guest team result
- * @apiParam {Number} [result.host=0] Match host team result
- */
-/**
- * @apiDefineStructure matchSuccess
- * @apiSuccess {String} slug Match identifier.
- * @apiSuccess {Number} round Match round.
- * @apiSuccess {Date} date Match date.
- * @apiSuccess {Boolean} finished Match status.
- * @apiSuccess {Number} elapsed Match elapsed time.
- * @apiSuccess {String} winner Match winner.
- * @apiSuccess {Number} jackpot Match total pot.
- * @apiSuccess {Number} reward Match reward.
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (result) {Number} guest Match guest team result.
- * @apiSuccess (result) {Number} host Match host team result.
- *
- * @apiSuccess (pot) {Number} guest Match guest total bets.
- * @apiSuccess (pot) {Number} host Match host total bets.
- * @apiSuccess (pot) {Number} draw Match draw total bets.
- *
- * @apiSuccess (guest) {String} name Guest team name.
- * @apiSuccess (guest) {String} picture Guest team picture.
- * @apiSuccess (guest) {String} slug Guest team identifier.
- * @apiSuccess (guest) {Date} createdAt Date of document creation.
- * @apiSuccess (guest) {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (host) {String} name Host team name.
- * @apiSuccess (host) {String} picture Host team picture.
- * @apiSuccess (host) {String} slug Host team identifier.
- * @apiSuccess (host) {Date} createdAt Date of document creation.
- * @apiSuccess (host) {Date} updatedAt Date of document last change.
- */
 var VError, router, nconf, slug, auth, Championship, Match;
 
 VError = require('verror');
@@ -82,7 +18,6 @@ Match = require('../models/match');
  * List all championships.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure championshipSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -129,8 +64,6 @@ router
  * @apiDescription
  * Get championship info.
  *
- * @apiStructure championshipSuccess
- *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
  *     {
@@ -167,7 +100,6 @@ router
  * List all matches.
  *
  * @apiParam {String} [page=0] The page to be displayed.
- * @apiStructure matchSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -244,8 +176,6 @@ router
  * @apiPermission user
  * @apiDescription
  * Get match info.
- *
- * @apiStructure matchSuccess
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok

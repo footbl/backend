@@ -1,34 +1,3 @@
-/**
- * @apiDefineStructure userParams
- * @apiParam {String} [email] User email
- * @apiParam {String} [username] User username
- * @apiParam {String} password User password
- * @apiParam {String} [name] User name
- * @apiParam {String} [about] User about
- * @apiParam {String} [picture] User picture
- * @apiParam {String} [apnsToken] User apnsToken
- */
-/**
- * @apiDefineStructure userSuccess
- * @apiSuccess {String} slug User identifier
- * @apiSuccess {String} email User email
- * @apiSuccess {String} username User username
- * @apiSuccess {String} name User name
- * @apiSuccess {String} about User about
- * @apiSuccess {Boolean} verified User verified
- * @apiSuccess {Boolean} featured User featured
- * @apiSuccess {String} picture User picture
- * @apiSuccess {String} apnsToken User apnsToken
- * @apiSuccess {Number} ranking User current ranking
- * @apiSuccess {Number} previousRanking User previous ranking
- * @apiSuccess {Number} funds User funds
- * @apiSuccess {Number} stake User stake
- * @apiSuccess {Date} createdAt Date of document creation.
- * @apiSuccess {Date} updatedAt Date of document last change.
- *
- * @apiSuccess (history) {Date} date Date of history creation
- * @apiSuccess (history) {Number} funds Funds in history
- */
 var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User;
 
 VError = require('verror');
@@ -49,10 +18,24 @@ User = require('../models/user');
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * Creates a new user.
+ * To create a user, the client must detect which kind of users will be created. There are three types of user, a
+ * anonymous user, a facebook user and a registered user.
+ * If the client is creating a anonymous user, a random password must be created by the client and stored in the device.
+ * The password must be sent to the server and will be stored as a sha1 hash together with a salt.
+ * If the client is creating a facebook user, the client must call the facebook sdk, and retrieve the user access token,
+ * email and username. The facebook access token must be sent in the header 'facebook-token', and the other data must be
+ * sent in the request body.
+ * And if the client is creating a registered user, all the user data must be sent in the request body.
+ * If the user has a username, a slug for identification will be created based on the user username, otherwise, the user
+ * will be identified as me.
  *
- * @apiStructure userParams
- * @apiStructure userSuccess
+ * @apiParam {String} [email] User email
+ * @apiParam {String} [username] User username
+ * @apiParam {String} password User password
+ * @apiParam {String} [name] User name
+ * @apiParam {String} [about] User about
+ * @apiParam {String} [picture] User picture
+ * @apiParam {String} [apnsToken] User apnsToken
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -146,13 +129,12 @@ router
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * List all users.
+ * This route is used to search for users in the database, a user can be searched by the facebook id, email or username.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiParam {Array} [emails] Emails to search.
  * @apiParam {Array} [usernames] Usernames to search.
- * @apiParam {Array} [page] .
- * @apiStructure userSuccess
+ * @apiParam {Array} [page].
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -228,9 +210,9 @@ router
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * Get user info.
- *
- * @apiStructure userSuccess
+ * This route returns the user info. To get the user details the user slug must placed in the route, and if it's a
+ * anonymous account, the 'me' slug must be used. Notice that for anonymous users, the ser account information its only
+ * accessible by the account owner using the 'me' slug.
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -276,16 +258,22 @@ router
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * Updates user info.
+ * To update a user info, the client must detect if is changing the user to a facebook registered user or a registered
+ * user. Or if the the client is keeping its old type.
+ * If the the user is a facebook user or is changing to a facebook user, the client must call the facebook sdk and
+ * retrieve the user facebook access token, and send it to the server in the 'facebook-token' header and also the
+ * 'auth-token' generated in the auth route.
+ * If the user is only a registered user, the client should only send the 'auth-token' generated in the auth route.
+ * To access this endpoint the client can use the user slug generated on the user username or can only use the 'me'
+ * slug..
  *
- * @apiStructure userParams
- * @apiStructure userSuccess
- *
- * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "password": "required"
- *     }
+ * @apiParam {String} [email] User email
+ * @apiParam {String} [username] User username
+ * @apiParam {String} [password] User password
+ * @apiParam {String} [name] User name
+ * @apiParam {String} [about] User about
+ * @apiParam {String} [picture] User picture
+ * @apiParam {String} [apnsToken] User apnsToken
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -358,7 +346,8 @@ router
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * Removes user
+ * This route deactivates a user in the system, if in the future a user tries to register with the deactivated user, the
+ * user will be reactivated.
  */
 router
 .route('/users/:id')
@@ -395,9 +384,13 @@ router
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * Get user info.
+ * To sign in a user, the client must detect if the user is a anonymous user, or a facebook user or a registered user.
+ * If it's a anonymous user, the client must send the random generated password stored in the client in the request
+ * body. If it's a facebook user, the client must call the facebook sdk and retrieve the user token and send it in the
+ * 'facebook-token' header. If it's aregistered user the client must send the email and password.
  *
- * @apiSuccess {String} token User access token
+ * @apiParam {String} [email] User email
+ * @apiParam {String} [password] User password
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -445,10 +438,8 @@ router
  * @apiGroup user
  * @apiPermission user
  * @apiDescription
- * Recharges user funds.
- *
- * @apiStructure userParams
- * @apiStructure userSuccess
+ * This route will upadte the user's last recharge to the current date, so, only the bets with date higher than the new
+ * date will impact in the user funds.
  *
  * @apiSuccessExample
  *     HTTP/1.1 201 Created
@@ -511,7 +502,10 @@ router
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
- * Send user email to recover password
+ * To recover a user password, the client must send the user email and a email will be send to the user with a new
+ * password.
+ *
+ * @apiParam {String} [email] User email
  */
 router
 .route('/users/me/forgot-password')
@@ -549,9 +543,7 @@ router
       },
       'async'   : true
     });
-    return response.status(200).send({
-      'token' : auth.token(user)
-    });
+    return response.status(200).send();
   });
 });
 
