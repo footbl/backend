@@ -72,58 +72,32 @@ schema.pre('save', function setBetUpdatedAt(next) {
   next();
 });
 
-schema.pre('save', function validateStartedMatchBeforeSave(next) {
+schema.path('match').validate(function validateStartedMatch(value, next) {
   'use strict';
 
-  this.populate('match');
-  this.populate(function (error) {
-    if (error) {
-      error = new VError(error, 'error populating bet "%s" match.', this._id);
-      return next(error);
-    }
-    if (this.match.finished || this.match.elapsed) {
-      error = new VError('match already started');
-      return next(error);
-    }
-    return next();
+  async.waterfall([function (next) {
+    this.populate('match');
+    this.populate(next);
+  }.bind(this)], function (error) {
+    next(!error && !this.match.finished && !this.match.elapsed);
   }.bind(this));
-});
+}, 'match already started');
 
-schema.pre('remove', function validateStartedMatchBeforeRemove(next) {
+schema.path('bid').validate(function validateSufficientFunds(value, next) {
   'use strict';
 
-  this.populate('match');
-  this.populate(function (error) {
-    if (error) {
-      error = new VError(error, 'error populating bet "%s" match.', this._id);
-      return next(error);
-    }
-    if (this.match.finished || this.match.elapsed) {
-      error = new VError('match already started');
-      return next(error);
-    }
-    return next();
+  async.waterfall([function (next) {
+    this.populate('user');
+    this.populate(next);
+  }.bind(this)], function (error) {
+    next(!error && value <= this.user.funds);
   }.bind(this));
-});
+}, 'insufficient funds');
 
-schema.pre('save', function validateSufficientFundsBeforeSave(next) {
+schema.pre('remove', function (next) {
   'use strict';
 
-  var User, query;
-  User = require('./user');
-  query = User.findOne();
-  query.where('_id').equals(this.user);
-  query.exec(function (error, user) {
-    if (error || !user) {
-      error = new VError(error, 'error finding bet "%s" user.', this._id);
-      return next(error);
-    }
-    if (this.bid > user.funds) {
-      error = new VError('insufficient funds');
-      return next(error);
-    }
-    return next();
-  }.bind(this));
+  this.validate(next);
 });
 
 schema.virtual('reward').get(function getBetReward() {

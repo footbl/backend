@@ -68,24 +68,15 @@ schema.pre('save', function setCreditRequestUpdatedAt(next) {
   next();
 });
 
-schema.pre('save', function validateSufficientFundsBeforeSave(next) {
+schema.path('value').validate(function validateSufficientFunds(value, next) {
   'use strict';
 
-  var User, query;
-  User = require('./user');
-  query = User.findOne();
-  query.where('_id').equals(this.chargedUser);
-  query.exec(function (error, user) {
-    if (error || !user) {
-      error = new VError(error, 'error finding user: "%s"', this._id);
-      return next(error);
-    }
-    if (this.value > user.funds && this.payed) {
-      error = new VError('insufficient funds');
-      return next(error);
-    }
-    return next();
+  async.waterfall([function (next) {
+    this.populate('chargedUser');
+    this.populate(next);
+  }.bind(this)], function (error) {
+    next(!error && value <= this.chargedUser.funds);
   }.bind(this));
-});
+}, 'insufficient funds');
 
 module.exports = mongoose.model('CreditRequest', schema);

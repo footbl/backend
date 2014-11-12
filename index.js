@@ -70,7 +70,7 @@ app.use(require('./controllers/entry'));
 app.use(function (error, request, response, next) {
   var errors, prop;
   if (error && error.cause && error.cause()) {
-    if ([11001, 11000].indexOf(error.cause().code) !== -1) {
+    if ([11000, 11001].lastIndexOf(error.cause().code) > -1) {
       return response.status(409).end();
     }
     if (error.cause().errors) {
@@ -81,12 +81,6 @@ app.use(function (error, request, response, next) {
         }
       }
       return response.status(400).send(errors);
-    }
-    if (error.message.indexOf('match already started') > -1) {
-      return response.status(400).end();
-    }
-    if (error.message.indexOf('insufficient funds') > -1) {
-      return response.status(400).end();
     }
   }
   console.error(prettyError.render(error));
