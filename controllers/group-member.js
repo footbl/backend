@@ -1,4 +1,4 @@
-var VError, router, nconf, slug, async, auth, GroupMember, Group, User;
+var VError, router, nconf, slug, async, auth, ZeroPush, GroupMember, Group, User;
 
 VError = require('verror');
 router = require('express').Router();
@@ -6,6 +6,7 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
+ZeroPush = require('nzero-push').ZeroPush;
 GroupMember = require('../models/group-member');
 Group = require('../models/group');
 User = require('../models/user');
@@ -106,6 +107,17 @@ router
   return async.series([groupMember.save.bind(groupMember), function (next) {
     groupMember.populate('user');
     groupMember.populate(next);
+  }, function (next) {
+    var push;
+    push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
+    push.notify('ios-mac', {
+      'device_tokens' : [request.groupUser.apnsToken]
+    }, {
+      'alert' : JSON.stringify({
+        'loc-key'  : 'NOTIFICATION_GROUP_ADDED',
+        'loc-args' : [request.groupUser.username]
+      })
+    }, next);
   }], function createdGroupMember(error) {
     if (error) {
       error = new VError(error, 'error creating group member: "$s"', groupMember._id);
