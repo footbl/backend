@@ -551,7 +551,6 @@ module.exports = function (next) {
           return next();
         }
         if (!guest || !host) {
-          console.log(!guest ? data.Comps[0].Name : '', !host ? data.Comps[1].Name : '');
           return next();
         }
         return async.waterfall([function (next) {

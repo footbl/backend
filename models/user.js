@@ -260,7 +260,7 @@ schema.pre('save', function saveUserPushToken(next) {
   async.waterfall([function (next) {
     var push;
     push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
-    push.register(this.apnsToken, next);
+    push.register([this.apnsToken], next);
   }.bind(this)], next);
 });
 
