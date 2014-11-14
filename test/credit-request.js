@@ -1,18 +1,22 @@
 /*globals describe, before, it, after*/
 require('should');
-var supertest, app, auth,
+var supertest, app, auth, nock,
 User, CreditRequest, Championship, Team, Match, Bet,
 user, otherUser, creditRequestedUser, otherCreditRequestedUser, championship, guestTeam, hostTeam, match;
 
 supertest = require('supertest');
 app = require('../index.js');
 auth = require('auth');
+nock = require('nock');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
 Championship = require('../models/championship');
 Team = require('../models/team');
 Match = require('../models/match');
 Bet = require('../models/bet');
+
+nock('https://api.zeropush.com').get('/verify_credentials?auth_token=undefined').times(Infinity).reply(200, {'message' : 'authenticated'});
+nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
 
 describe('credit request controller', function () {
   'use strict';
