@@ -15,7 +15,6 @@ nconf.env();
 nconf.defaults(require('./config'));
 
 mongoose.connect(nconf.get('MONGOHQ_URL'));
-
 auth.connect(nconf.get('REDISCLOUD_URL'), nconf.get('KEY'), require('./models/user'));
 
 prettyError.skipPackage('mongoose', 'express', 'redis');
