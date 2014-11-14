@@ -134,7 +134,7 @@ router
       'sound' : 'get_money.wav',
       'alert' : JSON.stringify({
         'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
-        'loc-args' : [creditRequest.chargedUser.username]
+        'loc-args' : [creditRequest.creditedUser.username]
       })
     }, next);
   }], function createdCreditRequest(error) {
@@ -511,6 +511,18 @@ router
     creditRequest.populate('creditedUser');
     creditRequest.populate('chargedUser');
     creditRequest.populate(next);
+  }, function (next) {
+    var push;
+    push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
+    push.notify('ios-mac', {
+      'device_tokens' : [creditRequest.creditedUser.apnsToken]
+    }, {
+      'sound' : 'get_money.wav',
+      'alert' : JSON.stringify({
+        'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
+        'loc-args' : [creditRequest.chargedUser.username]
+      })
+    }, next);
   }], function updatedCreditRequest(error) {
     if (error) {
       error = new VError(error, 'error updating creditRequest');
