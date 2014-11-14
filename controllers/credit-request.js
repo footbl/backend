@@ -131,7 +131,7 @@ router
     push.notify('ios-mac', {
       'device_tokens' : [creditRequest.chargedUser.apnsToken]
     }, {
-      'sound' : 'get_money.wav',
+      'sound' : 'get_money.mp3',
       'alert' : JSON.stringify({
         'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
         'loc-args' : [creditRequest.creditedUser.username]
@@ -517,7 +517,7 @@ router
     push.notify('ios-mac', {
       'device_tokens' : [creditRequest.creditedUser.apnsToken]
     }, {
-      'sound' : 'get_money.wav',
+      'sound' : 'get_money.mp3',
       'alert' : JSON.stringify({
         'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
         'loc-args' : [creditRequest.chargedUser.username]
