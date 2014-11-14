@@ -89,8 +89,18 @@ schema.path('bid').validate(function validateSufficientFunds(value, next) {
   async.waterfall([function (next) {
     this.populate('user');
     this.populate(next);
+  }.bind(this), function (_, next) {
+    var query;
+    query = this.constructor.findOne();
+    query.where('_id').equals(this._id);
+    query.exec(next);
+  }.bind(this), function (oldBid, next) {
+    var funds;
+    funds = this.user.funds;
+    funds += oldBid ? oldBid.bind : 0;
+    next(value > funds ? new VError('insufficient funds') : null);
   }.bind(this)], function (error) {
-    next(!error && value <= this.user.funds);
+    next(!error);
   }.bind(this));
 }, 'insufficient funds');
 
