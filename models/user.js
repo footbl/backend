@@ -1,11 +1,10 @@
-var VError, mongoose, jsonSelect, nconf, async, Schema, ZeroPush, schema;
+var VError, mongoose, jsonSelect, nconf, async, Schema, schema;
 
 VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');
 async = require('async');
-ZeroPush = require('nzero-push').ZeroPush;
 Schema = mongoose.Schema;
 
 schema = new Schema({
@@ -248,20 +247,6 @@ schema.pre('save', function updateCascadeMembers(next) {
   }, {'$set' : {
     'slug' : this.slug || 'me'
   }}, {'multi' : true}, next);
-});
-
-schema.pre('save', function saveUserPushToken(next) {
-  'use strict';
-
-  if (!this.apnsToken) {
-    return next();
-  }
-
-  async.waterfall([function (next) {
-    var push;
-    push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
-    push._registerDevice(this.apnsToken, [ "channel1", "channel2" ], next);
-  }.bind(this)], next);
 });
 
 schema.pre('init', function populateUserCreditRequests(next, data) {

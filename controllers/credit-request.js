@@ -1,4 +1,4 @@
-var VError, router, nconf, slug, async, auth, User, ZeroPush, CreditRequest;
+var VError, router, nconf, slug, async, auth, User, push, CreditRequest;
 
 VError = require('verror');
 router = require('express').Router();
@@ -6,7 +6,7 @@ nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
-ZeroPush = require('nzero-push').ZeroPush;
+push = require('push');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
 
@@ -126,16 +126,13 @@ router
     creditRequest.populate('chargedUser');
     creditRequest.populate(next);
   }, function (next) {
-    var push;
-    push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
-    push.notify('ios-mac', {
-      'device_tokens' : [creditRequest.chargedUser.apnsToken]
-    }, {
-      'sound' : 'get_money.mp3',
-      'alert' : JSON.stringify({
+    push(nconf.get('ZEROPUSH_TOKEN'), {
+      'device' : creditRequest.chargedUser.apnsToken,
+      'sound'  : 'get_money.mp3',
+      'alert'  : {
         'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
         'loc-args' : [creditRequest.creditedUser.username]
-      })
+      }
     }, next);
   }], function createdCreditRequest(error) {
     if (error) {
@@ -512,16 +509,13 @@ router
     creditRequest.populate('chargedUser');
     creditRequest.populate(next);
   }, function (next) {
-    var push;
-    push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
-    push.notify('ios-mac', {
-      'device_tokens' : [creditRequest.creditedUser.apnsToken]
-    }, {
-      'sound' : 'get_money.mp3',
-      'alert' : JSON.stringify({
+    push(nconf.get('ZEROPUSH_TOKEN'), {
+      'device' : creditRequest.creditedUser.apnsToken,
+      'sound'  : 'get_money.mp3',
+      'alert'  : {
         'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
         'loc-args' : [creditRequest.chargedUser.username]
-      })
+      }
     }, next);
   }], function updatedCreditRequest(error) {
     if (error) {

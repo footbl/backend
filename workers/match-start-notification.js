@@ -1,10 +1,10 @@
 'use strict';
-var mongoose, nconf, async, ZeroPush, User, Entry, Championship, Match, now, today, tomorrow;
+var mongoose, nconf, async, push, User, Entry, Championship, Match, now, today, tomorrow;
 
 mongoose = require('mongoose');
 nconf = require('nconf');
 async = require('async');
-ZeroPush = require('nzero-push').ZeroPush;
+push = require('push');
 User = require('../models/user');
 Entry = require('../models/entry');
 Championship = require('../models/championship');
@@ -47,15 +47,12 @@ module.exports = function (next) {
         query.exec(next);
       }, function (entries, next) {
         async.each(entries, function (entry, next) {
-          var push;
-          push = new ZeroPush(nconf.get('ZEROPUSH_TOKEN'));
-          push.notify('ios-mac', {
-            'device_tokens' : [entry.user.apnsToken]
-          }, {
-            'sound' : 'match_start.mp3',
-            'alert' : JSON.stringify({
+          push(nconf.get('ZEROPUSH_TOKEN'), {
+            'device' : entry.user.apnsToken,
+            'sound'  : 'match_start.mp3',
+            'alert'  : {
               'loc-key' : 'NOTIFICATION_ROUND_START'
-            })
+            }
           }, next);
         }, next);
       }], next);
