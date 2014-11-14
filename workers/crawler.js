@@ -373,7 +373,7 @@ teams = {
   'Torino'                 : 'Torino',
   'Udinese'                : 'Udinese',
   'Verona'                 : 'Verona',
-  'Bayern Munich'          : 'B. Munich',
+  'Bayern Munich'          : 'Bayern Mun.',
   'Bor. Dortmund'          : 'B. Dortmund',
   'Eintracht Frankfurt'    : 'E. Frankfurt',
   'Hertha Berlin'          : 'Hertha Berlin',
@@ -499,8 +499,8 @@ teams = {
   'Malmo FF'               : 'Malmo FF',
   'Maribor'                : 'Maribor',
   'Olympiakos'             : 'Olympiakos',
-  'Shakhter Donetsk'       : 'Shakhter Donetsk',
-  'Zenit Petersburg'       : 'Zenit Petersburg'
+  'Shakhter Donetsk'       : 'Shakhtar Don.',
+  'Zenit Petersburg'       : 'Zenit'
 };
 
 module.exports = function (next) {
