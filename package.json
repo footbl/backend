@@ -29,7 +29,7 @@
     "nzero-push": "footbl/nzero-push.git",
     "body-parser": "1.0.x",
     "cluster-start": "^0.1.4",
-    "express": "^4.1.1",
+    "express": "^4.1.x",
     "fbgraph": "^0.2.10",
     "mandrill-api": "^1.0.39",
     "method-override": "^1.0.0",
