@@ -599,7 +599,7 @@ router
   query.where('user').equals(request.user._id);
   query.populate('user');
   query.populate('match');
-  query.sort('updatedAt');
+  query.sort('-updatedAt');
   query.skip(page);
   query.limit(pageSize);
   return query.exec(function listedUserBet(error, bets) {
