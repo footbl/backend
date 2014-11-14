@@ -77,7 +77,7 @@ app.use(function (error, request, response, next) {
       errors = {};
       for (prop in error.cause().errors) {
         if (error.cause().errors.hasOwnProperty(prop)) {
-          errors[prop] = error.cause().errors[prop].type;
+          errors[prop] = error.cause().errors[prop].type === 'user defined' ? error.cause().errors[prop].message : error.cause().errors[prop].type;
         }
       }
       return response.status(400).send(errors);
