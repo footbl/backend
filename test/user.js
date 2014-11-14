@@ -21,6 +21,7 @@ nock('https://mandrillapp.com').post('/api/1.0/messages/send.json').times(Infini
 nock('http://freegeoip.net').get('/json/127.0.0.1').times(Infinity).reply(200, {'country_name' : 'Brazil'});
 nock('http://freegeoip.net').get('/json/undefined').times(Infinity).reply(200, {'country_name' : ''});
 nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
+nock('https://api.zeropush.com').post('/register').times(Infinity).reply(200, {'message' : 'authenticated'});
 
 describe('user controller', function () {
   'use strict';
@@ -573,6 +574,7 @@ describe('user controller', function () {
       request.send({'password' : '1234'});
       request.send({'email' : 'user2@user.com'});
       request.send({'username' : 'user2'});
+      request.send({'apnsToken' : 'user2'});
       request.expect(200);
       request.expect(function (response) {
         response.body.should.have.property('slug').be.equal('user2');
