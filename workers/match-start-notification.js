@@ -19,23 +19,30 @@ nconf.env();
 nconf.defaults(require('../config'));
 
 module.exports = function (next) {
-  async.waterfall([function () {
+  async.waterfall([function (next) {
     var query;
     query = Championship.find();
     query.exec(next);
   }, function (championships, next) {
     async.filter(championships, function (championship, next) {
-      var query;
-      query = Match.find();
-      query.where('championship').equals(championship._id);
-      query.where('date').gte(today).lt(tomorrow);
-      query.sort('date');
-      query.limit(1);
-      query.exec(next);
-    }, function (error, matches) {
-      var firstMatch;
-      firstMatch = matches[0];
-      next(!error && firstMatch.date - now > 0 && firstMatch.date - now < 1000 * 60 * 10);
+      async.waterfall([function (next) {
+        var query;
+        query = Match.find();
+        query.where('championship').equals(championship._id);
+        query.where('date').gte(today).lt(tomorrow);
+        query.sort('date');
+        query.limit(1);
+        query.exec(next);
+      }, function (matches, next) {
+        var firstMatch, notify;
+        firstMatch = matches[0];
+        notify = !!firstMatch && firstMatch.date - now > 0 && firstMatch.date - now < 1000 * 60 * 10;
+        next(null, notify);
+      }], function (error, result) {
+        next(!error && result);
+      })
+    }, function (championships) {
+      next(null, championships);
     });
   }, function (championships, next) {
     async.each(championships, function (championship, next) {
