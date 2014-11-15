@@ -34,9 +34,13 @@ module.exports = function (next) {
         query.limit(1);
         query.exec(next);
       }, function (matches, next) {
-        var lastMatch, notify;
+        var lastMatch, endTime, notify;
         lastMatch = matches[0];
-        notify = !!lastMatch && lastMatch.date - now > 0 && lastMatch.date - now < 1000 * 60 * 10;
+        if (lastMatch) {
+          endTime = new Date(lastMatch.date);
+          endTime.setMinutes(endTime.getMinutes() + 120);
+        }
+        notify = !!endTime && endTime - now > 0 && endTime - now < 1000 * 60 * 10;
         next(null, notify);
       }], function (error, result) {
         next(!error && result);
