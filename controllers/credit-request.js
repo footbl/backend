@@ -131,7 +131,7 @@ router
       'sound'  : 'get_money.mp3',
       'alert'  : {
         'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
-        'loc-args' : [creditRequest.creditedUser.username]
+        'loc-args' : [request.session.username]
       }
     }, next);
   }], function createdCreditRequest(error) {
