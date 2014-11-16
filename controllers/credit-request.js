@@ -126,6 +126,7 @@ router
     creditRequest.populate('chargedUser');
     creditRequest.populate(next);
   }, function (next) {
+    console.log(request.session);
     push(nconf.get('ZEROPUSH_TOKEN'), {
       'device' : creditRequest.chargedUser.apnsToken,
       'sound'  : 'get_money.mp3',
