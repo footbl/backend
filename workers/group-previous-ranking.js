@@ -1,5 +1,5 @@
 'use strict';
-var mongoose, nconf, async, Group, GroupMember, User, now;
+var mongoose, nconf, async, Group, GroupMember, User, Match, now;
 
 mongoose = require('mongoose');
 nconf = require('nconf');
@@ -7,6 +7,7 @@ async = require('async');
 Group = require('../models/group');
 GroupMember = require('../models/group-member');
 User = require('../models/user');
+Match = require('../models/match');
 
 nconf.argv();
 nconf.env();
