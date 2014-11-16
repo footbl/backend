@@ -126,13 +126,12 @@ router
     creditRequest.populate('chargedUser');
     creditRequest.populate(next);
   }, function (next) {
-    console.log(request.session);
     push(nconf.get('ZEROPUSH_TOKEN'), {
       'device' : creditRequest.chargedUser.apnsToken,
       'sound'  : 'get_money.mp3',
       'alert'  : {
         'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
-        'loc-args' : [request.session.username]
+        'loc-args' : [request.session.username || request.session.name]
       }
     }, next);
   }], function createdCreditRequest(error) {
@@ -515,7 +514,7 @@ router
       'sound'  : 'get_money.mp3',
       'alert'  : {
         'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
-        'loc-args' : [creditRequest.chargedUser.username]
+        'loc-args' : [request.session.username || request.session.name]
       }
     }, next);
   }], function updatedCreditRequest(error) {

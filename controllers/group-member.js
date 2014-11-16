@@ -112,7 +112,7 @@ router
       'device' : request.groupUser.apnsToken,
       'alert'  : {
         'loc-key'  : 'NOTIFICATION_GROUP_ADDED',
-        'loc-args' : [request.session.username]
+        'loc-args' : [request.session.username || request.session.name]
       }
     }, next);
   }], function createdGroupMember(error) {
