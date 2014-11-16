@@ -132,6 +132,16 @@ schema.methods.findBet = function (user, next) {
   }.bind(this));
 };
 
+schema.pre('remove', function (next) {
+  'use strict';
+
+  var Bet;
+  Bet = require('./bet');
+  async.waterfall([function (next) {
+    Bet.remove({'match' : this._id}, next);
+  }.bind(this)], next);
+});
+
 schema.virtual('bet').get(function getMatchBet() {
   return this._bet;
 });
