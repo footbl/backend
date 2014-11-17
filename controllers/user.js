@@ -575,7 +575,7 @@ router
 
 /**
  * @api {get} /users/me/prizes Send user prizes
- * @apiName forgotPassword
+ * @apiName listPrizes
  * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission none
@@ -585,14 +585,14 @@ router
 router
 .route('/users/:id/prizes')
 .get(auth.session())
-.get(function (request, response, next) {
+.get(function listPrizes(request, response, next) {
   'use strict';
 
   var query;
   query = Prize.find();
   query.where('user').equals(request.session._id);
   query.sort('-createdAt');
-  query.exec(function (error, prizes) {
+  query.exec(function listedPrizes(error, prizes) {
     if (error) {
       error = new VError(error, 'error finding user prizes');
       return next(error);
