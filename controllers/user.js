@@ -581,6 +581,15 @@ router
  * @apiPermission none
  * @apiDescription
  * This route send all user prizes, including daily bonus.
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     [{
+ *       "value": 1,
+ *       "type": "daily",
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }]
  */
 router
 .route('/users/:id/prizes')
