@@ -573,7 +573,6 @@ router
   });
 });
 
-
 /**
  * @api {get} /users/me/prizes Send user prizes
  * @apiName forgotPassword
