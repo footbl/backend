@@ -575,13 +575,15 @@ router
 });
 
 /**
- * @api {get} /users/me/prizes Send user prizes
+ * @api {get} /users/:id/prizes Send user prizes
  * @apiName listPrizes
  * @apiVersion 2.0.1
  * @apiGroup user
  * @apiPermission none
  * @apiDescription
  * This route send all user prizes, including daily bonus.
+ *
+ * @apiParam {Array} [page].
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -598,10 +600,14 @@ router
 .get(function listPrizes(request, response, next) {
   'use strict';
 
-  var query;
+  var pageSize, page, query;
+  pageSize = nconf.get('PAGE_SIZE');
+  page = request.param('page', 0) * pageSize;
   query = Prize.find();
   query.where('user').equals(request.session._id);
   query.sort('-createdAt');
+  query.skip(page);
+  query.limit(pageSize);
   query.exec(function listedPrizes(error, prizes) {
     if (error) {
       error = new VError(error, 'error finding user prizes');
