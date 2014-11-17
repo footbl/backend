@@ -1,4 +1,4 @@
-var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User;
+var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User, Prize;
 
 VError = require('verror');
 router = require('express').Router();
@@ -10,6 +10,7 @@ mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 crypto = require('crypto');
 auth = require('auth');
 User = require('../models/user');
+Prize = require('../models/prize');
 
 /**
  * @api {post} /users Creates a new user.
@@ -406,21 +407,43 @@ router
 .get(function authUser(request, response, next) {
   'use strict';
 
-  var query, facebook, password, email;
-  facebook = request.facebook;
-  email = request.param('email');
-  password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
-  query = User.findOne();
-  query.where('active').ne(false);
-  if (facebook) {
-    query.where('facebookId').equals(facebook);
-  } else if (email) {
-    query.where('email').equals(email);
-    query.where('password').equals(password);
-  } else {
-    query.where('password').equals(password);
-  }
-  return query.exec(function (error, user) {
+  async.waterfall([function (next) {
+    var query, facebook, password, email;
+    facebook = request.facebook;
+    email = request.param('email');
+    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+    query = User.findOne();
+    query.where('active').ne(false);
+    if (facebook) {
+      query.where('facebookId').equals(facebook);
+    } else if (email) {
+      query.where('email').equals(email);
+      query.where('password').equals(password);
+    } else {
+      query.where('password').equals(password);
+    }
+    query.exec(next);
+  }, function (user, next) {
+    async.waterfall([function (next) {
+      var query, now, today, tomorrow;
+      now = new Date();
+      today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      query = Prize.findOne();
+      query.where('user').equals(user ? user._id : null);
+      query.where('date').gte(today).lt(tomorrow);
+      query.exec(next);
+    }, function (prize, next) {
+      if (!prize) {
+        prize = new Prize();
+        prize.user = user;
+        prize.value = 1;
+        prize.type = 'daily';
+      }
+      prize.save(next);
+    }]);
+    next(null, user);
+  }], function (error, user) {
     if (error) {
       error = new VError(error, 'error signing up user');
       return next(error);
@@ -547,6 +570,35 @@ router
       'async'   : true
     });
     return response.status(200).send();
+  });
+});
+
+
+/**
+ * @api {get} /users/me/prizes Send user prizes
+ * @apiName forgotPassword
+ * @apiVersion 2.0.1
+ * @apiGroup user
+ * @apiPermission none
+ * @apiDescription
+ * This route send all user prizes, including daily bonus.
+ */
+router
+.route('/users/:id/prizes')
+.get(auth.session())
+.get(function (request, response, next) {
+  'use strict';
+
+  var query;
+  query = Prize.find();
+  query.where('user').equals(request.session._id);
+  query.sort('-createdAt');
+  query.exec(function (error, prizes) {
+    if (error) {
+      error = new VError(error, 'error finding user prizes');
+      return next(error);
+    }
+    return response.status(200).send(prizes);
   });
 });
 

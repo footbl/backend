@@ -817,8 +817,15 @@ describe('user controller', function () {
     });
 
     describe('registred user', function () {
+      var user;
+
       before(User.remove.bind(User));
       before(Entry.remove.bind(Entry));
+
+      before(function (done) {
+        user = new User({'password' : '1234', 'type' : 'admin'});
+        user.save(done);
+      });
 
       before(function (done) {
         var request, credentials;
@@ -832,6 +839,7 @@ describe('user controller', function () {
         request.send({'password' : '1234'});
         request.send({'email' : 'user1@user.com'});
         request.send({'name' : 'user1'});
+        request.send({'username' : 'user1'});
         request.send({'password' : '1234'});
         request.end(done);
       });
@@ -891,6 +899,22 @@ describe('user controller', function () {
         request.expect(200);
         request.expect(function (response) {
           response.body.should.have.property('token');
+        });
+        request.end(done);
+      });
+
+      after(function (done) {
+        var request, credentials;
+        credentials = auth.credentials();
+        request = supertest(app);
+        request = request.get('/users/user1');
+        request.set('auth-signature', credentials.signature);
+        request.set('auth-timestamp', credentials.timestamp);
+        request.set('auth-transactionId', credentials.transactionId);
+        request.set('auth-token', auth.token(user));
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.have.property('funds').be.equal(101);
         });
         request.end(done);
       });

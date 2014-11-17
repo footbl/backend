@@ -252,39 +252,50 @@ schema.pre('save', function updateCascadeMembers(next) {
 schema.pre('init', function populateUserCreditRequests(next, data) {
   'use strict';
 
-  var CreditRequest, query;
-  CreditRequest = require('./credit-request');
-  query = CreditRequest.find();
-  query.or([
-    {'creditedUser' : data._id},
-    {'chargedUser' : data._id}
-  ]);
-  query.exec(function (error, creditRequests) {
-    if (error) {
-      error = new VError(error, 'error populating user "%s" transfers.', data._id);
-      return next(error);
-    }
+  async.waterfall([function (next) {
+    var CreditRequest, query;
+    CreditRequest = require('./credit-request');
+    query = CreditRequest.find();
+    query.or([
+      {'creditedUser' : data._id},
+      {'chargedUser' : data._id}
+    ]);
+    query.exec(next);
+  }.bind(this), function (creditRequests, next) {
     this.creditRequests = creditRequests;
     return next();
-  }.bind(this));
+  }.bind(this)], next);
 });
 
 schema.pre('init', function populateUserBets(next, data) {
   'use strict';
 
-  var Bet, query;
-  Bet = require('./bet');
-  query = Bet.find();
-  query.where('user').equals(data._id);
-  query.populate('match');
-  query.exec(function (error, bets) {
-    if (error) {
-      error = new VError(error, 'error populating user "%s" bets.', data._id);
-      return next(error);
-    }
+  async.waterfall([function (next) {
+    var Bet, query;
+    Bet = require('./bet');
+    query = Bet.find();
+    query.where('user').equals(data._id);
+    query.populate('match');
+    query.exec(next);
+  }.bind(this), function (bets, next) {
     this.bets = bets;
     return next();
-  }.bind(this));
+  }.bind(this)], next);
+});
+
+schema.pre('init', function populateUserPrizes(next, data) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    var Prize, query;
+    Prize = require('./prize');
+    query = Prize.find();
+    query.where('user').equals(data._id);
+    query.exec(next);
+  }.bind(this), function (prizes, next) {
+    this.prizes = prizes;
+    return next();
+  }.bind(this)], next);
 });
 
 schema.virtual('stake').get(function getUserStake() {
@@ -324,8 +335,36 @@ schema.virtual('funds').get(function getUserFunds() {
 schema.virtual('credits').get(function getUserCredits() {
   'use strict';
 
+  return 100 + this.creditRequestCredits;
+});
+
+schema.virtual('debts').get(function getUserDebts() {
+  'use strict';
+
+  return this.creditRequestDebts + this.prizeCredits;
+});
+
+schema.virtual('prizeCredits').get(function getUserCreditRequestCredits() {
+  'use strict';
+
+  if (!this.prizes) {
+    return 0;
+  }
+
+  return this.prizes.filter(function (prize) {
+    return prize.createdAt > this.lastRecharge;
+  }.bind(this)).map(function (prize) {
+    return prize.value;
+  }.bind(this)).reduce(function (credits, prize) {
+    return credits + prize;
+  }.bind(this), 0);
+});
+
+schema.virtual('creditRequestCredits').get(function getUserCreditRequestCredits() {
+  'use strict';
+
   if (!this.creditRequests) {
-    return 100;
+    return 0;
   }
 
   return this.creditRequests.filter(function (creditRequest) {
@@ -336,10 +375,10 @@ schema.virtual('credits').get(function getUserCredits() {
     return creditRequest.value;
   }.bind(this)).reduce(function (credits, credit) {
     return credits + credit;
-  }.bind(this), 100);
+  }.bind(this), 0);
 });
 
-schema.virtual('debts').get(function getUserDebts() {
+schema.virtual('creditRequestDebts').get(function getUserDebts() {
   'use strict';
 
   if (!this.creditRequests) {
