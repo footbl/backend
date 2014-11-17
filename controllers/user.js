@@ -434,13 +434,14 @@ router
       query.where('date').gte(today).lt(tomorrow);
       query.exec(next);
     }, function (prize, next) {
-      if (!prize) {
-        prize = new Prize();
-        prize.user = user;
-        prize.value = 1;
-        prize.type = 'daily';
+      if (prize) {
+        return next();
       }
-      prize.save(next);
+      prize = new Prize();
+      prize.user = user;
+      prize.value = 1;
+      prize.type = 'daily';
+      return prize.save(next);
     }]);
     next(null, user);
   }], function (error, user) {
