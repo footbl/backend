@@ -431,7 +431,7 @@ router
       tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
       query = Prize.findOne();
       query.where('user').equals(user ? user._id : null);
-      query.where('date').gte(today).lt(tomorrow);
+      query.where('createdAt').gte(today).lt(tomorrow);
       query.exec(next);
     }, function (prize, next) {
       if (prize) {
