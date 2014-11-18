@@ -63,6 +63,7 @@ app.use(require('./controllers/featured'));
 app.use(require('./controllers/bet'));
 app.use(require('./controllers/group'));
 app.use(require('./controllers/group-member'));
+app.use(require('./controllers/message'));
 app.use(require('./controllers/credit-request'));
 app.use(require('./controllers/entry'));
 
