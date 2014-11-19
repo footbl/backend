@@ -134,6 +134,7 @@ router
  * This route is used to search for users in the database, a user can be searched by the facebook id, email or username.
  *
  * @apiParam {Number} [page=0] The page to be displayed.
+ * @apiParam {Boolean} [localRanking=false] List users close to the user in the ranking.
  * @apiParam {String []} [emails] Emails to search.
  * @apiParam {String []} [usernames] Usernames to search.
  * @apiParam {String} [name] Name to search.
@@ -170,9 +171,15 @@ router
 .get(function listUser(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
+  var pageSize, localRanking, page, query;
   pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
+  localRanking = request.param('localRanking', false);
+  if (localRanking && request.session) {
+    page = (request.session.ranking || 0) - 14;
+    page = page < 0 ? 0 : page;
+  } else {
+    page = request.param('page', 0) * pageSize;
+  }
   query = User.find();
   query.sort('ranking');
   query.skip(page);
