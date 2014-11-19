@@ -670,6 +670,58 @@ describe('credit request controller', function () {
     });
   });
 
+  describe('mark as read', function () {
+    var id;
+
+    before(CreditRequest.remove.bind(CreditRequest));
+
+    before(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.post('/users/credit-requested-user/credit-requests');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.expect(function (response) {
+        id = response.body.slug;
+      });
+      request.end(done);
+    });
+
+    it('should mark as read', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/credit-requested-user/credit-requests/' + id + '/mark-as-read');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(creditRequestedUser));
+      request.expect(200);
+      request.end(done);
+    });
+
+    after(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/users/credit-requested-user/credit-requests');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(creditRequestedUser));
+      request.send({'unreadMessages' : true});
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(0);
+      });
+      request.end(done);
+    });
+  });
+
   describe('delete', function () {
     var id;
 

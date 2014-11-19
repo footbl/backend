@@ -28,6 +28,12 @@ schema = new Schema({
     'type'    : Boolean,
     'default' : false
   },
+  'seenBy'       : [
+    {
+      'type' : Schema.Types.ObjectId,
+      'ref'  : 'User'
+    }
+  ],
   'createdAt'    : {
     'type'    : Date,
     'default' : Date.now
@@ -57,6 +63,7 @@ schema.plugin(jsonSelect, {
   'chargedUser'  : 1,
   'payed'        : 1,
   'value'        : 1,
+  'seenBy'       : 1,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });

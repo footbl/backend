@@ -153,6 +153,7 @@ router
  * List all creditRequests in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
+ * @apiParam {Boolean} [unreadMessages] Only displays unread messages.
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -216,13 +217,17 @@ router
 .get(function listCreditRequest(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
+  var unreadMessages, pageSize, page, query;
   pageSize = nconf.get('PAGE_SIZE');
   page = request.param('page', 0) * pageSize;
+  unreadMessages = request.param('unreadMessages');
   query = CreditRequest.find();
   query.where('chargedUser').equals(request.user._id);
   query.populate('creditedUser');
   query.populate('chargedUser');
+  if (unreadMessages) {
+    query.where('seenBy').ne(request.session._id);
+  }
   query.skip(page);
   query.limit(pageSize);
   return query.exec(function listedCreditRequest(error, creditRequests) {
@@ -244,6 +249,7 @@ router
  * List all creditRequests in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
+ * @apiParam {Boolean} [unreadMessages] Only displays unread messages.
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -307,13 +313,17 @@ router
 .get(function listRequestedCredits(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
+  var unreadMessages, pageSize, page, query;
   pageSize = nconf.get('PAGE_SIZE');
   page = request.param('page', 0) * pageSize;
+  unreadMessages = request.param('unreadMessages');
   query = CreditRequest.find();
   query.where('creditedUser').equals(request.user._id);
   query.populate('creditedUser');
   query.populate('chargedUser');
+  if (unreadMessages) {
+    query.where('seenBy').ne(request.session._id);
+  }
   query.skip(page);
   query.limit(pageSize);
   return query.exec(function listedRequestedCredits(error, creditRequests) {
@@ -518,6 +528,89 @@ router
       }
     }, next);
   }], function updatedCreditRequest(error) {
+    if (error) {
+      error = new VError(error, 'error updating creditRequest');
+      return next(error);
+    }
+    return response.status(200).send(creditRequest);
+  });
+});
+
+/**
+ * @api {put} /users/:user/credit-requests/:id/mark-as-read Mark as read creditRequest info in database
+ * @apiName approveCreditRequest
+ * @apiVersion 2.0.1
+ * @apiGroup creditRequest
+ * @apiPermission none
+ * @apiDescription
+ * Mark as read creditRequest info in database.
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "slug": "vandoren",
+ *       "value": 10,
+ *       "payed": false,
+ *       "creditedUser": {
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "chargedUser": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
+ */
+router
+.route('/users/:user/credit-requests/:id/mark-as-read')
+.put(auth.session())
+.put(function markAsReadCreditRequest(request, response, next) {
+  'use strict';
+
+  var creditRequest;
+  creditRequest = request.creditRequest;
+  creditRequest.seenBy.push(request.session._id);
+  return async.series([creditRequest.save.bind(creditRequest)], function markedAsReadCreditRequest(error) {
     if (error) {
       error = new VError(error, 'error updating creditRequest');
       return next(error);
