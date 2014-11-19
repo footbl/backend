@@ -437,7 +437,7 @@ router
       query.where('createdAt').gte(today).lt(tomorrow);
       query.exec(next);
     }, function (prize, next) {
-      if (prize) {
+      if (prize || !user || user.funds >= 100) {
         return next();
       }
       prize = new Prize();
