@@ -323,6 +323,111 @@ describe('entry controller', function () {
     });
   });
 
+  describe('update', function () {
+    before(Entry.remove.bind(Entry));
+
+    before(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.post('/users/me/entries');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.send({'championship' : 'brasileirao-brasil-2014'});
+      request.end(done);
+    });
+
+    it('should raise error without token', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/user/entries/brasileirao-brasil-2014');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.send({'championship' : 'brasileirao-brasil-2014'});
+      request.send({'order' : 1});
+      request.expect(401);
+      request.end(done);
+    });
+
+    it('should raise error with other user token', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/user/entries/brasileirao-brasil-2014');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(otherUser));
+      request.send({'championship' : 'brasileirao-brasil-2014'});
+      request.send({'order' : 1});
+      request.expect(405);
+      request.end(done);
+    });
+
+    it('should raise error with invalid user id', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/invalid/entries/brasileirao-brasil-2014');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.send({'championship' : 'brasileirao-brasil-2014'});
+      request.send({'order' : 1});
+      request.expect(404);
+      request.end(done);
+    });
+
+    it('should raise error with invalid id', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/user/entries/invalid');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.send({'championship' : 'brasileirao-brasil-2014'});
+      request.send({'order' : 1});
+      request.expect(404);
+      request.end(done);
+    });
+
+    it('should raise error without championship', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/user/entries/brasileirao-brasil-2014');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.send({'order' : 1});
+      request.expect(400);
+      request.end(done);
+    });
+
+    it('should update', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/user/entries/brasileirao-brasil-2014');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.send({'championship' : 'brasileirao-brasil-2014'});
+      request.send({'order' : 1});
+      request.expect(200);
+      request.end(done);
+    });
+  });
+
   describe('delete', function () {
     before(Entry.remove.bind(Entry));
 

@@ -40,6 +40,7 @@ router.use(function findChampionship(request, response, next) {
  * Creates a new entry in database.
  *
  * @apiParam {String} championship Entry championship
+ * @apiParam {Number} [order] Entry order
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -86,6 +87,7 @@ router.use(function findChampionship(request, response, next) {
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "order": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -110,7 +112,8 @@ router
   entry = new Entry({
     'slug'         : request.championship ? request.championship.slug : null,
     'championship' : request.championship,
-    'user'         : request.session._id
+    'user'         : request.session._id,
+    'order'        : request.param('order')
   });
   return async.series([entry.save.bind(entry), function (next) {
     entry.populate('championship');
@@ -175,6 +178,7 @@ router
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "order": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -192,6 +196,7 @@ router
   query.where('user').equals(request.user._id);
   query.populate('championship');
   query.populate('user');
+  query.sort('order');
   query.skip(page);
   query.limit(pageSize);
   return query.exec(function listedEntry(error, entries) {
@@ -251,6 +256,7 @@ router
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "order": 1,
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -264,6 +270,102 @@ router
   var entry;
   entry = request.entry;
   return response.status(200).send(entry);
+});
+
+/**
+ * @api {put} /users/:user/entries/:id Updates a entry in database
+ * @apiName updateEntry
+ * @apiVersion 2.0.1
+ * @apiGroup entry
+ * @apiPermission none
+ * @apiDescription
+ * Updates a entry in database.
+ *
+ * @apiParam {String} championship Entry championship
+ * @apiParam {Number} [order] Entry order
+ *
+ * @apiErrorExample
+ *     HTTP/1.1 400 Bad Request
+ *     {
+ *       "championship": "required"
+ *     }
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 200 Ok
+ *     {
+ *       "slug": "brasileirao-brasil-2014",
+ *       "championship": {
+ *         "name": "Brasileirão",
+ *         "slug": "brasileirao-brasil-2014",
+ *         "country" : "brasil",
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "edition": 2014,
+ *         "type": "national league",
+ *         "rounds": 7,
+ *         "currentRound" : 4,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "user": {
+ *         "slug": "fan",
+ *         "email": "fan@vandoren.com",
+ *         "username": "fan",
+ *         "name": "Fan",
+ *         "about": "vandoren fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "3",
+ *         "previousRanking": "2",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "order": 1,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
+ */
+router
+.route('/users/:user/entries/:id')
+.put(auth.session())
+.put(function validateEntryToUpdate(request, response, next) {
+  'use strict';
+
+  var user;
+  user = request.user;
+  if (request.session._id.toString() !== user._id.toString()) {
+    return response.status(405).end()
+  }
+  return next();
+})
+.put(function updateEntry(request, response, next) {
+  'use strict';
+
+  var entry;
+  entry = request.entry;
+  entry.championship = request.championship;
+  entry.slug = request.championship ? request.championship.slug : null;
+  entry.order = request.param('order');
+  return async.series([entry.save.bind(entry), function (next) {
+    entry.populate('championship');
+    entry.populate('user');
+    entry.populate(next);
+  }], function updatedEntry(error) {
+    if (error) {
+      error = new VError(error, 'error updating entry: "$s"', request.params.id);
+      return next(error);
+    }
+    return response.status(200).send(entry);
+  });
 });
 
 /**

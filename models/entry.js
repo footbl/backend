@@ -21,6 +21,9 @@ schema = new Schema({
     'ref'      : 'Championship',
     'required' : true
   },
+  'order'        : {
+    'type' : Number
+  },
   'createdAt'    : {
     'type'    : Date,
     'default' : Date.now
@@ -48,6 +51,7 @@ schema.plugin(jsonSelect, {
   'slug'         : 1,
   'user'         : 1,
   'championship' : 1,
+  'order'        : 1,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });
