@@ -538,7 +538,7 @@ router
 
 /**
  * @api {put} /users/:user/credit-requests/:id/mark-as-read Mark as read creditRequest info in database
- * @apiName approveCreditRequest
+ * @apiName markAsReadCreditRequest
  * @apiVersion 2.0.1
  * @apiGroup creditRequest
  * @apiPermission none
