@@ -300,6 +300,20 @@ describe('user controller', function () {
     });
 
     before(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.post('/users');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.send({'password' : '1234'});
+      request.send({'username' : 'user3'});
+      request.send({'name' : 'rafael'});
+      request.end(done);
+    });
+
+    before(function (done) {
       var featured;
       featured = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user', 'featured' : true});
       featured.save(done);
@@ -373,6 +387,24 @@ describe('user controller', function () {
         response.body.should.be.instanceOf(Array);
         response.body.should.have.lengthOf(1);
         response.body[0].should.have.property('slug').be.equal('user1');
+      });
+      request.end(done);
+    });
+
+    it('should filter by name', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/users');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.send({'name' : 'rafa'});
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(1);
+        response.body[0].should.have.property('slug').be.equal('user3');
       });
       request.end(done);
     });

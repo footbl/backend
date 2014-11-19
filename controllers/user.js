@@ -133,9 +133,10 @@ router
  * @apiDescription
  * This route is used to search for users in the database, a user can be searched by the facebook id, email or username.
  *
- * @apiParam {String} [page=0] The page to be displayed.
- * @apiParam {Array} [emails] Emails to search.
- * @apiParam {Array} [usernames] Usernames to search.
+ * @apiParam {Number} [page=0] The page to be displayed.
+ * @apiParam {String []} [emails] Emails to search.
+ * @apiParam {String []} [usernames] Usernames to search.
+ * @apiParam {String} [name] Name to search.
  * @apiParam {Array} [page].
  *
  * @apiSuccessExample
@@ -188,6 +189,8 @@ router
     query.where('facebookId').in(request.param('facebookIds', []));
   } else if (request.param('usernames')) {
     query.where('username').in(request.param('usernames', []));
+  } else if (request.param('name')) {
+    query.where('name').equals(new RegExp(request.param('featured'), 'i'));
   } else if (request.param('featured')) {
     query.where('featured').equals(true);
   } else {
