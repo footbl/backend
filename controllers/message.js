@@ -103,7 +103,7 @@ router
 });
 
 /**
- * @api {get} /groups/:group/members List all messages
+ * @api {get} /groups/:group/messages List all messages
  * @apiName listMessage
  * @apiVersion 2.0.1
  * @apiGroup message
@@ -225,7 +225,7 @@ router
 });
 
 /**
- * @api {get} /groups/:group/messages/:id Mark as read message info in database
+ * @api {get} /groups/:group/messages/:id/mark-as-read Mark as read message info in database
  * @apiName markAsReadMessage
  * @apiVersion 2.0.1
  * @apiGroup message
