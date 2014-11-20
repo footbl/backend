@@ -2,7 +2,7 @@
 require('should');
 var supertest, app, auth, nock,
 User, Group, Message,
-groupOwner, groupUser, otherGroupUser, slug;
+groupOwner, slug;
 
 supertest = require('supertest');
 app = require('../index.js');
@@ -12,7 +12,7 @@ User = require('../models/user');
 Group = require('../models/group');
 Message = require('../models/message');
 
-describe('group controller', function () {
+describe('message controller', function () {
   'use strict';
 
   before(Group.remove.bind(Group));
@@ -177,6 +177,136 @@ describe('group controller', function () {
       request.set('auth-transactionId', credentials.transactionId);
       request.set('auth-token', auth.token(groupOwner));
       request.send({'page' : 1});
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(0);
+      });
+      request.end(done);
+    });
+  });
+
+  describe('details', function () {
+    var id;
+
+    before(Message.remove.bind(Message));
+
+    before(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.post('/groups/' + slug + '/messages');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.send({'message' : 'fala galera'});
+      request.expect(function (response) {
+        id = response.body.slug;
+      });
+      request.end(done);
+    });
+
+    it('should raise error without token', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/groups/' + slug + '/messages/' + id);
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.expect(401);
+      request.end(done);
+    });
+
+    it('should raise error with invalid group id', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/groups/invalid/messages/' + id);
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.expect(404);
+      request.end(done);
+    });
+
+    it('should raise error with invalid id', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/groups/' + slug + '/messages/invalid');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.expect(404);
+      request.end(done);
+    });
+
+    it('should show', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/groups/' + slug + '/messages/' + id);
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.have.property('user');
+        response.body.should.have.property('message');
+      });
+      request.end(done);
+    });
+  });
+
+  describe('mark as read', function () {
+    var id;
+
+    before(Message.remove.bind(Message));
+
+    before(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.post('/groups/' + slug + '/messages');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.send({'message' : 'fala galera'});
+      request.expect(function (response) {
+        id = response.body.slug;
+      });
+      request.end(done);
+    });
+
+    it('should mark as read', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/groups/' + slug + '/messages/' + id + '/mark-as-read');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.expect(200);
+      request.end(done);
+    });
+
+    after(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/groups/' + slug + '/messages');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.send({'unreadMessages' : true});
       request.expect(200);
       request.expect(function (response) {
         response.body.should.be.instanceOf(Array);

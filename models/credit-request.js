@@ -63,7 +63,7 @@ schema.plugin(jsonSelect, {
   'chargedUser'  : 1,
   'payed'        : 1,
   'value'        : 1,
-  'seenBy'       : 1,
+  'seenBy'       : 0,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });
