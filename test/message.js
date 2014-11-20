@@ -318,4 +318,57 @@ describe('message controller', function () {
       request.end(done);
     });
   });
+
+  describe('mark all as read', function () {
+    var id;
+
+    before(Message.remove.bind(Message));
+
+    before(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.post('/groups/' + slug + '/messages');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.send({'message' : 'fala galera'});
+      request.expect(function (response) {
+        id = response.body.slug;
+      });
+      request.end(done);
+    });
+
+    it('should mark all as read', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/groups/' + slug + '/messages/all/mark-as-read');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.expect(200);
+      request.end(done);
+    });
+
+    after(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/groups/' + slug + '/messages');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(groupOwner));
+      request.send({'unreadMessages' : true});
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(0);
+      });
+      request.end(done);
+    });
+  });
 });
