@@ -448,6 +448,7 @@ router
         return next();
       }
       prize = new Prize();
+      prize.slug = Date.now();
       prize.user = user;
       prize.value = 1;
       prize.type = 'daily';
@@ -581,49 +582,6 @@ router
       'async'   : true
     });
     return response.status(200).send();
-  });
-});
-
-/**
- * @api {get} /users/:id/prizes Send user prizes
- * @apiName listPrizes
- * @apiVersion 2.0.1
- * @apiGroup user
- * @apiPermission none
- * @apiDescription
- * This route send all user prizes, including daily bonus.
- *
- * @apiParam {Array} [page].
- *
- * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "value": 1,
- *       "type": "daily",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
- */
-router
-.route('/users/:id/prizes')
-.get(auth.session())
-.get(function listPrizes(request, response, next) {
-  'use strict';
-
-  var pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = Prize.find();
-  query.where('user').equals(request.session._id);
-  query.sort('-createdAt');
-  query.skip(page);
-  query.limit(pageSize);
-  query.exec(function listedPrizes(error, prizes) {
-    if (error) {
-      error = new VError(error, 'error finding user prizes');
-      return next(error);
-    }
-    return response.status(200).send(prizes);
   });
 });
 

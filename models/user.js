@@ -291,6 +291,7 @@ schema.pre('init', function populateUserPrizes(next, data) {
     Prize = require('./prize');
     query = Prize.find();
     query.where('user').equals(data._id);
+    query.where('seenBy').equals(data._id);
     query.exec(next);
   }.bind(this), function (prizes, next) {
     this.prizes = prizes;

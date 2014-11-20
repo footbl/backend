@@ -8,6 +8,9 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
+  'slug'      : {
+    'type' : String
+  },
   'user'      : {
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'User',
@@ -22,6 +25,12 @@ schema = new Schema({
     'required' : true,
     'enum'     : ['daily']
   },
+  'seenBy'    : [
+    {
+      'type' : Schema.Types.ObjectId,
+      'ref'  : 'User'
+    }
+  ],
   'createdAt' : {
     'type'    : Date,
     'default' : Date.now
@@ -39,9 +48,11 @@ schema = new Schema({
 
 schema.plugin(jsonSelect, {
   '_id'       : 0,
+  'slug'      : 1,
   'user'      : 0,
   'value'     : 1,
   'type'      : 1,
+  'seenBy'    : 0,
   'createdAt' : 1,
   'updatedAt' : 1
 });
