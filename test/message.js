@@ -12,6 +12,9 @@ User = require('../models/user');
 Group = require('../models/group');
 Message = require('../models/message');
 
+nock('https://api.zeropush.com').get('/verify_credentials?auth_token=undefined').times(Infinity).reply(200, {'message' : 'authenticated'});
+nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
+
 describe('message controller', function () {
   'use strict';
 

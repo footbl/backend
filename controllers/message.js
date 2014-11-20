@@ -9,6 +9,7 @@ auth = require('auth');
 push = require('push');
 Message = require('../models/message');
 Group = require('../models/group');
+GroupMember = require('../models/group-member');
 
 /**
  * @api {post} /groups/:group/messages Creates a new message.
@@ -74,6 +75,24 @@ router
   return async.series([message.save.bind(message), function (next) {
     message.populate('user');
     message.populate(next);
+  }, function (next) {
+    async.waterfall([function (next) {
+      var query;
+      query = GroupMember.find();
+      query.where('group').equals(request.group._id);
+      query.populate('user');
+      query.exec(next);
+    }, function (members, next) {
+      async.each(members, function (member, next) {
+        push(nconf.get('ZEROPUSH_TOKEN'), {
+          'device' : member.user.apnsToken,
+          'alert'  : {
+            'loc-key'  : 'NOTIFICATION_GROUP_MESSAGE',
+            'loc-args' : [request.session.username]
+          }
+        }, next);
+      }, next);
+    }], next);
   }], function createdMessage(error) {
     if (error) {
       error = new VError(error, 'error creating message: "$s"', message._id);
