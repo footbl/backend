@@ -65,41 +65,45 @@ router
 .post(function createMessage(request, response, next) {
   'use strict';
 
-  var message;
-  message = new Message({
-    'slug'    : request.session.slug + '-' + Date.now(),
-    'group'   : request.group ? request.group._id : null,
-    'user'    : request.session._id,
-    'message' : request.param('message')
-  });
-  return async.series([message.save.bind(message), function (next) {
-    message.populate('user');
-    message.populate(next);
-  }, function (next) {
+  async.waterfall([function (next) {
+    var message;
+    message = new Message({
+      'slug'    : request.session.slug + '-' + Date.now(),
+      'group'   : request.group ? request.group._id : null,
+      'user'    : request.session._id,
+      'message' : request.param('message')
+    });
+    message.save(next);
+  }, function (message, _, next) {
     async.waterfall([function (next) {
-      var query;
-      query = GroupMember.find();
-      query.where('group').equals(request.group._id);
-      query.populate('user');
-      query.exec(next);
-    }, function (members, next) {
-      async.each(members, function (member, next) {
-        push(nconf.get('ZEROPUSH_TOKEN'), {
-          'device' : member.user.apnsToken,
-          'alert'  : {
-            'loc-key'  : 'NOTIFICATION_GROUP_MESSAGE',
-            'loc-args' : [request.session.username]
-          }
-        }, next);
-      }, next);
+      async.parallel([function (next) {
+        message.populate('user');
+        message.populate(next);
+      }, function (next) {
+        async.waterfall([function (next) {
+          var query;
+          query = GroupMember.find();
+          query.where('group').equals(request.group._id);
+          query.populate('user');
+          query.exec(next);
+        }, function (members, next) {
+          async.each(members, function (member, next) {
+            push(nconf.get('ZEROPUSH_TOKEN'), {
+              'device' : member.user.apnsToken,
+              'alert'  : {
+                'loc-key'  : 'NOTIFICATION_GROUP_MESSAGE',
+                'loc-args' : [request.session.username]
+              }
+            }, next);
+          }, next);
+        }], next);
+      }], next);
+    }, function (_, next) {
+      response.status(201);
+      response.send(message);
+      next();
     }], next);
-  }], function createdMessage(error) {
-    if (error) {
-      error = new VError(error, 'error creating message: "$s"', message._id);
-      return next(error);
-    }
-    return response.status(201).send(message);
-  });
+  }], next);
 });
 
 /**
@@ -151,26 +155,26 @@ router
 .get(function listMessage(request, response, next) {
   'use strict';
 
-  var unreadMessages, pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  unreadMessages = request.param('unreadMessages');
-  query = Message.find();
-  query.where('group').equals(request.group._id);
-  query.sort('-createdAt');
-  query.populate('user');
-  if (unreadMessages) {
-    query.where('seenBy').ne(request.session._id);
-  }
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedMessage(error, messages) {
-    if (error) {
-      error = new VError(error, 'error finding message');
-      return next(error);
+  async.waterfall([function (next) {
+    var unreadMessages, pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    unreadMessages = request.param('unreadMessages');
+    query = Message.find();
+    query.where('group').equals(request.group._id);
+    query.sort('-createdAt');
+    query.populate('user');
+    if (unreadMessages) {
+      query.where('seenBy').ne(request.session._id);
     }
-    return response.status(200).send(messages);
-  });
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (messages, next) {
+    response.status(200);
+    response.send(messages);
+    next();
+  }], next);
 });
 
 /**
@@ -214,16 +218,19 @@ router
  *     }
  */
 router
-.route('/groups/:group/messages/:id')
+.route('/groups/:group/messages/:message')
 .get(auth.session())
-.get(function getMessage(request, response) {
+.get(function getMessage(request, response, next) {
   'use strict';
 
-  var message;
-  message = request.message;
-  return response.status(200).send(message);
+  async.waterfall([function (next) {
+    var message;
+    message = request.message;
+    response.status(200);
+    response.send(message);
+    next();
+  }], next);
 });
-
 
 /**
  * @api {get} /groups/:group/messages/all/mark-as-read Mark as read all group messages in database
@@ -287,13 +294,11 @@ router
       message.seenBy.push(request.session._id);
       message.save(next);
     }, next);
-  }], function maskedAllAsRead(error) {
-    if (error) {
-      error = new VError(error, 'error updating messages');
-      return next(error);
-    }
-    return response.status(200).send(group);
-  });
+  }, function (next) {
+    response.status(200);
+    response.send(group);
+    next();
+  }], next);
 });
 
 /**
@@ -337,61 +342,51 @@ router
  *     }
  */
 router
-.route('/groups/:group/messages/:id/mark-as-read')
+.route('/groups/:group/messages/:message/mark-as-read')
 .put(auth.session())
-.put(function markedAsReadMessage(request, response) {
+.put(function markedAsReadMessage(request, response, next) {
   'use strict';
 
-  var message;
-  message = request.message;
-  message.seenBy.push(request.session._id);
-  return async.series([message.save.bind(message)], function markedAsReadMessage(error) {
-    if (error) {
-      error = new VError(error, 'error updating message');
-      return next(error);
-    }
-    return response.status(200).send(message);
-  });
+  async.waterfall([function (next) {
+    var message;
+    message = request.message;
+    message.seenBy.push(request.session._id);
+    message.save(next);
+  }, function (message, _, next) {
+    response.status(200);
+    response.send(message);
+    next();
+  }], next);
 });
 
 router.param('group', function findGroup(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Group.findOne();
-  query.where('slug').equals(id);
-  return query.exec(function foundGroup(error, group) {
-    if (error) {
-      error = new VError(error, 'error finding group: "$s"', id);
-      return next(error);
-    }
-    if (!group) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Group.findOne();
+    query.where('slug').equals(id);
+    query.exec(next);
+  }, function (group, next) {
     request.group = group;
-    return next();
-  });
+    next(!group ? new Error('not found') : null);
+  }], next);
 });
 
-router.param('id', function findMessage(request, response, next, id) {
+router.param('message', function findMessage(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Message.findOne();
-  query.where('group').equals(request.group._id);
-  query.where('slug').equals(id);
-  query.populate('user');
-  return query.exec(function foundGroup(error, message) {
-    if (error) {
-      error = new VError(error, 'error finding message: "$s"', id);
-      return next(error);
-    }
-    if (!message) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Message.findOne();
+    query.where('group').equals(request.group._id);
+    query.where('slug').equals(id);
+    query.populate('user');
+    query.exec(next);
+  }, function (message, next) {
     request.message = message;
-    return next();
-  });
+    next(!message ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

@@ -1,6 +1,5 @@
-var VError, router, nconf, slug, async, auth, User, Prize;
+var router, nconf, slug, async, auth, User, Prize;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
@@ -36,25 +35,25 @@ router
 .get(function listPrizes(request, response, next) {
   'use strict';
 
-  var unreadMessages, pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  unreadMessages = request.param('unreadMessages');
-  query = Prize.find();
-  query.where('user').equals(request.session._id);
-  query.sort('-createdAt');
-  if (unreadMessages) {
-    query.where('seenBy').ne(request.session._id);
-  }
-  query.skip(page);
-  query.limit(pageSize);
-  query.exec(function listedPrizes(error, prizes) {
-    if (error) {
-      error = new VError(error, 'error finding user prizes');
-      return next(error);
+  async.waterfall([function (next) {
+    var unreadMessages, pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    unreadMessages = request.param('unreadMessages');
+    query = Prize.find();
+    query.where('user').equals(request.session._id);
+    query.sort('-createdAt');
+    if (unreadMessages) {
+      query.where('seenBy').ne(request.session._id);
     }
-    return response.status(200).send(prizes);
-  });
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (prizes, next) {
+    response.status(200);
+    response.send(prizes);
+    next();
+  }], next);
 });
 
 /**
@@ -76,14 +75,18 @@ router
  *     }
  */
 router
-.route('/users/:user/prizes/:id')
+.route('/users/:user/prizes/:prize')
 .get(auth.session())
-.get(function getPrizes(request, response) {
+.get(function getPrizes(request, response, next) {
   'use strict';
 
-  var prize;
-  prize = request.prize;
-  return response.status(200).send(prize);
+  async.waterfall([function (next) {
+    var prize;
+    prize = request.prize;
+    response.status(200);
+    response.send(prize);
+    next();
+  }], next);
 });
 
 /**
@@ -105,65 +108,55 @@ router
  *     }
  */
 router
-.route('/users/:user/prizes/:id/mark-as-read')
+.route('/users/:user/prizes/:prize/mark-as-read')
 .put(auth.session())
 .put(function markAsReadPrize(request, response, next) {
   'use strict';
 
-  var prize;
-  prize = request.prize;
-  prize.seenBy.push(request.session._id);
-  return async.series([prize.save.bind(prize)], function markedAsReadPrize(error) {
-    if (error) {
-      error = new VError(error, 'error updating prize');
-      return next(error);
-    }
-    return response.status(200).send(prize);
-  });
+  async.waterfall([function (next) {
+    var prize;
+    prize = request.prize;
+    prize.seenBy.push(request.session._id);
+    prize.save(next);
+  }, function (prize, _, next) {
+    response.status(200);
+    response.send(prize);
+    next();
+  }], next);
 });
 
-router.param('id', function findPrize(request, response, next, id) {
+router.param('prize', function findPrize(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Prize.findOne();
-  query.where('user').equals(request.user._id);
-  query.where('slug').equals(id);
-  query.exec(function foundPrize(error, prize) {
-    if (error) {
-      error = new VError(error, 'error finding prize: "$s"', id);
-      return next(error);
-    }
-    if (!prize) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Prize.findOne();
+    query.where('user').equals(request.user._id);
+    query.where('slug').equals(id);
+    query.exec(next);
+  }, function (prize, next) {
     request.prize = prize;
-    return next();
-  });
+    next(!prize ? new Error('not found') : null);
+  }], next);
 });
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = User.findOne();
-  if (id === 'me') {
-    request.user = request.session;
-    return next();
-  }
-  query.where('slug').equals(id);
-  return query.exec(function foundUser(error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', id);
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    if (id === 'me') {
+      query.where('_id').equals(request.session._id);
+    } else {
+      query.where('slug').equals(id);
     }
-    if (!user) {
-      return response.status(404).end();
-    }
+    query.exec(next);
+  }, function (user, next) {
     request.user = user;
-    return next();
-  });
+    next(!user ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

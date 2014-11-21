@@ -690,7 +690,7 @@ describe('credit request controller', function () {
       request.end(done);
     });
 
-    it('should mark as read', function (done) {
+    it('should mark as read credit requested user', function (done) {
       var request, credentials;
       credentials = auth.credentials();
       request = supertest(app);
@@ -703,11 +703,42 @@ describe('credit request controller', function () {
       request.end(done);
     });
 
+    it('should mark as read credit requester user', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.put('/users/credit-requested-user/credit-requests/' + id + '/mark-as-read');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.expect(200);
+      request.end(done);
+    });
+
     after(function (done) {
       var request, credentials;
       credentials = auth.credentials();
       request = supertest(app);
       request = request.get('/users/credit-requested-user/credit-requests');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(creditRequestedUser));
+      request.send({'unreadMessages' : true});
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(0);
+      });
+      request.end(done);
+    });
+
+    after(function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/users/user/requested-credits');
       request.set('auth-signature', credentials.signature);
       request.set('auth-timestamp', credentials.timestamp);
       request.set('auth-transactionId', credentials.transactionId);

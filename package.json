@@ -17,7 +17,8 @@
   "scripts": {
     "test": "NODE_ENV=test mocha test/ --require blanket -R mocha-spec-cov-alt",
     "prestart": "apidoc -i controllers/ -o docs/",
-    "start": "cluster index.js"
+    "start": "cluster index.js",
+    "coverage": "mocha -R html-cov --require blanket > coverage.html"
   },
   "engines": {
     "node": "0.10.21"

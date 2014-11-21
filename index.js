@@ -1,5 +1,5 @@
 'use strict';
-var express, mongoose, nconf, bodyParser, methodOverride, prettyError, auth,
+var express, mongoose, nconf, bodyParser, methodOverride, auth,
 app;
 
 express = require('express');
@@ -7,7 +7,6 @@ mongoose = require('mongoose');
 nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
-prettyError = new (require('pretty-error'))();
 auth = require('auth');
 
 nconf.argv();
@@ -16,24 +15,6 @@ nconf.defaults(require('./config'));
 
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 auth.connect(nconf.get('REDISCLOUD_URL'), nconf.get('KEY'), require('./models/user'));
-
-prettyError.skipPackage('mongoose', 'express', 'redis');
-prettyError.skipNodeFiles();
-prettyError.appendStyle({
-  'pretty-error > header > title > kind' : {
-    display : 'none'
-  },
-  'pretty-error > header > colon'        : {
-    display : 'none'
-  },
-  'pretty-error > header > message'      : {
-    color      : 'bright-white',
-    background : 'red'
-  },
-  'pretty-error > trace > item'          : {
-    margin : 0
-  }
-});
 
 app = express();
 app.use(bodyParser());
@@ -70,23 +51,26 @@ app.use(require('./controllers/entry'));
 
 app.use(function (error, request, response, next) {
   var errors, prop;
-  if (error && error.cause && error.cause()) {
-    if ([11000, 11001].lastIndexOf(error.cause().code) > -1) {
-      return response.status(409).end();
-    }
-    if (error.cause().errors) {
+  if (error) {
+    if (error.message === 'not found') {
+      response.status(404).end();
+    } else if ([11000, 11001].lastIndexOf(error.code) > -1) {
+      response.status(409).end();
+    } else if (error.errors) {
       errors = {};
-      for (prop in error.cause().errors) {
-        if (error.cause().errors.hasOwnProperty(prop)) {
-          errors[prop] = error.cause().errors[prop].type === 'user defined' ? error.cause().errors[prop].message : error.cause().errors[prop].type;
+      for (prop in error.errors) {
+        if (error.errors.hasOwnProperty(prop)) {
+          errors[prop] = error.errors[prop].type === 'user defined' ? error.errors[prop].message : error.errors[prop].type;
         }
       }
-      return response.status(400).send(errors);
+      response.status(400).send(errors);
+    } else {
+      console.error(error.message);
+      console.error(error.trace);
+      response.status(500).end();
+      process.exit();
     }
   }
-  console.error(prettyError.render(error));
-  response.status(500).end();
-  return process.exit();
 });
 
 app.listen(nconf.get('PORT'));

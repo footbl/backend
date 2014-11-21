@@ -1,6 +1,5 @@
-var VError, router, nconf, slug, async, auth, Championship, Match, Team, Bet, User;
+var router, nconf, slug, async, auth, Championship, Match, Team, Bet, User;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
@@ -103,35 +102,37 @@ router
 .post(function createBet(request, response, next) {
   'use strict';
 
-  var bet;
-  bet = new Bet({
-    'slug'   : request.match.slug + '-' + request.session.slug,
-    'user'   : request.session._id,
-    'match'  : request.match._id,
-    'bid'    : request.param('bid'),
-    'result' : request.param('result')
-  });
-  return async.series([bet.save.bind(bet), function (next) {
-    bet.populate('user');
-    bet.populate('match');
-    bet.populate(next);
-  }, function (next) {
-    bet.match.populate('guest');
-    bet.match.populate('host');
-    bet.match.populate(next);
-  }, function (next) {
-    Match.update({'_id' : request.match._id}, {'$inc' : {
-      'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
-      'pot.host'  : bet.result === 'host' ? bet.bid : 0,
-      'pot.draw'  : bet.result === 'draw' ? bet.bid : 0
-    }}, next);
-  }], function createdBet(error) {
-    if (error) {
-      error = new VError(error, 'error creating bet: "$s"', bet._id);
-      return next(error);
-    }
-    return response.status(201).send(bet);
-  });
+  async.waterfall([function (next) {
+    var bet;
+    bet = new Bet({
+      'slug'   : request.match.slug + '-' + request.session.slug,
+      'user'   : request.session._id,
+      'match'  : request.match._id,
+      'bid'    : request.param('bid'),
+      'result' : request.param('result')
+    });
+    bet.save(next);
+  }, function (bet, _, next) {
+    async.parallel([function (next) {
+      Match.update({'_id' : request.match._id}, {'$inc' : {
+        'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
+        'pot.host'  : bet.result === 'host' ? bet.bid : 0,
+        'pot.draw'  : bet.result === 'draw' ? bet.bid : 0
+      }}, next);
+    }, function (next) {
+      async.waterfall([function (next) {
+        bet.populate('user');
+        bet.populate('match');
+        bet.populate(next);
+      }, function (_, next) {
+        Team.populate(bet, {'path' : 'match.guest match.host'}, next);
+      }, function (_, next) {
+        response.status(201);
+        response.send(bet);
+        next();
+      }], next);
+    }], next);
+  }], next);
 });
 
 /**
@@ -219,28 +220,24 @@ router
 .get(function listBet(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = Bet.find();
-  query.where('match').equals(request.match._id);
-  query.populate('user');
-  query.populate('match');
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedBet(error, bets) {
-    if (error) {
-      error = new VError(error, 'error finding bets');
-      return next(error);
-    }
-    return Team.populate(bets, {'path' : 'match.guest match.host'}, function (error) {
-      if (error) {
-        error = new VError(error, 'error populating bets');
-        return next(error);
-      }
-      return response.status(200).send(bets);
-    });
-  });
+  async.waterfall([function (next) {
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Bet.find();
+    query.where('match').equals(request.match._id);
+    query.populate('user');
+    query.populate('match');
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (bets, next) {
+    Team.populate(bets, {'path' : 'match.guest match.host'}, next);
+  }, function (bets, next) {
+    response.status(200);
+    response.send(bets);
+    next();
+  }], next);
 });
 
 /**
@@ -321,14 +318,18 @@ router
  *     }
  */
 router
-.route('/championships/:championship/matches/:match/bets/:id')
+.route('/championships/:championship/matches/:match/bets/:bet')
 .get(auth.session())
-.get(function getBet(request, response) {
+.get(function getBet(request, response, next) {
   'use strict';
 
-  var bet;
-  bet = request.bet;
-  return response.status(200).send(bet);
+  async.waterfall([function (next) {
+    var bet;
+    bet = request.bet;
+    response.status(200);
+    response.send(bet);
+    next();
+  }], next);
 });
 
 /**
@@ -419,48 +420,42 @@ router
  *     }
  */
 router
-.route('/championships/:championship/matches/:match/bets/:id')
+.route('/championships/:championship/matches/:match/bets/:bet')
 .put(auth.session())
-.put(function validateUserToUpdate(request, response, next) {
-  'use strict';
-
-  var bet;
-  bet = request.bet;
-  if (request.session._id.toString() !== bet.user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.put(auth.checkMethod('bet', 'user'))
 .put(function updateBet(request, response, next) {
   'use strict';
 
-  var bet, oldResult, oldBid;
-  bet = request.bet;
-  oldBid = bet.bid;
-  oldResult = bet.result;
-  bet.bid = request.param('bid');
-  bet.result = request.param('result');
-  return async.series([bet.save.bind(bet), function (next) {
-    bet.populate('user');
-    bet.populate('match');
-    bet.populate(next);
-  }, function (next) {
-    bet.match.populate('guest');
-    bet.match.populate('host');
-    bet.match.populate(next);
-  }, function (next) {
-    Match.update({'_id' : request.match._id}, {'$inc' : {
-      'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
-      'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
-      'pot.draw'  : (bet.result === 'draw' ? bet.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
-    }}, next);
-  }], function updatedBet(error) {
-    if (error) {
-      error = new VError(error, 'error updating bet: "$s"', bet._id);
-      return next(error);
-    }
-    return response.status(200).send(bet);
-  });
+  var oldResult, oldBid;
+  oldBid = request.bet.bid;
+  oldResult = request.bet.result;
+  async.waterfall([function (next) {
+    var bet;
+    bet = request.bet;
+    bet.bid = request.param('bid');
+    bet.result = request.param('result');
+    bet.save(next);
+  }, function (bet, _, next) {
+    async.parallel([function (next) {
+      Match.update({'_id' : request.match._id}, {'$inc' : {
+        'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
+        'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
+        'pot.draw'  : (bet.result === 'draw' ? bet.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
+      }}, next);
+    }, function (next) {
+      async.waterfall([function (next) {
+        bet.populate('user');
+        bet.populate('match');
+        bet.populate(next);
+      }, function (_, next) {
+        Team.populate(bet, {'path' : 'match.guest match.host'}, next);
+      }, function (_, next) {
+        response.status(200);
+        response.send(bet);
+        next();
+      }], next);
+    }], next);
+  }], next);
 });
 
 /**
@@ -473,38 +468,32 @@ router
  * Removes bet from database
  */
 router
-.route('/championships/:championship/matches/:match/bets/:id')
+.route('/championships/:championship/matches/:match/bets/:bet')
 .delete(auth.session())
-.delete(function validateUserToRemove(request, response, next) {
-  'use strict';
-
-  var bet;
-  bet = request.bet;
-  if (request.session._id.toString() !== bet.user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.delete(auth.checkMethod('bet', 'user'))
 .delete(function removeBet(request, response, next) {
   'use strict';
 
-  var bet, oldResult, oldBid;
-  bet = request.bet;
-  oldBid = bet.bid;
-  oldResult = bet.result;
-  return async.series([bet.remove.bind(bet), function (next) {
-    Match.update({'_id' : request.match._id}, {'$inc' : {
-      'pot.guest' : -(oldResult === 'guest' ? oldBid : 0),
-      'pot.host'  : -(oldResult === 'host' ? oldBid : 0),
-      'pot.draw'  : -(oldResult === 'draw' ? oldBid : 0)
-    }}, next);
-  }], function removedBet(error) {
-    if (error) {
-      error = new VError(error, 'error updating bet: "$s"', bet._id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
+  var oldResult, oldBid;
+  oldBid = request.bet.bid;
+  oldResult = request.bet.result;
+  async.waterfall([function (next) {
+    var bet;
+    bet = request.bet;
+    bet.remove(next);
+  }, function (_, next) {
+    async.parallel([function () {
+      Match.update({'_id' : request.match._id}, {'$inc' : {
+        'pot.guest' : -(oldResult === 'guest' ? oldBid : 0),
+        'pot.host'  : -(oldResult === 'host' ? oldBid : 0),
+        'pot.draw'  : -(oldResult === 'draw' ? oldBid : 0)
+      }}, next);
+    }, function (next) {
+      response.status(204);
+      response.end();
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -592,127 +581,97 @@ router
 .get(function listUserBets(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = Bet.find();
-  query.where('user').equals(request.user._id);
-  query.populate('user');
-  query.populate('match');
-  query.sort('-updatedAt');
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedUserBet(error, bets) {
-    if (error) {
-      error = new VError(error, 'error finding bets');
-      return next(error);
-    }
-    return Team.populate(bets, {'path' : 'match.guest match.host'}, function (error) {
-      if (error) {
-        error = new VError(error, 'error populating bets');
-        return next(error);
-      }
-      return response.status(200).send(bets);
-    });
-  });
+  async.waterfall([function (next) {
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Bet.find();
+    query.where('user').equals(request.user._id);
+    query.populate('user');
+    query.populate('match');
+    query.sort('-updatedAt');
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (bets, next) {
+    Team.populate(bets, {'path' : 'match.guest match.host'}, next);
+  }, function (bets, next) {
+    response.status(200);
+    response.send(bets);
+    next();
+  }], next);
 });
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = User.findOne();
-  if (id === 'me') {
-    request.user = request.session;
-    return next();
-  }
-  query.where('slug').equals(id);
-  return query.exec(function foundUser(error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', id);
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    if (id === 'me') {
+      query.where('_id').equals(request.session._id);
+    } else {
+      query.where('slug').equals(id);
     }
-    if (!user) {
-      return response.status(404).end();
-    }
+    query.exec(next);
+  }, function (user, next) {
     request.user = user;
-    return next();
-  });
+    next(!user ? new Error('not found') : null);
+  }], next);
 });
 
-router.param('id', auth.session());
-router.param('id', function findBet(request, response, next, id) {
+router.param('bet', auth.session());
+router.param('bet', function findBet(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Bet.findOne();
-  query.populate('user');
-  query.populate('match');
-  query.where('match').equals(request.match._id);
-  if (id === 'mine') {
-    query.where('user').equals(request.session._id);
-  } else {
-    query.where('slug').equals(id);
-  }
-  query.exec(function foundBet(error, bet) {
-    if (error) {
-      error = new VError(error, 'error finding bet: "$s"', id);
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = Bet.findOne();
+    query.populate('user');
+    query.populate('match');
+    query.where('match').equals(request.match._id);
+    if (id === 'mine') {
+      query.where('user').equals(request.session._id);
+    } else {
+      query.where('slug').equals(id);
     }
-    if (!bet) {
-      return response.status(404).end();
-    }
-    bet.match.populate('guest');
-    bet.match.populate('host');
-    return bet.match.populate(function (error) {
-      if (error) {
-        error = new VError(error, 'error populating bet: "$s"', bet._id);
-        return next(error);
-      }
-      request.bet = bet;
-      return next();
-    });
-  });
+    query.exec(next);
+  }, function (bet, next) {
+    Team.populate(bet, {'path' : 'match.guest match.host'}, next);
+  }, function (bet, next) {
+    request.bet = bet;
+    next(!bet ? new Error('not found') : null);
+  }], next);
 });
 
 router.param('match', function findMatch(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Match.findOne();
-  query.where('championship').equals(request.championship._id);
-  query.where('slug').equals(id);
-  return query.exec(function foundMatch(error, match) {
-    if (error) {
-      error = new VError(error, 'error finding match: "$s"', id);
-      return next(error);
-    }
-    if (!match) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Match.findOne();
+    query.where('championship').equals(request.championship._id);
+    query.where('slug').equals(id);
+    query.exec(next);
+  }, function (match, next) {
     request.match = match;
-    return next();
-  });
+    next(!match ? new Error('not found') : null);
+  }], next);
 });
 
 router.param('championship', function findChampionship(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Championship.findOne();
-  query.where('slug').equals(id);
-  return query.exec(function foundChampionship(error, championship) {
-    if (error) {
-      error = new VError(error, 'error finding championship: "$s"', id);
-      return next(error);
-    }
-    if (!championship) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Championship.findOne();
+    query.where('slug').equals(id);
+    query.exec(next);
+  }, function (championship, next) {
     request.championship = championship;
-    return next();
-  });
+    next(!championship ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

@@ -70,30 +70,37 @@ router
 .post(function createGroup(request, response, next) {
   'use strict';
 
-  var group, groupMember;
-  group = new Group({
-    'name'       : request.param('name'),
-    'slug'       : new Date().getTime().toString(36).substring(3),
-    'picture'    : request.param('picture'),
-    'freeToEdit' : request.param('freeToEdit', false),
-    'owner'      : request.session._id
-  });
-  groupMember = new GroupMember({
-    'slug'         : request.session.slug,
-    'user'         : request.session._id,
-    'group'        : group._id,
-    'initialFunds' : request.session.funds
-  });
-  return async.series([group.save.bind(group), groupMember.save.bind(groupMember), function (next) {
-    group.populate('owner');
-    group.populate(next);
-  }], function (error) {
-    if (error) {
-      error = new VError(error, 'error creating group: "$s"', group._id);
-      return next(error);
-    }
-    return response.status(201).send(group);
-  });
+  async.waterfall([function (next) {
+    var group;
+    group = new Group({
+      'name'       : request.param('name'),
+      'slug'       : new Date().getTime().toString(36).substring(3),
+      'picture'    : request.param('picture'),
+      'freeToEdit' : request.param('freeToEdit', false),
+      'owner'      : request.session._id
+    });
+    group.save(next);
+  }, function (group, _, next) {
+    async.waterfall([function (next) {
+      async.parallel([function (next) {
+        group.populate('owner');
+        group.populate(next);
+      }, function (next) {
+        var groupMember;
+        groupMember = new GroupMember({
+          'slug'         : request.session.slug,
+          'user'         : request.session._id,
+          'group'        : group._id,
+          'initialFunds' : request.session.funds
+        });
+        groupMember.save(next);
+      }], next);
+    }, function (_, next) {
+      response.status(201);
+      response.send(group);
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -149,47 +156,42 @@ router
 .get(function listGroup(request, response, next) {
   'use strict';
 
-  var pageSize, page, query, featured;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  featured = request.param('featured', false);
-  query = GroupMember.find();
-  if (featured) {
-    query = Group.find();
-    query.where('featured').equals(true);
-    query.populate('owner');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedGroup(error, groups) {
-      if (error) {
-        error = new VError(error, 'error finding groups');
-        return next(error);
-      }
-      return response.status(200).send(groups);
-    });
-  } else {
-    query = GroupMember.find();
-    query.where('user').equals(request.session._id);
-    query.populate('group');
-    query.skip(page);
-    query.limit(pageSize);
-    return query.exec(function listedGroup(error, groupMembers) {
-      if (error) {
-        error = new VError(error, 'error finding groups');
-        return next(error);
-      }
-      return async.map(groupMembers.filter(function (groupMember) {
-        return !!groupMember.group;
-      }), function populateGroupOwner(groupMember, next) {
-        var group;
-        group = groupMember.group;
-        group.populate('owner');
-        group.populate(next);
-      }, function populatedGroupOwner(error, groups) {
-        return response.status(200).send(groups);
-      });
-    });
-  }
+  async.waterfall([function (next) {
+    var pageSize, page, query, featured;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    featured = request.param('featured', false);
+    if (featured) {
+      query = Group.find();
+      query.where('featured').equals(true);
+      query.populate('owner');
+      query.skip(page);
+      query.limit(pageSize);
+      query.exec(next);
+    } else {
+      async.waterfall([function (next) {
+        query = GroupMember.find();
+        query.where('user').equals(request.session._id);
+        query.populate('group');
+        query.skip(page);
+        query.limit(pageSize);
+        query.exec(next);
+      }, function (members, next) {
+        async.map(members.filter(function (member) {
+          return !!member.group;
+        }), function (member, next) {
+          var group;
+          group = member.group;
+          group.populate('owner');
+          group.populate(next);
+        }, next)
+      }], next);
+    }
+  }, function (groups, next) {
+    response.status(200);
+    response.send(groups);
+    next()
+  }], next);
 });
 
 /**
@@ -237,14 +239,18 @@ router
  *     }
  */
 router
-.route('/groups/:id')
+.route('/groups/:group')
 .get(auth.session())
-.get(function getGroup(request, response) {
+.get(function getGroup(request, response, next) {
   'use strict';
 
-  var group;
-  group = request.group;
-  return response.status(200).send(group);
+  async.waterfall([function (next) {
+    var group;
+    group = request.group;
+    response.status(200);
+    response.send(group);
+    next();
+  }], next);
 });
 
 /**
@@ -302,33 +308,24 @@ router
  *     }
  */
 router
-.route('/groups/:id')
+.route('/groups/:group')
 .put(auth.session())
-.put(function validateUpdateGroup(request, response, next) {
-  'use strict';
-
-  var group;
-  group = request.group;
-  if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.put(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .put(function updateGroup(request, response, next) {
   'use strict';
 
-  var group;
-  group = request.group;
-  group.name = request.param('name');
-  group.picture = request.param('picture');
-  group.freeToEdit = request.session._id.toString() === group.owner._id.toString() ? request.param('freeToEdit', false) : group.freeToEdit;
-  return group.save(function updatedGroup(error) {
-    if (error) {
-      error = new VError(error, 'error updating group: "$s"', group._id);
-      return next(error);
-    }
-    return response.status(200).send(group);
-  });
+  async.waterfall([function (next) {
+    var group;
+    group = request.group;
+    group.name = request.param('name');
+    group.picture = request.param('picture');
+    group.freeToEdit = request.session._id.toString() === group.owner._id.toString() ? request.param('freeToEdit', false) : group.freeToEdit;
+    group.save(next);
+  }, function (group, _, next) {
+    response.status(200);
+    response.send(group);
+    next()
+  }], next);
 });
 
 /**
@@ -341,30 +338,21 @@ router
  * Removes group
  */
 router
-.route('/groups/:id')
+.route('/groups/:group')
 .delete(auth.session())
-.delete(function validateRemoveGroup(request, response, next) {
-  'use strict';
-
-  var group;
-  group = request.group;
-  if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.delete(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .delete(function removeGroup(request, response, next) {
   'use strict';
 
-  var group;
-  group = request.group;
-  return group.remove(function removedGroup(error) {
-    if (error) {
-      error = new VError(error, 'error removing group: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
+  async.waterfall([function (next) {
+    var group;
+    group = request.group;
+    group.remove(next);
+  }, function (_, next) {
+    response.status(204);
+    response.end();
+    next();
+  }], next);
 });
 
 /**
@@ -379,53 +367,46 @@ router
  * @apiParam {String} invite Invite
  */
 router
-.route('/groups/:id/invite')
+.route('/groups/:group/invite')
 .post(auth.session())
-.post(function validateInviteGroup(request, response, next) {
-  'use strict';
-
-  var group;
-  group = request.group;
-  if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.post(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .post(function inviteGroup(request, response, next) {
   'use strict';
 
-  var group;
-  group = request.group;
-  group.invites.push(request.param('invite', ''));
-  async.series([group.save.bind(group), function (next) {
-    mandrill.messages.send({
-      'message' : {
-        'html'       : [
-          '<p>Join my group on footbl!</p>',
-          '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
-          '<p>footbl | wanna bet?<p>',
-          request.session.name || request.session.username || 'A friend on footbl'
-        ].join('\n'),
-        'subject'    : 'wanna bet?',
-        'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
-        'from_email' : 'noreply@footbl.co',
-        'to'         : [
-          {
-            'email' : request.param('invite', ''),
-            'type'  : 'to'
-          }
-        ]
-      },
-      'async'   : true
-    });
-    next();
-  }], function (error) {
-    if (error) {
-      error = new VError(error, 'error inviting user');
-      return next(error);
-    }
-    return response.status(200).send(group);
-  });
+  async.waterfall([function (next) {
+    var group;
+    group = request.group;
+    group.invites.push(request.param('invite', ''));
+    group.save(next);
+  }, function (group, _, next) {
+    async.parallel([function (next) {
+      mandrill.messages.send({
+        'message' : {
+          'html'       : [
+            '<p>Join my group on footbl!</p>',
+            '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
+            '<p>footbl | wanna bet?<p>',
+            request.session.name || request.session.username || 'A friend on footbl'
+          ].join('\n'),
+          'subject'    : 'wanna bet?',
+          'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
+          'from_email' : 'noreply@footbl.co',
+          'to'         : [
+            {
+              'email' : request.param('invite', ''),
+              'type'  : 'to'
+            }
+          ]
+        },
+        'async'   : true
+      });
+      next();
+    }, function (next) {
+      response.status(200);
+      response.send(group);
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -438,62 +419,46 @@ router
  * Restarts all group members initial funds.
  */
 router
-.route('/groups/:id/restart')
+.route('/groups/:group/restart')
 .post(auth.session())
-.post(function validateRestartGroup(request, response, next) {
-  'use strict';
-
-  var group;
-  group = request.group;
-  if (!group.freeToEdit && request.session._id.toString() !== group.owner._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.post(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .post(function restartGroup(request, response, next) {
   'use strict';
 
-  var group, query;
-  group = request.group;
-  query = GroupMember.find();
-  query.where('group').equals(group._id);
-  query.populate('user');
-  query.exec(function (error, members) {
-    if (error) {
-      error = new VError(error, 'error finding groupMembers to restart group: "%s"', request.group._id);
-      return next(error);
-    }
-    return async.each(members, function (member, next) {
-      member.initialFunds = member.user.funds;
-      member.save(next);
-    }, function (error) {
-      if (error) {
-        error = new VError(error, 'error restarting group: "%s"', request.group._id);
-        return next(error);
-      }
-      return response.status(200).send(group);
-    });
-  });
+  async.waterfall([function (next) {
+    var group, query;
+    group = request.group;
+    query = GroupMember.find();
+    query.where('group').equals(group._id);
+    query.populate('user');
+    query.exec(next);
+  }, function (members, next) {
+    async.waterfall([function (next) {
+      async.each(members, function (member, next) {
+        member.initialFunds = member.user.funds;
+        member.save(next);
+      }, next);
+    }, function (next) {
+      response.status(200);
+      response.send(request.group);
+      next();
+    }], next);
+  }], next);
 });
 
-router.param('id', function findGroup(request, response, next, id) {
+router.param('group', function findGroup(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Group.findOne();
-  query.where('slug').equals(id.toLowerCase());
-  query.populate('owner');
-  return query.exec(function foundGroup(error, group) {
-    if (error) {
-      error = new VError(error, 'error finding group: "$s"', id);
-      return next(error);
-    }
-    if (!group) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Group.findOne();
+    query.where('slug').equals(id);
+    query.populate('owner');
+    query.exec(next);
+  }, function (group, next) {
     request.group = group;
-    return next();
-  });
+    next(!group ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

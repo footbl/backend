@@ -1,6 +1,5 @@
-var VError, router, nconf, slug, async, auth, User, Championship, Entry;
+var router, nconf, slug, async, auth, User, Championship, Entry;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
@@ -13,21 +12,20 @@ Entry = require('../models/entry');
 router.use(function findChampionship(request, response, next) {
   'use strict';
 
-  var query, championship;
+  var championship;
   championship = request.param('championship');
   if (!championship) {
     return next();
   }
-  query = Championship.findOne();
-  query.where('slug').equals(championship);
-  return query.exec(function (error, championship) {
-    if (error) {
-      error = new VError(error, 'error finding championship: "$s"', championship);
-      return next(error);
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Championship.findOne();
+    query.where('slug').equals(championship);
+    query.exec(next);
+  }, function (championship, next) {
     request.championship = championship;
-    return next();
-  });
+    next();
+  }], next);
 });
 
 /**
@@ -95,37 +93,28 @@ router.use(function findChampionship(request, response, next) {
 router
 .route('/users/:user/entries')
 .post(auth.session())
-.post(function validateUserToCreate(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (request.session._id.toString() !== user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.post(auth.checkMethod('user'))
 .post(function createEntry(request, response, next) {
   'use strict';
 
-  var entry;
-  entry = new Entry({
-    'slug'         : request.championship ? request.championship.slug : null,
-    'championship' : request.championship,
-    'user'         : request.session._id,
-    'order'        : request.param('order')
-  });
-  return async.series([entry.save.bind(entry), function (next) {
+  async.waterfall([function (next) {
+    var entry;
+    entry = new Entry({
+      'slug'         : request.championship ? request.championship.slug : null,
+      'championship' : request.championship,
+      'user'         : request.session._id,
+      'order'        : request.param('order')
+    });
+    entry.save(next);
+  }, function (entry, _, next) {
     entry.populate('championship');
     entry.populate('user');
     entry.populate(next);
-  }], function createdEntry(error) {
-    if (error) {
-      error = new VError(error, 'error creating entry');
-      return next(error);
-    }
-    return response.status(201).send(entry);
-  });
+  }, function (entry, next) {
+    response.status(201);
+    response  .send(entry);
+    next();
+  }], next);
 });
 
 /**
@@ -189,23 +178,23 @@ router
 .get(function listEntry(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = Entry.find();
-  query.where('user').equals(request.user._id);
-  query.populate('championship');
-  query.populate('user');
-  query.sort('order');
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedEntry(error, entries) {
-    if (error) {
-      error = new VError(error, 'error finding entries');
-      return next(error);
-    }
-    return response.status(200).send(entries);
-  });
+  async.waterfall([function (next) {
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Entry.find();
+    query.where('user').equals(request.user._id);
+    query.populate('championship');
+    query.populate('user');
+    query.sort('order');
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (entries, next) {
+    response.status(200);
+    response.send(entries);
+    next();
+  }], next);
 });
 
 /**
@@ -262,14 +251,18 @@ router
  *     }
  */
 router
-.route('/users/:user/entries/:id')
+.route('/users/:user/entries/:entry')
 .get(auth.session())
-.get(function getEntry(request, response) {
+.get(function getEntry(request, response, next) {
   'use strict';
 
-  var entry;
-  entry = request.entry;
-  return response.status(200).send(entry);
+  async.waterfall([function (next) {
+    var entry;
+    entry = request.entry;
+    response.status(200);
+    response.send(entry);
+    next();
+  }], next);
 });
 
 /**
@@ -335,37 +328,28 @@ router
  *     }
  */
 router
-.route('/users/:user/entries/:id')
+.route('/users/:user/entries/:entry')
 .put(auth.session())
-.put(function validateEntryToUpdate(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (request.session._id.toString() !== user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.put(auth.checkMethod('user'))
 .put(function updateEntry(request, response, next) {
   'use strict';
 
-  var entry;
-  entry = request.entry;
-  entry.championship = request.championship;
-  entry.slug = request.championship ? request.championship.slug : null;
-  entry.order = request.param('order');
-  return async.series([entry.save.bind(entry), function (next) {
+  async.waterfall([function (next) {
+    var entry;
+    entry = request.entry;
+    entry.championship = request.championship;
+    entry.slug = request.championship ? request.championship.slug : null;
+    entry.order = request.param('order');
+    entry.save(next);
+  }, function (entry, _, next) {
     entry.populate('championship');
     entry.populate('user');
     entry.populate(next);
-  }], function updatedEntry(error) {
-    if (error) {
-      error = new VError(error, 'error updating entry: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(200).send(entry);
-  });
+  }, function (entry, next) {
+    response.status(200);
+    response.send(entry);
+    next();
+  }], next);
 });
 
 /**
@@ -378,76 +362,57 @@ router
  * Removes entry from database
  */
 router
-.route('/users/:user/entries/:id')
+.route('/users/:user/entries/:entry')
 .delete(auth.session())
-.delete(function validateEntryToDelete(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (request.session._id.toString() !== user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.delete(auth.checkMethod('user'))
 .delete(function removeEntry(request, response, next) {
   'use strict';
 
-  var entry;
-  entry = request.entry;
-  return entry.remove(function removedEntry(error) {
-    if (error) {
-      error = new VError(error, 'error removing entry: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
+  async.waterfall([function (next) {
+    var entry;
+    entry = request.entry;
+    entry.remove(next);
+  }, function (_, next) {
+    response.status(204);
+    response.end();
+    next();
+  }], next);
 });
 
-router.param('id', function findEntry(request, response, next, id) {
+router.param('entry', function findEntry(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Entry.findOne();
-  query.where('user').equals(request.user._id);
-  query.where('slug').equals(id);
-  query.populate('championship');
-  query.populate('user');
-  query.exec(function foundEntry(error, entry) {
-    if (error) {
-      error = new VError(error, 'error finding entry: "$s"', id);
-      return next(error);
-    }
-    if (!entry) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Entry.findOne();
+    query.where('user').equals(request.user._id);
+    query.where('slug').equals(id);
+    query.populate('championship');
+    query.populate('user');
+    query.exec(next);
+  }, function (entry, next) {
     request.entry = entry;
-    return next();
-  });
+    next(!entry ? new Error('not found') : null);
+  }], next);
 });
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = User.findOne();
-  if (id === 'me') {
-    request.user = request.session;
-    return next();
-  }
-  query.where('slug').equals(id);
-  return query.exec(function foundUser(error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', id);
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    if (id === 'me') {
+      query.where('_id').equals(request.session._id);
+    } else {
+      query.where('slug').equals(id);
     }
-    if (!user) {
-      return response.status(404).end();
-    }
+    query.exec(next);
+  }, function (user, next) {
     request.user = user;
-    return next();
-  });
+    next(!user ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

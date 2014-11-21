@@ -1,6 +1,5 @@
-var VError, router, nconf, slug, async, auth, User, push, CreditRequest;
+var router, nconf, slug, async, auth, User, push, CreditRequest;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
@@ -84,63 +83,55 @@ CreditRequest = require('../models/credit-request');
 router
 .route('/users/:userOrFacebookId/credit-requests')
 .post(auth.session())
-.post(function createUserIfNotExistsToCreate(request, response, next) {
-  'use strict';
-
-  var query, id;
-  query = User.findOne();
-  id = request.params.userOrFacebookId;
-  query.or([
-    {'slug' : id},
-    {'facebookId' : id}
-  ]);
-  return query.exec(function (error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', id);
-      return next(error);
-    }
-    if (!user) {
-      request.user = new User({
-        'facebookId' : id,
-        'password'   : 'temp',
-        'active'     : false
-      });
-      return request.user.save(next);
-    }
-    request.user = user;
-    return next();
-  });
-})
 .post(function createCreditRequest(request, response, next) {
   'use strict';
 
-  var creditRequest, now;
-  now = new Date();
-  creditRequest = new CreditRequest({
-    'slug'         : request.params.userOrFacebookId + '-' + request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
-    'creditedUser' : request.session._id,
-    'chargedUser'  : request.user._id
-  });
-  return async.series([creditRequest.save.bind(creditRequest), function (next) {
-    creditRequest.populate('creditedUser');
-    creditRequest.populate('chargedUser');
-    creditRequest.populate(next);
-  }, function (next) {
-    push(nconf.get('ZEROPUSH_TOKEN'), {
-      'device' : creditRequest.chargedUser.apnsToken,
-      'sound'  : 'get_money.mp3',
-      'alert'  : {
-        'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
-        'loc-args' : [request.session.username || request.session.name]
-      }
-    }, next);
-  }], function createdCreditRequest(error) {
-    if (error) {
-      error = new VError(error, 'error creating creditRequest');
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    query.or([
+      {'slug' : request.params.userOrFacebookId},
+      {'facebookId' : request.params.userOrFacebookId}
+    ]);
+    query.exec(next);
+  }, function (user, next) {
+    if (!user) {
+      user = new User({'facebookId' : request.params.userOrFacebookId, 'password' : 'temp', 'active' : false});
+      user.save(next);
+    } else {
+      next(null, user, null);
     }
-    return response.status(201).send(creditRequest);
-  });
+  }, function (user, _, next) {
+    var creditRequest, now;
+    now = new Date();
+    creditRequest = new CreditRequest({
+      'slug'         : request.params.userOrFacebookId + '-' + request.session.slug + '-' + now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate(),
+      'creditedUser' : request.session._id,
+      'chargedUser'  : user._id
+    });
+    creditRequest.save(next);
+  }, function (creditRequest, _, next) {
+    async.waterfall([function (next) {
+      async.parallel([function (next) {
+        creditRequest.populate('creditedUser');
+        creditRequest.populate('chargedUser');
+        creditRequest.populate(next);
+      }, function (next) {
+        push(nconf.get('ZEROPUSH_TOKEN'), {
+          'device' : creditRequest.chargedUser.apnsToken,
+          'sound'  : 'get_money.mp3',
+          'alert'  : {
+            'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
+            'loc-args' : [request.session.username || request.session.name]
+          }
+        }, next);
+      }], next);
+    }, function (_, next) {
+      response.status(201);
+      response.send(creditRequest);
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -217,26 +208,26 @@ router
 .get(function listCreditRequest(request, response, next) {
   'use strict';
 
-  var unreadMessages, pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  unreadMessages = request.param('unreadMessages');
-  query = CreditRequest.find();
-  query.where('chargedUser').equals(request.user._id);
-  query.populate('creditedUser');
-  query.populate('chargedUser');
-  if (unreadMessages) {
-    query.where('seenBy').ne(request.session._id);
-  }
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedCreditRequest(error, creditRequests) {
-    if (error) {
-      error = new VError(error, 'error finding creditRequests');
-      return next(error);
+  async.waterfall([function (next) {
+    var unreadMessages, pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    unreadMessages = request.param('unreadMessages');
+    query = CreditRequest.find();
+    query.where('chargedUser').equals(request.user._id);
+    query.populate('creditedUser');
+    query.populate('chargedUser');
+    if (unreadMessages) {
+      query.where('seenBy').ne(request.session._id);
     }
-    return response.status(200).send(creditRequests);
-  });
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (creditRequests, next) {
+    response.status(200);
+    response.send(creditRequests);
+    next();
+  }], next);
 });
 
 /**
@@ -313,26 +304,26 @@ router
 .get(function listRequestedCredits(request, response, next) {
   'use strict';
 
-  var unreadMessages, pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  unreadMessages = request.param('unreadMessages');
-  query = CreditRequest.find();
-  query.where('creditedUser').equals(request.user._id);
-  query.populate('creditedUser');
-  query.populate('chargedUser');
-  if (unreadMessages) {
-    query.where('seenBy').ne(request.session._id);
-  }
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedRequestedCredits(error, creditRequests) {
-    if (error) {
-      error = new VError(error, 'error finding creditRequests');
-      return next(error);
+  async.waterfall([function (next) {
+    var unreadMessages, pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    unreadMessages = request.param('unreadMessages');
+    query = CreditRequest.find();
+    query.where('creditedUser').equals(request.user._id);
+    query.populate('creditedUser');
+    query.populate('chargedUser');
+    if (unreadMessages) {
+      query.where('seenBy').ne(request.session._id);
     }
-    return response.status(200).send(creditRequests);
-  });
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (creditRequests, next) {
+    response.status(200);
+    response.send(creditRequests);
+    next();
+  }], next);
 });
 
 /**
@@ -401,14 +392,18 @@ router
  *     }
  */
 router
-.route('/users/:user/credit-requests/:id')
+.route('/users/:user/credit-requests/:creditRequest')
 .get(auth.session())
-.get(function getCreditRequest(request, response) {
+.get(function getCreditRequest(request, response, next) {
   'use strict';
 
-  var creditRequest;
-  creditRequest = request.creditRequest;
-  return response.status(200).send(creditRequest);
+  async.waterfall([function (next) {
+    var creditRequest;
+    creditRequest = request.creditRequest;
+    response.status(200);
+    response.send(creditRequest);
+    next();
+  }], next);
 });
 
 /**
@@ -485,55 +480,52 @@ router
  *     }
  */
 router
-.route('/users/:user/credit-requests/:id/approve')
+.route('/users/:user/credit-requests/:creditRequest/approve')
 .put(auth.session())
-.put(function validateUserToApprove(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (request.session._id.toString() !== user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.put(auth.checkMethod('user'))
 .put(function approveCreditRequest(request, response, next) {
   'use strict';
 
-  var creditRequest;
-  creditRequest = request.creditRequest;
-  creditRequest.value = creditRequest.creditedUser.funds < 100 ? 100 - creditRequest.creditedUser.funds : 0;
-  creditRequest.payed = true;
-  return async.series([creditRequest.save.bind(creditRequest), function (next) {
-    var query;
-    query = CreditRequest.find();
-    query.where('creditedUser').equals(creditRequest.creditedUser._id);
-    query.where('payed').equals(false);
-    query.exec(function (error, creditRequests) {
-      async.each(creditRequests, function (creditRequest, next) {
-        creditRequest.remove(next);
-      }, next);
-    });
-  }, function (next) {
-    creditRequest.populate('creditedUser');
-    creditRequest.populate('chargedUser');
-    creditRequest.populate(next);
-  }, function (next) {
-    push(nconf.get('ZEROPUSH_TOKEN'), {
-      'device' : creditRequest.creditedUser.apnsToken,
-      'sound'  : 'get_money.mp3',
-      'alert'  : {
-        'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
-        'loc-args' : [request.session.username || request.session.name]
-      }
-    }, next);
-  }], function updatedCreditRequest(error) {
-    if (error) {
-      error = new VError(error, 'error updating creditRequest');
-      return next(error);
-    }
-    return response.status(200).send(creditRequest);
-  });
+  async.waterfall([function (next) {
+    var creditRequest;
+    creditRequest = request.creditRequest;
+    creditRequest.value = creditRequest.creditedUser.funds < 100 ? 100 - creditRequest.creditedUser.funds : 0;
+    creditRequest.payed = true;
+    creditRequest.save(next);
+  }, function (creditRequest, _, next) {
+    async.waterfall([function (next) {
+      async.parallel([function (next) {
+        push(nconf.get('ZEROPUSH_TOKEN'), {
+          'device' : creditRequest.creditedUser.apnsToken,
+          'sound'  : 'get_money.mp3',
+          'alert'  : {
+            'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
+            'loc-args' : [request.session.username || request.session.name]
+          }
+        }, next);
+      }, function (next) {
+        async.waterfall([function (next) {
+          var query;
+          query = CreditRequest.find();
+          query.where('creditedUser').equals(creditRequest.creditedUser._id);
+          query.where('payed').equals(false);
+          query.exec(next);
+        }, function (creditRequests, next) {
+          async.each(creditRequests, function (creditRequest, next) {
+            creditRequest.remove(next);
+          }, next);
+        }], next);
+      }, function (next) {
+        creditRequest.populate('creditedUser');
+        creditRequest.populate('chargedUser');
+        creditRequest.populate(next);
+      }], next);
+    }, function (_, next) {
+      response.status(200);
+      response.send(creditRequest);
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -602,21 +594,21 @@ router
  *     }
  */
 router
-.route('/users/:user/credit-requests/:id/mark-as-read')
+.route('/users/:user/credit-requests/:creditRequest/mark-as-read')
 .put(auth.session())
 .put(function markAsReadCreditRequest(request, response, next) {
   'use strict';
 
-  var creditRequest;
-  creditRequest = request.creditRequest;
-  creditRequest.seenBy.push(request.session._id);
-  return async.series([creditRequest.save.bind(creditRequest)], function markedAsReadCreditRequest(error) {
-    if (error) {
-      error = new VError(error, 'error updating creditRequest');
-      return next(error);
-    }
-    return response.status(200).send(creditRequest);
-  });
+  async.waterfall([function (next) {
+    var creditRequest;
+    creditRequest = request.creditRequest;
+    creditRequest.seenBy.push(request.session._id);
+    creditRequest.save(next);
+  }, function (creditRequest, _, next) {
+    response.status(200);
+    response.send(creditRequest);
+    next();
+  }], next);
 });
 
 /**
@@ -629,76 +621,57 @@ router
  * Removes creditRequest from database
  */
 router
-.route('/users/:user/credit-requests/:id')
+.route('/users/:user/credit-requests/:creditRequest')
 .delete(auth.session())
-.delete(function validateUserToDelete(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (request.session._id.toString() !== user._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.delete(auth.checkMethod('user'))
 .delete(function removeCreditRequest(request, response, next) {
   'use strict';
 
-  var creditRequest;
-  creditRequest = request.creditRequest;
-  return creditRequest.remove(function removedCreditRequest(error) {
-    if (error) {
-      error = new VError(error, 'error removing creditRequest: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
+  async.waterfall([function (next) {
+    var creditRequest;
+    creditRequest = request.creditRequest;
+    creditRequest.remove(next);
+  }, function (_, next) {
+    response.status(204);
+    response.end();
+    next();
+  }], next);
 });
 
-router.param('id', function findCreditRequest(request, response, next, id) {
+router.param('creditRequest', function findCreditRequest(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = CreditRequest.findOne();
-  query.where('chargedUser').equals(request.user._id);
-  query.where('slug').equals(id);
-  query.populate('creditedUser');
-  query.populate('chargedUser');
-  query.exec(function foundCreditRequest(error, creditRequest) {
-    if (error) {
-      error = new VError(error, 'error finding creditRequest: "$s"', id);
-      return next(error);
-    }
-    if (!creditRequest) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = CreditRequest.findOne();
+    query.where('chargedUser').equals(request.user._id);
+    query.where('slug').equals(id);
+    query.populate('creditedUser');
+    query.populate('chargedUser');
+    query.exec(next);
+  }, function (creditRequest, next) {
     request.creditRequest = creditRequest;
-    return next();
-  });
+    next(!creditRequest ? new Error('not found') : null);
+  }], next);
 });
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = User.findOne();
-  if (id === 'me') {
-    request.user = request.session;
-    return next();
-  }
-  query.where('slug').equals(id);
-  return query.exec(function foundUser(error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', id);
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    if (id === 'me') {
+      query.where('_id').equals(request.session._id);
+    } else {
+      query.where('slug').equals(id);
     }
-    if (!user) {
-      return response.status(404).end();
-    }
+    query.exec(next);
+  }, function (user, next) {
     request.user = user;
-    return next();
-  });
+    next(!user ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

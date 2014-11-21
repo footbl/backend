@@ -15,6 +15,7 @@ Match = require('../models/match');
 Bet = require('../models/bet');
 Entry = require('../models/entry');
 
+nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '111'});
 nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
 nock('https://api.zeropush.com').post('/register').times(Infinity).reply(200, {'message' : 'authenticated'});
 
@@ -102,11 +103,29 @@ describe('prize controller', function () {
     request.set('auth-timestamp', credentials.timestamp);
     request.set('auth-transactionId', credentials.transactionId);
     request.set('facebook-token', '1234');
+    request.expect(200);
     request.end(done);
   });
 
   describe('list', function () {
     it('should list', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/users/user/prizes');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.expect(200);
+      request.expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(1);
+      });
+      request.end(done);
+    });
+
+    it('should list searching by me', function (done) {
       var request, credentials;
       credentials = auth.credentials();
       request = supertest(app);

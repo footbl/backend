@@ -14,21 +14,20 @@ User = require('../models/user');
 router.use(function findGroupUser(request, response, next) {
   'use strict';
 
-  var query, user;
+  var user;
   user = request.param('user');
   if (!user) {
     return next();
   }
-  query = User.findOne();
-  query.where('slug').equals(user);
-  return query.exec(function (error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', user);
-      return next(error);
-    }
+  return async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    query.where('slug').equals(user);
+    query.exec(next);
+  }, function (user, next) {
     request.groupUser = user;
     return next();
-  });
+  }], next);
 });
 
 /**
@@ -84,44 +83,39 @@ router.use(function findGroupUser(request, response, next) {
 router
 .route('/groups/:group/members')
 .post(auth.session())
-.post(function (request, response, next) {
-  'use strict';
-
-  var group;
-  group = request.group;
-  if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.post(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .post(function createGroupMember(request, response, next) {
   'use strict';
 
-  var groupMember;
-  groupMember = new GroupMember({
-    'slug'         : request.groupUser ? request.groupUser.slug : null,
-    'group'        : request.group ? request.group._id : null,
-    'user'         : request.groupUser ? request.groupUser._id : null,
-    'initialFunds' : request.groupUser ? request.groupUser.funds : null
-  });
-  return async.series([groupMember.save.bind(groupMember), function (next) {
-    groupMember.populate('user');
-    groupMember.populate(next);
-  }, function (next) {
-    push(nconf.get('ZEROPUSH_TOKEN'), {
-      'device' : request.groupUser.apnsToken,
-      'alert'  : {
-        'loc-key'  : 'NOTIFICATION_GROUP_ADDED',
-        'loc-args' : [request.session.username || request.session.name]
-      }
-    }, next);
-  }], function createdGroupMember(error) {
-    if (error) {
-      error = new VError(error, 'error creating group member: "$s"', groupMember._id);
-      return next(error);
-    }
-    return response.status(201).send(groupMember);
-  });
+  async.waterfall([function (next) {
+    var groupMember;
+    groupMember = new GroupMember({
+      'slug'         : request.groupUser ? request.groupUser.slug : null,
+      'group'        : request.group ? request.group._id : null,
+      'user'         : request.groupUser ? request.groupUser._id : null,
+      'initialFunds' : request.groupUser ? request.groupUser.funds : null
+    });
+    groupMember.save(next);
+  }, function (member, _, next) {
+    async.waterfall([function (next) {
+      async.parallel([function (next) {
+        member.populate('user');
+        member.populate(next);
+      }, function (next) {
+        push(nconf.get('ZEROPUSH_TOKEN'), {
+          'device' : request.groupUser.apnsToken,
+          'alert'  : {
+            'loc-key'  : 'NOTIFICATION_GROUP_ADDED',
+            'loc-args' : [request.session.username || request.session.name]
+          }
+        }, next);
+      }], next);
+    }, function (_, next) {
+      response.status(201);
+      response.send(member);
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -174,22 +168,22 @@ router
 .get(function listGroupMember(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = GroupMember.find();
-  query.where('group').equals(request.group._id);
-  query.sort('ranking');
-  query.populate('user');
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedGroupMember(error, groupMembers) {
-    if (error) {
-      error = new VError(error, 'error finding groupMembers');
-      return next(error);
-    }
-    return response.status(200).send(groupMembers);
-  });
+  async.waterfall([function (next) {
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = GroupMember.find();
+    query.where('group').equals(request.group._id);
+    query.sort('ranking');
+    query.populate('user');
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (members, next) {
+    response.status(200);
+    response.send(members);
+    next();
+  }], next);
 });
 
 /**
@@ -235,14 +229,18 @@ router
  *     }
  */
 router
-.route('/groups/:group/members/:id')
+.route('/groups/:group/members/:member')
 .get(auth.session())
-.get(function getGroupMember(request, response) {
+.get(function getGroupMember(request, response, next) {
   'use strict';
 
-  var groupMember;
-  groupMember = request.groupMember;
-  return response.status(200).send(groupMember);
+  async.waterfall([function (next) {
+    var groupMember;
+    groupMember = request.groupMember;
+    response.status(200);
+    response.send(groupMember);
+    next();
+  }], next);
 });
 
 /**
@@ -255,70 +253,52 @@ router
  * Removes groupMember
  */
 router
-.route('/groups/:group/members/:id')
+.route('/groups/:group/members/:member')
 .delete(auth.session())
-.delete(function validateRemoveGroupMember(request, response, next) {
-  'use strict';
-
-  var group;
-  group = request.group;
-  if (!group.freeToEdit && request.session._id.toString() !== group.owner.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.delete(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .delete(function removeGroupMember(request, response, next) {
   'use strict';
 
-  var groupMember;
-  groupMember = request.groupMember;
-  return groupMember.remove(function removedGroupMember(error) {
-    if (error) {
-      error = new VError(error, 'error removing groupMember: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
-});
-
-router.param('id', function findGroupMember(request, response, next, id) {
-  'use strict';
-
-  var query;
-  query = GroupMember.findOne();
-  query.where('group').equals(request.group._id);
-  query.where('slug').equals(id);
-  query.populate('user');
-  query.exec(function foundGroupMember(error, groupMember) {
-    if (error) {
-      error = new VError(error, 'error finding groupMember: "$s"', id);
-      return next(error);
-    }
-    if (!groupMember) {
-      return response.status(404).end();
-    }
-    request.groupMember = groupMember;
-    return next();
-  });
+  async.waterfall([function (next) {
+    var groupMember;
+    groupMember = request.groupMember;
+    groupMember.remove(next);
+  }, function (_, next) {
+    response.status(204);
+    response.end();
+    next();
+  }], next);
 });
 
 router.param('group', function findGroup(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Group.findOne();
-  query.where('slug').equals(id);
-  return query.exec(function foundChampionship(error, group) {
-    if (error) {
-      error = new VError(error, 'error finding group: "$s"', id);
-      return next(error);
-    }
-    if (!group) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Group.findOne();
+    query.where('slug').equals(id);
+    query.populate('owner');
+    query.exec(next);
+  }, function (group, next) {
     request.group = group;
-    return next();
-  });
+    next(!group ? new Error('not found') : null);
+  }], next);
+});
+
+router.param('member', function findGroupMember(request, response, next, id) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    var query;
+    query = GroupMember.findOne();
+    query.where('group').equals(request.group._id);
+    query.where('slug').equals(id);
+    query.populate('user');
+    query.exec(next);
+  }, function (groupMember, next) {
+    request.groupMember = groupMember;
+    next(!groupMember ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

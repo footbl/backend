@@ -427,6 +427,20 @@ describe('user controller', function () {
       request.end(done);
     });
 
+    it('should filter local ranking', function (done) {
+      var request, credentials;
+      credentials = auth.credentials();
+      request = supertest(app);
+      request = request.get('/users');
+      request.set('auth-signature', credentials.signature);
+      request.set('auth-timestamp', credentials.timestamp);
+      request.set('auth-transactionId', credentials.transactionId);
+      request.set('auth-token', auth.token(user));
+      request.send({'localRanking' : true});
+      request.expect(200);
+      request.end(done);
+    });
+
     it('should return empty in second page', function (done) {
       var request, credentials;
       credentials = auth.credentials();

@@ -1,14 +1,11 @@
-var VError, router, nconf, slug, async, freegeoip, mandrill, crypto, auth, User, Prize;
+var router, nconf, slug, async, auth, crypto, User, Prize;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
-freegeoip = require('node-freegeoip');
-mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
-crypto = require('crypto');
 auth = require('auth');
+crypto = require('crypto');
 User = require('../models/user');
 Prize = require('../models/prize');
 
@@ -73,55 +70,44 @@ Prize = require('../models/prize');
 router
 .route('/users')
 .post(auth.facebook())
-.post(function detectUserCountry(request, response, next) {
-  'use strict';
-
-  var property;
-  property = 'country_name';
-  freegeoip.getLocation(request.ip, function detectedUserCountry(error, location) {
-    if (error) {
-      error = new VError(error, 'error finding user country');
-      return next(error);
-    }
-    request.country = location[property];
-    return next();
-  });
-})
 .post(function createUser(request, response, next) {
   'use strict';
 
-  var query;
-  query = User.findOne();
-  query.where('active').equals(false);
-  query.where('facebookId').equals(request.facebook);
-  return query.exec(function retrievedInactiveUserToCreate(error, user) {
-    if (error) {
-      error = new VError(error, 'error finding inactive user to create user');
-      return next(error);
-    }
-    if (!user) {
-      user = new User({});
-    }
+  async.waterfall([function (next) {
+    async.parallel([function (next) {
+      var freegeoip;
+      freegeoip = require('node-freegeoip');
+      freegeoip.getLocation(request.ip, next);
+    }, function (next) {
+      var query;
+      query = User.findOne();
+      query.where('active').equals(false);
+      query.where('facebookId').equals(request.facebook);
+      query.exec(next);
+    }], next);
+  }, function (data, next) {
+    var password, country, user;
+    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+    country = data[0]['country_name'];
+    user = data[1] || new User();
     user.slug = slug(request.param('username', 'me'));
     user.email = request.param('email');
     user.username = request.param('username');
     user.name = request.param('name');
     user.facebookId = request.facebook ? request.facebook : user.facebookId;
     user.about = request.param('about');
-    user.password = request.param('password') ? crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex') : null;
+    user.password = request.param('password') ? password : null;
     user.picture = request.param('picture');
     user.language = request.param('language');
     user.apnsToken = request.param('apnsToken');
-    user.country = request.country;
+    user.country = country;
     user.active = true;
-    return user.save(function createdUser(error) {
-      if (error) {
-        error = new VError(error, 'error activating user');
-        return next(error);
-      }
-      return response.status(201).send(user);
-    });
-  });
+    user.save(next);
+  }, function (user, _, next) {
+    response.status(201);
+    response.send(user);
+    next();
+  }], next);
 });
 
 /**
@@ -171,48 +157,48 @@ router
 .get(function listUser(request, response, next) {
   'use strict';
 
-  var pageSize, localRanking, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  localRanking = request.param('localRanking', false);
-  if (localRanking && request.session) {
-    page = (request.session.ranking || 0) - 14;
-    page = page < 0 ? 0 : page;
-  } else {
-    page = request.param('page', 0) * pageSize;
-  }
-  query = User.find();
-  query.sort('ranking');
-  query.skip(page);
-  query.limit(pageSize);
-  query.where('active').ne(false);
-  if (request.param('emails') && request.param('facebookIds')) {
-    query.where('email').or([
-      { 'email' : {'$in' : request.param('emails', [])} },
-      { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
-    ]);
-  } else if (request.param('emails')) {
-    query.where('email').in(request.param('emails', []));
-  } else if (request.param('facebookIds')) {
-    query.where('facebookId').in(request.param('facebookIds', []));
-  } else if (request.param('usernames')) {
-    query.where('username').in(request.param('usernames', []));
-  } else if (request.param('name')) {
-    query.where('name').equals(new RegExp(request.param('featured'), 'i'));
-  } else if (request.param('featured')) {
-    query.where('featured').equals(true);
-  } else {
-    query.or([
-      {'email' : {'$exists' : true}},
-      {'facebookId' : {'$exists' : true}}
-    ]);
-  }
-  return query.exec(function listedUser(error, users) {
-    if (error) {
-      error = new VError(error, 'error finding users');
-      return next(error);
+  async.waterfall([function (next) {
+    var pageSize, localRanking, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    localRanking = request.param('localRanking', false);
+    if (localRanking && request.session) {
+      page = (request.session.ranking || 0) - 14;
+      page = page < 0 ? 0 : page;
+    } else {
+      page = request.param('page', 0) * pageSize;
     }
-    return response.status(200).send(users);
-  });
+    query = User.find();
+    query.sort('ranking');
+    query.skip(page);
+    query.limit(pageSize);
+    query.where('active').ne(false);
+    if (request.param('emails') && request.param('facebookIds')) {
+      query.where('email').or([
+        { 'email' : {'$in' : request.param('emails', [])} },
+        { 'facebookId' : {'$in' : request.param('facebookIds', [])} }
+      ]);
+    } else if (request.param('emails')) {
+      query.where('email').in(request.param('emails', []));
+    } else if (request.param('facebookIds')) {
+      query.where('facebookId').in(request.param('facebookIds', []));
+    } else if (request.param('usernames')) {
+      query.where('username').in(request.param('usernames', []));
+    } else if (request.param('name')) {
+      query.where('name').equals(new RegExp(request.param('featured'), 'i'));
+    } else if (request.param('featured')) {
+      query.where('featured').equals(true);
+    } else {
+      query.or([
+        {'email' : {'$exists' : true}},
+        {'facebookId' : {'$exists' : true}}
+      ]);
+    }
+    query.exec(next);
+  }, function (users, next) {
+    response.status(200);
+    response.send(users);
+    next();
+  }], next);
 });
 
 /**
@@ -253,14 +239,18 @@ router
  *     }
  */
 router
-.route('/users/:id')
+.route('/users/:user')
 .get(auth.session())
-.get(function getUser(request, response) {
+.get(function getUser(request, response, next) {
   'use strict';
 
-  var user;
-  user = request.user;
-  return response.status(200).send(user);
+  async.waterfall([function (next) {
+    var user;
+    user = request.user;
+    response.status(200);
+    response.send(user);
+    next();
+  }], next);
 });
 
 /**
@@ -314,42 +304,33 @@ router
  *     }
  */
 router
-.route('/users/:id')
+.route('/users/:user')
 .put(auth.facebook())
 .put(auth.session())
-.put(function validateUpdateUser(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (user._id.toString() !== request.session._id.toString()) {
-    return response.status(405).end();
-  }
-  return next();
-})
+.put(auth.checkMethod('user'))
 .put(function updateUser(request, response, next) {
   'use strict';
 
-  var user, password;
-  password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
-  user = request.user;
-  user.slug = slug(request.param('username', 'me'));
-  user.email = request.param('email');
-  user.username = request.param('username');
-  user.name = request.param('name');
-  user.facebookId = request.facebook ? request.facebook : user.facebookId;
-  user.about = request.param('about');
-  user.password = request.param('password') ? password : user.password;
-  user.picture = request.param('picture');
-  user.language = request.param('language');
-  user.apnsToken = request.param('apnsToken');
-  return user.save(function updatedUser(error) {
-    if (error) {
-      error = new VError(error, 'error updating user');
-      return next(error);
-    }
-    return response.status(200).send(user);
-  });
+  async.waterfall([function (next) {
+    var user, password;
+    password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
+    user = request.user;
+    user.slug = slug(request.param('username', 'me'));
+    user.email = request.param('email');
+    user.username = request.param('username');
+    user.name = request.param('name');
+    user.facebookId = request.facebook ? request.facebook : user.facebookId;
+    user.about = request.param('about');
+    user.password = request.param('password') ? password : user.password;
+    user.picture = request.param('picture');
+    user.language = request.param('language');
+    user.apnsToken = request.param('apnsToken');
+    user.save(next);
+  }, function (user, _, next) {
+    response.status(200);
+    response.send(user);
+    next();
+  }], next);
 });
 
 /**
@@ -363,31 +344,22 @@ router
  * user will be reactivated.
  */
 router
-.route('/users/:id')
+.route('/users/:user')
 .delete(auth.session())
-.delete(function validateRemoveUser(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (user._id.toString() !== request.session._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.delete(auth.checkMethod('user'))
 .delete(function removeUser(request, response, next) {
   'use strict';
 
-  var user;
-  user = request.user;
-  user.active = false;
-  return user.save(function removedUser(error) {
-    if (error) {
-      error = new VError(error, 'error removing user: "$s"', request.params.id);
-      return next(error);
-    }
-    return response.status(204).end();
-  });
+  async.waterfall([function (next) {
+    var user;
+    user = request.user;
+    user.active = false;
+    user.save(next);
+  }, function (user, _, next) {
+    response.status(204);
+    response.end();
+    next();
+  }], next);
 });
 
 /**
@@ -434,39 +406,33 @@ router
     }
     query.exec(next);
   }, function (user, next) {
-    async.waterfall([function (next) {
-      var query, now, today, tomorrow;
-      now = new Date();
-      today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      query = Prize.findOne();
-      query.where('user').equals(user ? user._id : null);
-      query.where('createdAt').gte(today).lt(tomorrow);
-      query.exec(next);
-    }, function (prize, next) {
-      if (prize || !user || user.funds >= 100) {
-        return next();
-      }
-      prize = new Prize();
-      prize.slug = Date.now();
-      prize.user = user;
-      prize.value = 1;
-      prize.type = 'daily';
-      return prize.save(next);
-    }]);
-    next(null, user);
-  }], function (error, user) {
-    if (error) {
-      error = new VError(error, 'error signing up user');
-      return next(error);
-    }
-    if (!user) {
-      return response.status(403).end();
-    }
-    return response.status(200).send({
-      'token' : auth.token(user)
-    });
-  });
+    async.parallel([function (next) {
+      response.status(user ? 200 : 403);
+      response.send(user ? {'token' : auth.token(user)} : null);
+      next();
+    }, function (next) {
+      async.waterfall([function (next) {
+        var query, now, today, tomorrow;
+        now = new Date();
+        today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        query = Prize.findOne();
+        query.where('user').equals(user ? user._id : null);
+        query.where('createdAt').gte(today).lt(tomorrow);
+        query.exec(next);
+      }, function (prize, next) {
+        if (prize || !user || user.funds >= 100) {
+          return next();
+        }
+        prize = new Prize();
+        prize.slug = Date.now();
+        prize.user = user;
+        prize.value = 1;
+        prize.type = 'daily';
+        return prize.save(next);
+      }], next);
+    }], next);
+  }], next);
 });
 
 /**
@@ -506,31 +472,22 @@ router
  *     }
  */
 router
-.route('/users/:id/recharge')
+.route('/users/:user/recharge')
 .post(auth.session())
-.post(function validateRechargeUser(request, response, next) {
-  'use strict';
-
-  var user;
-  user = request.user;
-  if (user._id.toString() !== request.session._id.toString()) {
-    return response.status(405).end()
-  }
-  return next();
-})
+.post(auth.checkMethod('user'))
 .post(function createUser(request, response, next) {
   'use strict';
 
-  var user;
-  user = request.user;
-  user.lastRecharge = new Date();
-  return user.save(function (error) {
-    if (error) {
-      error = new VError(error, 'error recharging user: "$s"', user._id);
-      return next(error);
-    }
-    return response.status(200).send(user);
-  });
+  async.waterfall([function (next) {
+    var user;
+    user = request.user;
+    user.lastRecharge = new Date();
+    user.save(next);
+  }, function (user, _, next) {
+    response.status(200);
+    response.send(user);
+    next();
+  }], next);
 });
 
 /**
@@ -550,63 +507,61 @@ router
 .get(function forgotPassword(request, response, next) {
   'use strict';
 
-  var query, email;
-  email = request.param('email');
-  query = User.findOne();
-  query.where('email').equals(email);
-  return query.exec(function (error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user');
-      return next(error);
-    }
+  async.waterfall([function (next) {
+    var query, email;
+    email = request.param('email');
+    query = User.findOne();
+    query.where('email').equals(email);
+    query.exec(next);
+  }, function (user, next) {
+    var mandrill;
+    mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
     if (!user) {
-      return response.status(404).end();
+      response.status(404);
+    } else {
+      mandrill.messages.send({
+        'message' : {
+          'html'       : [
+            '<p>Forgot password</p>',
+            '<p>to change your password <a href="footbl://forgot-password?token=' + auth.token(user) + '">click here.</a><p>',
+            '<p>footbl | wanna bet?<p>'
+          ].join('\n'),
+          'subject'    : 'footbl - password recovery',
+          'from_name'  : 'footbl',
+          'from_email' : 'noreply@footbl.co',
+          'to'         : [
+            {
+              'email' : request.param('email', ''),
+              'type'  : 'to'
+            }
+          ]
+        },
+        'async'   : true
+      });
+      response.status(200);
     }
-    mandrill.messages.send({
-      'message' : {
-        'html'       : [
-          '<p>Forgot password</p>',
-          '<p>to change your password <a href="footbl://forgot-password?token=' + auth.token(user) + '">click here.</a><p>',
-          '<p>footbl | wanna bet?<p>'
-        ].join('\n'),
-        'subject'    : 'footbl - password recovery',
-        'from_name'  : 'footbl',
-        'from_email' : 'noreply@footbl.co',
-        'to'         : [
-          {
-            'email' : request.param('email', ''),
-            'type'  : 'to'
-          }
-        ]
-      },
-      'async'   : true
-    });
-    return response.status(200).send();
-  });
+    response.end();
+    next();
+  }], next);
 });
 
-router.param('id', auth.session());
-router.param('id', function findUser(request, response, next, id) {
+router.param('user', auth.session());
+router.param('user', function findUser(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = User.findOne();
-  if (id === 'me') {
-    request.user = request.session;
-    return next();
-  }
-  query.where('slug').equals(id);
-  return query.exec(function foundUser(error, user) {
-    if (error) {
-      error = new VError(error, 'error finding user: "$s"', id);
-      return next(error);
+  async.waterfall([function (next) {
+    var query;
+    query = User.findOne();
+    if (id === 'me') {
+      query.where('_id').equals(request.session._id);
+    } else {
+      query.where('slug').equals(id);
     }
-    if (!user) {
-      return response.status(404).end();
-    }
+    query.exec(next);
+  }, function (user, next) {
     request.user = user;
-    return next();
-  });
+    next(!user ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

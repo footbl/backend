@@ -16,7 +16,7 @@ Match = require('../models/match');
 nock('https://api.zeropush.com').get('/verify_credentials?auth_token=undefined').times(Infinity).reply(200, {'message' : 'authenticated'});
 nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
 
-describe('group controller', function () {
+describe('group member controller', function () {
   'use strict';
 
   before(User.remove.bind(User));

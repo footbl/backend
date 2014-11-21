@@ -1,6 +1,5 @@
-var VError, router, nconf, slug, async, auth, Championship, Match;
+var router, nconf, slug, async, auth, Championship, Match;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
@@ -41,19 +40,19 @@ router
 .get(function listChampionship(request, response, next) {
   'use strict';
 
-  var pageSize, page, query;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = Championship.find();
-  query.skip(page);
-  query.limit(pageSize);
-  return query.exec(function listedChampionship(error, championships) {
-    if (error) {
-      error = new VError(error, 'error finding championships');
-      return next(error);
-    }
-    return response.status(200).send(championships);
-  });
+  async.waterfall([function (next) {
+    var pageSize, page, query;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Championship.find();
+    query.skip(page);
+    query.limit(pageSize);
+    query.exec(next);
+  }, function (championships, next) {
+    response.status(200);
+    response.send(championships);
+    next();
+  }], next);
 });
 
 /**
@@ -83,12 +82,16 @@ router
 router
 .route('/championships/:championship')
 .get(auth.session())
-.get(function getChampionship(request, response) {
+.get(function getChampionship(request, response, next) {
   'use strict';
 
-  var championship;
-  championship = request.championship;
-  return response.status(200).send(championship);
+  async.waterfall([function (next) {
+    var championship;
+    championship = request.championship;
+    response.status(200);
+    response.send(championship);
+    next();
+  }], next);
 });
 
 /**
@@ -146,35 +149,33 @@ router
 .get(function listMatch(request, response, next) {
   'use strict';
 
-  var pageSize, page, query, championship;
-  championship = request.championship;
-  pageSize = nconf.get('PAGE_SIZE');
-  page = request.param('page', 0) * pageSize;
-  query = Match.find();
-  query.where('championship').equals(championship._id);
-  query.or([
-    {'round' : {'$gte' : (championship.currentRound || 1) - 3}},
-    {'finished' : false}
-  ]);
-  query.skip(page);
-  query.populate('guest');
-  query.populate('host');
-  query.limit(pageSize);
-  return query.exec(function listedMatch(error, matches) {
-    if (error) {
-      error = new VError(error, 'error finding matches');
-      return next(error);
-    }
-    return async.each(matches, function (match, next) {
-      match.findBet(request.session._id, next);
-    }, function (error) {
-      if (error) {
-        error = new VError(error, 'error populating matches bets');
-        return next(error);
-      }
-      return response.status(200).send(matches);
-    });
-  });
+  async.waterfall([function (next) {
+    var pageSize, page, query, championship;
+    championship = request.championship;
+    pageSize = nconf.get('PAGE_SIZE');
+    page = request.param('page', 0) * pageSize;
+    query = Match.find();
+    query.where('championship').equals(championship._id);
+    query.or([
+      {'round' : {'$gte' : (championship.currentRound || 1) - 3}},
+      {'finished' : false}
+    ]);
+    query.skip(page);
+    query.populate('guest');
+    query.populate('host');
+    query.limit(pageSize);
+    query.exec(next)
+  }, function (matches, next) {
+    async.series([function (next) {
+      return async.each(matches, function (match, next) {
+        match.findBet(request.session._id, next);
+      }, next);
+    }, function (next) {
+      response.status(200);
+      response.send(matches);
+      next();
+    }], next);
+  }], next);
 });
 
 /**
@@ -230,57 +231,48 @@ router
 .get(function getMatch(request, response, next) {
   'use strict';
 
-  var match;
-  match = request.match;
-  match.findBet(request.session._id, function (error) {
-    if (error) {
-      error = new VError(error, 'error populating matche bet');
-      return next(error);
-    }
-    return response.status(200).send(match);
-  });
+  async.waterfall([function (next) {
+    var match;
+    match = request.match;
+    match.findBet(request.session._id, next);
+  }, function (next) {
+    var match;
+    match = request.match;
+    response.status(200);
+    response.send(match);
+    next();
+  }], next);
 });
 
 router.param('match', function findMatch(request, response, next, id) {
   'use strict';
 
-  var query, championship;
-  championship = request.championship;
-  query = Match.findOne();
-  query.where('slug').equals(id);
-  query.where('championship').equals(championship._id);
-  query.populate('guest');
-  query.populate('host');
-  return query.exec(function foundMatch(error, match) {
-    if (error) {
-      error = new VError(error, 'error finding match: "$s"', id);
-      return next(error);
-    }
-    if (!match) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Match.findOne();
+    query.where('championship').equals(request.championship._id);
+    query.where('slug').equals(id);
+    query.populate('guest');
+    query.populate('host');
+    query.exec(next);
+  }, function (match, next) {
     request.match = match;
-    return next();
-  });
+    next(!match ? new Error('not found') : null);
+  }], next);
 });
 
 router.param('championship', function findChampionship(request, response, next, id) {
   'use strict';
 
-  var query;
-  query = Championship.findOne();
-  query.where('slug').equals(id);
-  return query.exec(function foundChampionship(error, championship) {
-    if (error) {
-      error = new VError(error, 'error finding championship: "$s"', id);
-      return next(error);
-    }
-    if (!championship) {
-      return response.status(404).end();
-    }
+  async.waterfall([function (next) {
+    var query;
+    query = Championship.findOne();
+    query.where('slug').equals(id);
+    query.exec(next);
+  }, function (championship, next) {
     request.championship = championship;
-    return next();
-  });
+    next(!championship ? new Error('not found') : null);
+  }], next);
 });
 
 module.exports = router;

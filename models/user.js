@@ -148,17 +148,16 @@ schema.pre('save', function insertUserIntoInvitedGroups(next) {
     return next();
   }
 
-  var Group, GroupMember, query;
+  var Group, GroupMember;
   Group = require('./group');
   GroupMember = require('./group-member');
-  query = Group.find();
-  query.where('invites').equals(this.facebookId ? this.facebookId : this.email);
-  return query.exec(function (error, groups) {
-    if (error) {
-      error = new VError(error, 'error finding user "%s" invited groups.', this._id);
-      return next(error);
-    }
-    return async.each(groups, function (group, next) {
+  return async.waterfall([function (next) {
+    var query;
+    query = Group.find();
+    query.where('invites').equals(this.facebookId ? this.facebookId : this.email);
+    query.exec(next);
+  }.bind(this), function (groups, next) {
+    async.each(groups, function (group, next) {
       var groupMember;
       groupMember = new GroupMember({
         'user'  : this._id,
@@ -166,7 +165,7 @@ schema.pre('save', function insertUserIntoInvitedGroups(next) {
       });
       groupMember.save(next);
     }.bind(this), next);
-  }.bind(this));
+  }.bind(this)], next);
 });
 
 schema.pre('save', function setUserDefaultEntry(next) {
