@@ -154,6 +154,7 @@ router
  */
 router
 .route('/users')
+.get(auth.populateSession())
 .get(function listUser(request, response, next) {
   'use strict';
 

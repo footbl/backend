@@ -256,6 +256,8 @@ describe('user controller', function () {
   });
 
   describe('list', function () {
+    var user;
+
     before(User.remove.bind(User));
     before(Entry.remove.bind(Entry));
 
@@ -314,9 +316,8 @@ describe('user controller', function () {
     });
 
     before(function (done) {
-      var featured;
-      featured = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user', 'featured' : true});
-      featured.save(done);
+      user = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'user', 'featured' : true});
+      user.save(done);
     });
 
     it('should filter by featured', function (done) {
