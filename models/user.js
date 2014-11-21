@@ -1,6 +1,5 @@
-var VError, mongoose, jsonSelect, nconf, async, Schema, schema;
+var mongoose, jsonSelect, nconf, async, Schema, schema;
 
-VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');

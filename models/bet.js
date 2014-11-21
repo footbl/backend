@@ -1,6 +1,5 @@
-var VError, mongoose, jsonSelect, nconf, async, Schema, schema;
+var mongoose, jsonSelect, nconf, async, Schema, schema;
 
-VError = require('verror');
 mongoose = require('mongoose');
 jsonSelect = require('mongoose-json-select');
 nconf = require('nconf');
@@ -98,7 +97,7 @@ schema.path('bid').validate(function validateSufficientFunds(value, next) {
     var funds;
     funds = this.user.funds;
     funds += oldBid ? oldBid.bind : 0;
-    next(value > funds ? new VError('insufficient funds') : null);
+    next(value > funds ? 'insufficient funds' : null);
   }.bind(this)], function (error) {
     next(!error);
   }.bind(this));

@@ -1,7 +1,6 @@
 'use strict';
-var VError, mongoose, nconf, async, Match, Championship, User, now, today, tomorrow;
+var mongoose, nconf, async, Match, Championship, User, now, today, tomorrow;
 
-VError = require('verror');
 mongoose = require('mongoose');
 nconf = require('nconf');
 async = require('async');

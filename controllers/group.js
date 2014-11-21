@@ -1,6 +1,5 @@
-var VError, router, nconf, slug, async, mandrill, auth, Group, GroupMember;
+var router, nconf, slug, async, mandrill, auth, Group, GroupMember;
 
-VError = require('verror');
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
