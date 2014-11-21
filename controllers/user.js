@@ -184,7 +184,7 @@ router
     } else if (request.param('usernames')) {
       query.where('username').in(request.param('usernames', []));
     } else if (request.param('name')) {
-      query.where('name').equals(new RegExp(request.param('featured'), 'i'));
+      query.where('name').equals(new RegExp(request.param('name'), 'i'));
     } else if (request.param('featured')) {
       query.where('featured').equals(true);
     } else {
