@@ -26,6 +26,7 @@
   "dependencies": {
     "apidoc": "^0.7.2",
     "async": "^0.7.0",
+    "auth": "footbl/auth.git",
     "body-parser": "1.0.x",
     "cluster-start": "^0.1.4",
     "express": "^4.1.x",
