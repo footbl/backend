@@ -94,7 +94,7 @@ router
               'device' : member.user.apnsToken,
               'alert'  : {
                 'loc-key'  : 'NOTIFICATION_GROUP_MESSAGE',
-                'loc-args' : [request.session.username]
+                'loc-args' : [request.session.username, request.group.slug]
               }
             }, next);
           }, next);
