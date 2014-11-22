@@ -20,6 +20,7 @@ GroupMember = require('../models/group-member');
  * Creates a new message.
  *
  * @apiParam {String} message Message text
+ * @apiParam {String} [type] Message type
  *
  * @apiErrorExample
  *     HTTP/1.1 400 Bad Request
@@ -54,6 +55,7 @@ GroupMember = require('../models/group-member');
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "message": "fala galera!",
+ *       "type": "text",
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -70,7 +72,8 @@ router
       'slug'    : request.session.slug + '-' + Date.now(),
       'group'   : request.group ? request.group._id : null,
       'user'    : request.session._id,
-      'message' : request.param('message')
+      'message' : request.param('message'),
+      'type'    : request.param('type')
     });
     message.save(next);
   }, function (message, _, next) {
@@ -144,6 +147,7 @@ router
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "message": "fala galera!",
+ *       "type": "text",
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }]
@@ -212,6 +216,7 @@ router
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "message": "fala galera!",
+ *       "type": "text",
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -271,6 +276,7 @@ router
  *         "createdAt": "2014-07-01T12:22:25.058Z",
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
+ *       "type": "text",
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }
@@ -336,6 +342,7 @@ router
  *         "updatedAt": "2014-07-01T12:22:25.058Z"
  *       },
  *       "message": "fala galera!",
+ *       "type": "text",
  *       "createdAt": "2014-07-01T12:22:25.058Z",
  *       "updatedAt": "2014-07-01T12:22:25.058Z"
  *     }

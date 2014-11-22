@@ -24,6 +24,9 @@ schema = new Schema({
     'type'     : String,
     'required' : true
   },
+  'type'      : {
+    'type' : String
+  },
   'seenBy'    : [
     {
       'type' : Schema.Types.ObjectId,
