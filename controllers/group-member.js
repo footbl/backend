@@ -243,6 +243,69 @@ router
 });
 
 /**
+ * @api {put} /groups/:group/members/:id Updates groupMember info
+ * @apiName updateGroupMember
+ * @apiVersion 2.0.1
+ * @apiGroup groupMember
+ * @apiPermission user
+ * @apiDescription
+ * Updates groupMember
+ *
+ * @apiParam {Boolean} [notifications] GroupMember notifications
+ *
+ * @apiSuccessExample
+ *     HTTP/1.1 201 Created
+ *     {
+ *       "slug": "vandoren",
+ *       "user": {
+ *         "slug": "vandoren",
+ *         "email": "vandoren@vandoren.com",
+ *         "username": "vandoren",
+ *         "name": "Van Doren",
+ *         "about": "footbl fan",
+ *         "verified": false,
+ *         "featured": false,
+ *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *         "ranking": "2",
+ *         "previousRanking": "1",
+ *         "history": [{
+ *           "date": "2014-07-01T12:22:25.058Z",
+ *           "funds": 100
+ *         },{
+ *           "date": "2014-07-03T12:22:25.058Z",
+ *           "funds": 120
+ *         }],
+ *         "funds": 100,
+ *         "stake": 0,
+ *         "createdAt": "2014-07-01T12:22:25.058Z",
+ *         "updatedAt": "2014-07-01T12:22:25.058Z"
+ *       },
+ *       "ranking": 1,
+ *       "previousRanking": 1,
+ *       "createdAt": "2014-07-01T12:22:25.058Z",
+ *       "updatedAt": "2014-07-01T12:22:25.058Z"
+ *     }
+ */
+router
+.route('/groups/:group/members/:member')
+.put(auth.session())
+.put(auth.checkMethod('groupMember', 'user'))
+.put(function updateGroupMember(request, response, next) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    var groupMember;
+    groupMember = request.groupMember;
+    groupMember.notifications = request.param('notifications');
+    groupMember.save(next);
+  }, function (member, _, next) {
+    response.status(200);
+    response.send(member);
+    next();
+  }], next);
+});
+
+/**
  * @api {delete} /groups/:group/members/:id Removes groupMember
  * @apiName removeGroupMember
  * @apiVersion 2.0.1

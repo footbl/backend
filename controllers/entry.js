@@ -274,14 +274,7 @@ router
  * @apiDescription
  * Updates a entry in database.
  *
- * @apiParam {String} championship Entry championship
  * @apiParam {Number} [order] Entry order
- *
- * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "championship": "required"
- *     }
  *
  * @apiSuccessExample
  *     HTTP/1.1 200 Ok
@@ -337,8 +330,6 @@ router
   async.waterfall([function (next) {
     var entry;
     entry = request.entry;
-    entry.championship = request.championship;
-    entry.slug = request.championship ? request.championship.slug : null;
     entry.order = request.param('order');
     entry.save(next);
   }, function (entry, _, next) {

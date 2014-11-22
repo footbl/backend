@@ -86,6 +86,7 @@ router
           var query;
           query = GroupMember.find();
           query.where('group').equals(request.group._id);
+          query.where('notifications').ne(false);
           query.populate('user');
           query.exec(next);
         }, function (members, next) {

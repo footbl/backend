@@ -33,6 +33,10 @@ schema = new Schema({
     'required' : true,
     'default'  : Infinity
   },
+  'notifications'   : {
+    'type'    : Boolean,
+    'default' : true
+  },
   'createdAt'       : {
     'type'    : Date,
     'default' : Date.now
@@ -63,6 +67,7 @@ schema.plugin(jsonSelect, {
   'ranking'         : 1,
   'previousRanking' : 1,
   'slug'            : 1,
+  'notifications'   : 1,
   'createdAt'       : 1,
   'updatedAt'       : 1
 });

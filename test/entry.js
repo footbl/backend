@@ -398,20 +398,6 @@ describe('entry controller', function () {
       request.end(done);
     });
 
-    it('should raise error without championship', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.put('/users/user/entries/brasileirao-brasil-2014');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(user));
-      request.send({'order' : 1});
-      request.expect(400);
-      request.end(done);
-    });
-
     it('should update', function (done) {
       var request, credentials;
       credentials = auth.credentials();
