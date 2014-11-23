@@ -13,52 +13,36 @@ GroupMember = require('../models/group-member');
 /**
  * @api {post} /groups/:group/messages Creates a new message.
  * @apiName createMessage
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup message
  * @apiPermission user
- * @apiDescription
- * Creates a new message.
  *
- * @apiParam {String} message Message text
- * @apiParam {String} [type] Message type
+ * @apiParam {String} message Message text.
+ * @apiParam {String} [type] Message type.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "message": "required"
- *     }
+ * HTTP/1.1 400 Bad Request {
+ *   "message": "required"
+ * }
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "message": "fala galera!",
- *       "type": "text",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created {
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "message": "fala galera!",
+ *  "type": "text",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/messages')
@@ -110,48 +94,33 @@ router
 });
 
 /**
- * @api {get} /groups/:group/messages List all messages
+ * @api {get} /groups/:group/messages List all messages.
  * @apiName listMessage
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup message
  * @apiPermission user
- * @apiDescription
- * List all messages.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiParam {Boolean} [unreadMessages] Only displays unread messages.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "message": "fala galera!",
- *       "type": "text",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok [{
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "message": "fala galera!",
+ *  "type": "text",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/groups/:group/messages')
@@ -182,45 +151,30 @@ router
 });
 
 /**
- * @api {get} /groups/:group/messages/:id Get message info in database
+ * @api {get} /groups/:group/messages/:message Get message.
  * @apiName getMessage
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup message
  * @apiPermission user
- * @apiDescription
- * Get message info in database.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "message": "fala galera!",
- *       "type": "text",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok {
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "message": "fala galera!",
+ *  "type": "text",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/messages/:message')
@@ -238,49 +192,33 @@ router
 });
 
 /**
- * @api {get} /groups/:group/messages/all/mark-as-read Mark as read all group messages in database
+ * @api {put} /groups/:group/messages/all/mark-as-read Mark as read all group messages.
  * @apiName markAllAsReadMessage
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup message
  * @apiPermission user
- * @apiDescription
- * Mark as read all group messages in database.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "name": "College Buddies",
- *       "slug": "abcde",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "freeToEdit": false,
- *       "featured": false,
- *       "owner": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "type": "text",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok {
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/messages/all/mark-as-read')
@@ -308,45 +246,30 @@ router
 });
 
 /**
- * @api {get} /groups/:group/messages/:id/mark-as-read Mark as read message info in database
+ * @api {put} /groups/:group/messages/:message/mark-as-read Mark as read message.
  * @apiName markAsReadMessage
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup message
  * @apiPermission user
- * @apiDescription
- * Mark as read message info in database.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "message": "fala galera!",
- *       "type": "text",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok {
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "message": "fala galera!",
+ *  "type": "text",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/messages/:message/mark-as-read')

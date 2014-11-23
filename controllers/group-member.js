@@ -32,52 +32,46 @@ router.use(function findGroupUser(request, response, next) {
 /**
  * @api {post} /groups/:group/members Creates a new groupMember.
  * @apiName createGroupMember
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup groupMember
  * @apiPermission user
- * @apiDescription
- * Creates a new groupMember.
  *
- * @apiParam {String} user GroupMember user
+ * @apiParam {String} user GroupMember user slug.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "user": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "user": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 409 Conflict
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "ranking": 1,
- *       "previousRanking": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "ranking": 1,
+ *  "previousRanking": 1,
+ *  "initialFunds": 100,
+ *  "notifications": true
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/members')
@@ -118,48 +112,36 @@ router
 });
 
 /**
- * @api {get} /groups/:group/members List all groupMembers
+ * @api {get} /groups/:group/members List all groupMembers.
  * @apiName listGroupMember
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup groupMember
  * @apiPermission user
- * @apiDescription
- * List all groupMembers.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "ranking": 1,
- *       "previousRanking": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "ranking": 1,
+ *  "previousRanking": 1,
+ *  "initialFunds": 100,
+ *  "notifications": true
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/groups/:group/members')
@@ -186,46 +168,34 @@ router
 });
 
 /**
- * @api {get} /groups/:group/members/:id Get groupMember info
+ * @api {get} /groups/:group/members/:member Get groupMember.
  * @apiName getGroupMember
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup groupMember
  * @apiPermission user
- * @apiDescription
- * Get groupMember info.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "ranking": 1,
- *       "previousRanking": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "ranking": 1,
+ *  "previousRanking": 1,
+ *  "initialFunds": 100,
+ *  "notifications": true
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/members/:member')
@@ -243,48 +213,39 @@ router
 });
 
 /**
- * @api {put} /groups/:group/members/:id Updates groupMember info
+ * @api {put} /groups/:group/members/:member Updates groupMember.
  * @apiName updateGroupMember
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup groupMember
  * @apiPermission user
- * @apiDescription
- * Updates groupMember
  *
- * @apiParam {Boolean} [notifications] GroupMember notifications
+ * @apiParam {Boolean} [notifications] GroupMember notifications.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "ranking": 1,
- *       "previousRanking": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "ranking": 1,
+ *  "previousRanking": 1,
+ *  "initialFunds": 100,
+ *  "notifications": true
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/members/:member')
@@ -306,13 +267,17 @@ router
 });
 
 /**
- * @api {delete} /groups/:group/members/:id Removes groupMember
+ * @api {delete} /groups/:group/members/:member Removes groupMember.
  * @apiName removeGroupMember
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup groupMember
  * @apiPermission user
- * @apiDescription
- * Removes groupMember
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 204 Empty
  */
 router
 .route('/groups/:group/members/:member')

@@ -1,10 +1,11 @@
-var router, nconf, slug, async, auth, User, Featured;
+var router, nconf, slug, async, auth, push, User, Featured;
 
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
+push = require('push');
 User = require('../models/user');
 Featured = require('../models/featured');
 
@@ -30,73 +31,53 @@ router.use(function findFeaturedUser(request, response, next) {
 /**
  * @api {post} /users/:user/featured Creates a new featured.
  * @apiName createFeatured
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup featured
  * @apiPermission user
- * @apiDescription
- * Creates a new featured.
  *
- * @apiParam {String} featured Featured user
+ * @apiParam {String} featured Featured user slug.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "featured": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "featured": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 409 Conflict
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "vandoren",
- *       "featured": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "featured": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/featured')
@@ -125,69 +106,43 @@ router
 });
 
 /**
- * @api {get} /users/:user/featured List all featured
+ * @api {get} /users/:user/featured List all user featured.
  * @apiName listFeatured
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup featured
  * @apiPermission user
- * @apiDescription
- * List all featured.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "vandoren",
- *       "featured": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "vandoren",
+ *  "featured": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/users/:user/featured')
@@ -214,69 +169,43 @@ router
 });
 
 /**
- * @api {get} /users/:user/fans List all user fans
+ * @api {get} /users/:user/fans List all user fans.
  * @apiName listFans
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup featured
  * @apiPermission user
- * @apiDescription
- * List all featured.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "vandoren",
- *       "featured": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "vandoren",
+ *  "featured": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/users/:user/fans')
@@ -303,67 +232,41 @@ router
 });
 
 /**
- * @api {get} /users/:user/featured/:id Get featured info
+ * @api {get} /users/:user/featured/:featured Get featured.
  * @apiName getFeatured
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup featured
  * @apiPermission user
- * @apiDescription
- * Get featured info.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "vandoren",
- *       "featured": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "vandoren",
+ *  "featured": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/featured/:featured')
@@ -381,13 +284,17 @@ router
 });
 
 /**
- * @api {delete} /users/:user/featured/:id Removes featured
+ * @api {delete} /users/:user/featured/:featured Removes featured.
  * @apiName removeFeatured
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup featured
  * @apiPermission user
- * @apiDescription
- * Removes featured
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 204 Empty
  */
 router
 .route('/users/:user/featured/:featured')

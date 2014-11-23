@@ -1,10 +1,11 @@
-var router, nconf, slug, async, auth, Championship, Match, Team, Bet, User;
+var router, nconf, slug, async, auth, push, Championship, Match, Team, Bet, User;
 
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
+push = require('push');
 Championship = require('../models/championship');
 Match = require('../models/match');
 Team = require('../models/team');
@@ -12,89 +13,94 @@ Bet = require('../models/bet');
 User = require('../models/user');
 
 /**
- * @api {post} /championships/:championship/matches/:match/bets Creates a new bet in database.
+ * @api {post} /championships/:championship/matches/:match/bets Creates a new bet.
  * @apiName createBet
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup bet
  * @apiPermission user
- * @apiDescription
- * Creates a new bet in database.
  *
- * @apiParam {Number} bid Bet bid
- * @apiParam {String} result Bet result
+ * @apiParam {Number} bid Bet bid.
+ * @apiParam {String} result Bet result.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "bid": "required",
- *       "result": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "bid": "required",
+ *   "result": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "match": "match already started"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "bid": "insufficient funds"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 409 Conflict
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "match": {
- *         "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
- *         "guest": {
- *           "name": "fluminense",
- *           "slug": "fluminense",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "host": {
- *           "name": "botafogo",
- *           "slug": "botafogo",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "round": 3,
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "finished": true,
- *         "elapsed": null,
- *         "result": {
- *           "guest": 0,
- *           "host" 0
- *         },
- *         "pot": {
- *           "guest": 0,
- *           "host" 0,
- *           "draw" 0
- *         },
- *         "winner": "draw",
- *         "jackpot": 0,
- *         "reward": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "match": {
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "guest": {
+ *      "name": "fluminense",
+ *      "slug": "fluminense",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "host": {
+ *      "name": "botafogo",
+ *      "slug": "botafogo",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "round": 3,
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "finished": true,
+ *    "elapsed": null,
+ *    "result": {
+ *      "guest": 0,
+ *      "host" 0
+ *    },
+ *    "pot": {
+ *      "guest": 0,
+ *      "host" 0,
+ *      "draw" 0
+ *    },
+ *    "winner": "draw",
+ *    "jackpot": 0,
+ *    "reward": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "bid": 5,
+ *  "result": "guest",
+ *  "reward": 15,
+ *  "profit": 10,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/championships/:championship/matches/:match/bets')
@@ -136,83 +142,71 @@ router
 });
 
 /**
- * @api {get} /championships/:championship/matches/:match/bets List all bets in database
+ * @api {get} /championships/:championship/matches/:match/bets List all match bets.
  * @apiName listBet
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup bet
  * @apiPermission user
- * @apiDescription
- * List all bets in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "match": {
- *         "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
- *         "guest": {
- *           "name": "fluminense",
- *           "slug": "fluminense",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "host": {
- *           "name": "botafogo",
- *           "slug": "botafogo",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "round": 3,
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "finished": true,
- *         "elapsed": null,
- *         "result": {
- *           "guest": 0,
- *           "host" 0
- *         },
- *         "pot": {
- *           "guest": 0,
- *           "host" 0,
- *           "draw" 0
- *         },
- *         "winner": "draw",
- *         "jackpot": 0,
- *         "reward": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "bid": 50,
- *       "result": "draw",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "match": {
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "guest": {
+ *      "name": "fluminense",
+ *      "slug": "fluminense",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "host": {
+ *      "name": "botafogo",
+ *      "slug": "botafogo",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "round": 3,
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "finished": true,
+ *    "elapsed": null,
+ *    "result": {
+ *      "guest": 0,
+ *      "host" 0
+ *    },
+ *    "pot": {
+ *      "guest": 0,
+ *      "host" 0,
+ *      "draw" 0
+ *    },
+ *    "winner": "draw",
+ *    "jackpot": 0,
+ *    "reward": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "bid": 5,
+ *  "result": "guest",
+ *  "reward": 15,
+ *  "profit": 10,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/championships/:championship/matches/:match/bets')
@@ -241,81 +235,69 @@ router
 });
 
 /**
- * @api {get} /championships/:championship/matches/:match/bets/:id Get bet info in database
+ * @api {get} /championships/:championship/matches/:match/bets/:bet Get bet.
  * @apiName getBet
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup bet
  * @apiPermission user
- * @apiDescription
- * Get bet info in database.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "match": {
- *         "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
- *         "guest": {
- *           "name": "fluminense",
- *           "slug": "fluminense",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "host": {
- *           "name": "botafogo",
- *           "slug": "botafogo",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "round": 3,
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "finished": true,
- *         "elapsed": null,
- *         "result": {
- *           "guest": 0,
- *           "host" 0
- *         },
- *         "pot": {
- *           "guest": 0,
- *           "host" 0,
- *           "draw" 0
- *         },
- *         "winner": "draw",
- *         "jackpot": 0,
- *         "reward": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "bid": 50,
- *       "result": "draw",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "match": {
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "guest": {
+ *      "name": "fluminense",
+ *      "slug": "fluminense",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "host": {
+ *      "name": "botafogo",
+ *      "slug": "botafogo",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "round": 3,
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "finished": true,
+ *    "elapsed": null,
+ *    "result": {
+ *      "guest": 0,
+ *      "host" 0
+ *    },
+ *    "pot": {
+ *      "guest": 0,
+ *      "host" 0,
+ *      "draw" 0
+ *    },
+ *    "winner": "draw",
+ *    "jackpot": 0,
+ *    "reward": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "bid": 5,
+ *  "result": "guest",
+ *  "reward": 15,
+ *  "profit": 10,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/championships/:championship/matches/:match/bets/:bet')
@@ -333,91 +315,94 @@ router
 });
 
 /**
- * @api {put} /championships/:championship/matches/:match/bets/:id Updates bet info in database
+ * @api {put} /championships/:championship/matches/:match/bets/:bet Updates bet.
  * @apiName updateBet
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup bet
  * @apiPermission user
- * @apiDescription
- * Updates bet info in database.
  *
- * @apiParam {Number} bid Bet bid
- * @apiParam {String} result Bet result
+ * @apiParam {Number} bid Bet bid.
+ * @apiParam {String} result Bet result.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "bid": "required",
- *       "result": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "bid": "required",
+ *   "result": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "match": "match already started"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "bid": "insufficient funds"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "match": {
- *         "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
- *         "guest": {
- *           "name": "fluminense",
- *           "slug": "fluminense",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "host": {
- *           "name": "botafogo",
- *           "slug": "botafogo",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "round": 3,
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "finished": true,
- *         "elapsed": null,
- *         "result": {
- *           "guest": 0,
- *           "host" 0
- *         },
- *         "pot": {
- *           "guest": 0,
- *           "host" 0,
- *           "draw" 0
- *         },
- *         "winner": "draw",
- *         "jackpot": 0,
- *         "reward": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "bid": 50,
- *       "result": "draw",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "match": {
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "guest": {
+ *      "name": "fluminense",
+ *      "slug": "fluminense",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "host": {
+ *      "name": "botafogo",
+ *      "slug": "botafogo",
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *      "createdAt": "2014-07-01T12:22:25.058Z",
+ *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    },
+ *    "round": 3,
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "finished": true,
+ *    "elapsed": null,
+ *    "result": {
+ *      "guest": 0,
+ *      "host" 0
+ *    },
+ *    "pot": {
+ *      "guest": 0,
+ *      "host" 0,
+ *      "draw" 0
+ *    },
+ *    "winner": "draw",
+ *    "jackpot": 0,
+ *    "reward": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "bid": 5,
+ *  "result": "guest",
+ *  "reward": 15,
+ *  "profit": 10,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/championships/:championship/matches/:match/bets/:bet')
@@ -459,13 +444,23 @@ router
 });
 
 /**
- * @api {delete} /championships/:championship/matches/:match/bets/:id Removes bet from database
+ * @api {delete} /championships/:championship/matches/:match/bets/:bet Removes bet.
  * @apiName removeBet
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup bet
  * @apiPermission user
- * @apiDescription
- * Removes bet from database
+ *
+ * @apiErrorExample
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "match": "match already started"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 204 Empty
  */
 router
 .route('/championships/:championship/matches/:match/bets/:bet')
@@ -497,83 +492,18 @@ router
 });
 
 /**
- * @api {get} /user/:id/bets List all bets in database
+ * @api {get} /user/:bet/bets List all user bets
  * @apiName listUserBet
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup bet
  * @apiPermission user
- * @apiDescription
- * List all bets in database.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "vandoren",
- *       "user": {
- *         "slug": "vandoren",
- *         "email": "vandoren@vandoren.com",
- *         "username": "vandoren",
- *         "name": "Van Doren",
- *         "about": "footbl fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "2",
- *         "previousRanking": "1",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "match": {
- *         "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
- *         "guest": {
- *           "name": "fluminense",
- *           "slug": "fluminense",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "host": {
- *           "name": "botafogo",
- *           "slug": "botafogo",
- *           "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *           "createdAt": "2014-07-01T12:22:25.058Z",
- *           "updatedAt": "2014-07-01T12:22:25.058Z"
- *         },
- *         "round": 3,
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "finished": true,
- *         "elapsed": null,
- *         "result": {
- *           "guest": 0,
- *           "host" 0
- *         },
- *         "pot": {
- *           "guest": 0,
- *           "host" 0,
- *           "draw" 0
- *         },
- *         "winner": "draw",
- *         "jackpot": 0,
- *         "reward": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "bid": 50,
- *       "result": "draw",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ * }]
  */
 router
 .route('/users/:user/bets')

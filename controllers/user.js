@@ -1,10 +1,11 @@
-var router, nconf, slug, async, auth, crypto, User, Prize;
+var router, nconf, slug, async, auth, push, crypto, User, Prize;
 
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
+push = require('push');
 crypto = require('crypto');
 User = require('../models/user');
 Prize = require('../models/prize');
@@ -12,60 +13,54 @@ Prize = require('../models/prize');
 /**
  * @api {post} /users Creates a new user.
  * @apiName createUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission none
- * @apiDescription
- * To create a user, the client must detect which kind of users will be created. There are three types of user, a
- * anonymous user, a facebook user and a registered user.
- * If the client is creating a anonymous user, a random password must be created by the client and stored in the device.
- * The password must be sent to the server and will be stored as a sha1 hash together with a salt.
- * If the client is creating a facebook user, the client must call the facebook sdk, and retrieve the user access token,
- * email and username. The facebook access token must be sent in the header 'facebook-token', and the other data must be
- * sent in the request body.
- * And if the client is creating a registered user, all the user data must be sent in the request body.
- * If the user has a username, a slug for identification will be created based on the user username, otherwise, the user
- * will be identified as me.
  *
- * @apiParam {String} [email] User email
- * @apiParam {String} [username] User username
- * @apiParam {String} password User password
- * @apiParam {String} [name] User name
- * @apiParam {String} [about] User about
- * @apiParam {String} [picture] User picture
- * @apiParam {String} [apnsToken] User apnsToken
+ * @apiParam {String} [username] User username, used for public profile.
+ * @apiParam {String} [email] User email.
+ * @apiParam {String} [name] User name.
+ * @apiParam {String} [about] User about, should contain user self description.
+ * @apiParam {String} password User password.
+ * @apiParam {String} [picture] User picture, the client must save it first in the cloudinary and only send the uri.
+ * @apiParam {String} [language] User language.
+ * @apiParam {String} [apnsToken] User pans token, for apple push notification.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "password": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "password": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 409 Conflict
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "vandoren",
- *       "email": "vandoren@vandoren.com",
- *       "username": "vandoren",
- *       "name": "Van Doren",
- *       "about": "footbl fan",
- *       "verified": false,
- *       "featured": false,
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "ranking": "2",
- *       "previousRanking": "1",
- *       "history": [{
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "funds": 100
- *       },{
- *         "date": "2014-07-03T12:22:25.058Z",
- *         "funds": 120
- *       }],
- *       "funds": 100,
- *       "stake": 0,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "email": "vandoren@vandoren.com",
+ *  "username": "vandoren",
+ *  "name": "Van Doren",
+ *  "about": "footbl fan",
+ *  "verified": false,
+ *  "featured": false,
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "ranking": "2",
+ *  "previousRanking": "1",
+ *  "history": [{
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "funds": 100
+ *  },{
+ *    "date": "2014-07-03T12:22:25.058Z",
+ *    "funds": 120
+ *  }],
+ *  "country": "Brazil",
+ *  "funds": 100,
+ *  "stake": 0,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users')
@@ -111,46 +106,47 @@ router
 });
 
 /**
- * @api {get} /users List all users
+ * @api {get} /users List all users.
  * @apiName listUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission none
- * @apiDescription
- * This route is used to search for users in the database, a user can be searched by the facebook id, email or username.
+ *
+ * @apiParam {String} [emails] Filter users in the emails list.
+ * @apiParam {String} [facebookIds] Filter users in the facebook ids list.
+ * @apiParam {String} [usernames] Filter users in the usernames list.
+ * @apiParam {String} [name] Filter users with name matching in regular expression with the given name.
+ * @apiParam {String} [featured] Filter only featured account users.
+ * @apiParam {String} [localRanking] Filter user local ranking.
  *
  * @apiParam {Number} [page=0] The page to be displayed.
- * @apiParam {Boolean} [localRanking=false] List users close to the user in the ranking.
- * @apiParam {String []} [emails] Emails to search.
- * @apiParam {String []} [usernames] Usernames to search.
- * @apiParam {String} [name] Name to search.
- * @apiParam {Array} [page].
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "vandoren",
- *       "email": "vandoren@vandoren.com",
- *       "username": "vandoren",
- *       "name": "Van Doren",
- *       "about": "footbl fan",
- *       "verified": false,
- *       "featured": false,
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "ranking": "2",
- *       "previousRanking": "1",
- *       "history": [{
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "funds": 100
- *       },{
- *         "date": "2014-07-03T12:22:25.058Z",
- *         "funds": 120
- *       }],
- *       "funds": 100,
- *       "stake": 0,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "vandoren",
+ *  "email": "vandoren@vandoren.com",
+ *  "username": "vandoren",
+ *  "name": "Van Doren",
+ *  "about": "footbl fan",
+ *  "verified": false,
+ *  "featured": false,
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "ranking": "2",
+ *  "previousRanking": "1",
+ *  "history": [{
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "funds": 100
+ *  },{
+ *    "date": "2014-07-03T12:22:25.058Z",
+ *    "funds": 120
+ *  }],
+ *  "country": "Brazil",
+ *  "funds": 100,
+ *  "stake": 0,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/users')
@@ -203,41 +199,38 @@ router
 });
 
 /**
- * @api {get} /users/:id Get user info
+ * @api {get} /users/:user Get user.
  * @apiName getUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission user
- * @apiDescription
- * This route returns the user info. To get the user details the user slug must placed in the route, and if it's a
- * anonymous account, the 'me' slug must be used. Notice that for anonymous users, the ser account information its only
- * accessible by the account owner using the 'me' slug.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "vandoren",
- *       "email": "vandoren@vandoren.com",
- *       "username": "vandoren",
- *       "name": "Van Doren",
- *       "about": "footbl fan",
- *       "verified": false,
- *       "featured": false,
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "ranking": "2",
- *       "previousRanking": "1",
- *       "history": [{
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "funds": 100
- *       },{
- *         "date": "2014-07-03T12:22:25.058Z",
- *         "funds": 120
- *       }],
- *       "funds": 100,
- *       "stake": 0,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "vandoren",
+ *  "email": "vandoren@vandoren.com",
+ *  "username": "vandoren",
+ *  "name": "Van Doren",
+ *  "about": "footbl fan",
+ *  "verified": false,
+ *  "featured": false,
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "ranking": "2",
+ *  "previousRanking": "1",
+ *  "history": [{
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "funds": 100
+ *  },{
+ *    "date": "2014-07-03T12:22:25.058Z",
+ *    "funds": 120
+ *  }],
+ *  "country": "Brazil",
+ *  "funds": 100,
+ *  "stake": 0,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user')
@@ -255,54 +248,59 @@ router
 });
 
 /**
- * @api {put} /users/:id Updates user info
+ * @api {put} /users/:user Updates user.
  * @apiName updateUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission user
- * @apiDescription
- * To update a user info, the client must detect if is changing the user to a facebook registered user or a registered
- * user. Or if the the client is keeping its old type.
- * If the the user is a facebook user or is changing to a facebook user, the client must call the facebook sdk and
- * retrieve the user facebook access token, and send it to the server in the 'facebook-token' header and also the
- * 'auth-token' generated in the auth route.
- * If the user is only a registered user, the client should only send the 'auth-token' generated in the auth route.
- * To access this endpoint the client can use the user slug generated on the user username or can only use the 'me'
- * slug..
  *
- * @apiParam {String} [email] User email
- * @apiParam {String} [username] User username
- * @apiParam {String} [password] User password
- * @apiParam {String} [name] User name
- * @apiParam {String} [about] User about
- * @apiParam {String} [picture] User picture
- * @apiParam {String} [apnsToken] User apnsToken
+ * @apiParam {String} [username] User username, used for public profile.
+ * @apiParam {String} [email] User email.
+ * @apiParam {String} [name] User name.
+ * @apiParam {String} [about] User about, should contain user self description.
+ * @apiParam {String} [password] User password.
+ * @apiParam {String} [picture] User picture, the client must save it first in the cloudinary and only send the uri.
+ * @apiParam {String} [language] User language.
+ * @apiParam {String} [apnsToken] User pans token, for apple push notification.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "password": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 409 Conflict
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "vandoren",
- *       "email": "vandoren@vandoren.com",
- *       "username": "vandoren",
- *       "name": "Van Doren",
- *       "about": "footbl fan",
- *       "verified": false,
- *       "featured": false,
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "ranking": "2",
- *       "previousRanking": "1",
- *       "history": [{
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "funds": 100
- *       },{
- *         "date": "2014-07-03T12:22:25.058Z",
- *         "funds": 120
- *       }],
- *       "funds": 100,
- *       "stake": 0,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "vandoren",
+ *  "email": "vandoren@vandoren.com",
+ *  "username": "vandoren",
+ *  "name": "Van Doren",
+ *  "about": "footbl fan",
+ *  "verified": false,
+ *  "featured": false,
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "ranking": "2",
+ *  "previousRanking": "1",
+ *  "history": [{
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "funds": 100
+ *  },{
+ *    "date": "2014-07-03T12:22:25.058Z",
+ *    "funds": 120
+ *  }],
+ *  "country": "Brazil",
+ *  "funds": 100,
+ *  "stake": 0,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user')
@@ -335,14 +333,17 @@ router
 });
 
 /**
- * @api {delete} /users/:id Removes user
+ * @api {delete} /users/:user Removes user.
  * @apiName removeUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission user
- * @apiDescription
- * This route deactivates a user in the system, if in the future a user tries to register with the deactivated user, the
- * user will be reactivated.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 204 Empty
  */
 router
 .route('/users/:user')
@@ -364,25 +365,23 @@ router
 });
 
 /**
- * @api {get} /users/me/auth Get user access token
+ * @api {get} /users/me/auth Get user access token.
  * @apiName authUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission none
- * @apiDescription
- * To sign in a user, the client must detect if the user is a anonymous user, or a facebook user or a registered user.
- * If it's a anonymous user, the client must send the random generated password stored in the client in the request
- * body. If it's a facebook user, the client must call the facebook sdk and retrieve the user token and send it in the
- * 'facebook-token' header. If it's aregistered user the client must send the email and password.
  *
- * @apiParam {String} [email] User email
- * @apiParam {String} [password] User password
+ * @apiParam {String} [email] User email.
+ * @apiParam {String} [password] User password.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 403 Forbidden
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "token": "asdpsfhysdofwe3456sdfsd",
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *   "token": "asdpsfhysdofwe3456sdfsd",
+ * }
  */
 router
 .route('/users/me/auth')
@@ -437,46 +436,47 @@ router
 });
 
 /**
- * @api {post} /users/:id/recharge Recharges user funds.
+ * @api {post} /users/:user/recharge Recharges user funds.
  * @apiName rechargeUser
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission user
- * @apiDescription
- * This route will update the user's last recharge to the current date, so, only the bets with date higher than the new
- * date will impact in the user funds.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "vandoren",
- *       "email": "vandoren@vandoren.com",
- *       "username": "vandoren",
- *       "name": "Van Doren",
- *       "about": "footbl fan",
- *       "verified": false,
- *       "featured": false,
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "ranking": "2",
- *       "previousRanking": "1",
- *       "history": [{
- *         "date": "2014-07-01T12:22:25.058Z",
- *         "funds": 100
- *       },{
- *         "date": "2014-07-03T12:22:25.058Z",
- *         "funds": 120
- *       }],
- *       "funds": 100,
- *       "stake": 0,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "vandoren",
+ *  "email": "vandoren@vandoren.com",
+ *  "username": "vandoren",
+ *  "name": "Van Doren",
+ *  "about": "footbl fan",
+ *  "verified": false,
+ *  "featured": false,
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "ranking": "2",
+ *  "previousRanking": "1",
+ *  "history": [{
+ *    "date": "2014-07-01T12:22:25.058Z",
+ *    "funds": 100
+ *  },{
+ *    "date": "2014-07-03T12:22:25.058Z",
+ *    "funds": 120
+ *  }],
+ *  "country": "Brazil",
+ *  "funds": 100,
+ *  "stake": 0,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/recharge')
 .post(auth.session())
 .post(auth.checkMethod('user'))
-.post(function createUser(request, response, next) {
+.post(function rechargeUser(request, response, next) {
   'use strict';
 
   async.waterfall([function (next) {
@@ -492,16 +492,16 @@ router
 });
 
 /**
- * @api {get} /users/me/forgot-password Send user email to recover password
+ * @api {get} /users/me/forgot-password Send user email to recover password.
  * @apiName forgotPassword
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup user
  * @apiPermission none
- * @apiDescription
- * To recover a user password, the client must send the user email and a email will be send to the user with a new
- * password.
  *
- * @apiParam {String} [email] User email
+ * @apiParam {String} [email] User email.
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 200 Created
  */
 router
 .route('/users/me/forgot-password')

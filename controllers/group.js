@@ -1,67 +1,53 @@
-var router, nconf, slug, async, mandrill, auth, Group, GroupMember;
+var router, nconf, slug, async, auth, push, Group, GroupMember;
 
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
-mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
 auth = require('auth');
+push = require('push');
 Group = require('../models/group');
 GroupMember = require('../models/group-member');
 
 /**
  * @api {post} /groups Creates a new group.
  * @apiName createGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * Creates a new group.
  *
  * @apiParam {String} name Group name.
  * @apiParam {String} [picture] Group picture for display.
- * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited be any member.
+ * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited by any member.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "name": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "name": "required"
+ * }
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "name": "College Buddies",
- *       "slug": "abcde",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "freeToEdit": false,
- *       "featured": false,
- *       "owner": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups')
@@ -103,51 +89,37 @@ router
 });
 
 /**
- * @api {get} /groups List all groups
+ * @api {get} /groups List all groups.
  * @apiName listGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * List all groups.
  *
  * @apiParam {String} [page=0] The page to be displayed.
  * @apiParam {Boolean} [featured=false] Tells if should return the user groups or the featured groups.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "name": "College Buddies",
- *       "slug": "abcde",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "freeToEdit": false,
- *       "featured": false,
- *       "owner": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/groups')
@@ -194,48 +166,34 @@ router
 });
 
 /**
- * @api {get} /groups/:id Get group info
+ * @api {get} /groups/:group Get group.
  * @apiName getGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * Get group info.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "name": "College Buddies",
- *       "slug": "abcde",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "freeToEdit": false,
- *       "featured": false,
- *       "owner": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group')
@@ -253,58 +211,47 @@ router
 });
 
 /**
- * @api {put} /groups/:id Updates group info
+ * @api {put} /groups/:group Updates group.
  * @apiName updateGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * Updates group info.
  *
  * @apiParam {String} name Group name.
  * @apiParam {String} [picture] Group picture for display.
  * @apiParam {Boolean} [freeToEdit=false] Tells if the group can be edited be any member.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "name": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "name": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "name": "College Buddies",
- *       "slug": "abcde",
- *       "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *       "freeToEdit": false,
- *       "featured": false,
- *       "owner": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group')
@@ -328,13 +275,17 @@ router
 });
 
 /**
- * @api {delete} /groups/:id Removes group
+ * @api {delete} /groups/:group Removes group.
  * @apiName removeGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * Removes group
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 204 Empty
  */
 router
 .route('/groups/:group')
@@ -355,15 +306,39 @@ router
 });
 
 /**
- * @api {post} /groups/:id/invite Invites new user
+ * @api {post} /groups/:group/invite Invites new user.
  * @apiName inviteGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * Updates group info.
  *
- * @apiParam {String} invite Invite
+ * @apiParam {String} invite Invited user email.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 200 Ok
+ * {
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/invite')
@@ -379,6 +354,8 @@ router
     group.save(next);
   }, function (group, _, next) {
     async.parallel([function (next) {
+      var mandrill;
+      mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
       mandrill.messages.send({
         'message' : {
           'html'       : [
@@ -409,13 +386,37 @@ router
 });
 
 /**
- * @api {post} /groups/:id/restart Restarts all group members initial funds
+ * @api {post} /groups/:group/restart Restarts all group members initial funds.
  * @apiName restartGroup
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup group
  * @apiPermission user
- * @apiDescription
- * Restarts all group members initial funds.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 200 Ok
+ * {
+ *  "name": "College Buddies",
+ *  "slug": "abcde",
+ *  "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *  "freeToEdit": false,
+ *  "featured": false,
+ *  "owner": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/groups/:group/restart')

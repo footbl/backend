@@ -1,33 +1,33 @@
-var router, nconf, slug, async, auth, User, Prize;
+var router, nconf, slug, async, auth, push, User, Prize;
 
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
+push = require('push');
 User = require('../models/user');
 Prize = require('../models/prize');
 
 /**
- * @api {get} /users/:id/prizes Send user prizes
+ * @api {get} /users/:prize/prizes List user prizes.
  * @apiName listPrizes
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup prize
  * @apiPermission user
- * @apiDescription
- * This route send all user prizes, including daily bonus.
  *
- * @apiParam {Array} [page].
+ * @apiParam {String} [page=0] The page to be displayed.
  * @apiParam {Boolean} [unreadMessages] Only displays unread messages.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "value": 1,
- *       "type": "daily",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "213123123",
+ *  "value": 1,
+ *  "type": "daily",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/users/:user/prizes')
@@ -57,22 +57,21 @@ router
 });
 
 /**
- * @api {get} /users/:user/prizes/:id Get prize info in database
+ * @api {get} /users/:user/prizes/:prize Get prize.
  * @apiName getPrize
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup prize
  * @apiPermission user
- * @apiDescription
- * Get prize info in database.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "value": 1,
- *       "type": "daily",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "213123123",
+ *  "value": 1,
+ *  "type": "daily",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/prizes/:prize')
@@ -90,22 +89,21 @@ router
 });
 
 /**
- * @api {put} /users/:user/prizes/:id/mark-as-read Mark as read prize info in database
+ * @api {put} /users/:user/prizes/:prize/mark-as-read Mark as read prize.
  * @apiName markAsReadPrize
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup prize
  * @apiPermission user
- * @apiDescription
- * Mark as read prize info in database.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "value": 1,
- *       "type": "daily",
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "213123123",
+ *  "value": 1,
+ *  "type": "daily",
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/prizes/:prize/mark-as-read')

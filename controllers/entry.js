@@ -1,10 +1,11 @@
-var router, nconf, slug, async, auth, User, Championship, Entry;
+var router, nconf, slug, async, auth, push, User, Championship, Entry;
 
 router = require('express').Router();
 nconf = require('nconf');
 slug = require('slug');
 async = require('async');
 auth = require('auth');
+push = require('push');
 User = require('../models/user');
 Championship = require('../models/championship');
 Entry = require('../models/entry');
@@ -17,7 +18,7 @@ router.use(function findChampionship(request, response, next) {
   if (!championship) {
     return next();
   }
-  async.waterfall([function (next) {
+  return async.waterfall([function (next) {
     var query;
     query = Championship.findOne();
     query.where('slug').equals(championship);
@@ -29,66 +30,58 @@ router.use(function findChampionship(request, response, next) {
 });
 
 /**
- * @api {post} /users/:user/entries Creates a new entry in database.
+ * @api {post} /users/:user/entries Creates a new entry.
  * @apiName createEntry
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup entry
- * @apiPermission none
- * @apiDescription
- * Creates a new entry in database.
+ * @apiPermission user
  *
- * @apiParam {String} championship Entry championship
- * @apiParam {Number} [order] Entry order
+ * @apiParam {String} championship Entry championship slug.
+ * @apiParam {Number} [order] Entry order for sorting.
  *
  * @apiErrorExample
- *     HTTP/1.1 400 Bad Request
- *     {
- *       "championship": "required"
- *     }
+ * HTTP/1.1 400 Bad Request
+ * {
+ *   "championship": "required"
+ * }
+ *
+ * @apiErrorExample
+ * HTTP/1.1 409 Conflict
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 201 Created
- *     {
- *       "slug": "brasileirao-brasil-2014",
- *       "championship": {
- *         "name": "Brasileirão",
- *         "slug": "brasileirao-brasil-2014",
- *         "country" : "brasil",
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "edition": 2014,
- *         "type": "national league",
- *         "rounds": 7,
- *         "currentRound" : 4,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "order": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "brasileirao-brasil-2014",
+ *  "championship": {
+ *    "name": "Brasileirão",
+ *    "slug": "brasileirao-brasil-2014",
+ *    "country" : "brasil",
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *    "edition": 2014,
+ *    "type": "national league",
+ *    "rounds": 7,
+ *    "currentRound" : 4,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "order": 1,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/entries')
@@ -118,59 +111,45 @@ router
 });
 
 /**
- * @api {get} /users/:user/entries List all entries in database
+ * @api {get} /users/:user/entries List all entries.
  * @apiName listEntry
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup entry
- * @apiPermission none
- * @apiDescription
- * List all entries in database.
+ * @apiPermission user
  *
  * @apiParam {String} [page=0] The page to be displayed.
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     [{
- *       "slug": "brasileirao-brasil-2014",
- *       "championship": {
- *         "name": "Brasileirão",
- *         "slug": "brasileirao-brasil-2014",
- *         "country" : "brasil",
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "edition": 2014,
- *         "type": "national league",
- *         "rounds": 7,
- *         "currentRound" : 4,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "order": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }]
+ * HTTP/1.1 200 Ok
+ * [{
+ *  "slug": "brasileirao-brasil-2014",
+ *  "championship": {
+ *    "name": "Brasileirão",
+ *    "slug": "brasileirao-brasil-2014",
+ *    "country" : "brasil",
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *    "edition": 2014,
+ *    "type": "national league",
+ *    "rounds": 7,
+ *    "currentRound" : 4,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "order": 1,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }]
  */
 router
 .route('/users/:user/entries')
@@ -198,57 +177,43 @@ router
 });
 
 /**
- * @api {get} /users/:user/entries/:id Get entry info in database
+ * @api {get} /users/:user/entries/:entry Get entry.
  * @apiName getEntry
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup entry
- * @apiPermission none
- * @apiDescription
- * Get entry info in database.
+ * @apiPermission user
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "brasileirao-brasil-2014",
- *       "championship": {
- *         "name": "Brasileirão",
- *         "slug": "brasileirao-brasil-2014",
- *         "country" : "brasil",
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "edition": 2014,
- *         "type": "national league",
- *         "rounds": 7,
- *         "currentRound" : 4,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "order": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 200 Ok
+ * {
+ *  "slug": "brasileirao-brasil-2014",
+ *  "championship": {
+ *    "name": "Brasileirão",
+ *    "slug": "brasileirao-brasil-2014",
+ *    "country" : "brasil",
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *    "edition": 2014,
+ *    "type": "national league",
+ *    "rounds": 7,
+ *    "currentRound" : 4,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "order": 1,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/entries/:entry')
@@ -266,59 +231,48 @@ router
 });
 
 /**
- * @api {put} /users/:user/entries/:id Updates a entry in database
+ * @api {put} /users/:user/entries/:entry Updates a entry.
  * @apiName updateEntry
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup entry
- * @apiPermission none
- * @apiDescription
- * Updates a entry in database.
+ * @apiPermission user
  *
- * @apiParam {Number} [order] Entry order
+ * @apiParam {Number} [order] Entry order for sorting.
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
  *
  * @apiSuccessExample
- *     HTTP/1.1 200 Ok
- *     {
- *       "slug": "brasileirao-brasil-2014",
- *       "championship": {
- *         "name": "Brasileirão",
- *         "slug": "brasileirao-brasil-2014",
- *         "country" : "brasil",
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "edition": 2014,
- *         "type": "national league",
- *         "rounds": 7,
- *         "currentRound" : 4,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "user": {
- *         "slug": "fan",
- *         "email": "fan@vandoren.com",
- *         "username": "fan",
- *         "name": "Fan",
- *         "about": "vandoren fan",
- *         "verified": false,
- *         "featured": false,
- *         "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *         "ranking": "3",
- *         "previousRanking": "2",
- *         "history": [{
- *           "date": "2014-07-01T12:22:25.058Z",
- *           "funds": 100
- *         },{
- *           "date": "2014-07-03T12:22:25.058Z",
- *           "funds": 120
- *         }],
- *         "funds": 100,
- *         "stake": 0,
- *         "createdAt": "2014-07-01T12:22:25.058Z",
- *         "updatedAt": "2014-07-01T12:22:25.058Z"
- *       },
- *       "order": 1,
- *       "createdAt": "2014-07-01T12:22:25.058Z",
- *       "updatedAt": "2014-07-01T12:22:25.058Z"
- *     }
+ * HTTP/1.1 201 Created
+ * {
+ *  "slug": "brasileirao-brasil-2014",
+ *  "championship": {
+ *    "name": "Brasileirão",
+ *    "slug": "brasileirao-brasil-2014",
+ *    "country" : "brasil",
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
+ *    "edition": 2014,
+ *    "type": "national league",
+ *    "rounds": 7,
+ *    "currentRound" : 4,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "user": {
+ *    "slug": "vandoren",
+ *    "email": "vandoren@vandoren.com",
+ *    "username": "vandoren",
+ *    "ranking": "2",
+ *    "previousRanking": "1",
+ *    "funds": 100,
+ *    "stake": 0,
+ *    "createdAt": "2014-07-01T12:22:25.058Z",
+ *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *  },
+ *  "order": 1,
+ *  "createdAt": "2014-07-01T12:22:25.058Z",
+ *  "updatedAt": "2014-07-01T12:22:25.058Z"
+ * }
  */
 router
 .route('/users/:user/entries/:entry')
@@ -344,13 +298,17 @@ router
 });
 
 /**
- * @api {delete} /users/:user/entries/:id Removes entry from database
+ * @api {delete} /users/:user/entries/:entry Removes entry.
  * @apiName removeEntry
- * @apiVersion 2.0.1
+ * @apiVersion 2.2.0
  * @apiGroup entry
- * @apiPermission none
- * @apiDescription
- * Removes entry from database
+ * @apiPermission user
+ *
+ * @apiErrorExample
+ * HTTP/1.1 405 Method Not Allowed
+ *
+ * @apiSuccessExample
+ * HTTP/1.1 204 Empty
  */
 router
 .route('/users/:user/entries/:entry')
