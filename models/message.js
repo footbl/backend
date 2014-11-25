@@ -55,6 +55,7 @@ schema.plugin(jsonSelect, {
   'group'     : 0,
   'message'   : 1,
   'seenBy'    : 1,
+  'type'      : 1,
   'createdAt' : 1,
   'updatedAt' : 1
 });
