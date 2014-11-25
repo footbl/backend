@@ -5,16 +5,16 @@ User, Championship, Match, Team, Bet, ranking, previousRanking, userHistory,
 user, otherUser, guestBetter, hostBetter, drawBetter, championship, guestTeam, hostTeam, match;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Team = require('../models/team');
-Bet = require('../models/bet');
-ranking = require('../workers/world-ranking');
-previousRanking = require('../workers/world-previous-ranking');
-userHistory = require('../workers/user-history');
+User = require('../../models/user');
+Championship = require('../../models/championship');
+Match = require('../../models/match');
+Team = require('../../models/team');
+Bet = require('../../models/bet');
+ranking = require('../../workers/world-ranking');
+previousRanking = require('../../workers/world-previous-ranking');
+userHistory = require('../../workers/user-history');
 
 describe('world ranking', function () {
   'use strict';

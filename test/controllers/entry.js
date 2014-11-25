@@ -5,11 +5,11 @@ User, Entry, Championship,
 user, otherUser;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Entry = require('../models/entry');
-Championship = require('../models/championship');
+User = require('../../models/user');
+Entry = require('../../models/entry');
+Championship = require('../../models/championship');
 
 describe('entry controller', function () {
   'use strict';

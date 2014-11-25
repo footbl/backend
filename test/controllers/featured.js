@@ -5,10 +5,10 @@ User, Featured,
 user, otherUser, featuredUser, otherFeaturedUser;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Featured = require('../models/featured');
+User = require('../../models/user');
+Featured = require('../../models/featured');
 
 describe('featured controller', function () {
   'use strict';

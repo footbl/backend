@@ -5,13 +5,13 @@ User, Championship, Match, Team, Bet,
 user, otherUser, guestBetter, hostBetter, drawBetter, championship, guestTeam, hostTeam, match;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Team = require('../models/team');
-Bet = require('../models/bet');
+User = require('../../models/user');
+Championship = require('../../models/championship');
+Match = require('../../models/match');
+Team = require('../../models/team');
+Bet = require('../../models/bet');
 
 describe('bet controller', function () {
   'use strict';

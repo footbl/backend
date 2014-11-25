@@ -5,17 +5,17 @@ User, Championship, Match, Team, Bet, Group, GroupMember, ranking, previousRanki
 user, groupOwner, otherUser, guestBetter, hostBetter, drawBetter, slug, championship, guestTeam, hostTeam, match;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Team = require('../models/team');
-Bet = require('../models/bet');
-Group = require('../models/group');
-GroupMember = require('../models/group-member');
-ranking = require('../workers/group-ranking');
-previousRanking = require('../workers/group-previous-ranking');
+User = require('../../models/user');
+Championship = require('../../models/championship');
+Match = require('../../models/match');
+Team = require('../../models/team');
+Bet = require('../../models/bet');
+Group = require('../../models/group');
+GroupMember = require('../../models/group-member');
+ranking = require('../../workers/group-ranking');
+previousRanking = require('../../workers/group-previous-ranking');
 
 describe('group ranking', function () {
   'use strict';

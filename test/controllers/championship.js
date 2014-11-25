@@ -5,12 +5,12 @@ User, Championship, Match, Team,
 user, championship, guestTeam, hostTeam;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Team = require('../models/team');
+User = require('../../models/user');
+Championship = require('../../models/championship');
+Match = require('../../models/match');
+Team = require('../../models/team');
 
 describe('championship controller', function () {
   'use strict';

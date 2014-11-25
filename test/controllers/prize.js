@@ -1,23 +1,18 @@
 /*globals describe, before, it, after*/
 require('should');
-var supertest, app, auth, nock,
+var supertest, app, auth,
 User, Championship, Team, Match, Bet, Entry,
 user, championship, guestTeam, hostTeam;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-nock = require('nock');
-User = require('../models/user');
-Championship = require('../models/championship');
-Team = require('../models/team');
-Match = require('../models/match');
-Bet = require('../models/bet');
-Entry = require('../models/entry');
-
-nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '111'});
-nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
-nock('https://api.zeropush.com').post('/register').times(Infinity).reply(200, {'message' : 'authenticated'});
+User = require('../../models/user');
+Championship = require('../../models/championship');
+Team = require('../../models/team');
+Match = require('../../models/match');
+Bet = require('../../models/bet');
+Entry = require('../../models/entry');
 
 describe('prize controller', function () {
   'use strict';

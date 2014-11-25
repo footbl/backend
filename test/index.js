@@ -1,5 +1,24 @@
-var now = new Date();
-module.exports = {
+var now, nock;
+now = new Date();
+nock = require('nock');
+
+nock('https://graph.facebook.com').get('/me?access_token=1234').times(Infinity).reply(200, {'id' : '111'});
+nock('https://graph.facebook.com').get('/me?access_token=invalid').times(Infinity).reply(404, {});
+nock('https://mandrillapp.com').post('/api/1.0/messages/send.json').times(Infinity).reply(200, {});
+nock('http://freegeoip.net').get('/json/127.0.0.1').times(Infinity).reply(200, {'country_name' : 'Brazil'});
+nock('http://freegeoip.net').get('/json/undefined').times(Infinity).reply(200, {'country_name' : ''});
+nock('https://api.zeropush.com').post('/notify').times(Infinity).reply(200, {'message' : 'authenticated'});
+nock('https://api.zeropush.com').post('/register').times(Infinity).reply(200, {'message' : 'authenticated'});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=1').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=2').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=3').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=4').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=5').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=11').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=10').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=18').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=19').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(Infinity).reply(200, {
   "LastUpdateID"      : 77721894,
   "Games"             : [
     {
@@ -13704,4 +13723,4 @@ module.exports = {
   "RequestedUpdateID" : -1,
   "CurrentDate"       : "06-08-2014",
   "TTL"               : 10
-};
+});

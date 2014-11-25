@@ -5,11 +5,11 @@ User, Group, GroupMember,
 groupOwner, otherGroupOwner, groupUser, otherGroupUser, featuredGroup;
 
 supertest = require('supertest');
-app = require('../index.js');
+app = require('../../index.js');
 auth = require('auth');
-User = require('../models/user');
-Group = require('../models/group');
-GroupMember = require('../models/group-member');
+User = require('../../models/user');
+Group = require('../../models/group');
+GroupMember = require('../../models/group-member');
 
 describe('group controller', function () {
   'use strict';
