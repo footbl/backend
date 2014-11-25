@@ -22,7 +22,7 @@ schema = new Schema({
   'type'      : {
     'type'     : String,
     'required' : true,
-    'enum'     : ['daily']
+    'enum'     : ['daily', 'update']
   },
   'seenBy'    : [
     {
