@@ -85,8 +85,8 @@ describe('prize controller', function () {
 
   before(function (done) {
     Match.update({'slug' : 'round-1-fluminense-vs-botafogo'}, { '$set' : {
-      'finsihed' : true
-    }}, done);
+      'finished' : true
+    }}, {'multi' : true}, done);
   });
 
   before(function (done) {
