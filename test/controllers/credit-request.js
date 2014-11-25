@@ -402,8 +402,12 @@ describe('credit request controller', function () {
         request.set('auth-transactionId', credentials.transactionId);
         request.set('auth-token', auth.token(user));
         request.send({'bid' : 70});
-        request.send({'result' : 'draw'});
+        request.send({'result' : 'guest'});
         request.end(done);
+      });
+
+      before(function (done) {
+        Match.update({'slug' : 'round-1-fluminense-vs-botafogo'}, {'$set' : {'finished' : true}}, done);
       });
 
       before(function (done) {
@@ -550,6 +554,10 @@ describe('credit request controller', function () {
         });
         request.end(done);
       });
+
+      after(function (done) {
+        Match.update({'slug' : 'round-1-fluminense-vs-botafogo'}, {'$set' : {'finished' : false}}, done);
+      });
     });
 
     describe('without sufficient funds', function () {
@@ -567,7 +575,7 @@ describe('credit request controller', function () {
         request.set('auth-transactionId', credentials.transactionId);
         request.set('auth-token', auth.token(user));
         request.send({'bid' : 70});
-        request.send({'result' : 'draw'});
+        request.send({'result' : 'host'});
         request.end(done);
       });
 
@@ -581,8 +589,12 @@ describe('credit request controller', function () {
         request.set('auth-transactionId', credentials.transactionId);
         request.set('auth-token', auth.token(creditRequestedUser));
         request.send({'bid' : 70});
-        request.send({'result' : 'draw'});
+        request.send({'result' : 'host'});
         request.end(done);
+      });
+
+      before(function (done) {
+        Match.update({'slug' : 'round-1-fluminense-vs-botafogo'}, {'$set' : {'finished' : true}}, done);
       });
 
       before(function (done) {
@@ -662,6 +674,10 @@ describe('credit request controller', function () {
         request.set('auth-token', auth.token(creditRequestedUser));
         request.expect(400);
         request.end(done);
+      });
+
+      after(function (done) {
+        Match.update({'slug' : 'round-1-fluminense-vs-botafogo'}, {'$set' : {'finished' : false}}, done);
       });
     });
   });

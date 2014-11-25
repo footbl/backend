@@ -357,7 +357,7 @@ router
   async.waterfall([function (next) {
     var creditRequest;
     creditRequest = request.creditRequest;
-    creditRequest.value = creditRequest.creditedUser.funds < 100 ? 100 - creditRequest.creditedUser.funds : 0;
+    creditRequest.value = (creditRequest.creditedUser.funds + creditRequest.creditedUser.stake) < 100 ? 100 - (creditRequest.creditedUser.funds + creditRequest.creditedUser.stake) : 0;
     creditRequest.payed = true;
     creditRequest.save(next);
   }, function (creditRequest, _, next) {
