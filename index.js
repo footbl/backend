@@ -1,9 +1,11 @@
 'use strict';
-var express, mongoose, nconf, bodyParser, methodOverride, auth,
+var express, mongoose, memwatch, nconf, bodyParser, methodOverride, auth, cluster,
 app;
 
 express = require('express');
 mongoose = require('mongoose');
+memwatch = require('memwatch');
+cluster = require('cluster');
 nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
@@ -12,6 +14,16 @@ auth = require('auth');
 nconf.argv();
 nconf.env();
 nconf.defaults(require('./config'));
+
+function gracefullShtudown(error) {
+  if (cluster.isWorker) {
+    console.error(error);
+    process.exit(1);
+  }
+}
+
+memwatch.on('leak', gracefullShtudown);
+process.on('uncaughtException', gracefullShtudown);
 
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 auth.connect(nconf.get('REDISCLOUD_URL'), nconf.get('KEY'), require('./models/user'));
@@ -65,10 +77,8 @@ app.use(function (error, request, response, next) {
       }
       response.status(400).send(errors);
     } else {
-      console.error(error.message);
-      console.error(error.trace);
       response.status(500).end();
-      process.exit();
+      gracefullShtudown(error);
     }
   }
 });
