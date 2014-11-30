@@ -1,11 +1,12 @@
 'use strict';
-var express, mongoose, memwatch, nconf, bodyParser, methodOverride, auth, cluster,
+var express, mongoose, memwatch, nconf, bodyParser, methodOverride, auth, cluster, nodetime,
 app;
 
 express = require('express');
 mongoose = require('mongoose');
 memwatch = require('memwatch');
 cluster = require('cluster');
+nodetime = require('nodetime');
 nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
@@ -24,6 +25,13 @@ function gracefullShtudown(error) {
 
 memwatch.on('leak', gracefullShtudown);
 process.on('uncaughtException', gracefullShtudown);
+
+if (nconf.get('NODETIME_ACCOUNT_KEY')) {
+  nodetime.profile({
+    'accountKey' : nconf.get('NODETIME_ACCOUNT_KEY'),
+    'appName'    : 'footbl'
+  });
+}
 
 mongoose.connect(nconf.get('MONGOHQ_URL'));
 auth.connect(nconf.get('REDISCLOUD_URL'), nconf.get('KEY'), require('./models/user'));
