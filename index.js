@@ -1,12 +1,10 @@
 'use strict';
-var express, mongoose, memwatch, nconf, bodyParser, methodOverride, auth, cluster, nodetime,
-app;
+var express, mongoose, memwatch, nconf, bodyParser, methodOverride, auth, cluster, app;
 
 express = require('express');
 mongoose = require('mongoose');
 memwatch = require('memwatch');
 cluster = require('cluster');
-nodetime = require('nodetime');
 nconf = require('nconf');
 bodyParser = require('body-parser');
 methodOverride = require('method-override');
