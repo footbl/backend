@@ -1,9 +1,8 @@
 'use strict';
-var express, mongoose, memwatch, nconf, bodyParser, methodOverride, auth, cluster, app;
+var express, mongoose, nconf, bodyParser, methodOverride, auth, cluster, app;
 
 express = require('express');
 mongoose = require('mongoose');
-memwatch = require('memwatch');
 cluster = require('cluster');
 nconf = require('nconf');
 bodyParser = require('body-parser');
@@ -21,7 +20,12 @@ function gracefullShtudown(error) {
   }
 }
 
-memwatch.on('leak', gracefullShtudown);
+setInterval(function () {
+  if (process.memoryUsage().heapUsed / 1000000 > 300) {
+    process.exit(1);
+  }
+}, 1000);
+
 process.on('uncaughtException', gracefullShtudown);
 
 mongoose.connect(nconf.get('MONGOHQ_URL'));
@@ -47,7 +51,6 @@ app.use(function (request, response, next) {
   response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
   next();
 });
-
 app.use(auth.signature());
 app.use(require('./controllers/championship'));
 app.use(require('./controllers/user'));
@@ -59,29 +62,32 @@ app.use(require('./controllers/group-member'));
 app.use(require('./controllers/message'));
 app.use(require('./controllers/credit-request'));
 app.use(require('./controllers/entry'));
-
 app.use(function (error, request, response, next) {
   var errors, prop;
-  if (error) {
-    if (error.message === 'not found') {
-      response.status(404).end();
-    } else if ([11000, 11001].lastIndexOf(error.code) > -1) {
-      response.status(409).end();
-    } else if (error.errors) {
-      errors = {};
-      for (prop in error.errors) {
-        if (error.errors.hasOwnProperty(prop)) {
-          errors[prop] = error.errors[prop].type === 'user defined' ? error.errors[prop].message : error.errors[prop].type;
-        }
+  if (error.message === 'not found') {
+    response.status(404).end();
+  } else if (error.message === 'invalid signature') {
+    response.status(401).end();
+  } else if (error.message === 'invalid session') {
+    response.status(401).end();
+  } else if (error.message === 'invalid method') {
+    response.status(405).end();
+  } else if ([11000, 11001].lastIndexOf(error.code) > -1) {
+    response.status(409).end();
+  } else if (error.errors) {
+    errors = {};
+    for (prop in error.errors) {
+      if (error.errors.hasOwnProperty(prop)) {
+        errors[prop] = error.errors[prop].type === 'user defined' ? error.errors[prop].message : error.errors[prop].type;
       }
-      response.status(400).send(errors);
-    } else {
-      response.status(500).end();
-      gracefullShtudown(error);
     }
+    response.status(400).send(errors);
+  } else {
+    response.status(500).end();
+    gracefullShtudown(error);
   }
+  next();
 });
-
 app.listen(nconf.get('PORT'));
 
 module.exports = app;
