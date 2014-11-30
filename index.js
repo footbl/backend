@@ -21,6 +21,7 @@ function gracefullShtudown(error) {
 }
 
 setInterval(function () {
+  console.log('[memory usage]', process.memoryUsage().heapUsed / 1000000);
   if (process.memoryUsage().heapUsed / 1000000 > 300) {
     process.exit(1);
   }
