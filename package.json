@@ -24,6 +24,23 @@
     "node": "0.10.21"
   },
   "dependencies": {
+    "apidoc": "^0.7.2",
+    "async": "^0.7.0",
+    "auth": "footbl/auth.git",
+    "body-parser": "1.0.x",
+    "cluster-start": "^0.1.4",
+    "express": "^4.1.x",
+    "fbgraph": "^0.2.10",
+    "mandrill-api": "^1.0.39",
+    "method-override": "^1.0.0",
+    "mongoose": "3.x.x",
+    "mongoose-json-select": "0.2.x",
+    "nconf": "0.6.x",
+    "node-freegeoip": "0.0.1",
+    "push": "footbl/push.git",
+    "redis": "0.10.x",
+    "request": "^2.39.0",
+    "slug": "^0.5.0"
   },
   "devDependencies": {
     "blanket": "^1.1.6",
