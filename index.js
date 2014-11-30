@@ -22,10 +22,10 @@ function gracefullShtudown(error) {
 
 setInterval(function () {
   console.log('[memory usage]', process.memoryUsage().heapUsed / 1000000);
-  if (process.memoryUsage().heapUsed / 1000000 > 300) {
+  if (process.memoryUsage().heapUsed / 1000000 > 90) {
     process.exit(1);
   }
-}, 1000);
+}, 10000);
 
 process.on('uncaughtException', gracefullShtudown);
 
