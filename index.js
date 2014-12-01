@@ -29,7 +29,9 @@ domain.run(function () {
   auth.connect(nconf.get('REDISCLOUD_URL'), nconf.get('KEY'), require('./models/user'));
 
   setInterval(function () {
-    if (process.memoryUsage().heapUsed / 1000000 > 100) throw new Error('memory leak');
+    var usage;
+    usage = process.memoryUsage().heapUsed / 1000000;
+    if (usage > 100) throw new Error('memory leak heap usage reached ' + usage + 'mB');
   }, 10000);
 
   app = express();
