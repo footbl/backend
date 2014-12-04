@@ -351,7 +351,7 @@ router
     var group;
     group = request.group;
     group.invites.push(request.param('invite', ''));
-    console.log(request.param('invite', ''));
+    console.log('------------------------', request.param('invite', ''));
     group.save(next);
   }, function (group, _, next) {
     async.parallel([function (next) {
