@@ -77,38 +77,77 @@ router
 .route('/groups/:group/members')
 .post(auth.session())
 .post(auth.checkMethod('group', 'owner', 'freeToEdit'))
-.post(function createGroupMember(request, response, next) {
+.post(function inviteGroup(request, response, next) {
   'use strict';
 
-  async.waterfall([function (next) {
-    var groupMember;
-    groupMember = new GroupMember({
-      'slug'         : request.groupUser ? request.groupUser.slug : null,
-      'group'        : request.group ? request.group._id : null,
-      'user'         : request.groupUser ? request.groupUser._id : null,
-      'initialFunds' : request.groupUser ? request.groupUser.funds : null
-    });
-    groupMember.save(next);
-  }, function (member, _, next) {
+  if (request.groupUser) {
     async.waterfall([function (next) {
-      async.parallel([function (next) {
-        member.populate('user');
-        member.populate(next);
-      }, function (next) {
-        push(nconf.get('ZEROPUSH_TOKEN'), {
-          'device' : request.groupUser.apnsToken,
-          'alert'  : {
-            'loc-key'  : 'NOTIFICATION_GROUP_ADDED',
-            'loc-args' : [request.session.username || request.session.name]
-          }
-        }, next);
+      var groupMember;
+      groupMember = new GroupMember({
+        'slug'         : request.groupUser ? request.groupUser.slug : null,
+        'group'        : request.group ? request.group._id : null,
+        'user'         : request.groupUser ? request.groupUser._id : null,
+        'initialFunds' : request.groupUser ? request.groupUser.funds : null
+      });
+      groupMember.save(next);
+    }, function (member, _, next) {
+      async.waterfall([function (next) {
+        async.parallel([function (next) {
+          member.populate('user');
+          member.populate(next);
+        }, function (next) {
+          push(nconf.get('ZEROPUSH_TOKEN'), {
+            'device' : request.groupUser.apnsToken,
+            'alert'  : {
+              'loc-key'  : 'NOTIFICATION_GROUP_ADDED',
+              'loc-args' : [request.session.username || request.session.name]
+            }
+          }, next);
+        }], next);
+      }, function (_, next) {
+        response.status(201);
+        response.send(member);
+        next();
       }], next);
-    }, function (_, next) {
-      response.status(201);
-      response.send(member);
-      next();
     }], next);
-  }], next);
+  } else {
+    async.waterfall([function (next) {
+      var group;
+      group = request.group;
+      group.invites.push(request.param('user', ''));
+      group.save(next);
+    }, function (group, _, next) {
+      async.parallel([function (next) {
+        var mandrill;
+        mandrill = new (require('mandrill-api')).Mandrill(nconf.get('MANDRILL_APIKEY'));
+        mandrill.messages.send({
+          'message' : {
+            'html'       : [
+              '<p>Join my group on footbl!</p>',
+              '<p>Bet against friends on football matches around the world. footbl is the global football betting app. Virtual money, real dynamic odds.<br> <a href="http://footbl.co/dl">Download</a> the app and use this e-mail address to Sign up or simply use the group code ' + group.code + '.<p>',
+              '<p>footbl | wanna bet?<p>',
+              request.session.name || request.session.username || 'A friend on footbl'
+            ].join('\n'),
+            'subject'    : 'wanna bet?',
+            'from_name'  : request.session.name || request.session.username || 'A friend on footbl',
+            'from_email' : 'noreply@footbl.co',
+            'to'         : [
+              {
+                'email' : request.param('invite', ''),
+                'type'  : 'to'
+              }
+            ]
+          },
+          'async'   : true
+        });
+        next();
+      }, function (next) {
+        response.status(200);
+        response.send(group);
+        next();
+      }], next);
+    }], next);
+  }
 });
 
 /**
