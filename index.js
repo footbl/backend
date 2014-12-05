@@ -87,7 +87,6 @@ domain.run(function () {
       response.status(400).send(errors);
     } else {
       response.status(500).end();
-      console.error('DEU RUIM ---->', error);
       emitter.emit('error', error);
     }
     next();
