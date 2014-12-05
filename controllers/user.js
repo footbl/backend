@@ -97,6 +97,7 @@ router
     user.apnsToken = request.param('apnsToken');
     user.country = country;
     user.active = true;
+    console.log(user);
     user.save(next);
   }, function (user, _, next) {
     response.status(201);
