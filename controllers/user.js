@@ -73,7 +73,7 @@ router
       var freegeoip;
       freegeoip = require('node-freegeoip');
       freegeoip.getLocation(request.ip, function (error, data) {
-        next(null, data['country_name'] || 'Brazil');
+        next(null, data && data['country_name'] ? data['country_name'] : 'Brazil');
       });
     }, function (next) {
       var query;
