@@ -10,7 +10,9 @@ nconf.env();
 nconf.defaults(require('./config'));
 
 domain.on("error", function (error) {
-  console.error(error);
+  console.error(error.message);
+  console.error(error.stack);
+  console.error(JSON.stringify(error, 4, 4));
   cluster.worker.disconnect();
   setTimeout(process.exit, 5000);
 });
