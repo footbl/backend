@@ -79,7 +79,10 @@ router
       query.where('active').equals(false);
       query.where('facebookId').equals(request.facebook);
       query.exec(next);
-    }], next);
+    }], function (error, data) {
+      console.log(error);
+      next(error, data);
+    });
   }, function (data, next) {
     var password, country, user;
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
@@ -97,7 +100,6 @@ router
     user.apnsToken = request.param('apnsToken');
     user.country = country;
     user.active = true;
-    console.log(user);
     user.save(next);
   }, function (user, _, next) {
     response.status(201);
