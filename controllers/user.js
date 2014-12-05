@@ -72,7 +72,9 @@ router
     async.parallel([function (next) {
       var freegeoip;
       freegeoip = require('node-freegeoip');
-      freegeoip.getLocation(request.ip, next);
+      freegeoip.getLocation(request.ip, function (error, data) {
+        next(null, data['country_name'] || 'Brazil');
+      });
     }, function (next) {
       var query;
       query = User.findOne();
@@ -83,7 +85,7 @@ router
   }, function (data, next) {
     var password, country, user;
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
-    country = data[0]['country_name'];
+    country = data[0];
     user = data[1] || new User();
     user.slug = slug(request.param('username', 'me'));
     user.email = request.param('email');
