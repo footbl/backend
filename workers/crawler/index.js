@@ -52,6 +52,8 @@ module.exports = function (next) {
           match.championship = champ._id;
           id = match._id;
           delete match._id;
+          match.guest.slug = slug(match.guest.name);
+          match.host.slug = slug(match.host.name);
           Match.findOneAndUpdate({'_id' : id}, {'$set' : match}, {'upsert' : true}, next);
         }, next);
       }, function (matches, next) {
