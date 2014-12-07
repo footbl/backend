@@ -56,7 +56,6 @@ domain.run(function () {
     response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
     next();
   });
-  app.use(auth.signature());
   app.use(require('./controllers/championship'));
   app.use(require('./controllers/user'));
   app.use(require('./controllers/featured'));

@@ -103,20 +103,14 @@ router
  * @apiSuccessExample
  * HTTP/1.1 200 Ok
  * [{
- *  "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *  "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
  *  "guest": {
  *    "name": "fluminense",
- *    "slug": "fluminense",
- *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *  },
  *  "host": {
  *    "name": "botafogo",
- *    "slug": "botafogo",
- *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *  },
  *  "round": 3,
  *  "date": "2014-07-01T12:22:25.058Z",
@@ -156,8 +150,6 @@ router
       {'finished' : false}
     ]);
     query.skip(page);
-    query.populate('guest');
-    query.populate('host');
     query.limit(pageSize);
     query.exec(next)
   }, function (matches, next) {
@@ -186,17 +178,11 @@ router
  *  "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
  *  "guest": {
  *    "name": "fluminense",
- *    "slug": "fluminense",
- *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *  },
  *  "host": {
  *    "name": "botafogo",
- *    "slug": "botafogo",
- *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
+ *    "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *  },
  *  "round": 3,
  *  "date": "2014-07-01T12:22:25.058Z",
@@ -245,8 +231,6 @@ router.param('match', function findMatch(request, response, next, id) {
     query = Match.findOne();
     query.where('championship').equals(request.championship._id);
     query.where('slug').equals(id);
-    query.populate('guest');
-    query.populate('host');
     query.exec(next);
   }, function (match, next) {
     request.match = match;

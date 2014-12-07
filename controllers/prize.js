@@ -114,9 +114,10 @@ router
   async.waterfall([function (next) {
     var prize;
     prize = request.prize;
-    prize.seenBy.push(request.session._id);
-    prize.save(next);
-  }, function (prize, _, next) {
+    prize.markAsRead(request.session._id, next);
+  }, function (_, next) {
+    var prize;
+    prize = request.prize;
     response.status(200);
     response.send(prize);
     next();

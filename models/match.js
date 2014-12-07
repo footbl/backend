@@ -7,6 +7,10 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
+  '_id'          : {
+    'type'     : Number,
+    'required' : true
+  },
   'slug'         : {
     'type' : String
   },
@@ -16,14 +20,24 @@ schema = new Schema({
     'required' : true
   },
   'guest'        : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'Team',
-    'required' : true
+    'name'    : {
+      'type'     : String,
+      'required' : true
+    },
+    'picture' : {
+      'type'  : String,
+      'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+    }
   },
   'host'         : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'Team',
-    'required' : true
+    'name'    : {
+      'type'     : String,
+      'required' : true
+    },
+    'picture' : {
+      'type'  : String,
+      'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+    }
   },
   'round'        : {
     'type'     : Number,
@@ -131,13 +145,21 @@ schema.methods.findBet = function (user, next) {
   }.bind(this));
 };
 
-schema.pre('remove', function (next) {
+schema.pre('remove', function removeCascadeBets(next) {
   'use strict';
 
   var Bet;
   Bet = require('./bet');
   async.waterfall([function (next) {
-    Bet.remove({'match' : this._id}, next);
+    var query;
+    query = Bet.find();
+    query.where('match').equals(this._id);
+    query.exec(next);
+  }.bind(this), function (bets, next) {
+    async.each(bets, function (bet, next) {
+      bet._forceRemove = true;
+      bet.remove(next);
+    }.bind(this), next);
   }.bind(this)], next);
 });
 

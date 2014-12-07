@@ -289,20 +289,6 @@ router
   }], next);
 });
 
-router.param('group', function findGroup(request, response, next, id) {
-  'use strict';
-
-  async.waterfall([function (next) {
-    var query;
-    query = Group.findOne();
-    query.where('slug').equals(id);
-    query.exec(next);
-  }, function (group, next) {
-    request.group = group;
-    next(!group ? new Error('not found') : null);
-  }], next);
-});
-
 router.param('message', function findMessage(request, response, next, id) {
   'use strict';
 
@@ -316,6 +302,20 @@ router.param('message', function findMessage(request, response, next, id) {
   }, function (message, next) {
     request.message = message;
     next(!message ? new Error('not found') : null);
+  }], next);
+});
+
+router.param('group', function findGroup(request, response, next, id) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    var query;
+    query = Group.findOne();
+    query.where('slug').equals(id);
+    query.exec(next);
+  }, function (group, next) {
+    request.group = group;
+    next(!group ? new Error('not found') : null);
   }], next);
 });
 

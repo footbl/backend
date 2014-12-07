@@ -1,378 +1,188 @@
-/*globals describe, before, it, after*/
-require('should');
+/*globals describe, before, beforeEach, afterEach, it, after*/
 var supertest, app, auth,
 User, Group, GroupMember,
-groupOwner, groupUser, otherGroupUser, anotherGroupUser, Match;
+user, otherUser, group;
 
+require('should');
 supertest = require('supertest');
-app = require('../../index.js');
+app = supertest(require('../../index.js'));
 auth = require('auth');
 User = require('../../models/user');
 Group = require('../../models/group');
 GroupMember = require('../../models/group-member');
-Match = require('../../models/match');
 
 describe('group member controller', function () {
   'use strict';
 
   before(User.remove.bind(User));
+  before(Group.remove.bind(Group));
 
   before(function (done) {
-    groupOwner = new User({'password' : '1234', 'slug' : 'group-owner'});
-    groupOwner.save(done);
+    user = new User({'password' : '1234', 'slug' : 'user'});
+    user.save(done);
   });
 
   before(function (done) {
-    groupUser = new User({'password' : '1234', 'slug' : 'group-user'});
-    groupUser.save(done);
+    otherUser = new User({'password' : '1234', 'slug' : 'other-user'});
+    otherUser.save(done);
   });
 
   before(function (done) {
-    otherGroupUser = new User({'password' : '1234', 'slug' : 'other-group-user'});
-    otherGroupUser.save(done);
+    group = new Group({
+      'name'       : 'buddies',
+      'slug'       : new Date().getTime().toString(36).substring(3),
+      'freeToEdit' : true,
+      'owner'      : user._id
+    });
+    group.save(done);
   });
 
-  before(function (done) {
-    anotherGroupUser = new User({'password' : '1234', 'slug' : 'another-group-user'});
-    anotherGroupUser.save(done);
+  beforeEach('remove members', GroupMember.remove.bind(GroupMember));
+
+  beforeEach('reset group', function (done) {
+    Group.update({'_id' : group._id}, {'$set' : {'freeToEdit' : true}}, done);
   });
 
   describe('create', function () {
     describe('free to edit', function () {
-      var slug;
-
-      before(Group.remove.bind(Group));
-      before(GroupMember.remove.bind(GroupMember));
-
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'name' : 'college buddies'});
-        request.send({'freeToEdit' : true});
-        request.expect(function (response) {
-          slug = response.body.slug;
+      describe('without token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.send({'user' : otherUser.slug});
+          request.expect(401);
+          request.end(done);
         });
-        request.end(done);
       });
 
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : groupUser.slug});
-        request.end(done);
-      });
-
-      it('should raise error without token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(401);
-        request.end(done);
-      });
-
-      it('should raise error with invalid group id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/invalid/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should create with owner token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(201);
-        request.expect(function (response) {
-          response.body.should.have.property('user');
-          response.body.should.have.property('slug');
+      describe('with invalid group id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/invalid/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
+          request.expect(404);
+          request.end(done);
         });
-        request.end(done);
-      });
-
-      it('should create with user token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.send({'group' : slug});
-        request.send({'user' : anotherGroupUser.slug});
-        request.expect(201);
-        request.expect(function (response) {
-          response.body.should.have.property('user');
-          response.body.should.have.property('slug');
-        });
-        request.end(done);
       });
 
       describe('with member created', function () {
-        var slug;
+        beforeEach('create member', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
+          request.end(done);
+        });
 
-        before(Group.remove.bind(Group));
-        before(GroupMember.remove.bind(GroupMember));
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
+          request.expect(409);
+          request.end(done);
+        });
+      });
 
-        before(function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'name' : 'college buddies'});
-          request.send({'freeToEdit' : true});
+      describe('with valid credentials and user', function () {
+        it('should create', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
+          request.expect(201);
           request.expect(function (response) {
-            slug = response.body.slug;
+            response.body.should.have.property('user');
+            response.body.should.have.property('slug');
           });
           request.end(done);
         });
+      });
 
-        before(function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups/' + slug + '/members');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'group' : slug});
-          request.send({'user' : groupUser.slug});
-          request.end(done);
-        });
-
-        before(function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups/' + slug + '/members');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'group' : slug});
-          request.send({'user' : otherGroupUser.slug});
-          request.end(done);
-        });
-
-        it('should raise error with repeated user', function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups/' + slug + '/members');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'group' : slug});
-          request.send({'user' : otherGroupUser.slug});
-          request.expect(409);
+      describe('with other user valid credentials and user', function () {
+        it('should create ', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(otherUser));
+          request.send({'user' : otherUser.slug});
+          request.expect(201);
+          request.expect(function (response) {
+            response.body.should.have.property('user');
+            response.body.should.have.property('slug');
+          });
           request.end(done);
         });
       });
     });
 
     describe('not free to edit', function () {
-      var slug;
+      beforeEach('reset group', function (done) {
+        Group.update({'_id' : group._id}, {'$set' : {'freeToEdit' : false}}, done);
+      });
 
-      before(Group.remove.bind(Group));
-      before(GroupMember.remove.bind(GroupMember));
-
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'name' : 'college buddies'});
-        request.send({'freeToEdit' : false});
-        request.expect(function (response) {
-          slug = response.body.slug;
+      describe('without token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.send({'user' : otherUser.slug});
+          request.expect(401);
+          request.end(done);
         });
-        request.end(done);
       });
 
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : groupUser._id});
-        request.end(done);
-      });
-
-      it('should raise error without token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(401);
-        request.end(done);
-      });
-
-      it('should raise error with invalid group id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/invalid/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should raise error with user token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(405);
-        request.end(done);
-      });
-
-      it('should create with owner token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.expect(201);
-        request.expect(function (response) {
-          response.body.should.have.property('user');
-          response.body.should.have.property('slug');
+      describe('with invalid group id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/invalid/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
+          request.expect(404);
+          request.end(done);
         });
-        request.end(done);
+      });
+
+      describe('with other user token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(otherUser));
+          request.send({'user' : otherUser.slug});
+          request.expect(405);
+          request.end(done);
+        });
       });
 
       describe('with member created', function () {
-        var slug;
-
-        before(Group.remove.bind(Group));
-        before(GroupMember.remove.bind(GroupMember));
-
-        before(function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'name' : 'college buddies'});
-          request.send({'freeToEdit' : false});
-          request.expect(function (response) {
-            slug = response.body.slug;
-          });
+        beforeEach('create member', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
           request.end(done);
         });
 
-        before(function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups/' + slug + '/members');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'group' : slug});
-          request.send({'user' : groupUser.slug});
-          request.end(done);
-        });
-
-        before(function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups/' + slug + '/members');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'group' : slug});
-          request.send({'user' : otherGroupUser.slug});
-          request.end(done);
-        });
-
-        it('should raise error with repeated user', function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = supertest(app);
-          request = request.post('/groups/' + slug + '/members');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('auth-token', auth.token(groupOwner));
-          request.send({'group' : slug});
-          request.send({'user' : otherGroupUser.slug});
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
           request.expect(409);
+          request.end(done);
+        });
+      });
+
+      describe('with valid credentials and user', function () {
+        it('should create', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : otherUser.slug});
+          request.expect(201);
+          request.expect(function (response) {
+            response.body.should.have.property('user');
+            response.body.should.have.property('slug');
+          });
           request.end(done);
         });
       });
@@ -381,730 +191,484 @@ describe('group member controller', function () {
 
   describe('invite', function () {
     describe('free to edit', function () {
-      var slug;
-
-      before(Group.remove.bind(Group));
-      before(GroupMember.remove.bind(GroupMember));
-
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'name' : 'college buddies'});
-        request.send({'freeToEdit' : true});
-        request.expect(function (response) {
-          slug = response.body.slug;
+      describe('without token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.send({'user' : 'invited-user@invite.com'});
+          request.expect(401);
+          request.end(done);
         });
-        request.end(done);
       });
 
-      it('should raise error without token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.send({'user' : 'invited-user@invite.com'});
-        request.expect(401);
-        request.end(done);
-      });
-
-      it('should raise error with invalid id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/invalid/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.send({'user' : 'invited-user@invite.com'});
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should invite', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'user' : 'invited-user@invite.com'});
-        request.expect(200);
-        request.end(done);
-      });
-
-      after(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/users');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.send({'password' : '1234'});
-        request.send({'email' : 'invited-user@invite.com'});
-        request.end(done);
-      });
-
-      after(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.get('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(200);
-        request.expect(function (response) {
-          response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(2);
+      describe('with invalid group id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/invalid/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : 'invited-user@invite.com'});
+          request.expect(404);
+          request.end(done);
         });
-        request.end(done);
+      });
+
+      describe('with valid credentials', function () {
+        it('should invite', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : 'invited-user@invite.com'});
+          request.expect(200);
+          request.end(done);
+        });
+
+        afterEach(function (done) {
+          var request, credentials;
+          credentials = auth.credentials();
+          request = app.post('/users');
+          request.set('auth-signature', credentials.signature);
+          request.set('auth-timestamp', credentials.timestamp);
+          request.set('auth-transactionId', credentials.transactionId);
+          request.send({'password' : '1234'});
+          request.send({'email' : 'invited-user@invite.com'});
+          request.end(done);
+        });
+
+        afterEach(function (done) {
+          var request, credentials;
+          credentials = auth.credentials();
+          request = app.get('/groups/' + group.slug + '/members');
+          request.set('auth-signature', credentials.signature);
+          request.set('auth-timestamp', credentials.timestamp);
+          request.set('auth-transactionId', credentials.transactionId);
+          request.set('auth-token', auth.token(user));
+          request.expect(200);
+          request.expect(function (response) {
+            response.body.should.be.instanceOf(Array);
+            response.body.should.have.lengthOf(1);
+          });
+          request.end(done);
+        });
+      });
+
+      describe('with valid other user credentials', function () {
+        it('should invite', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(otherUser));
+          request.send({'user' : 'invited-user@invite.com'});
+          request.expect(200);
+          request.end(done);
+        });
+
+        afterEach(function (done) {
+          var request, credentials;
+          credentials = auth.credentials();
+          request = app.post('/users');
+          request.set('auth-signature', credentials.signature);
+          request.set('auth-timestamp', credentials.timestamp);
+          request.set('auth-transactionId', credentials.transactionId);
+          request.send({'password' : '1234'});
+          request.send({'email' : 'invited-user@invite.com'});
+          request.end(done);
+        });
+
+        afterEach(function (done) {
+          var request, credentials;
+          credentials = auth.credentials();
+          request = app.get('/groups/' + group.slug + '/members');
+          request.set('auth-signature', credentials.signature);
+          request.set('auth-timestamp', credentials.timestamp);
+          request.set('auth-transactionId', credentials.transactionId);
+          request.set('auth-token', auth.token(user));
+          request.expect(200);
+          request.expect(function (response) {
+            response.body.should.be.instanceOf(Array);
+            response.body.should.have.lengthOf(1);
+          });
+          request.end(done);
+        });
       });
     });
 
     describe('not free to edit', function () {
-      var slug;
+      beforeEach('reset group', function (done) {
+        Group.update({'_id' : group._id}, {'$set' : {'freeToEdit' : false}}, done);
+      });
 
-      before(Group.remove.bind(Group));
-      before(GroupMember.remove.bind(GroupMember));
-
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'name' : 'college buddies'});
-        request.send({'freeToEdit' : false});
-        request.expect(function (response) {
-          slug = response.body.slug;
+      describe('without token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.send({'user' : 'invited-user2@invite.com'});
+          request.expect(401);
+          request.end(done);
         });
-        request.end(done);
       });
 
-      it('should raise error without token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.send({'user' : 'invited-user2@invite.com'});
-        request.expect(401);
-        request.end(done);
-      });
-
-      it('should raise error with invalid id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/invalid/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.send({'user' : 'invited-user2@invite.com'});
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should raise error with other user token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.send({'user' : 'invited-user2@invite.com'});
-        request.expect(405);
-        request.end(done);
-      });
-
-      it('should invite', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'user' : 'invited-user2@invite.com'});
-        request.expect(200);
-        request.end(done);
-      });
-
-      after(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/users');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.send({'password' : '1234'});
-        request.send({'email' : 'invited-user2@invite.com'});
-        request.end(done);
-      });
-
-      after(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.get('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(200);
-        request.expect(function (response) {
-          response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(2);
+      describe('with invalid id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/invalid/members');
+          request.set('auth-token', auth.token(otherUser));
+          request.send({'user' : 'invited-user2@invite.com'});
+          request.expect(404);
+          request.end(done);
         });
-        request.end(done);
+      });
+
+      describe('with other user token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(otherUser));
+          request.send({'user' : 'invited-user2@invite.com'});
+          request.expect(405);
+          request.end(done);
+        });
+      });
+
+      describe('with valid credentials', function () {
+        it('should invite', function (done) {
+          var request;
+          request = app.post('/groups/' + group.slug + '/members');
+          request.set('auth-token', auth.token(user));
+          request.send({'user' : 'invited-user@invite.com'});
+          request.expect(200);
+          request.end(done);
+        });
+
+        afterEach(function (done) {
+          var request, credentials;
+          credentials = auth.credentials();
+          request = app.post('/users');
+          request.set('auth-signature', credentials.signature);
+          request.set('auth-timestamp', credentials.timestamp);
+          request.set('auth-transactionId', credentials.transactionId);
+          request.send({'password' : '1234'});
+          request.send({'email' : 'invited-user@invite.com'});
+          request.end(done);
+        });
+
+        afterEach(function (done) {
+          var request, credentials;
+          credentials = auth.credentials();
+          request = app.get('/groups/' + group.slug + '/members');
+          request.set('auth-signature', credentials.signature);
+          request.set('auth-timestamp', credentials.timestamp);
+          request.set('auth-transactionId', credentials.transactionId);
+          request.set('auth-token', auth.token(user));
+          request.expect(200);
+          request.expect(function (response) {
+            response.body.should.be.instanceOf(Array);
+            response.body.should.have.lengthOf(1);
+          });
+          request.end(done);
+        });
       });
     });
   });
 
   describe('list', function () {
-    var slug;
-
-    before(Group.remove.bind(Group));
-    before(GroupMember.remove.bind(GroupMember));
-
-    before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/groups');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'name' : 'college buddies'});
-      request.send({'freeToEdit' : true});
-      request.expect(function (response) {
-        slug = response.body.slug;
+    describe('without token', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members');
+        request.expect(401);
+        request.end(done);
       });
-      request.end(done);
     });
 
-    before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/groups/' + slug + '/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'group' : slug});
-      request.send({'user' : groupUser._id});
-      request.end(done);
+    describe('with invalid group id', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.get('/groups/invalid/members');
+        request.set('auth-token', auth.token(user));
+        request.expect(404);
+        request.end(done);
+      });
     });
 
-    it('should raise error without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/' + slug + '/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.expect(401);
-      request.end(done);
-    });
+    describe('with one group member', function () {
+      beforeEach('create member', function (done) {
+        var request;
+        request = app.post('/groups/' + group.slug + '/members');
+        request.set('auth-token', auth.token(user));
+        request.send({'user' : otherUser.slug});
+        request.end(done);
+      });
 
-    it('should raise error with invalid group id', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/invalid/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.expect(404);
-      request.end(done);
-    });
-
-    it('should list', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/' + slug + '/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.be.instanceOf(Array);
-        response.body.should.have.lengthOf(1);
-        response.body.every(function (championship) {
-          championship.should.have.property('user');
-          championship.should.have.property('slug');
+      it('should list one in first page', function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members');
+        request.set('auth-token', auth.token(user));
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.be.instanceOf(Array);
+          response.body.should.have.lengthOf(1);
         });
+        request.end(done);
       });
-      request.end(done);
-    });
 
-    it('should return empty in second page', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/' + slug + '/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'page' : 1});
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.be.instanceOf(Array);
-        response.body.should.have.lengthOf(0);
+      it('should return empty in second page', function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members');
+        request.set('auth-token', auth.token(user));
+        request.send({'page' : 1});
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.be.instanceOf(Array);
+          response.body.should.have.lengthOf(0);
+        });
+        request.end(done);
       });
-      request.end(done);
     });
   });
 
   describe('details', function () {
-    var slug;
+    beforeEach('create member', function (done) {
+      var request;
+      request = app.post('/groups/' + group.slug + '/members');
+      request.set('auth-token', auth.token(user));
+      request.send({'user' : otherUser.slug});
+      request.end(done);
+    });
 
-    before(Group.remove.bind(Group));
-    before(GroupMember.remove.bind(GroupMember));
-
-    before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/groups');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'name' : 'College Buddies'});
-      request.expect(function (response) {
-        slug = response.body.slug;
+    describe('without token', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members/' + otherUser.slug);
+        request.expect(401);
+        request.end(done);
       });
-      request.end(done);
     });
 
-    before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/groups/' + slug + '/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'group' : slug});
-      request.send({'user' : groupUser.slug});
-      request.end(done);
-    });
-
-    it('should raise error without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/' + slug + '/members/' + groupUser.slug);
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.expect(401);
-      request.end(done);
-    });
-
-    it('should raise error with invalid group id', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/invalid/members/' + groupUser.slug);
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.expect(404);
-      request.end(done);
-    });
-
-    it('should raise error with invalid id', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/' + slug + '/members/invalid');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.expect(404);
-      request.end(done);
-    });
-
-    it('should show', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.get('/groups/' + slug + '/members/' + groupUser.slug);
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.have.property('user');
-        response.body.should.have.property('slug');
+    describe('with invalid group id', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.get('/groups/invalid/members/' + otherUser.slug);
+        request.set('auth-token', auth.token(user));
+        request.expect(404);
+        request.end(done);
       });
-      request.end(done);
+    });
+
+    describe('with invalid id', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members/invalid');
+        request.set('auth-token', auth.token(user));
+        request.expect(404);
+        request.end(done);
+      });
+    });
+
+    describe('with valid credentials', function () {
+      it('should show', function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members/' + otherUser.slug);
+        request.set('auth-token', auth.token(user));
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.have.property('user');
+          response.body.should.have.property('slug');
+        });
+        request.end(done);
+      });
     });
   });
 
   describe('update', function () {
-    var slug;
+    beforeEach('create member', function (done) {
+      var request;
+      request = app.post('/groups/' + group.slug + '/members');
+      request.set('auth-token', auth.token(user));
+      request.send({'user' : otherUser.slug});
+      request.end(done);
+    });
 
-    before(Group.remove.bind(Group));
-    before(GroupMember.remove.bind(GroupMember));
-
-    before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/groups');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'name' : 'College Buddies'});
-      request.expect(function (response) {
-        slug = response.body.slug;
+    describe('without token', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.put('/groups/' + group.slug + '/members/' + otherUser.slug);
+        request.send({'notifications' : false});
+        request.expect(401);
+        request.end(done);
       });
-      request.end(done);
     });
 
-    before(function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.post('/groups/' + slug + '/members');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupOwner));
-      request.send({'group' : slug});
-      request.send({'user' : groupUser.slug});
-      request.end(done);
-    });
-
-    it('should raise without token', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.put('/groups/' + slug + '/members/' + groupUser.slug);
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.send({'notifications' : false});
-      request.expect(401);
-      request.end(done);
-    });
-
-    it('should raise error with invalid group id', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.put('/groups/invalid/members/' + groupUser.slug);
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupUser));
-      request.send({'notifications' : false});
-      request.expect(404);
-      request.end(done);
-    });
-
-    it('should raise error with invalid id', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.put('/groups/' + slug + '/members/invalid');
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupUser));
-      request.send({'notifications' : false});
-      request.expect(404);
-      request.end(done);
-    });
-
-    it('should update', function (done) {
-      var request, credentials;
-      credentials = auth.credentials();
-      request = supertest(app);
-      request = request.put('/groups/' + slug + '/members/' + groupUser.slug);
-      request.set('auth-signature', credentials.signature);
-      request.set('auth-timestamp', credentials.timestamp);
-      request.set('auth-transactionId', credentials.transactionId);
-      request.set('auth-token', auth.token(groupUser));
-      request.send({'notifications' : false});
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.have.property('user');
-        response.body.should.have.property('notifications').be.equal(false);
+    describe('with other user token', function () {
+      it('should update', function (done) {
+        var request;
+        request = app.put('/groups/' + group.slug + '/members/' + otherUser.slug);
+        request.set('auth-token', auth.token(user));
+        request.send({'notifications' : false});
+        request.expect(405);
+        request.end(done);
       });
-      request.end(done);
+    });
+
+    describe('with invalid group id', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.put('/groups/invalid/members/' + otherUser.slug);
+        request.set('auth-token', auth.token(otherUser));
+        request.send({'notifications' : false});
+        request.expect(404);
+        request.end(done);
+      });
+    });
+
+    describe('with invalid id', function () {
+      it('should raise error', function (done) {
+        var request;
+        request = app.put('/groups/' + group.slug + '/members/invalid');
+        request.set('auth-token', auth.token(otherUser));
+        request.send({'notifications' : false});
+        request.expect(404);
+        request.end(done);
+      });
+    });
+
+    describe('with valid credentials', function () {
+      it('should update', function (done) {
+        var request;
+        request = app.put('/groups/' + group.slug + '/members/' + otherUser.slug);
+        request.set('auth-token', auth.token(otherUser));
+        request.send({'notifications' : false});
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.have.property('user');
+          response.body.should.have.property('notifications').be.equal(false);
+        });
+        request.end(done);
+      });
+
+      afterEach(function (done) {
+        var request;
+        request = app.get('/groups/' + group.slug + '/members/' + otherUser.slug);
+        request.set('auth-token', auth.token(user));
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.have.property('notifications').be.equal(false);
+        });
+        request.end(done);
+      });
     });
   });
 
   describe('delete', function () {
+    beforeEach('create member', function (done) {
+      var request;
+      request = app.post('/groups/' + group.slug + '/members');
+      request.set('auth-token', auth.token(user));
+      request.send({'user' : otherUser.slug});
+      request.end(done);
+    });
+
     describe('free to edit', function () {
-      var slug;
-
-      before(Group.remove.bind(Group));
-      before(GroupMember.remove.bind(GroupMember));
-
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'name' : 'college buddies'});
-        request.send({'freeToEdit' : true});
-        request.expect(function (response) {
-          slug = response.body.slug;
+      describe('without token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/' + otherUser.slug);
+          request.expect(401);
+          request.end(done);
         });
-        request.end(done);
       });
 
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : groupUser.slug});
-        request.end(done);
+      describe('with invalid group id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.del('/groups/invalid/members/' + otherUser.slug);
+          request.set('auth-token', auth.token(user));
+          request.expect(404);
+          request.end(done);
+        });
       });
 
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.end(done);
+      describe('with invalid id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/invalid');
+          request.set('auth-token', auth.token(user));
+          request.expect(404);
+          request.end(done);
+        });
       });
 
-      it('should raise without token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.expect(401);
-        request.end(done);
+      describe('with valid credentials', function () {
+        it('should remove', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/' + otherUser.slug);
+          request.set('auth-token', auth.token(user));
+          request.expect(204);
+          request.end(done);
+        });
       });
 
-      it('should raise error with invalid group id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/invalid/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should raise error with invalid id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/invalid');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should remove with owner token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(204);
-        request.end(done);
-      });
-
-      it('should remove with user token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/' + otherGroupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.expect(204);
-        request.end(done);
+      describe('with valid other user credentials', function () {
+        it('should remove with user token', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/' + otherUser.slug);
+          request.set('auth-token', auth.token(otherUser));
+          request.expect(204);
+          request.end(done);
+        });
       });
     });
 
     describe('not free to edit', function () {
-      var slug;
+      beforeEach('reset group', function (done) {
+        Group.update({'_id' : group._id}, {'$set' : {'freeToEdit' : false}}, done);
+      });
 
-      before(Group.remove.bind(Group));
-      before(GroupMember.remove.bind(GroupMember));
-
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'name' : 'college buddies'});
-        request.send({'freeToEdit' : false});
-        request.expect(function (response) {
-          slug = response.body.slug;
+      describe('without token', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/' + otherUser.slug);
+          request.expect(401);
+          request.end(done);
         });
-        request.end(done);
       });
 
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : groupUser.slug});
-        request.end(done);
+      describe('with other user token', function () {
+        it('should remove with user token', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/' + otherUser.slug);
+          request.set('auth-token', auth.token(otherUser));
+          request.expect(405);
+          request.end(done);
+        });
       });
 
-      before(function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.post('/groups/' + slug + '/members');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.send({'group' : slug});
-        request.send({'user' : otherGroupUser.slug});
-        request.end(done);
+      describe('with invalid group id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.del('/groups/invalid/members/' + otherUser.slug);
+          request.set('auth-token', auth.token(user));
+          request.expect(404);
+          request.end(done);
+        });
       });
 
-      it('should raise without token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.expect(401);
-        request.end(done);
+      describe('with invalid id', function () {
+        it('should raise error', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/invalid');
+          request.set('auth-token', auth.token(user));
+          request.expect(404);
+          request.end(done);
+        });
       });
 
-      it('should raise error with invalid group id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/invalid/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should raise error with invalid id', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/invalid');
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(404);
-        request.end(done);
-      });
-
-      it('should raise error with user token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupUser));
-        request.expect(405);
-        request.end(done);
-      });
-
-      it('should remove with owner token', function (done) {
-        var request, credentials;
-        credentials = auth.credentials();
-        request = supertest(app);
-        request = request.del('/groups/' + slug + '/members/' + groupUser.slug);
-        request.set('auth-signature', credentials.signature);
-        request.set('auth-timestamp', credentials.timestamp);
-        request.set('auth-transactionId', credentials.transactionId);
-        request.set('auth-token', auth.token(groupOwner));
-        request.expect(204);
-        request.end(done);
+      describe('with valid credentials', function () {
+        it('should remove', function (done) {
+          var request;
+          request = app.del('/groups/' + group.slug + '/members/' + otherUser.slug);
+          request.set('auth-token', auth.token(user));
+          request.expect(204);
+          request.end(done);
+        });
       });
     });
   });

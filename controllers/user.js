@@ -482,7 +482,7 @@ router
   async.waterfall([function (next) {
     var user;
     user = request.user;
-    user.lastRecharge = new Date();
+    user.funds = 100;
     user.save(next);
   }, function (user, _, next) {
     response.status(200);

@@ -85,4 +85,38 @@ schema.path('value').validate(function validateSufficientFunds(value, next) {
   }.bind(this));
 }, 'insufficient funds');
 
+schema.methods.approve = function (next) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    this.populate('creditedUser');
+    this.populate('chargedUser');
+    this.populate(next);
+  }.bind(this), function (_, next) {
+    this.payed = true;
+    this.value = (this.creditedUser.funds + this.creditedUser.stake < 100) ? (100 - this.creditedUser.funds + this.creditedUser.stake) : 0;
+    this.save(next);
+  }.bind(this), function () {
+    async.parallel([function (next) {
+      this.creditedUser.funds += this.value;
+      this.creditedUser.save(next);
+    }.bind(this), function (next) {
+      this.chargedUser.funds -= this.value;
+      this.chargedUser.save(next);
+    }.bind(this), function (next) {
+      async.waterfall([function (next) {
+        var query;
+        query = this.constructor.find();
+        query.where('creditedUser').equals(this.creditedUser._id);
+        query.where('payed').equals(false);
+        query.exec(next);
+      }.bind(this), function (creditRequests, next) {
+        async.each(creditRequests, function (creditRequest, next) {
+          creditRequest.remove(next);
+        }, next);
+      }], next);
+    }.bind(this)], next);
+  }.bind(this)], next);
+};
+
 module.exports = mongoose.model('CreditRequest', schema);

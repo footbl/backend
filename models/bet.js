@@ -16,7 +16,7 @@ schema = new Schema({
     'required' : true
   },
   'match'     : {
-    'type'     : Schema.Types.ObjectId,
+    'type'     : Number,
     'ref'      : 'Match',
     'required' : true
   },
@@ -28,6 +28,10 @@ schema = new Schema({
     'type'     : String,
     'required' : true,
     'enum'     : ['guest', 'host', 'draw']
+  },
+  'payed'     : {
+    'type'    : Boolean,
+    'default' : false
   },
   'createdAt' : {
     'type'    : Date,
@@ -71,6 +75,41 @@ schema.pre('save', function setBetUpdatedAt(next) {
   next();
 });
 
+schema.pre('save', function updateCascadeUserAndMatch(next) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    this.populate('user');
+    this.populate('match');
+    this.populate(next);
+  }.bind(this), function (_, next) {
+    var query;
+    query = this.constructor.findOne();
+    query.where('_id').equals(this._id);
+    query.exec(next);
+  }.bind(this), function (oldBet, next) {
+    var oldBid, oldResult;
+    oldBid = oldBet ? oldBet.bid : 0;
+    oldResult = oldBet ? oldBet.result : null;
+    async.parallel([function (next) {
+      var Match;
+      Match = require('./match');
+      Match.update({'_id' : this.match._id}, {'$inc' : {
+        'pot.guest' : (this.result === 'guest' ? this.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
+        'pot.host'  : (this.result === 'host' ? this.bid : 0) - (oldResult === 'host' ? oldBid : 0),
+        'pot.draw'  : (this.result === 'draw' ? this.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
+      }}, next);
+    }.bind(this), function (next) {
+      var User;
+      User = require('./user');
+      User.update({'_id' : this.user._id}, {'$inc' : {
+        'stake' : -oldBid + this.bid,
+        'funds' : oldBid - this.bid
+      }}, next);
+    }.bind(this)], next);
+  }.bind(this)], next);
+});
+
 schema.path('match').validate(function validateStartedMatch(value, next) {
   'use strict';
 
@@ -96,7 +135,7 @@ schema.path('bid').validate(function validateSufficientFunds(value, next) {
   }.bind(this), function (oldBid, next) {
     var funds;
     funds = this.user.funds;
-    funds += oldBid ? oldBid.bind : 0;
+    funds += oldBid ? oldBid.bid : 0;
     next(value > funds ? 'insufficient funds' : null);
   }.bind(this)], function (error) {
     next(!error);
@@ -106,7 +145,38 @@ schema.path('bid').validate(function validateSufficientFunds(value, next) {
 schema.pre('remove', function (next) {
   'use strict';
 
-  this.validate(next);
+  if (this._forceRemove) {
+    return next();
+  } else {
+    return this.validate(next);
+  }
+});
+
+schema.pre('remove', function deleteCascadeUserAndMatch(next) {
+  'use strict';
+
+  async.series([function (next) {
+    this.populate('user');
+    this.populate('match');
+    this.populate(next);
+  }.bind(this), function (next) {
+    async.parallel([function (next) {
+      var Match;
+      Match = require('./match');
+      Match.update({'_id' : this.match._id}, {'$inc' : {
+        'pot.guest' : -(this.result === 'guest' ? this.bid : 0),
+        'pot.host'  : -(this.result === 'host' ? this.bid : 0),
+        'pot.draw'  : -(this.result === 'draw' ? this.bid : 0)
+      }}, next);
+    }.bind(this), function (next) {
+      var User;
+      User = require('./user');
+      User.update({'_id' : this.user._id}, {'$inc' : {
+        'stake' : -this.bid,
+        'funds' : this.bid
+      }}, next);
+    }.bind(this)], next);
+  }.bind(this)], next);
 });
 
 schema.virtual('reward').get(function getBetReward() {

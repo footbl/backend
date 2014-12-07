@@ -1,5 +1,5 @@
 /*globals describe, before, it, after*/
-var async, ranking,
+var async, ranking, previousRanking,
 User, Group, GroupMember,
 members, group;
 
@@ -10,9 +10,10 @@ User = require('../../models/user');
 Group = require('../../models/group');
 GroupMember = require('../../models/group-member');
 ranking = require('../../workers/group-ranking');
+previousRanking = require('../../workers/group-previous-ranking');
 members = [];
 
-describe('group ranking worker', function () {
+describe('group previous ranking worker', function () {
   'use strict';
 
   before(User.remove.bind(User));
@@ -57,32 +58,34 @@ describe('group ranking worker', function () {
     async.parallel([user.save.bind(user), member.save.bind(member)], done);
   });
 
-  it('should sort', ranking);
+  before(ranking);
+
+  it('should save previous ranking', previousRanking);
 
   after(function (done) {
     GroupMember.findOne({'_id' : members[0]._id}, function (error, member) {
-      member.should.have.property('ranking').be.equal(1);
+      member.should.have.property('previousRanking').be.equal(1);
       done();
     });
   });
 
   after(function (done) {
     GroupMember.findOne({'_id' : members[1]._id}, function (error, member) {
-      member.should.have.property('ranking').be.equal(2);
+      member.should.have.property('previousRanking').be.equal(2);
       done();
     });
   });
 
   after(function (done) {
     GroupMember.findOne({'_id' : members[2]._id}, function (error, member) {
-      member.should.have.property('ranking').be.equal(3);
+      member.should.have.property('previousRanking').be.equal(3);
       done();
     });
   });
 
   after(function (done) {
     GroupMember.findOne({'_id' : members[3]._id}, function (error, member) {
-      member.should.have.property('ranking').be.equal(4);
+      member.should.have.property('previousRanking').be.equal(4);
       done();
     });
   });

@@ -1,0 +1,102 @@
+[
+  {
+    "name"               : "Premier League",
+    "country"            : "United Kingdom",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/England_pu515s.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 1,
+    "365scoresCompId"    : 7
+  },
+  {
+    "name"               : "Primera División",
+    "country"            : "Spain",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099446/Spain_fbtjci.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 2,
+    "365scoresCompId"    : 11
+  },
+  {
+    "name"               : "Serie A",
+    "country"            : "Italy",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/Italy_jn9gec.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 3,
+    "365scoresCompId"    : 17
+  },
+  {
+    "name"               : "Bundesliga",
+    "country"            : "Germany",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/Germany_ogmgq3.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 4,
+    "365scoresCompId"    : 25
+  },
+  {
+    "name"               : "Ligue 1",
+    "country"            : "France",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/France_kc8cke.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 5,
+    "365scoresCompId"    : 35
+  },
+  {
+    "name"               : "Primeira Liga",
+    "country"            : "Portugal",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/Portugal_j8oclj.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 11,
+    "365scoresCompId"    : 73
+  },
+  {
+    "name"               : "Série A",
+    "country"            : "Brazil",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/Brazil_b4izf9.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 21,
+    "365scoresCompId"    : 113
+  },
+  {
+    "name"               : "Primera División",
+    "country"            : "Argentina",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099445/Argentina_o4arz3.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 10,
+    "365scoresCompId"    : 72
+  },
+  {
+    "name"               : "MLS",
+    "country"            : "United States",
+    "type"               : "national league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099446/USA_pnjeel.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 18,
+    "365scoresCompId"    : 104
+  },
+  {
+    "name"               : "Champions League",
+    "country"            : "Europe",
+    "type"               : "continental league",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1412904170/Europe_r12tpr.png",
+    "edition"            : 2014,
+    "rounds"             : 38,
+    "365scoresCountryId" : 19,
+    "365scoresCompId"    : 572
+  }
+]

@@ -63,4 +63,22 @@ schema.pre('save', function setPrizeUpdatedAt(next) {
   next();
 });
 
+schema.methods.markAsRead = function (user, next) {
+  'use strict';
+
+  async.waterfall([function (next) {
+    this.populate('user');
+    this.populate(next);
+  }.bind(this), function (_, next) {
+    async.parallel([function (next) {
+      this.seenBy.push(user);
+      this.save(next);
+    }.bind(this), function (next) {
+      var User;
+      User = require('./user');
+      User.update({'_id' : this.user._id}, {'$inc' : {'funds' : this.value}}, next);
+    }.bind(this)], next);
+  }.bind(this)], next);
+};
+
 module.exports = mongoose.model('Prize', schema);

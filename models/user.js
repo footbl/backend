@@ -92,6 +92,14 @@ schema = new Schema({
   'country'         : {
     'type' : String
   },
+  'stake'           : {
+    'type'    : Number,
+    'default' : 0
+  },
+  'funds'           : {
+    'type'    : Number,
+    'default' : 100
+  },
   'createdAt'       : {
     'type'    : Date,
     'default' : Date.now
@@ -127,10 +135,10 @@ schema.plugin(require('mongoose-json-select'), {
   'lastRecharge'    : 0,
   'active'          : 0,
   'country'         : 1,
-  'createdAt'       : 1,
-  'updatedAt'       : 1,
   'stake'           : 1,
-  'funds'           : 1
+  'funds'           : 1,
+  'createdAt'       : 1,
+  'updatedAt'       : 1
 });
 
 schema.pre('save', function setUserUpdatedAt(next) {
@@ -245,154 +253,6 @@ schema.pre('save', function updateCascadeMembers(next) {
   }, {'$set' : {
     'slug' : this.slug || 'me'
   }}, {'multi' : true}, next);
-});
-
-schema.pre('init', function populateUserCreditRequests(next, data) {
-  'use strict';
-
-  async.waterfall([function (next) {
-    var CreditRequest, query;
-    CreditRequest = require('./credit-request');
-    query = CreditRequest.find();
-    query.or([
-      {'creditedUser' : data._id},
-      {'chargedUser' : data._id}
-    ]);
-    query.exec(next);
-  }.bind(this), function (creditRequests, next) {
-    this.creditRequests = creditRequests;
-    return next();
-  }.bind(this)], next);
-});
-
-schema.pre('init', function populateUserBets(next, data) {
-  'use strict';
-
-  async.waterfall([function (next) {
-    var Bet, query;
-    Bet = require('./bet');
-    query = Bet.find();
-    query.where('user').equals(data._id);
-    query.populate('match');
-    query.exec(next);
-  }.bind(this), function (bets, next) {
-    this.bets = bets;
-    return next();
-  }.bind(this)], next);
-});
-
-schema.pre('init', function populateUserPrizes(next, data) {
-  'use strict';
-
-  async.waterfall([function (next) {
-    var Prize, query;
-    Prize = require('./prize');
-    query = Prize.find();
-    query.where('user').equals(data._id);
-    query.where('seenBy').equals(data._id);
-    query.exec(next);
-  }.bind(this), function (prizes, next) {
-    this.prizes = prizes;
-    return next();
-  }.bind(this)], next);
-});
-
-schema.virtual('stake').get(function getUserStake() {
-  'use strict';
-
-  if (!this.bets) {
-    return 0;
-  }
-
-  return this.bets.filter(function (bet) {
-    return bet.createdAt > this.lastRecharge;
-  }.bind(this)).filter(function (bet) {
-    return !bet.match.finished;
-  }.bind(this)).map(function (bet) {
-    return bet.bid;
-  }.bind(this)).reduce(function (stake, bid) {
-    return stake + bid;
-  }.bind(this), 0);
-});
-
-schema.virtual('funds').get(function getUserFunds() {
-  'use strict';
-
-  if (!this.bets) {
-    return 100;
-  }
-
-  return this.bets.filter(function (bet) {
-    return bet.createdAt > this.lastRecharge;
-  }.bind(this)).map(function (bet) {
-    return bet.profit;
-  }.bind(this)).reduce(function (stake, bid) {
-    return stake + bid;
-  }.bind(this), this.credits + this.debts);
-});
-
-schema.virtual('credits').get(function getUserCredits() {
-  'use strict';
-
-  return 100 + this.creditRequestCredits;
-});
-
-schema.virtual('debts').get(function getUserDebts() {
-  'use strict';
-
-  return this.creditRequestDebts + this.prizeCredits;
-});
-
-schema.virtual('prizeCredits').get(function getUserCreditRequestCredits() {
-  'use strict';
-
-  if (!this.prizes) {
-    return 0;
-  }
-
-  return this.prizes.filter(function (prize) {
-    return prize.createdAt > this.lastRecharge;
-  }.bind(this)).map(function (prize) {
-    return prize.value;
-  }.bind(this)).reduce(function (credits, prize) {
-    return credits + prize;
-  }.bind(this), 0);
-});
-
-schema.virtual('creditRequestCredits').get(function getUserCreditRequestCredits() {
-  'use strict';
-
-  if (!this.creditRequests) {
-    return 0;
-  }
-
-  return this.creditRequests.filter(function (creditRequest) {
-    return creditRequest.createdAt > this.lastRecharge;
-  }.bind(this)).filter(function (creditRequest) {
-    return creditRequest.creditedUser.toString() === this._id.toString() && creditRequest.payed;
-  }.bind(this)).map(function (creditRequest) {
-    return creditRequest.value;
-  }.bind(this)).reduce(function (credits, credit) {
-    return credits + credit;
-  }.bind(this), 0);
-});
-
-schema.virtual('creditRequestDebts').get(function getUserDebts() {
-  'use strict';
-
-  if (!this.creditRequests) {
-    return 0;
-  }
-
-  return this.creditRequests.filter(function (creditRequest) {
-    return creditRequest.createdAt > this.lastRecharge;
-  }.bind(this)).filter(function (creditRequest) {
-    return creditRequest.chargedUser.toString() === this._id.toString() && creditRequest.payed;
-  }.bind(this)).map(function (creditRequest) {
-    return -1 * creditRequest.value;
-  }.bind(this)).reduce(function (debts, debt) {
-    return debts + debt;
-  }.bind(this), 0);
 });
 
 module.exports = mongoose.model('User', schema);

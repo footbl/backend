@@ -1,5 +1,5 @@
 /*globals describe, before, it, after*/
-var async, ranking,
+var async, ranking, previousRanking,
 User,
 users;
 
@@ -8,9 +8,10 @@ require('../../index.js');
 async = require('async');
 User = require('../../models/user');
 ranking = require('../../workers/world-ranking');
+previousRanking = require('../../workers/world-previous-ranking');
 users = [];
 
-describe('world ranking worker', function () {
+describe('world previous ranking worker', function () {
   'use strict';
 
   before(User.remove.bind(User));
@@ -43,32 +44,34 @@ describe('world ranking worker', function () {
     user.save(done);
   });
 
-  it('should sort', ranking);
+  before(ranking);
+
+  it('should save previous ranking', previousRanking);
 
   after(function (done) {
     User.findOne({'_id' : users[0]._id}, function (error, user) {
-      user.should.have.property('ranking').be.equal(1);
+      user.should.have.property('previousRanking').be.equal(1);
       done();
     });
   });
 
   after(function (done) {
     User.findOne({'_id' : users[1]._id}, function (error, user) {
-      user.should.have.property('ranking').be.equal(2);
+      user.should.have.property('previousRanking').be.equal(2);
       done();
     });
   });
 
   after(function (done) {
     User.findOne({'_id' : users[2]._id}, function (error, user) {
-      user.should.have.property('ranking').be.equal(3);
+      user.should.have.property('previousRanking').be.equal(3);
       done();
     });
   });
 
   after(function (done) {
     User.findOne({'_id' : users[3]._id}, function (error, user) {
-      user.should.have.property('ranking').be.equal(4);
+      user.should.have.property('previousRanking').be.equal(4);
       done();
     });
   });

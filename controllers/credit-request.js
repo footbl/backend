@@ -357,42 +357,28 @@ router
   async.waterfall([function (next) {
     var creditRequest;
     creditRequest = request.creditRequest;
-    creditRequest.value = (creditRequest.creditedUser.funds + creditRequest.creditedUser.stake) < 100 ? 100 - (creditRequest.creditedUser.funds + creditRequest.creditedUser.stake) : 0;
-    creditRequest.payed = true;
-    creditRequest.save(next);
-  }, function (creditRequest, _, next) {
-    async.waterfall([function (next) {
-      async.parallel([function (next) {
-        push(nconf.get('ZEROPUSH_TOKEN'), {
-          'device' : creditRequest.creditedUser.apnsToken,
-          'sound'  : 'get_money.mp3',
-          'alert'  : {
-            'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
-            'loc-args' : [request.session.username || request.session.name]
-          }
-        }, next);
-      }, function (next) {
-        async.waterfall([function (next) {
-          var query;
-          query = CreditRequest.find();
-          query.where('creditedUser').equals(creditRequest.creditedUser._id);
-          query.where('payed').equals(false);
-          query.exec(next);
-        }, function (creditRequests, next) {
-          async.each(creditRequests, function (creditRequest, next) {
-            creditRequest.remove(next);
-          }, next);
-        }], next);
-      }, function (next) {
-        creditRequest.populate('creditedUser');
-        creditRequest.populate('chargedUser');
-        creditRequest.populate(next);
-      }], next);
-    }, function (_, next) {
-      response.status(200);
-      response.send(creditRequest);
-      next();
-    }], next);
+    creditRequest.approve(next);
+  }, function (_, next) {
+    var creditRequest;
+    creditRequest = request.creditRequest;
+    creditRequest.populate('creditedUser');
+    creditRequest.populate('chargedUser');
+    creditRequest.populate(next);
+  }, function (creditRequest, next) {
+    response.status(200);
+    response.send(creditRequest);
+    next();
+  }, function (next) {
+    var creditRequest;
+    creditRequest = request.creditRequest;
+    push(nconf.get('ZEROPUSH_TOKEN'), {
+      'device' : creditRequest.creditedUser.apnsToken,
+      'sound'  : 'get_money.mp3',
+      'alert'  : {
+        'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
+        'loc-args' : [request.session.username || request.session.name]
+      }
+    }, next);
   }], next);
 });
 

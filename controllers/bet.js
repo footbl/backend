@@ -1,4 +1,4 @@
-var router, nconf, slug, async, auth, push, Championship, Match, Team, Bet, User;
+var router, nconf, slug, async, auth, push, Championship, Match, Bet, User;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -8,7 +8,6 @@ auth = require('auth');
 push = require('push');
 Championship = require('../models/championship');
 Match = require('../models/match');
-Team = require('../models/team');
 Bet = require('../models/bet');
 User = require('../models/user');
 
@@ -63,17 +62,11 @@ User = require('../models/user');
  *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
  *    "guest": {
  *      "name": "fluminense",
- *      "slug": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "host": {
  *      "name": "botafogo",
- *      "slug": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "round": 3,
  *    "date": "2014-07-01T12:22:25.058Z",
@@ -119,25 +112,13 @@ router
     });
     bet.save(next);
   }, function (bet, _, next) {
-    async.parallel([function (next) {
-      Match.update({'_id' : request.match._id}, {'$inc' : {
-        'pot.guest' : bet.result === 'guest' ? bet.bid : 0,
-        'pot.host'  : bet.result === 'host' ? bet.bid : 0,
-        'pot.draw'  : bet.result === 'draw' ? bet.bid : 0
-      }}, next);
-    }, function (next) {
-      async.waterfall([function (next) {
-        bet.populate('user');
-        bet.populate('match');
-        bet.populate(next);
-      }, function (_, next) {
-        Team.populate(bet, {'path' : 'match.guest match.host'}, next);
-      }, function (_, next) {
-        response.status(201);
-        response.send(bet);
-        next();
-      }], next);
-    }], next);
+    bet.populate('user');
+    bet.populate('match');
+    bet.populate(next);
+  }, function (bet, next) {
+    response.status(201);
+    response.send(bet);
+    next();
   }], next);
 });
 
@@ -166,20 +147,14 @@ router
  *    "updatedAt": "2014-07-01T12:22:25.058Z"
  *  },
  *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
  *    "guest": {
  *      "name": "fluminense",
- *      "slug": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "host": {
  *      "name": "botafogo",
- *      "slug": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "round": 3,
  *    "date": "2014-07-01T12:22:25.058Z",
@@ -226,8 +201,6 @@ router
     query.limit(pageSize);
     query.exec(next);
   }, function (bets, next) {
-    Team.populate(bets, {'path' : 'match.guest match.host'}, next);
-  }, function (bets, next) {
     response.status(200);
     response.send(bets);
     next();
@@ -257,20 +230,14 @@ router
  *    "updatedAt": "2014-07-01T12:22:25.058Z"
  *  },
  *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
  *    "guest": {
  *      "name": "fluminense",
- *      "slug": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "host": {
  *      "name": "botafogo",
- *      "slug": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "round": 3,
  *    "date": "2014-07-01T12:22:25.058Z",
@@ -362,20 +329,14 @@ router
  *    "updatedAt": "2014-07-01T12:22:25.058Z"
  *  },
  *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
+ *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
  *    "guest": {
  *      "name": "fluminense",
- *      "slug": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "host": {
  *      "name": "botafogo",
- *      "slug": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png",
- *      "createdAt": "2014-07-01T12:22:25.058Z",
- *      "updatedAt": "2014-07-01T12:22:25.058Z"
+ *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
  *    },
  *    "round": 3,
  *    "date": "2014-07-01T12:22:25.058Z",
@@ -411,9 +372,6 @@ router
 .put(function updateBet(request, response, next) {
   'use strict';
 
-  var oldResult, oldBid;
-  oldBid = request.bet.bid;
-  oldResult = request.bet.result;
   async.waterfall([function (next) {
     var bet;
     bet = request.bet;
@@ -421,25 +379,13 @@ router
     bet.result = request.param('result');
     bet.save(next);
   }, function (bet, _, next) {
-    async.parallel([function (next) {
-      Match.update({'_id' : request.match._id}, {'$inc' : {
-        'pot.guest' : (bet.result === 'guest' ? bet.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
-        'pot.host'  : (bet.result === 'host' ? bet.bid : 0) - (oldResult === 'host' ? oldBid : 0),
-        'pot.draw'  : (bet.result === 'draw' ? bet.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
-      }}, next);
-    }, function (next) {
-      async.waterfall([function (next) {
-        bet.populate('user');
-        bet.populate('match');
-        bet.populate(next);
-      }, function (_, next) {
-        Team.populate(bet, {'path' : 'match.guest match.host'}, next);
-      }, function (_, next) {
-        response.status(200);
-        response.send(bet);
-        next();
-      }], next);
-    }], next);
+    bet.populate('user');
+    bet.populate('match');
+    bet.populate(next);
+  }, function (bet, next) {
+    response.status(200);
+    response.send(bet);
+    next();
   }], next);
 });
 
@@ -469,25 +415,14 @@ router
 .delete(function removeBet(request, response, next) {
   'use strict';
 
-  var oldResult, oldBid;
-  oldBid = request.bet.bid;
-  oldResult = request.bet.result;
   async.waterfall([function (next) {
     var bet;
     bet = request.bet;
     bet.remove(next);
   }, function (_, next) {
-    async.parallel([function () {
-      Match.update({'_id' : request.match._id}, {'$inc' : {
-        'pot.guest' : -(oldResult === 'guest' ? oldBid : 0),
-        'pot.host'  : -(oldResult === 'host' ? oldBid : 0),
-        'pot.draw'  : -(oldResult === 'draw' ? oldBid : 0)
-      }}, next);
-    }, function (next) {
-      response.status(204);
-      response.end();
-      next();
-    }], next);
+    response.status(204);
+    response.end();
+    next();
   }], next);
 });
 
@@ -523,8 +458,6 @@ router
     query.skip(page);
     query.limit(pageSize);
     query.exec(next);
-  }, function (bets, next) {
-    Team.populate(bets, {'path' : 'match.guest match.host'}, next);
   }, function (bets, next) {
     response.status(200);
     response.send(bets);
@@ -567,8 +500,6 @@ router.param('bet', function findBet(request, response, next, id) {
       query.where('slug').equals(id);
     }
     query.exec(next);
-  }, function (bet, next) {
-    Team.populate(bet, {'path' : 'match.guest match.host'}, next);
   }, function (bet, next) {
     request.bet = bet;
     next(!bet ? new Error('not found') : null);
