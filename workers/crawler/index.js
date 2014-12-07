@@ -31,7 +31,7 @@ module.exports = function (next) {
           'json' : true
         }, next);
       }, function (response, body, next) {
-        async.filter(body.Games, function (match, next) {
+        async.filter((body || {}).Games || [], function (match, next) {
           next(match.Comp === championship['365scoresCompId']);
         }, function (results) {
           next(null, results);
