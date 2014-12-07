@@ -218,6 +218,13 @@ describe('crawler', function () {
         done();
       });
     });
+
+    after(function (done) {
+      Championship.findOne({'country' : 'Brazil'}, function (error, championship) {
+        championship.should.have.property('currentRound').be.equal(14);
+        done();
+      });
+    })
   });
 
   describe('rewards', function () {

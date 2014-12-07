@@ -64,23 +64,32 @@ module.exports = function (next) {
         });
       }, function (matches, next) {
         async.each(matches, function (match, next) {
-          async.waterfall([function (next) {
-            var query;
-            query = Bet.find();
-            query.where('match').equals(match._id);
-            query.where('payed').ne(true);
-            query.exec(next)
-          }, function (bets, next) {
-            async.each(bets, function (bet, next) {
-              async.parallel([function (next) {
-                Bet.update({'_id' : bet._id}, {'$set' : {'payed' : true}}, next);
-              }, function (next) {
-                User.update({'_id' : bet.user}, {'$inc' : {
-                  'stake' : -bet.bid,
-                  'funds' : (bet.result === match.winner) ? bet.bid * match.reward : 0
-                }}, next);
-              }], next);
-            }, next)
+          async.parallel([function (next) {
+            async.waterfall([function (next) {
+              var query;
+              query = Bet.find();
+              query.where('match').equals(match._id);
+              query.where('payed').ne(true);
+              query.exec(next)
+            }, function (bets, next) {
+              async.each(bets, function (bet, next) {
+                async.parallel([function (next) {
+                  Bet.update({'_id' : bet._id}, {'$set' : {'payed' : true}}, next);
+                }, function (next) {
+                  User.update({'_id' : bet.user}, {'$inc' : {
+                    'stake' : -bet.bid,
+                    'funds' : (bet.result === match.winner) ? bet.bid * match.reward : 0
+                  }}, next);
+                }], next);
+              }, next)
+            }], next);
+          }, function (next) {
+            Championship.collection.update({
+              '$or' : [
+                {'_id' : match.championship, 'currentRound' : {'$lt' : match.round}},
+                {'_id' : match.championship, 'currentRound' : {'$exists' : false}}
+              ]
+            }, {'$set' : {'currentRound' : match.round}}, next);
           }], next);
         }, next);
       }], next);

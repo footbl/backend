@@ -37,7 +37,8 @@ schema = new Schema({
     'type' : Number
   },
   'currentRound' : {
-    'type' : Number
+    'type'    : Number,
+    'default' : 1
   },
   'createdAt'    : {
     'type'    : Date,
