@@ -48,8 +48,11 @@ module.exports = function (next) {
         });
       }, function (matches, next) {
         async.map(matches, function (match, next) {
+          var id;
           match.championship = champ._id;
-          Match.findOneAndUpdate({'_id' : match._id}, {'$set' : match}, {'upsert' : true}, next);
+          id = match._id;
+          delete match._id;
+          Match.findOneAndUpdate({'_id' : id}, {'$set' : match}, {'upsert' : true}, next);
         }, next);
       }, function (matches, next) {
         async.filter(matches, function (match, next) {
