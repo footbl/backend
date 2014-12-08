@@ -188,26 +188,18 @@ schema.pre('save', function setUserDefaultEntry(next) {
   return async.waterfall([function (next) {
     var query;
     query = Championship.find();
-    query.or([
-      {'country' : this.country},
-      {'country' : 'United Kingdom'}
-    ]);
-    return query.exec(next);
+    query.where('country').in([this.country ? this.country : '', 'Europe']);
+    query.exec(next);
   }.bind(this), function (championships, next) {
-    var championship, entry;
-    if (championships.length === 2) {
-      championship = championships[0].country === 'United Kingdom' ? championships[1] : championships[0];
-    } else if (championships.length === 1) {
-      championship = championships[0];
-    } else {
-      return next();
-    }
-    entry = new Entry({
-      'slug'         : championship ? championship.slug : null,
-      'championship' : championship._id,
-      'user'         : this._id
-    });
-    return entry.save(next);
+    async.each(championships, function (championship, next) {
+      var entry;
+      entry = new Entry({
+        'slug'         : championship ? championship.slug : null,
+        'championship' : championship._id,
+        'user'         : this._id
+      });
+      entry.save(next);
+    }.bind(this), next);
   }.bind(this)], next);
 });
 

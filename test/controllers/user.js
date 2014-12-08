@@ -19,9 +19,9 @@ describe('user controller', function () {
   before(function (done) {
     championship = new Championship({
       'name'    : 'brasileirão',
-      'slug'    : 'brasileirao-brasil-2014',
+      'slug'    : 'brasileirao-Brazil-2014',
       'type'    : 'national league',
-      'country' : 'brasil',
+      'country' : 'Brazil',
       'edition' : 2014
     });
     championship.save(done);
@@ -176,12 +176,12 @@ describe('user controller', function () {
 
     after(function (done) {
       var request;
-      request = app.get('/users/entry-user/entries/premier-league-United-Kingdom-2014');
+      request = app.get('/users/entry-user/entries/brasileirao-Brazil-2014');
       request.set('auth-token', auth.token(user));
       request.expect(200);
       request.expect(function (response) {
         response.body.should.have.property('user').with.property('slug').be.equal('entry-user');
-        response.body.should.have.property('championship').with.property('slug').be.equal('premier-league-United-Kingdom-2014');
+        response.body.should.have.property('championship').with.property('slug').be.equal('brasileirao-Brazil-2014');
       });
       request.end(done);
     });
