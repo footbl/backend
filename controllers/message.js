@@ -57,7 +57,8 @@ router
       'group'   : request.group ? request.group._id : null,
       'user'    : request.session._id,
       'message' : request.param('message'),
-      'type'    : request.param('type')
+      'type'    : request.param('type'),
+      'seenBy'  : [request.session._id]
     });
     message.save(next);
   }, function (message, _, next) {
