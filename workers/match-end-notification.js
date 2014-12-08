@@ -1,6 +1,8 @@
 'use strict';
-var mongoose, nconf, async, push, User, Entry, Championship, Match, now, today, tomorrow;
+var redis, mongoose, nconf, async, push, User, Entry, Championship, Match, now, today, tomorrow, uri, url, client;
 
+redis = require('redis');
+url = require('url');
 mongoose = require('mongoose');
 nconf = require('nconf');
 async = require('async');
@@ -17,6 +19,16 @@ tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 nconf.argv();
 nconf.env();
 nconf.defaults(require('../config'));
+
+if (nconf.get('REDISCLOUD_URL')) {
+  uri = url.parse(nconf.get('REDISCLOUD_URL'));
+  client = redis.createClient(uri.port, uri.hostname);
+  if (uri.auth) {
+    client.auth(uri.auth.split(':')[1]);
+  }
+} else {
+  client = redis.createClient();
+}
 
 module.exports = function (next) {
   async.waterfall([function (next) {
@@ -58,13 +70,20 @@ module.exports = function (next) {
         query.exec(next);
       }, function (entries, next) {
         async.each(entries, function (entry, next) {
-          push(nconf.get('ZEROPUSH_TOKEN'), {
-            'device' : entry.user.apnsToken,
-            'sound'  : 'match_end1.mp3',
-            'alert'  : {
-              'loc-key' : 'NOTIFICATION_ROUND_END'
-            }
-          }, next);
+          async.waterfall([function (next) {
+            client.get(entry.user._id + ':match-end-notification', next);
+          }, function (id, next) {
+            if (id) return next();
+            client.set(entry.user._id + ':match-end-notification', true);
+            client.expire(entry.user._id + ':match-end-notification', 9 * 60 * 60);
+            return push(nconf.get('ZEROPUSH_TOKEN'), {
+              'device' : entry.user.apnsToken,
+              'sound'  : 'match_end1.mp3',
+              'alert'  : {
+                'loc-key' : 'NOTIFICATION_ROUND_END'
+              }
+            }, next);
+          }], next);
         }, next);
       }], next);
     }, next);
