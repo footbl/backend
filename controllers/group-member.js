@@ -133,7 +133,7 @@ router
             'from_email' : 'noreply@footbl.co',
             'to'         : [
               {
-                'email' : request.param('invite', ''),
+                'email' : request.param('user', ''),
                 'type'  : 'to'
               }
             ]
