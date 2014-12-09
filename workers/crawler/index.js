@@ -48,13 +48,13 @@ module.exports = function (next) {
         });
       }, function (matches, next) {
         async.map(matches, function (match, next) {
-          var id;
           match.championship = champ._id;
-          id = match._id;
-          delete match._id;
           match.guest.slug = slug(match.guest.name);
           match.host.slug = slug(match.host.name);
-          Match.findOneAndUpdate({'_id' : id}, {'$set' : match}, {'upsert' : true}, next);
+          Match.findOneAndUpdate({
+            'slug'         : match.slug,
+            'championship' : champ._id
+          }, {'$set' : match}, {'upsert' : true}, next);
         }, next);
       }, function (matches, next) {
         async.filter(matches, function (match, next) {
@@ -120,7 +120,6 @@ function parseMatch(data, next) {
     return next({});
   }
   return next(null, {
-    '_id'      : data.ID,
     'slug'     : 'round-' + (data.Round || 1) + '-' + slug(teams[data.Comps[0].ID].name) + '-vs-' + slug(teams[data.Comps[1].ID].name),
     'guest'    : teams[data.Comps[1].ID],
     'host'     : teams[data.Comps[0].ID],

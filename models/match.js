@@ -7,10 +7,6 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  '_id'          : {
-    'type'     : Number,
-    'required' : true
-  },
   'slug'         : {
     'type' : String
   },

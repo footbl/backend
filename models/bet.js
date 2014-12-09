@@ -16,7 +16,7 @@ schema = new Schema({
     'required' : true
   },
   'match'     : {
-    'type'     : Number,
+    'type'     : Schema.Types.ObjectId,
     'ref'      : 'Match',
     'required' : true
   },

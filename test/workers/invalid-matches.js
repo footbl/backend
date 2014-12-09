@@ -38,7 +38,6 @@ describe('invalid matches worker', function () {
 
   before(function (done) {
     tomorrowMatch = new Match({
-      '_id'          : 1,
       'round'        : 2,
       'date'         : new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2),
       'finished'     : false,
@@ -58,7 +57,6 @@ describe('invalid matches worker', function () {
 
   before(function (done) {
     yesterdayMatch = new Match({
-      '_id'          : 2,
       'round'        : 1,
       'date'         : new Date(now.getFullYear(), now.getMonth(), now.getDate() - 2),
       'finished'     : false,

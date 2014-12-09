@@ -228,7 +228,7 @@ describe('crawler', function () {
   });
 
   describe('rewards', function () {
-    var drawBetter, guestBetter, hostBetter;
+    var drawBetter, guestBetter, hostBetter, id;
 
     beforeEach(function (done) {
       drawBetter = new User({'password' : '1234', 'type' : 'admin', 'slug' : 'draw-better'});
@@ -250,7 +250,6 @@ describe('crawler', function () {
         "Games" : [
           {
             "Comp"   : 113,
-            "ID"     : 513645,
             "Season" : 7,
             "Active" : false,
             "GT"     : -1,
@@ -270,10 +269,17 @@ describe('crawler', function () {
     beforeEach(crawler);
 
     beforeEach(function (done) {
+      Match.findOne(function (error, match) {
+        id = match._id;
+        done();
+      });
+    });
+
+    beforeEach(function (done) {
       new Bet({
         'slug'   : 'teste-draw-better',
         'user'   : drawBetter._id,
-        'match'  : 513645,
+        'match'  : id,
         'bid'    : 50,
         'result' : 'draw'
       }).save(done);
@@ -283,7 +289,7 @@ describe('crawler', function () {
       new Bet({
         'slug'   : 'teste-guest-better',
         'user'   : guestBetter._id,
-        'match'  : 513645,
+        'match'  : id,
         'bid'    : 50,
         'result' : 'guest'
       }).save(done);
@@ -293,7 +299,7 @@ describe('crawler', function () {
       new Bet({
         'slug'   : 'teste-host-better',
         'user'   : hostBetter._id,
-        'match'  : 513645,
+        'match'  : id,
         'bid'    : 50,
         'result' : 'host'
       }).save(done);

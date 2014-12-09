@@ -37,7 +37,6 @@ describe('championship controller', function () {
 
   before(function (done) {
     match = new Match({
-      '_id'          : 1,
       'round'        : 1,
       'date'         : new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1),
       'guest'        : {
