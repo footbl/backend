@@ -36,63 +36,35 @@ describe('prize controller', function () {
 
   describe('create on login', function () {
     describe('on first login', function () {
-      describe('with 100 funds', function () {
-        it('not should give daily bonus', function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = app.get('/users/me/auth');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('facebook-token', '1234');
-          request.expect(200);
-          request.end(done);
-        });
-
-        afterEach(function (done) {
-          var request;
-          request = app.get('/users/me/prizes');
-          request.set('auth-token', auth.token(user));
-          request.expect(200);
-          request.expect(function (response) {
-            response.body.should.be.instanceOf(Array);
-            response.body.should.have.lengthOf(0);
-          });
-          request.end(done);
-        });
+      beforeEach('remove user funds', function (done) {
+        User.update({'_id' : user._id}, {'$set' : {
+          'funds' : 10,
+          'stake' : 0
+        }}, done);
       });
 
-      describe('with less than 100 funds', function () {
-        beforeEach('remove user funds', function (done) {
-          User.update({'_id' : user._id}, {'$set' : {
-            'funds' : 10,
-            'stake' : 0
-          }}, done);
-        });
+      it('should give daily bonus', function (done) {
+        var request, credentials;
+        credentials = auth.credentials();
+        request = app.get('/users/me/auth');
+        request.set('auth-signature', credentials.signature);
+        request.set('auth-timestamp', credentials.timestamp);
+        request.set('auth-transactionId', credentials.transactionId);
+        request.set('facebook-token', '1234');
+        request.expect(200);
+        request.end(done);
+      });
 
-        it('should give daily bonus', function (done) {
-          var request, credentials;
-          credentials = auth.credentials();
-          request = app.get('/users/me/auth');
-          request.set('auth-signature', credentials.signature);
-          request.set('auth-timestamp', credentials.timestamp);
-          request.set('auth-transactionId', credentials.transactionId);
-          request.set('facebook-token', '1234');
-          request.expect(200);
-          request.end(done);
+      afterEach(function (done) {
+        var request;
+        request = app.get('/users/me/prizes');
+        request.set('auth-token', auth.token(user));
+        request.expect(200);
+        request.expect(function (response) {
+          response.body.should.be.instanceOf(Array);
+          response.body.should.have.lengthOf(1);
         });
-
-        afterEach(function (done) {
-          var request;
-          request = app.get('/users/me/prizes');
-          request.set('auth-token', auth.token(user));
-          request.expect(200);
-          request.expect(function (response) {
-            response.body.should.be.instanceOf(Array);
-            response.body.should.have.lengthOf(1);
-          });
-          request.end(done);
-        });
+        request.end(done);
       });
     });
 
@@ -128,7 +100,7 @@ describe('prize controller', function () {
         request.expect(200);
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(0);
+          response.body.should.have.lengthOf(1);
         });
         request.end(done);
       });

@@ -423,13 +423,13 @@ router
         query.where('createdAt').gte(today).lt(tomorrow);
         query.exec(next);
       }, function (prize, next) {
-        if (prize || !user || (user.funds + user.stake) >= 100) {
+        if (prize || !user) {
           return next();
         }
         prize = new Prize();
         prize.slug = Date.now();
         prize.user = user;
-        prize.value = 1;
+        prize.value = 2;
         prize.type = 'daily';
         return prize.save(next);
       }], next);
