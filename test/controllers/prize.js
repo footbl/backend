@@ -334,7 +334,7 @@ describe('prize controller', function () {
         request.set('auth-token', auth.token(user));
         request.expect(200);
         request.expect(function (response) {
-          response.body.should.have.property('funds').be.equal(11);
+          response.body.should.have.property('funds').be.equal(12);
         });
         request.end(done);
       });
