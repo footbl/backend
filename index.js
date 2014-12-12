@@ -1,7 +1,4 @@
 'use strict';
-if (process.env.NODE_ENV !== 'test') {
-  require('newrelic');
-}
 var Domain, cluster, domain, nconf;
 Domain = require('domain');
 cluster = require('cluster');
