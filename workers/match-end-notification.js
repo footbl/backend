@@ -69,6 +69,12 @@ module.exports = function (next) {
         query.populate('user');
         query.exec(next);
       }, function (entries, next) {
+        async.filter(entries, function (entry, next) {
+          next(entry && entry.user && entry.user._id);
+        }, function (entries) {
+          next(null, entries);
+        });
+      }, function (entries, next) {
         async.each(entries, function (entry, next) {
           async.waterfall([function (next) {
             client.get(entry.user._id + ':match-end-notification', next);
