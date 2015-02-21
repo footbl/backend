@@ -1,8 +1,8 @@
 'use strict';
 var mongoose, nconf, request, async, slug,
-Championship, Match, Bet, User,
-championships, teams,
-now, today;
+    Championship, Match, Bet, User,
+    championships, teams,
+    now, today;
 
 mongoose = require('mongoose');
 nconf = require('nconf');
@@ -18,7 +18,48 @@ teams = require('./teams');
 now = new Date();
 today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-module.exports = function (next) {
+function parseChampionship(championship) {
+  return {
+    'slug'    : slug(championship.name) + '-' + slug(championship.country) + '-' + championship.edition,
+    'name'    : championship.name,
+    'country' : championship.country,
+    'type'    : championship.type,
+    'picture' : championship.picture,
+    'edition' : championship.edition,
+    'rounds'  : championship.rounds
+  };
+}
+
+function parseMatch(data, next) {
+  var dateMask = data.STime.split(/-|\s|:/).map(Number);
+  if (!teams[data.Comps[0].ID]) {
+    console.log('[team not found]', data.Comps[0].Name);
+    return next({});
+  }
+  if (!teams[data.Comps[1].ID]) {
+    console.log('[team not found]', data.Comps[1].Name);
+    return next({});
+  }
+  return next(null, {
+    'slug'     : 'round-' + (data.Round || 1) + '-' + slug(teams[data.Comps[0].ID].name) + '-vs-' + slug(teams[data.Comps[1].ID].name),
+    'guest'    : teams[data.Comps[1].ID],
+    'host'     : teams[data.Comps[0].ID],
+    'round'    : data.Round || 1,
+    'date'     : new Date(dateMask[2], dateMask[1] - 1, dateMask[0], dateMask[3], dateMask[4]),
+    'finished' : !data.Active && data.GT >= 90,
+    'elapsed'  : data.Active ? data.GT : null,
+    'result'   : {
+      'guest' : (data.Events || []).filter(function (event) {
+        return event.Type === 0 && event.Comp === 2;
+      }).length,
+      'host'  : (data.Events || []).filter(function (event) {
+        return event.Type === 0 && event.Comp === 1;
+      }).length
+    }
+  });
+}
+
+module.exports = function crawler(next) {
   async.map(championships, function (championship, next) {
     async.waterfall([function (next) {
       Championship.findOneAndUpdate({
@@ -70,18 +111,20 @@ module.exports = function (next) {
               query = Bet.find();
               query.where('match').equals(match._id);
               query.where('payed').ne(true);
-              query.exec(next)
+              query.exec(next);
             }, function (bets, next) {
               async.each(bets, function (bet, next) {
                 async.parallel([function (next) {
                   Bet.update({'_id' : bet._id}, {'$set' : {'payed' : true}}, next);
                 }, function (next) {
-                  User.update({'_id' : bet.user}, {'$inc' : {
-                    'stake' : -bet.bid,
-                    'funds' : (bet.result === match.winner) ? bet.bid * match.reward : 0
-                  }}, next);
+                  User.update({'_id' : bet.user}, {
+                    '$inc' : {
+                      'stake' : -bet.bid,
+                      'funds' : (bet.result === match.winner) ? bet.bid * match.reward : 0
+                    }
+                  }, next);
                 }], next);
-              }, next)
+              }, next);
             }], next);
           }, function (next) {
             Championship.collection.update({
@@ -96,47 +139,6 @@ module.exports = function (next) {
     }], next);
   }, next);
 };
-
-function parseChampionship(championship) {
-  return {
-    'slug'    : slug(championship.name) + '-' + slug(championship.country) + '-' + championship.edition,
-    'name'    : championship.name,
-    'country' : championship.country,
-    'type'    : championship.type,
-    'picture' : championship.picture,
-    'edition' : championship.edition,
-    'rounds'  : championship.rounds
-  };
-}
-
-function parseMatch(data, next) {
-  var dateMask = data.STime.split(/-|\s|:/).map(Number);
-  if (!teams[data.Comps[0].ID]) {
-    console.log('[team not found]', data.Comps[0].Name);
-    return next({});
-  }
-  if (!teams[data.Comps[1].ID]) {
-    console.log('[team not found]', data.Comps[1].Name);
-    return next({});
-  }
-  return next(null, {
-    'slug'     : 'round-' + (data.Round || 1) + '-' + slug(teams[data.Comps[0].ID].name) + '-vs-' + slug(teams[data.Comps[1].ID].name),
-    'guest'    : teams[data.Comps[1].ID],
-    'host'     : teams[data.Comps[0].ID],
-    'round'    : data.Round || 1,
-    'date'     : new Date(dateMask[2], dateMask[1] - 1, dateMask[0], dateMask[3], dateMask[4]),
-    'finished' : !data.Active && data.GT !== -1,
-    'elapsed'  : data.Active ? data.GT : null,
-    'result'   : {
-      'guest' : (data.Events || []).filter(function (event) {
-        return event.Type === 0 && event.Comp === 2;
-      }).length,
-      'host'  : (data.Events || []).filter(function (event) {
-        return event.Type === 0 && event.Comp === 1;
-      }).length
-    }
-  });
-}
 
 if (require.main === module) {
   nconf.argv();
