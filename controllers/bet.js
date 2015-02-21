@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, Championship, Match, Bet, User;
 
 router = require('express').Router();
@@ -99,8 +101,6 @@ router
 .route('/championships/:championship/matches/:match/bets')
 .post(auth.session())
 .post(function createBet(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var bet;
     bet = new Bet({
@@ -187,8 +187,6 @@ router
 .route('/championships/:championship/matches/:match/bets')
 .get(auth.session())
 .get(function listBet(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -270,8 +268,6 @@ router
 .route('/championships/:championship/matches/:match/bets/:bet')
 .get(auth.session())
 .get(function getBet(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var bet;
     bet = request.bet;
@@ -370,8 +366,6 @@ router
 .put(auth.session())
 .put(auth.checkMethod('bet', 'user'))
 .put(function updateBet(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var bet;
     bet = request.bet;
@@ -413,8 +407,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('bet', 'user'))
 .delete(function removeBet(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var bet;
     bet = request.bet;
@@ -444,8 +436,6 @@ router
 .route('/users/:user/bets')
 .get(auth.session())
 .get(function listUserBets(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -467,8 +457,6 @@ router
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();
@@ -486,8 +474,6 @@ router.param('user', function findUser(request, response, next, id) {
 
 router.param('bet', auth.session());
 router.param('bet', function findBet(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Bet.findOne();
@@ -507,8 +493,6 @@ router.param('bet', function findBet(request, response, next, id) {
 });
 
 router.param('match', function findMatch(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Match.findOne();
@@ -522,8 +506,6 @@ router.param('match', function findMatch(request, response, next, id) {
 });
 
 router.param('championship', function findChampionship(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Championship.findOne();

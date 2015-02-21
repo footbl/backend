@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -57,15 +59,11 @@ schema.plugin(jsonSelect, {
 });
 
 schema.pre('save', function setPrizeUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });
 
-schema.methods.markAsRead = function (user, next) {
-  'use strict';
-
+schema.methods.markAsRead = function markAsRead(user, next) {
   async.waterfall([function (next) {
     this.populate('user');
     this.populate(next);

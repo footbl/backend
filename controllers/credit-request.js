@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, User, CreditRequest;
 
 router = require('express').Router();
@@ -55,8 +57,6 @@ router
 .route('/users/:userOrFacebookId/credit-requests')
 .post(auth.session())
 .post(function createCreditRequest(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();
@@ -151,8 +151,6 @@ router
 .route('/users/:user/credit-requests')
 .get(auth.session())
 .get(function listCreditRequest(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var unreadMessages, pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -221,8 +219,6 @@ router
 .route('/users/:user/requested-credits')
 .get(auth.session())
 .get(function listRequestedCredits(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var unreadMessages, pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -288,8 +284,6 @@ router
 .route('/users/:user/credit-requests/:creditRequest')
 .get(auth.session())
 .get(function getCreditRequest(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var creditRequest;
     creditRequest = request.creditRequest;
@@ -352,8 +346,6 @@ router
 .put(auth.session())
 .put(auth.checkMethod('user'))
 .put(function approveCreditRequest(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var creditRequest;
     creditRequest = request.creditRequest;
@@ -425,8 +417,6 @@ router
 .route('/users/:user/credit-requests/:creditRequest/mark-as-read')
 .put(auth.session())
 .put(function markAsReadCreditRequest(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var creditRequest;
     creditRequest = request.creditRequest;
@@ -457,8 +447,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('user'))
 .delete(function removeCreditRequest(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var creditRequest;
     creditRequest = request.creditRequest;
@@ -471,8 +459,6 @@ router
 });
 
 router.param('creditRequest', function findCreditRequest(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = CreditRequest.findOne();
@@ -489,8 +475,6 @@ router.param('creditRequest', function findCreditRequest(request, response, next
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();

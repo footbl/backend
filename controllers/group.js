@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, Group, GroupMember;
 
 router = require('express').Router();
@@ -53,8 +55,6 @@ router
 .route('/groups')
 .post(auth.session())
 .post(function createGroup(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var group;
     group = new Group({
@@ -125,8 +125,6 @@ router
 .route('/groups')
 .get(auth.session())
 .get(function listGroup(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query, featured;
     pageSize = nconf.get('PAGE_SIZE');
@@ -155,13 +153,13 @@ router
           group = member.group;
           group.populate('owner');
           group.populate(next);
-        }, next)
+        }, next);
       }], next);
     }
   }, function (groups, next) {
     response.status(200);
     response.send(groups);
-    next()
+    next();
   }], next);
 });
 
@@ -199,8 +197,6 @@ router
 .route('/groups/:group')
 .get(auth.session())
 .get(function getGroup(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var group;
     group = request.group;
@@ -258,8 +254,6 @@ router
 .put(auth.session())
 .put(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .put(function updateGroup(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var group;
     group = request.group;
@@ -270,7 +264,7 @@ router
   }, function (group, _, next) {
     response.status(200);
     response.send(group);
-    next()
+    next();
   }], next);
 });
 
@@ -292,8 +286,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .delete(function removeGroup(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var group;
     group = request.group;
@@ -343,8 +335,6 @@ router
 .post(auth.session())
 .post(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .post(function restartGroup(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var group, query;
     group = request.group;
@@ -367,8 +357,6 @@ router
 });
 
 router.param('group', function findGroup(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Group.findOne();

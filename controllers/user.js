@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, crypto, User, Prize;
 
 router = require('express').Router();
@@ -66,8 +68,6 @@ router
 .route('/users')
 .post(auth.facebook())
 .post(function createUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     async.parallel([function (next) {
       var freegeoip;
@@ -154,8 +154,6 @@ router
 .route('/users')
 .get(auth.populateSession())
 .get(function listUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, localRanking, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -238,8 +236,6 @@ router
 .route('/users/:user')
 .get(auth.session())
 .get(function getUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var user;
     user = request.user;
@@ -310,8 +306,6 @@ router
 .put(auth.session())
 .put(auth.checkMethod('user'))
 .put(function updateUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var user, password;
     password = crypto.createHash('sha1').update(request.param('password') + nconf.get('PASSWORD_SALT')).digest('hex');
@@ -352,8 +346,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('user'))
 .delete(function removeUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var user;
     user = request.user;
@@ -389,8 +381,6 @@ router
 .route('/users/me/auth')
 .get(auth.facebook())
 .get(function authUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query, facebook, password, email;
     facebook = request.facebook;
@@ -423,9 +413,7 @@ router
         query.where('createdAt').gte(today).lt(tomorrow);
         query.exec(next);
       }, function (prize, next) {
-        if (prize || !user) {
-          return next();
-        }
+        if (prize || !user) return next();
         prize = new Prize();
         prize.slug = Date.now();
         prize.user = user;
@@ -479,8 +467,6 @@ router
 .post(auth.session())
 .post(auth.checkMethod('user'))
 .post(function rechargeUser(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var user;
     user = request.user;
@@ -508,8 +494,6 @@ router
 router
 .route('/users/me/forgot-password')
 .get(function forgotPassword(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query, email;
     email = request.param('email');
@@ -550,8 +534,6 @@ router
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();

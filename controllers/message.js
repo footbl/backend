@@ -1,4 +1,6 @@
-var router, nconf, slug, async, auth, push, GroupMember, Group;
+'use strict';
+
+var router, nconf, slug, async, auth, push, Message, GroupMember, Group;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -48,8 +50,6 @@ router
 .route('/groups/:group/messages')
 .post(auth.session())
 .post(function createMessage(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var message;
     message = new Message({
@@ -127,8 +127,6 @@ router
 .route('/groups/:group/messages')
 .get(auth.session())
 .get(function listMessage(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var unreadMessages, pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -181,8 +179,6 @@ router
 .route('/groups/:group/messages/:message')
 .get(auth.session())
 .get(function getMessage(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var message;
     message = request.message;
@@ -225,15 +221,13 @@ router
 .route('/groups/:group/messages/all/mark-as-read')
 .put(auth.session())
 .put(function markAllAsReadMessage(request, response, next) {
-  'use strict';
-
   var group;
   group = request.group;
   async.waterfall([function (next) {
     var query;
     query = Message.find();
     query.where('group').equals(group._id);
-    query.exec(next)
+    query.exec(next);
   }, function (messages, next) {
     async.each(messages, function (message, next) {
       message.seenBy.push(request.session._id);
@@ -276,8 +270,6 @@ router
 .route('/groups/:group/messages/:message/mark-as-read')
 .put(auth.session())
 .put(function markedAsReadMessage(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var message;
     message = request.message;
@@ -291,8 +283,6 @@ router
 });
 
 router.param('message', function findMessage(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Message.findOne();
@@ -307,8 +297,6 @@ router.param('message', function findMessage(request, response, next, id) {
 });
 
 router.param('group', function findGroup(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Group.findOne();

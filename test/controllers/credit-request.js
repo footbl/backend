@@ -1,4 +1,6 @@
-/*globals describe, before, beforeEach, afterEach, it, after*/
+/*globals describe, before, beforeEach, afterEach, it*/
+'use strict';
+
 var supertest, app, auth,
 User, CreditRequest,
 user, otherUser, anotherUser;
@@ -11,8 +13,6 @@ User = require('../../models/user');
 CreditRequest = require('../../models/credit-request');
 
 describe('credit request controller', function () {
-  'use strict';
-
   before(User.remove.bind(User));
 
   before(function (done) {

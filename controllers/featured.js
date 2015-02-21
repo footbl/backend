@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, User, Featured;
 
 router = require('express').Router();
@@ -10,13 +12,9 @@ User = require('../models/user');
 Featured = require('../models/featured');
 
 router.use(function findFeaturedUser(request, response, next) {
-  'use strict';
-
   var user;
   user = request.param('featured');
-  if (!user) {
-    return next();
-  }
+  if (!user) return next();
   return async.waterfall([function (next) {
     var query;
     query = User.findOne();
@@ -84,8 +82,6 @@ router
 .post(auth.session())
 .post(auth.checkMethod('user'))
 .post(function createFeatured(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var featured;
     featured = new Featured({
@@ -148,8 +144,6 @@ router
 .route('/users/:user/featured')
 .get(auth.session())
 .get(function listFeatured(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -211,8 +205,6 @@ router
 .route('/users/:user/fans')
 .get(auth.session())
 .get(function listFans(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -272,8 +264,6 @@ router
 .route('/users/:user/featured/:featured')
 .get(auth.session())
 .get(function getFeatured(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var featured;
     featured = request.featured;
@@ -301,8 +291,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('user'))
 .delete(function removeFeatured(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var featured;
     featured = request.featured;
@@ -315,8 +303,6 @@ router
 });
 
 router.param('featured', function findFeatured(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Featured.findOne();
@@ -333,8 +319,6 @@ router.param('featured', function findFeatured(request, response, next, id) {
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();

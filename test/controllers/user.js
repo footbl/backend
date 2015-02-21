@@ -1,4 +1,6 @@
 /*globals describe, before, beforeEach, afterEach, it, after*/
+'use strict';
+
 var supertest, app, auth,
 User, Championship, Entry,
 user, championship;
@@ -12,8 +14,6 @@ Championship = require('../../models/championship');
 Entry = require('../../models/entry');
 
 describe('user controller', function () {
-  'use strict';
-
   before(Championship.remove.bind(Championship));
 
   before(function (done) {

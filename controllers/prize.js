@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, User, Prize;
 
 router = require('express').Router();
@@ -33,8 +35,6 @@ router
 .route('/users/:user/prizes')
 .get(auth.session())
 .get(function listPrizes(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var unreadMessages, pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -43,9 +43,7 @@ router
     query = Prize.find();
     query.where('user').equals(request.session._id);
     query.sort('-createdAt');
-    if (unreadMessages) {
-      query.where('seenBy').ne(request.session._id);
-    }
+    if (unreadMessages) query.where('seenBy').ne(request.session._id);
     query.skip(page);
     query.limit(pageSize);
     query.exec(next);
@@ -77,8 +75,6 @@ router
 .route('/users/:user/prizes/:prize')
 .get(auth.session())
 .get(function getPrizes(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var prize;
     prize = request.prize;
@@ -109,8 +105,6 @@ router
 .route('/users/:user/prizes/:prize/mark-as-read')
 .put(auth.session())
 .put(function markAsReadPrize(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var prize;
     prize = request.prize;
@@ -125,8 +119,6 @@ router
 });
 
 router.param('prize', function findPrize(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Prize.findOne();
@@ -141,8 +133,6 @@ router.param('prize', function findPrize(request, response, next, id) {
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();

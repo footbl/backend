@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -128,13 +130,11 @@ schema.plugin(jsonSelect, {
 });
 
 schema.pre('save', function setMatchUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });
 
-schema.methods.findBet = function (user, next) {
+schema.methods.findBet = function findBet(user, next) {
   var Bet, query;
   Bet = require('./bet');
   query = Bet.findOne();
@@ -148,8 +148,6 @@ schema.methods.findBet = function (user, next) {
 };
 
 schema.pre('remove', function removeCascadeBets(next) {
-  'use strict';
-
   var Bet;
   Bet = require('./bet');
   async.waterfall([function (next) {
@@ -170,33 +168,18 @@ schema.virtual('bet').get(function getMatchBet() {
 });
 
 schema.virtual('winner').get(function getMatchWinner() {
-  'use strict';
-
-  if (!this.finished) {
-    return null;
-  }
-  if (this.result.guest > this.result.host) {
-    return 'guest';
-  }
-  if (this.result.guest < this.result.host) {
-    return 'host';
-  }
+  if (!this.finished) return null;
+  if (this.result.guest > this.result.host) return 'guest';
+  if (this.result.guest < this.result.host) return 'host';
   return 'draw';
 });
 
 schema.virtual('jackpot').get(function getMatchJackpot() {
-  'use strict';
-
   return this.pot.guest + this.pot.draw + this.pot.host;
 });
 
 schema.virtual('reward').get(function getMatchReward() {
-  'use strict';
-
-  if (!this.jackpot) {
-    return 0;
-  }
-
+  if (!this.jackpot) return 0;
   switch (this.winner) {
     case 'guest' :
       return this.jackpot / this.pot.guest;

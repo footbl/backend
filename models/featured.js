@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -52,8 +54,6 @@ schema.plugin(jsonSelect, {
 });
 
 schema.pre('save', function setFeaturedUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });

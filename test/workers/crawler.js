@@ -1,6 +1,7 @@
-/*globals describe, before, it, after*/
-var supertest,
-User, Championship, Match, Bet, crawler, nock, now;
+/*globals describe, before, it, after, beforeEach, afterEach*/
+'use strict';
+
+var User, Championship, Match, Bet, crawler, nock, now;
 
 require('should');
 require('../../index.js');
@@ -23,8 +24,6 @@ nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=19').times(Infinity).reply(200, {Games : []});
 
 describe('crawler', function () {
-  'use strict';
-
   beforeEach(User.remove.bind(User));
   beforeEach(Bet.remove.bind(Bet));
   beforeEach(Championship.remove.bind(Championship));
@@ -33,20 +32,20 @@ describe('crawler', function () {
   describe('first match crawl', function () {
     before(function (done) {
       nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(1).reply(200, {
-        "Games" : [
+        'Games' : [
           {
-            "Comp"   : 113,
-            "ID"     : 513645,
-            "Season" : 7,
-            "Active" : false,
-            "GT"     : -1,
-            "STime"  : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
-            "Comps"  : [
-              {"ID" : 1216, "Name" : "Fluminense", "CID" : 21, "SID" : 1 },
-              {"ID" : 1212, "Name" : "Coritiba", "CID" : 21, "SID" : 1 }
+            'Comp'   : 113,
+            'ID'     : 513645,
+            'Season' : 7,
+            'Active' : false,
+            'GT'     : -1,
+            'STime'  : now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' 21:30',
+            'Comps'  : [
+              {'ID' : 1216, 'Name' : 'Fluminense', 'CID' : 21, 'SID' : 1},
+              {'ID' : 1212, 'Name' : 'Coritiba', 'CID' : 21, 'SID' : 1}
             ],
-            "Round"  : 14,
-            "Winner" : -1
+            'Round'  : 14,
+            'Winner' : -1
           }
         ]
       });
@@ -79,20 +78,20 @@ describe('crawler', function () {
   describe('match start', function () {
     before(function (done) {
       nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(1).reply(200, {
-        "Games" : [
+        'Games' : [
           {
-            "Comp"   : 113,
-            "ID"     : 513645,
-            "Season" : 7,
-            "Active" : true,
-            "GT"     : 1,
-            "STime"  : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
-            "Comps"  : [
-              {"ID" : 1216, "Name" : "Fluminense", "CID" : 21, "SID" : 1 },
-              {"ID" : 1212, "Name" : "Coritiba", "CID" : 21, "SID" : 1 }
+            'Comp'   : 113,
+            'ID'     : 513645,
+            'Season' : 7,
+            'Active' : true,
+            'GT'     : 1,
+            'STime'  : now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' 21:30',
+            'Comps'  : [
+              {'ID' : 1216, 'Name' : 'Fluminense', 'CID' : 21, 'SID' : 1},
+              {'ID' : 1212, 'Name' : 'Coritiba', 'CID' : 21, 'SID' : 1}
             ],
-            "Round"  : 14,
-            "Winner" : -1
+            'Round'  : 14,
+            'Winner' : -1
           }
         ]
       });
@@ -125,22 +124,22 @@ describe('crawler', function () {
   describe('first match goal', function () {
     before(function (done) {
       nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(1).reply(200, {
-        "Games" : [
+        'Games' : [
           {
-            "Comp"   : 113,
-            "ID"     : 513645,
-            "Season" : 7,
-            "Active" : true,
-            "GT"     : 10,
-            "STime"  : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
-            "Comps"  : [
-              {"ID" : 1216, "Name" : "Fluminense", "CID" : 21, "SID" : 1 },
-              {"ID" : 1212, "Name" : "Coritiba", "CID" : 21, "SID" : 1 }
+            'Comp'   : 113,
+            'ID'     : 513645,
+            'Season' : 7,
+            'Active' : true,
+            'GT'     : 10,
+            'STime'  : now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' 21:30',
+            'Comps'  : [
+              {'ID' : 1216, 'Name' : 'Fluminense', 'CID' : 21, 'SID' : 1},
+              {'ID' : 1212, 'Name' : 'Coritiba', 'CID' : 21, 'SID' : 1}
             ],
-            "Round"  : 14,
-            "Winner" : -1,
-            "Events" : [
-              {"Type" : 0, "SType" : 0, "Num" : 1, "Comp" : 1, "GT" : 10, "Player" : "Cicero"}
+            'Round'  : 14,
+            'Winner' : -1,
+            'Events' : [
+              {'Type' : 0, 'SType' : 0, 'Num' : 1, 'Comp' : 1, 'GT' : 10, 'Player' : 'Cicero'}
             ]
           }
         ]
@@ -174,22 +173,22 @@ describe('crawler', function () {
   describe('match end', function () {
     before(function (done) {
       nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(1).reply(200, {
-        "Games" : [
+        'Games' : [
           {
-            "Comp"   : 113,
-            "ID"     : 513645,
-            "Season" : 7,
-            "Active" : false,
-            "GT"     : 90,
-            "STime"  : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
-            "Comps"  : [
-              {"ID" : 1216, "Name" : "Fluminense", "CID" : 21, "SID" : 1 },
-              {"ID" : 1212, "Name" : "Coritiba", "CID" : 21, "SID" : 1 }
+            'Comp'   : 113,
+            'ID'     : 513645,
+            'Season' : 7,
+            'Active' : false,
+            'GT'     : 90,
+            'STime'  : now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' 21:30',
+            'Comps'  : [
+              {'ID' : 1216, 'Name' : 'Fluminense', 'CID' : 21, 'SID' : 1},
+              {'ID' : 1212, 'Name' : 'Coritiba', 'CID' : 21, 'SID' : 1}
             ],
-            "Round"  : 14,
-            "Winner" : -1,
-            "Events" : [
-              {"Type" : 0, "SType" : 0, "Num" : 1, "Comp" : 1, "GT" : 10, "Player" : "Cicero"}
+            'Round'  : 14,
+            'Winner' : -1,
+            'Events' : [
+              {'Type' : 0, 'SType' : 0, 'Num' : 1, 'Comp' : 1, 'GT' : 10, 'Player' : 'Cicero'}
             ]
           }
         ]
@@ -224,7 +223,7 @@ describe('crawler', function () {
         championship.should.have.property('currentRound').be.equal(14);
         done();
       });
-    })
+    });
   });
 
   describe('rewards', function () {
@@ -247,19 +246,19 @@ describe('crawler', function () {
 
     beforeEach(function (done) {
       nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(1).reply(200, {
-        "Games" : [
+        'Games' : [
           {
-            "Comp"   : 113,
-            "Season" : 7,
-            "Active" : false,
-            "GT"     : -1,
-            "STime"  : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
-            "Comps"  : [
-              {"ID" : 1216, "Name" : "Fluminense", "CID" : 21, "SID" : 1 },
-              {"ID" : 1212, "Name" : "Coritiba", "CID" : 21, "SID" : 1 }
+            'Comp'   : 113,
+            'Season' : 7,
+            'Active' : false,
+            'GT'     : -1,
+            'STime'  : now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' 21:30',
+            'Comps'  : [
+              {'ID' : 1216, 'Name' : 'Fluminense', 'CID' : 21, 'SID' : 1},
+              {'ID' : 1212, 'Name' : 'Coritiba', 'CID' : 21, 'SID' : 1}
             ],
-            "Round"  : 14,
-            "Winner" : -1
+            'Round'  : 14,
+            'Winner' : -1
           }
         ]
       });
@@ -307,22 +306,22 @@ describe('crawler', function () {
 
     beforeEach(function (done) {
       nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=21').times(1).reply(200, {
-        "Games" : [
+        'Games' : [
           {
-            "Comp"   : 113,
-            "ID"     : 513645,
-            "Season" : 7,
-            "Active" : false,
-            "GT"     : 90,
-            "STime"  : now.getDate() + "-" + (now.getMonth() + 1) + "-" + now.getFullYear() + " 21:30",
-            "Comps"  : [
-              {"ID" : 1216, "Name" : "Fluminense", "CID" : 21, "SID" : 1 },
-              {"ID" : 1212, "Name" : "Coritiba", "CID" : 21, "SID" : 1 }
+            'Comp'   : 113,
+            'ID'     : 513645,
+            'Season' : 7,
+            'Active' : false,
+            'GT'     : 90,
+            'STime'  : now.getDate() + '-' + (now.getMonth() + 1) + '-' + now.getFullYear() + ' 21:30',
+            'Comps'  : [
+              {'ID' : 1216, 'Name' : 'Fluminense', 'CID' : 21, 'SID' : 1},
+              {'ID' : 1212, 'Name' : 'Coritiba', 'CID' : 21, 'SID' : 1}
             ],
-            "Round"  : 14,
-            "Winner" : -1,
-            "Events" : [
-              {"Type" : 0, "SType" : 0, "Num" : 1, "Comp" : 1, "GT" : 10, "Player" : "Cicero"}
+            'Round'  : 14,
+            'Winner' : -1,
+            'Events' : [
+              {'Type' : 0, 'SType' : 0, 'Num' : 1, 'Comp' : 1, 'GT' : 10, 'Player' : 'Cicero'}
             ]
           }
         ]

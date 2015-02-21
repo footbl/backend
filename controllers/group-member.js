@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, GroupMember, Group, User;
 
 router = require('express').Router();
@@ -11,13 +13,9 @@ Group = require('../models/group');
 User = require('../models/user');
 
 router.use(function findGroupUser(request, response, next) {
-  'use strict';
-
   var user;
   user = request.param('user');
-  if (!user) {
-    return next();
-  }
+  if (!user) return next();
   return async.waterfall([function (next) {
     var query;
     query = User.findOne();
@@ -78,8 +76,6 @@ router
 .post(auth.session())
 .post(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .post(function inviteGroup(request, response, next) {
-  'use strict';
-
   if (request.groupUser) {
     async.waterfall([function (next) {
       var groupMember;
@@ -186,8 +182,6 @@ router
 .route('/groups/:group/members')
 .get(auth.session())
 .get(function listGroupMember(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -240,8 +234,6 @@ router
 .route('/groups/:group/members/:member')
 .get(auth.session())
 .get(function getGroupMember(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var groupMember;
     groupMember = request.groupMember;
@@ -291,8 +283,6 @@ router
 .put(auth.session())
 .put(auth.checkMethod('groupMember', 'user'))
 .put(function updateGroupMember(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var groupMember;
     groupMember = request.groupMember;
@@ -323,8 +313,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('group', 'owner', 'freeToEdit'))
 .delete(function removeGroupMember(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var groupMember;
     groupMember = request.groupMember;
@@ -337,8 +325,6 @@ router
 });
 
 router.param('group', function findGroup(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Group.findOne();
@@ -352,8 +338,6 @@ router.param('group', function findGroup(request, response, next, id) {
 });
 
 router.param('member', function findGroupMember(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = GroupMember.findOne();

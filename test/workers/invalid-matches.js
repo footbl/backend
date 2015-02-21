@@ -1,4 +1,6 @@
 /*globals describe, before, it, after*/
+'use strict';
+
 var invalidMatches, now,
 User, Championship, Match, Bet,
 user, championship, yesterdayMatch, tomorrowMatch;
@@ -13,8 +15,6 @@ invalidMatches = require('../../workers/invalid-matches');
 now = new Date();
 
 describe('invalid matches worker', function () {
-  'use strict';
-
   before(User.remove.bind(User));
   before(Championship.remove.bind(Championship));
   before(Match.remove.bind(Match));

@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -142,18 +144,12 @@ schema.plugin(require('mongoose-json-select'), {
 });
 
 schema.pre('save', function setUserUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });
 
 schema.pre('save', function insertUserIntoInvitedGroups(next) {
-  'use strict';
-
-  if (!this.facebookId && !this.email) {
-    return next();
-  }
+  if (!this.facebookId && !this.email) return next();
 
   var Group, GroupMember;
   Group = require('./group');
@@ -176,11 +172,7 @@ schema.pre('save', function insertUserIntoInvitedGroups(next) {
 });
 
 schema.pre('save', function setUserDefaultEntry(next) {
-  'use strict';
-
-  if (!this.isNew) {
-    return next();
-  }
+  if (!this.isNew) return next();
 
   var Championship, Entry;
   Championship = require('./championship');
@@ -204,8 +196,6 @@ schema.pre('save', function setUserDefaultEntry(next) {
 });
 
 schema.pre('save', function updateCascadeBets(next) {
-  'use strict';
-
   var Bet;
   Bet = require('./bet');
   async.waterfall([function (next) {
@@ -216,35 +206,31 @@ schema.pre('save', function updateCascadeBets(next) {
     query.exec(next);
   }.bind(this), function (bets, next) {
     async.each(bets, function (bet, next) {
-      Bet.update({'_id' : bet._id}, {'$set' : {
-        'slug' : bet.match.slug + '-' + this.slug
-      }}, next);
-    }.bind(this), next)
+      Bet.update({'_id' : bet._id}, {
+        '$set' : {'slug' : bet.match.slug + '-' + this.slug}
+      }, next);
+    }.bind(this), next);
   }.bind(this)], next);
 });
 
 schema.pre('save', function updateCascadeFeatureds(next) {
-  'use strict';
-
   var Featured;
   Featured = require('./featured');
   Featured.update({
     'featured' : this._id
-  }, {'$set' : {
-    'slug' : this.slug || 'me'
-  }}, {'multi' : true}, next);
+  }, {
+    '$set' : {'slug' : this.slug || 'me'}
+  }, {'multi' : true}, next);
 });
 
 schema.pre('save', function updateCascadeMembers(next) {
-  'use strict';
-
   var Member;
   Member = require('./group-member');
   Member.update({
     'user' : this._id
-  }, {'$set' : {
-    'slug' : this.slug || 'me'
-  }}, {'multi' : true}, next);
+  }, {
+    '$set' : {'slug' : this.slug || 'me'}
+  }, {'multi' : true}, next);
 });
 
 module.exports = mongoose.model('User', schema);

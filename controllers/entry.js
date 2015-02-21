@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, User, Championship, Entry;
 
 router = require('express').Router();
@@ -11,13 +13,9 @@ Championship = require('../models/championship');
 Entry = require('../models/entry');
 
 router.use(function findChampionship(request, response, next) {
-  'use strict';
-
   var championship;
   championship = request.param('championship');
-  if (!championship) {
-    return next();
-  }
+  if (!championship) return next();
   return async.waterfall([function (next) {
     var query;
     query = Championship.findOne();
@@ -88,8 +86,6 @@ router
 .post(auth.session())
 .post(auth.checkMethod('user'))
 .post(function createEntry(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var entry;
     entry = new Entry({
@@ -155,8 +151,6 @@ router
 .route('/users/:user/entries')
 .get(auth.session())
 .get(function listEntry(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -219,8 +213,6 @@ router
 .route('/users/:user/entries/:entry')
 .get(auth.session())
 .get(function getEntry(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var entry;
     entry = request.entry;
@@ -279,8 +271,6 @@ router
 .put(auth.session())
 .put(auth.checkMethod('user'))
 .put(function updateEntry(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var entry;
     entry = request.entry;
@@ -315,8 +305,6 @@ router
 .delete(auth.session())
 .delete(auth.checkMethod('user'))
 .delete(function removeEntry(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var entry;
     entry = request.entry;
@@ -329,8 +317,6 @@ router
 });
 
 router.param('entry', function findEntry(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Entry.findOne();
@@ -347,8 +333,6 @@ router.param('entry', function findEntry(request, response, next, id) {
 
 router.param('user', auth.session());
 router.param('user', function findUser(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = User.findOne();

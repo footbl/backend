@@ -1,3 +1,5 @@
+'use strict';
+
 var router, nconf, slug, async, auth, push, Championship, Match;
 
 router = require('express').Router();
@@ -37,8 +39,6 @@ router
 .route('/championships')
 .get(auth.session())
 .get(function listChampionship(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
@@ -80,8 +80,6 @@ router
 .route('/championships/:championship')
 .get(auth.session())
 .get(function getChampionship(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var championship;
     championship = request.championship;
@@ -136,8 +134,6 @@ router
 .route('/championships/:championship/matches')
 .get(auth.session())
 .get(function listMatch(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var pageSize, page, query, championship;
     championship = request.championship;
@@ -151,7 +147,7 @@ router
     ]);
     query.skip(page);
     query.limit(pageSize);
-    query.exec(next)
+    query.exec(next);
   }, function (matches, next) {
     async.series([function (next) {
       return async.each(matches, function (match, next) {
@@ -208,8 +204,6 @@ router
 .route('/championships/:championship/matches/:match')
 .get(auth.session())
 .get(function getMatch(request, response, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     var match;
     match = request.match;
@@ -224,8 +218,6 @@ router
 });
 
 router.param('match', function findMatch(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Match.findOne();
@@ -239,8 +231,6 @@ router.param('match', function findMatch(request, response, next, id) {
 });
 
 router.param('championship', function findChampionship(request, response, next, id) {
-  'use strict';
-
   async.waterfall([function (next) {
     var query;
     query = Championship.findOne();

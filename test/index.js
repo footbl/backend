@@ -1,3 +1,5 @@
+'use strict';
+
 var now, nock;
 now = new Date();
 nock = require('nock');

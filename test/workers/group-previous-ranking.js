@@ -1,4 +1,6 @@
 /*globals describe, before, it, after*/
+'use strict';
+
 var async, ranking, previousRanking,
 User, Group, GroupMember,
 members, group;
@@ -14,8 +16,6 @@ previousRanking = require('../../workers/group-previous-ranking');
 members = [];
 
 describe('group previous ranking worker', function () {
-  'use strict';
-
   before(User.remove.bind(User));
   before(Group.remove.bind(Group));
   before(GroupMember.remove.bind(GroupMember));

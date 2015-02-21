@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -68,15 +70,11 @@ schema.plugin(jsonSelect, {
 });
 
 schema.pre('save', function setGroupUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });
 
 schema.pre('remove', function deleteCascadeMembers(next) {
-  'use strict';
-
   var Members;
   Members = require('./group-member');
   Members.remove({'group' : this._id}, next);

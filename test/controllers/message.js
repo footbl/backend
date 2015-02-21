@@ -1,4 +1,6 @@
-/*globals describe, before, beforeEach, afterEach, it, after*/
+/*globals describe, before, beforeEach, afterEach, it*/
+'use strict';
+
 var supertest, app, auth,
 User, Group, GroupMember, Message,
 user, group;
@@ -13,8 +15,6 @@ GroupMember = require('../../models/group-member');
 Message = require('../../models/message');
 
 describe('message controller', function () {
-  'use strict';
-
   before(User.remove.bind(User));
   before(Group.remove.bind(Group));
 

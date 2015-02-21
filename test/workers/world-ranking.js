@@ -1,4 +1,6 @@
 /*globals describe, before, it, after*/
+'use strict';
+
 var async, ranking,
 User,
 users;
@@ -11,8 +13,6 @@ ranking = require('../../workers/world-ranking');
 users = [];
 
 describe('world ranking worker', function () {
-  'use strict';
-
   before(User.remove.bind(User));
 
   before(function (done) {

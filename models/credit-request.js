@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -68,15 +70,11 @@ schema.plugin(jsonSelect, {
 });
 
 schema.pre('save', function setCreditRequestUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });
 
 schema.path('value').validate(function validateSufficientFunds(value, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     this.populate('chargedUser');
     this.populate(next);
@@ -85,9 +83,7 @@ schema.path('value').validate(function validateSufficientFunds(value, next) {
   }.bind(this));
 }, 'insufficient funds');
 
-schema.methods.approve = function (next) {
-  'use strict';
-
+schema.methods.approve = function approve(next) {
   async.waterfall([function (next) {
     this.populate('creditedUser');
     this.populate('chargedUser');
