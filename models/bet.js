@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose, jsonSelect, nconf, async, Schema, schema;
 
 mongoose = require('mongoose');
@@ -69,15 +71,11 @@ schema.plugin(jsonSelect, {
 });
 
 schema.pre('save', function setBetUpdatedAt(next) {
-  'use strict';
-
   this.updatedAt = new Date();
   next();
 });
 
 schema.pre('save', function updateCascadeUserAndMatch(next) {
-  'use strict';
-
   async.waterfall([function (next) {
     this.populate('user');
     this.populate('match');
@@ -111,8 +109,6 @@ schema.pre('save', function updateCascadeUserAndMatch(next) {
 });
 
 schema.path('match').validate(function validateStartedMatch(value, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     this.populate('match');
     this.populate(next);
@@ -122,8 +118,6 @@ schema.path('match').validate(function validateStartedMatch(value, next) {
 }, 'match already started');
 
 schema.path('bid').validate(function validateSufficientFunds(value, next) {
-  'use strict';
-
   async.waterfall([function (next) {
     this.populate('user');
     this.populate(next);
@@ -143,8 +137,6 @@ schema.path('bid').validate(function validateSufficientFunds(value, next) {
 }, 'insufficient funds');
 
 schema.pre('remove', function (next) {
-  'use strict';
-
   if (this._forceRemove) {
     return next();
   } else {
@@ -153,8 +145,6 @@ schema.pre('remove', function (next) {
 });
 
 schema.pre('remove', function deleteCascadeUserAndMatch(next) {
-  'use strict';
-
   async.series([function (next) {
     this.populate('user');
     this.populate('match');
@@ -180,17 +170,11 @@ schema.pre('remove', function deleteCascadeUserAndMatch(next) {
 });
 
 schema.virtual('reward').get(function getBetReward() {
-  'use strict';
-
-  if (!this.match.finished || this.match.winner !== this.result) {
-    return 0;
-  }
+  if (!this.match.finished || this.match.winner !== this.result) return 0;
   return (this.match ? this.match.reward * this.bid : undefined);
 });
 
 schema.virtual('profit').get(function getBetProfit() {
-  'use strict';
-
   return (this.reward ? this.reward : 0) - this.bid;
 });
 
