@@ -2,7 +2,7 @@
 var mongoose, nconf, request, async, slug,
     Championship, Match, Bet, User,
     championships, teams,
-    now, today;
+    now, today, tomorrow, yesterday;
 
 mongoose = require('mongoose');
 nconf = require('nconf');
@@ -16,7 +16,9 @@ User = require('../../models/user');
 championships = require('./championships');
 teams = require('./teams');
 now = new Date();
+yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
 today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
 function parseChampionship(championship) {
   return {
@@ -83,6 +85,8 @@ module.exports = function crawler(next) {
         async.filter(matches, function (match, next) {
           if (!match.guest) return next(false);
           if (!match.host) return next(false);
+          if (match.date < yesterday && !match.finished) return next(false);
+          if (match.date > tomorrow && match.finished) return next(false);
           return next(true);
         }, function (results) {
           next(null, results);
