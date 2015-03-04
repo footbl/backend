@@ -61,14 +61,12 @@ domain.run(function () {
   }
   app.use(require('./controllers/championship'));
   app.use(require('./controllers/user'));
-  app.use(require('./controllers/featured'));
   app.use(require('./controllers/prize'));
   app.use(require('./controllers/bet'));
   app.use(require('./controllers/group'));
-  app.use(require('./controllers/group-member'));
+  app.use(require('./controllers/match'));
   app.use(require('./controllers/message'));
   app.use(require('./controllers/credit-request'));
-  app.use(require('./controllers/entry'));
   app.use(function (error, request, response, next) {
     var errors, prop;
     if (error.message === 'not found') {
@@ -89,6 +87,8 @@ domain.run(function () {
         }
       }
       response.status(400).send(errors);
+    } else if (error.name === 'CastError' && error.type === 'ObjectId') {
+      response.status(404).end();
     } else {
       response.status(500).end();
       emitter.emit('error', error);

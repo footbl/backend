@@ -9,42 +9,55 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'name'       : {
+  'name'      : {
     'type'     : String,
     'required' : true
   },
-  'slug'       : {
-    'type'   : String,
-    'unique' : true
+  'code'      : {
+    'type'     : String,
+    'required' : true
   },
-  'picture'    : {
-    'type'  : String,
-    'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+  'picture'   : {
+    'type' : String
   },
-  'freeToEdit' : {
-    'type'     : Boolean,
-    'required' : true,
-    'default'  : true
-  },
-  'owner'      : {
+  'owner'     : {
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'User',
     'required' : true
   },
-  'invites'    : [
-    {
-      'type' : String
-    }
-  ],
-  'featured'   : {
+  'invites'   : [{
+    'type' : String
+  }],
+  'featured'  : {
     'type'    : Boolean,
     'default' : false
   },
-  'createdAt'  : {
+  'members'   : [{
+    'user'            : {
+      'type'     : Schema.Types.ObjectId,
+      'ref'      : 'User',
+      'required' : true
+    },
+    'ranking'         : {
+      'type'     : Number,
+      'required' : true,
+      'default'  : Infinity
+    },
+    'previousRanking' : {
+      'type'     : Number,
+      'required' : true,
+      'default'  : Infinity
+    },
+    'notifications'   : {
+      'type'    : Boolean,
+      'default' : true
+    }
+  }],
+  'createdAt' : {
     'type'    : Date,
     'default' : Date.now
   },
-  'updatedAt'  : {
+  'updatedAt' : {
     'type' : Date
   }
 }, {
@@ -58,12 +71,12 @@ schema = new Schema({
 schema.plugin(jsonSelect, {
   '_id'        : 0,
   'name'       : 1,
-  'slug'       : 1,
+  'code'       : 1,
   'picture'    : 1,
   'freeToEdit' : 1,
   'owner'      : 1,
   'invites'    : 0,
-  'members'    : 0,
+  'members'    : 1,
   'featured'   : 1,
   'createdAt'  : 1,
   'updatedAt'  : 1
@@ -71,13 +84,7 @@ schema.plugin(jsonSelect, {
 
 schema.pre('save', function setGroupUpdatedAt(next) {
   this.updatedAt = new Date();
-  next();
-});
-
-schema.pre('remove', function deleteCascadeMembers(next) {
-  var Members;
-  Members = require('./group-member');
-  Members.remove({'group' : this._id}, next);
+  return next();
 });
 
 module.exports = mongoose.model('Group', schema);

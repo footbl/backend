@@ -9,9 +9,6 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'slug'      : {
-    'type' : String
-  },
   'user'      : {
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'User',
@@ -23,18 +20,15 @@ schema = new Schema({
     'required' : true
   },
   'message'   : {
-    'type'     : String,
-    'required' : true
+    'type'     : String
   },
   'type'      : {
     'type' : String
   },
-  'seenBy'    : [
-    {
-      'type' : Schema.Types.ObjectId,
-      'ref'  : 'User'
-    }
-  ],
+  'seenBy'    : [{
+    'type' : Schema.Types.ObjectId,
+    'ref'  : 'User'
+  }],
   'createdAt' : {
     'type'    : Date,
     'default' : Date.now
@@ -52,7 +46,6 @@ schema = new Schema({
 
 schema.plugin(jsonSelect, {
   '_id'       : 0,
-  'slug'      : 1,
   'user'      : 1,
   'group'     : 0,
   'message'   : 1,
@@ -64,7 +57,7 @@ schema.plugin(jsonSelect, {
 
 schema.pre('save', function setMessageUpdatedAt(next) {
   this.updatedAt = new Date();
-  next();
+  return next();
 });
 
 module.exports = mongoose.model('Message', schema);

@@ -9,9 +9,6 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'slug'      : {
-    'type' : String
-  },
   'user'      : {
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'User',
@@ -26,12 +23,10 @@ schema = new Schema({
     'required' : true,
     'enum'     : ['daily', 'update']
   },
-  'seenBy'    : [
-    {
-      'type' : Schema.Types.ObjectId,
-      'ref'  : 'User'
-    }
-  ],
+  'seenBy'    : [{
+    'type' : Schema.Types.ObjectId,
+    'ref'  : 'User'
+  }],
   'createdAt' : {
     'type'    : Date,
     'default' : Date.now
@@ -49,7 +44,6 @@ schema = new Schema({
 
 schema.plugin(jsonSelect, {
   '_id'       : 0,
-  'slug'      : 1,
   'user'      : 0,
   'value'     : 1,
   'type'      : 1,
@@ -60,23 +54,7 @@ schema.plugin(jsonSelect, {
 
 schema.pre('save', function setPrizeUpdatedAt(next) {
   this.updatedAt = new Date();
-  next();
+  return next();
 });
-
-schema.methods.markAsRead = function markAsRead(user, next) {
-  async.waterfall([function (next) {
-    this.populate('user');
-    this.populate(next);
-  }.bind(this), function (_, next) {
-    async.parallel([function (next) {
-      this.seenBy.push(user);
-      this.save(next);
-    }.bind(this), function (next) {
-      var User;
-      User = require('./user');
-      User.update({'_id' : this.user._id}, {'$inc' : {'funds' : this.value}}, next);
-    }.bind(this)], next);
-  }.bind(this)], next);
-};
 
 module.exports = mongoose.model('Prize', schema);

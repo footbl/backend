@@ -24,7 +24,7 @@
     "node": "0.10.21"
   },
   "dependencies": {
-    "apidoc": "^0.7.2",
+    "apidoc": "^0.12.1",
     "async": "^0.7.0",
     "auth": "footbl/auth.git",
     "body-parser": "1.0.x",
@@ -33,7 +33,7 @@
     "fbgraph": "^0.2.10",
     "mandrill-api": "^1.0.39",
     "method-override": "^1.0.0",
-    "mongoose": "3.x.x",
+    "mongoose": "^3.8.24",
     "mongoose-json-select": "0.2.x",
     "nconf": "0.6.x",
     "node-freegeoip": "0.0.1",

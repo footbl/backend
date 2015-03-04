@@ -9,9 +9,6 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'slug'         : {
-    'type' : String
-  },
   'championship' : {
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'Championship',
@@ -25,9 +22,6 @@ schema = new Schema({
     'picture' : {
       'type'  : String,
       'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-    },
-    'slug'    : {
-      'type' : String
     }
   },
   'host'         : {
@@ -38,9 +32,6 @@ schema = new Schema({
     'picture' : {
       'type'  : String,
       'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-    },
-    'slug'    : {
-      'type' : String
     }
   },
   'round'        : {
@@ -111,7 +102,6 @@ schema.index({
 
 schema.plugin(jsonSelect, {
   '_id'          : 0,
-  'slug'         : 1,
   'championship' : 0,
   'guest'        : 1,
   'host'         : 1,
@@ -131,40 +121,34 @@ schema.plugin(jsonSelect, {
 
 schema.pre('save', function setMatchUpdatedAt(next) {
   this.updatedAt = new Date();
-  next();
+  return next();
 });
 
 schema.methods.findBet = function findBet(user, next) {
-  var Bet, query;
-  Bet = require('./bet');
-  query = Bet.findOne();
-  query.where('match').equals(this._id);
-  query.where('user').equals(user);
-  query.populate('user');
-  query.exec(function (error, bet) {
-    this._bet = bet;
-    next(error);
-  }.bind(this));
+  return async.waterfall([function (next) {
+    var Bet, query;
+    Bet = require('./bet');
+    query = Bet.findOne();
+    query.where('match').equals(this._id);
+    query.where('user').equals(user);
+    query.populate('user');
+    query.exec(next);
+  }.bind(this), function (bet, next) {
+    this.bet = bet;
+    next(null, this);
+  }.bind(this)], next);
 };
 
 schema.pre('remove', function removeCascadeBets(next) {
-  var Bet;
-  Bet = require('./bet');
-  async.waterfall([function (next) {
-    var query;
+  return async.waterfall([function (next) {
+    var Bet, query;
+    Bet = require('./bet');
     query = Bet.find();
     query.where('match').equals(this._id);
     query.exec(next);
   }.bind(this), function (bets, next) {
-    async.each(bets, function (bet, next) {
-      bet._forceRemove = true;
-      bet.remove(next);
-    }.bind(this), next);
+    async.each(bets, function (bet, next) { bet.remove(next); }.bind(this), next);
   }.bind(this)], next);
-});
-
-schema.virtual('bet').get(function getMatchBet() {
-  return this._bet;
 });
 
 schema.virtual('winner').get(function getMatchWinner() {
@@ -180,14 +164,9 @@ schema.virtual('jackpot').get(function getMatchJackpot() {
 
 schema.virtual('reward').get(function getMatchReward() {
   if (!this.jackpot) return 0;
-  switch (this.winner) {
-    case 'guest' :
-      return this.jackpot / this.pot.guest;
-    case 'host'  :
-      return this.jackpot / this.pot.host;
-    default      :
-      return this.jackpot / this.pot.draw;
-  }
+  if (this.winner === 'guest') return this.jackpot / this.pot.guest;
+  if (this.winner === 'host') return this.jackpot / this.pot.host;
+  return this.jackpot / this.pot.draw;
 });
 
 module.exports = mongoose.model('Match', schema);

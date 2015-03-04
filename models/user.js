@@ -9,9 +9,6 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'slug'            : {
-    'type' : String
-  },
   'email'           : {
     'type'   : String,
     'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
@@ -71,22 +68,16 @@ schema = new Schema({
     'required' : true,
     'default'  : Infinity
   },
-  'history'         : [
-    {
-      'date'  : {
-        'type'     : Date,
-        'required' : true
-      },
-      'funds' : {
-        'type'     : Number,
-        'required' : true
-      }
+  'history'         : [{
+    'date'  : {
+      'type'     : Date,
+      'required' : true
+    },
+    'funds' : {
+      'type'     : Number,
+      'required' : true
     }
-  ],
-  'lastRecharge'    : {
-    'type'    : Date,
-    'default' : Date.now
-  },
+  }],
   'active'          : {
     'type'    : Boolean,
     'default' : true
@@ -102,6 +93,16 @@ schema = new Schema({
     'type'    : Number,
     'default' : 100
   },
+  'entries'         : [{
+    'type'     : Schema.Types.ObjectId,
+    'ref'      : 'Championship',
+    'required' : true
+  }],
+  'starred'         : [{
+    'type'     : Schema.Types.ObjectId,
+    'ref'      : 'User',
+    'required' : true
+  }],
   'createdAt'       : {
     'type'    : Date,
     'default' : Date.now
@@ -118,11 +119,9 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-  '_id'             : 0,
-  'slug'            : 1,
   'email'           : 1,
   'username'        : 1,
-  'facebookId'      : 1,
+  'facebookId'      : 0,
   'password'        : 0,
   'name'            : 1,
   'about'           : 1,
@@ -134,103 +133,37 @@ schema.plugin(require('mongoose-json-select'), {
   'ranking'         : 1,
   'previousRanking' : 1,
   'history'         : 1,
-  'lastRecharge'    : 0,
-  'active'          : 0,
+  'active'          : 1,
   'country'         : 1,
   'stake'           : 1,
   'funds'           : 1,
+  'entries'         : 1,
+  'starred'         : 1,
   'createdAt'       : 1,
   'updatedAt'       : 1
 });
 
 schema.pre('save', function setUserUpdatedAt(next) {
   this.updatedAt = new Date();
-  next();
-});
-
-schema.pre('save', function insertUserIntoInvitedGroups(next) {
-  if (!this.facebookId && !this.email) return next();
-
-  var Group, GroupMember;
-  Group = require('./group');
-  GroupMember = require('./group-member');
-  return async.waterfall([function (next) {
-    var query;
-    query = Group.find();
-    query.where('invites').equals(this.facebookId ? this.facebookId : this.email);
-    query.exec(next);
-  }.bind(this), function (groups, next) {
-    async.each(groups, function (group, next) {
-      var groupMember;
-      groupMember = new GroupMember({
-        'user'  : this._id,
-        'group' : group._id
-      });
-      groupMember.save(next);
-    }.bind(this), next);
-  }.bind(this)], next);
+  return next();
 });
 
 schema.pre('save', function setUserDefaultEntry(next) {
   if (!this.isNew) return next();
-
-  var Championship, Entry;
-  Championship = require('./championship');
-  Entry = require('./entry');
   return async.waterfall([function (next) {
-    var query;
+    var Championship, query;
+    Championship = require('./championship');
     query = Championship.find();
     query.where('country').in([this.country ? this.country : '', 'Europe']);
     query.exec(next);
   }.bind(this), function (championships, next) {
-    async.each(championships, function (championship, next) {
-      var entry;
-      entry = new Entry({
-        'slug'         : championship ? championship.slug : null,
-        'championship' : championship._id,
-        'user'         : this._id
-      });
-      entry.save(next);
-    }.bind(this), next);
+    this.entries = championships;
+    next();
   }.bind(this)], next);
 });
 
-schema.pre('save', function updateCascadeBets(next) {
-  var Bet;
-  Bet = require('./bet');
-  async.waterfall([function (next) {
-    var query;
-    query = Bet.find();
-    query.where('user').equals(this._id);
-    query.populate('match');
-    query.exec(next);
-  }.bind(this), function (bets, next) {
-    async.each(bets, function (bet, next) {
-      Bet.update({'_id' : bet._id}, {
-        '$set' : {'slug' : bet.match.slug + '-' + this.slug}
-      }, next);
-    }.bind(this), next);
-  }.bind(this)], next);
-});
-
-schema.pre('save', function updateCascadeFeatureds(next) {
-  var Featured;
-  Featured = require('./featured');
-  Featured.update({
-    'featured' : this._id
-  }, {
-    '$set' : {'slug' : this.slug || 'me'}
-  }, {'multi' : true}, next);
-});
-
-schema.pre('save', function updateCascadeMembers(next) {
-  var Member;
-  Member = require('./group-member');
-  Member.update({
-    'user' : this._id
-  }, {
-    '$set' : {'slug' : this.slug || 'me'}
-  }, {'multi' : true}, next);
-});
+schema.path('funds').validate(function (value) {
+  return value > 0;
+}, 'insufficient funds');
 
 module.exports = mongoose.model('User', schema);

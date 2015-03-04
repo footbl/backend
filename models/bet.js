@@ -9,9 +9,6 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'slug'      : {
-    'type' : String
-  },
   'user'      : {
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'User',
@@ -59,7 +56,6 @@ schema.index({
 
 schema.plugin(jsonSelect, {
   '_id'       : 0,
-  'slug'      : 1,
   'user'      : 1,
   'match'     : 1,
   'bid'       : 1,
@@ -70,14 +66,17 @@ schema.plugin(jsonSelect, {
   'updatedAt' : 1
 });
 
-schema.pre('save', function setBetUpdatedAt(next) {
-  this.updatedAt = new Date();
-  next();
+schema.virtual('reward').get(function getBetReward() {
+  if (!this.match.finished || this.match.winner !== this.result) return 0;
+  return (this.match ? this.match.reward * this.bid : undefined);
 });
 
-schema.pre('save', function updateCascadeUserAndMatch(next) {
-  async.waterfall([function (next) {
-    this.populate('user');
+schema.virtual('profit').get(function getBetProfit() {
+  return (this.reward ? this.reward : 0) - this.bid;
+});
+
+schema.methods.updateMatch = function updateMatch(result, bid, next) {
+  return async.waterfall([function (next) {
     this.populate('match');
     this.populate(next);
   }.bind(this), function (_, next) {
@@ -86,30 +85,65 @@ schema.pre('save', function updateCascadeUserAndMatch(next) {
     query.where('_id').equals(this._id);
     query.exec(next);
   }.bind(this), function (oldBet, next) {
-    var oldBid, oldResult;
+    var Match, oldBid, oldResult;
+    Match = require('./match');
     oldBid = oldBet ? oldBet.bid : 0;
     oldResult = oldBet ? oldBet.result : null;
-    async.parallel([function (next) {
-      var Match;
-      Match = require('./match');
-      Match.update({'_id' : this.match._id}, {'$inc' : {
-        'pot.guest' : (this.result === 'guest' ? this.bid : 0) - (oldResult === 'guest' ? oldBid : 0),
-        'pot.host'  : (this.result === 'host' ? this.bid : 0) - (oldResult === 'host' ? oldBid : 0),
-        'pot.draw'  : (this.result === 'draw' ? this.bid : 0) - (oldResult === 'draw' ? oldBid : 0)
-      }}, next);
-    }.bind(this), function (next) {
-      var User;
-      User = require('./user');
-      User.update({'_id' : this.user._id}, {'$inc' : {
-        'stake' : -oldBid + this.bid,
-        'funds' : oldBid - this.bid
-      }}, next);
-    }.bind(this)], next);
+    Match.update({'_id' : this.match._id}, {
+      '$inc' : {
+        'pot.guest' : (result === 'guest' ? bid : 0) - (oldResult === 'guest' ? oldBid : 0),
+        'pot.host'  : (result === 'host' ? bid : 0) - (oldResult === 'host' ? oldBid : 0),
+        'pot.draw'  : (result === 'draw' ? bid : 0) - (oldResult === 'draw' ? oldBid : 0)
+      }
+    }, next);
+  }.bind(this)], next);
+};
+
+schema.methods.updateUser = function updateUser(bid, next) {
+  return async.waterfall([function (next) {
+    this.populate('match');
+    this.populate(next);
+  }.bind(this), function (_, next) {
+    var query;
+    query = this.constructor.findOne();
+    query.where('_id').equals(this._id);
+    query.exec(next);
+  }.bind(this), function (oldBet, next) {
+    var User, oldBid;
+    User = require('./user');
+    oldBid = oldBet ? oldBet.bid : 0;
+    User.update({'_id' : this.user._id}, {
+      '$inc' : {
+        'stake' : -oldBid + bid,
+        'funds' : oldBid - bid
+      }
+    }, next);
+  }.bind(this)], next);
+};
+
+schema.pre('save', function setBetUpdatedAt(next) {
+  this.updatedAt = new Date();
+  return next();
+});
+
+schema.pre('save', function updateCascadeUserAndMatch(next) {
+  return async.parallel([function (next) {
+    this.updateMatch(this.result, this.bid, next);
+  }.bind(this), function (next) {
+    this.updateUser(this.bid, next);
+  }.bind(this)], next);
+});
+
+schema.pre('remove', function deleteCascadeUserAndMatch(next) {
+  return async.parallel([function (next) {
+    this.updateMatch(this.result, 0, next);
+  }.bind(this), function (next) {
+    this.updateUser(0, next);
   }.bind(this)], next);
 });
 
 schema.path('match').validate(function validateStartedMatch(value, next) {
-  async.waterfall([function (next) {
+  return async.waterfall([function (next) {
     this.populate('match');
     this.populate(next);
   }.bind(this)], function (error) {
@@ -118,7 +152,7 @@ schema.path('match').validate(function validateStartedMatch(value, next) {
 }, 'match already started');
 
 schema.path('bid').validate(function validateSufficientFunds(value, next) {
-  async.waterfall([function (next) {
+  return async.waterfall([function (next) {
     this.populate('user');
     this.populate(next);
   }.bind(this), function (_, next) {
@@ -135,47 +169,5 @@ schema.path('bid').validate(function validateSufficientFunds(value, next) {
     next(!error);
   }.bind(this));
 }, 'insufficient funds');
-
-schema.pre('remove', function (next) {
-  if (this._forceRemove) {
-    return next();
-  } else {
-    return this.validate(next);
-  }
-});
-
-schema.pre('remove', function deleteCascadeUserAndMatch(next) {
-  async.series([function (next) {
-    this.populate('user');
-    this.populate('match');
-    this.populate(next);
-  }.bind(this), function (next) {
-    async.parallel([function (next) {
-      var Match;
-      Match = require('./match');
-      Match.update({'_id' : this.match._id}, {'$inc' : {
-        'pot.guest' : -(this.result === 'guest' ? this.bid : 0),
-        'pot.host'  : -(this.result === 'host' ? this.bid : 0),
-        'pot.draw'  : -(this.result === 'draw' ? this.bid : 0)
-      }}, next);
-    }.bind(this), function (next) {
-      var User;
-      User = require('./user');
-      User.update({'_id' : this.user._id}, {'$inc' : {
-        'stake' : -this.bid,
-        'funds' : this.bid
-      }}, next);
-    }.bind(this)], next);
-  }.bind(this)], next);
-});
-
-schema.virtual('reward').get(function getBetReward() {
-  if (!this.match.finished || this.match.winner !== this.result) return 0;
-  return (this.match ? this.match.reward * this.bid : undefined);
-});
-
-schema.virtual('profit').get(function getBetProfit() {
-  return (this.reward ? this.reward : 0) - this.bid;
-});
 
 module.exports = mongoose.model('Bet', schema);
