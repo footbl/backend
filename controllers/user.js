@@ -14,13 +14,41 @@ User = require('../models/user');
 Prize = require('../models/prize');
 
 /**
- * @api {POST} /users
+ * @api {POST} /users createUser
  * @apiName createUser
  * @apiGroup User
  *
  * @apiParam {String} password User password.
  * @apiParam {Array[ObjectId]} entries User entries.
  * @apiParam {Array[ObjectId]} starred User starred.
+ *
+ * @apiExample HTTP/1.1 201
+ * {
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }
  */
 router
 .route('/users')
@@ -57,9 +85,37 @@ router
 });
 
 /**
- * @api {GET} /users
+ * @api {GET} /users listUser
  * @apiName listUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }]
  */
 router
 .route('/users')
@@ -103,9 +159,37 @@ router
 });
 
 /**
- * @api {GET} /users/:user
+ * @api {GET} /users/:user getUser
  * @apiName getUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }
  */
 router
 .route('/users/:user')
@@ -121,7 +205,7 @@ router
 });
 
 /**
- * @api {PUT} /users/:user
+ * @api {PUT} /users/:user updateUser
  * @apiName updateUser
  * @apiGroup User
  *
@@ -133,6 +217,34 @@ router
  * @apiParam {String} [picture] User picture.
  * @apiParam {String} [apnsToken] User apnsToken.
  * @apiParam {Array[ObjectId]} entries User entries.
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }
  */
 router
 .route('/users/:user')
@@ -167,9 +279,12 @@ router
 });
 
 /**
- * @api {DELETE} /users/:user
+ * @api {DELETE} /users/:user removeUser
  * @apiName removeUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 204
+ * {}
  */
 router
 .route('/users/:user')
@@ -189,9 +304,37 @@ router
 });
 
 /**
- * @api {GET} /users/:user/recharge
+ * @api {GET} /users/:user/recharge rechargeUser
  * @apiName rechargeUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }
  */
 router
 .route('/users/:user/recharge')
@@ -211,9 +354,15 @@ router
 });
 
 /**
- * @api {GET} /users/me/auth
+ * @api {GET} /users/me/auth authUser
  * @apiName authUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "token": "1234"
+ * }
  */
 router
 .route('/users/me/auth')
@@ -260,9 +409,12 @@ router
 });
 
 /**
- * @api {GET} /users/me/forgot-password
+ * @api {GET} /users/me/forgot-password forgotPassword
  * @apiName forgotPassword
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * {}
  */
 router
 .route('/users/me/forgot-password')
@@ -290,51 +442,174 @@ router
 });
 
 /**
- * @api {POST} /users/:user/follow
+ * @api {POST} /users/:user/follow followUser
  * @apiName followUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }
  */
 router
 .route('/users/:user/follow')
 .post(auth.session())
 .post(function followUser(request, response, next) {
-  async.waterfall([], next);
+  async.waterfall([function (next) {
+    var user;
+    user = request.session;
+    user.starred.push(request.user);
+    user.save(next);
+  }, function (user, _, next) {
+    response.status(200);
+    response.send(user);
+    return next();
+  }], next);
 });
 
 /**
- * @api {DELETE} /users/:user/unfollow
+ * @api {DELETE} /users/:user/unfollow unfollowUser
  * @apiName unfollowUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 204
+ * {}
  */
 router
 .route('/users/:user/unfollow')
 .delete(auth.session())
 .delete(function unfollowUser(request, response, next) {
-  async.waterfall([], next);
+  async.waterfall([function (next) {
+    var user;
+    user = request.user;
+    user.update({'$pull' : {'starred' : request.session._id}}, next);
+  }, function (user, _, next) {
+    response.status(204);
+    response.end();
+    next();
+  }], next);
 });
 
 /**
- * @api {GET} /users/:user/followers
+ * @api {GET} /users/:user/followers followersUser
  * @apiName followersUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }]
  */
 router
 .route('/users/:user/followers')
 .get(auth.session())
 .get(function followersUser(request, response, next) {
-  async.waterfall([], next);
+  async.waterfall([function (next) {
+    var query;
+    query = User.find();
+    query.where('starred').equals(request.user._id);
+    query.exec(next);
+  }, function (users, _, next) {
+    response.status(200);
+    response.send(users);
+    return next();
+  }], next);
 });
 
 /**
- * @api {GET} /users/:user/following
+ * @api {GET} /users/:user/following followingUser
  * @apiName followingUser
  * @apiGroup User
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8dc3944fb8faeda457409",
+ *   "username": "roberval",
+ *   "verified": false,
+ *   "featured": false,
+ *   "ranking": null,
+ *   "previousRanking": null,
+ *   "history": [],
+ *   "active": true,
+ *   "country": "Brazil",
+ *   "stake": 0,
+ *   "funds": 100,
+ *   "entries": [{
+ *     "_id": "54f8d8db89b71fc5d9dd47c1",
+ *     "name": "brasileirão",
+ *     "edition": 2014,
+ *     "type": "national league",
+ *     "country": "Brazil",
+ *     "currentRound": 1,
+ *     "createdAt": "2015-03-05T22:29:47.133Z",
+ *     "updatedAt": "2015-03-05T22:29:47.135Z"
+ *   }],
+ *   "starred": [],
+ *   "createdAt": "2015-03-05T22:44:09.131Z",
+ *   "updatedAt": "2015-03-05T22:44:09.898Z"
+ * }]
  */
 router
 .route('/users/:user/following')
 .get(auth.session())
 .get(function followingUser(request, response, next) {
-  async.waterfall([], next);
+  async.waterfall([function (next) {
+    var user, query;
+    user = request.user;
+    query = User.find();
+    query.where('_id').in(user.starred);
+    query.exec(next);
+  }, function (users, _, next) {
+    response.status(200);
+    response.send(users);
+    return next();
+  }], next);
 });
 
 router.param('user', function findUser(request, response, next, id) {
@@ -344,7 +619,6 @@ router.param('user', function findUser(request, response, next, id) {
     query.where('_id').equals(id);
     query.where('active').equals(true);
     query.populate('entries');
-    query.populate('starred');
     query.exec(next);
   }, function (user, next) {
     request.user = user;

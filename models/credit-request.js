@@ -42,7 +42,7 @@ schema = new Schema({
 });
 
 schema.plugin(jsonSelect, {
-  '_id'          : 0,
+  '_id'          : 1,
   'creditedUser' : 1,
   'chargedUser'  : 1,
   'payed'        : 1,

@@ -14,9 +14,51 @@ User = require('../models/user');
 CreditRequest = require('../models/credit-request');
 
 /**
- * @api {POST} /users/:userOrFacebookId/credit-requests
+ * @api {POST} /users/:userOrFacebookId/credit-requests createCreditRequest
  * @apiName createCreditRequest
  * @apiGroup CreditRequest
+ *
+ * @apiExample HTTP/1.1 201
+ * {
+ *   "_id": "54f8de21b54cf548db39e00d",
+ *   "creditedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "chargedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "payed": false,
+ *   "createdAt": "2015-03-05T22:52:17.368Z",
+ *   "updatedAt": "2015-03-05T22:52:17.368Z"
+ * }
  */
 router
 .route('/users/:userOrFacebookId/credit-requests')
@@ -61,9 +103,51 @@ router
 });
 
 /**
- * @api {GET} /users/:user/credit-requests
+ * @api {GET} /users/:user/credit-requests listCreditRequest
  * @apiName listCreditRequest
  * @apiGroup CreditRequest
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8de21b54cf548db39e00d",
+ *   "creditedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "chargedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "payed": false,
+ *   "createdAt": "2015-03-05T22:52:17.368Z",
+ *   "updatedAt": "2015-03-05T22:52:17.368Z"
+ * }]
  */
 router
 .route('/users/:user/credit-requests')
@@ -88,9 +172,51 @@ router
 });
 
 /**
- * @api {GET} /users/:user/requested-credits
+ * @api {GET} /users/:user/requested-credits listRequestedCredits
  * @apiName listRequestedCredits
  * @apiGroup CreditRequest
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8de21b54cf548db39e00d",
+ *   "creditedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "chargedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "payed": false,
+ *   "createdAt": "2015-03-05T22:52:17.368Z",
+ *   "updatedAt": "2015-03-05T22:52:17.368Z"
+ * }]
  */
 router
 .route('/users/:user/requested-credits')
@@ -116,9 +242,51 @@ router
 });
 
 /**
- * @api {GET} /users/:user/credit-requests/:creditRequest
+ * @api {GET} /users/:user/credit-requests/:creditRequest getCreditRequest
  * @apiName getCreditRequest
  * @apiGroup CreditRequest
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8de21b54cf548db39e00d",
+ *   "creditedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "chargedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "payed": false,
+ *   "createdAt": "2015-03-05T22:52:17.368Z",
+ *   "updatedAt": "2015-03-05T22:52:17.368Z"
+ * }
  */
 router
 .route('/users/:user/credit-requests/:creditRequest')
@@ -134,9 +302,51 @@ router
 });
 
 /**
- * @api {PUT} /users/:user/credit-requests/:creditRequest/approve
+ * @api {PUT} /users/:user/credit-requests/:creditRequest/approve approveCreditRequest
  * @apiName approveCreditRequest
  * @apiGroup CreditRequest
+ *
+ * @apiExample HTTP/1.1 201
+ * {
+ *   "_id": "54f8de21b54cf548db39e00d",
+ *   "creditedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "chargedUser": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "payed": false,
+ *   "createdAt": "2015-03-05T22:52:17.368Z",
+ *   "updatedAt": "2015-03-05T22:52:17.368Z"
+ * }
  */
 router
 .route('/users/:user/credit-requests/:creditRequest/approve')

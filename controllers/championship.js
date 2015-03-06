@@ -1,7 +1,7 @@
 'use strict';
 
 var router, nconf, async, auth, push, crypto,
-    Championship, Match;
+    Championship;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -13,9 +13,20 @@ crypto = require('crypto');
 Championship = require('../models/championship');
 
 /**
- * @api {GET} /championships
+ * @api {GET} /championships listChampionship
  * @apiName listChampionship
  * @apiGroup Championship
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8d8db89b71fc5d9dd47c1",
+ *   "name": "brasileirão",
+ *   "type": "national league",
+ *   "country": "Brazil",
+ *   "currentRound": 1,
+ *   "createdAt": "2015-03-05T22:29:47.133Z",
+ *   "updatedAt": "2015-03-05T22:29:47.135Z"
+ * }]
  */
 router
 .route('/championships')
@@ -37,9 +48,20 @@ router
 });
 
 /**
- * @api {GET} /championships/:championship
+ * @api {GET} /championships/:championship getChampionship
  * @apiName getChampionship
  * @apiGroup Championship
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8d8db89b71fc5d9dd47c1",
+ *   "name": "brasileirão",
+ *   "type": "national league",
+ *   "country": "Brazil",
+ *   "currentRound": 1,
+ *   "createdAt": "2015-03-05T22:29:47.133Z",
+ *   "updatedAt": "2015-03-05T22:29:47.135Z"
+ * }
  */
 router
 .route('/championships/:championship')

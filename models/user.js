@@ -119,6 +119,7 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
+  '_id'             : 1,
   'email'           : 1,
   'username'        : 1,
   'facebookId'      : 0,
@@ -138,7 +139,7 @@ schema.plugin(require('mongoose-json-select'), {
   'stake'           : 1,
   'funds'           : 1,
   'entries'         : 1,
-  'starred'         : 1,
+  'starred'         : 0,
   'createdAt'       : 1,
   'updatedAt'       : 1
 });

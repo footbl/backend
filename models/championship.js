@@ -17,10 +17,6 @@ schema = new Schema({
     'type'  : String,
     'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
   },
-  'edition'      : {
-    'type'     : Number,
-    'required' : true
-  },
   'type'         : {
     'type'     : String,
     'enum'     : ['national league', 'continental league', 'world cup'],
@@ -53,10 +49,9 @@ schema = new Schema({
 });
 
 schema.plugin(jsonSelect, {
-  '_id'          : 0,
+  '_id'          : 1,
   'name'         : 1,
   'picture'      : 1,
-  'edition'      : 1,
   'type'         : 1,
   'country'      : 1,
   'rounds'       : 1,

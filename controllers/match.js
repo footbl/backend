@@ -14,9 +14,39 @@ Championship = require('../models/championship');
 Match = require('../models/match');
 
 /**
- * @api {GET} /championships/:championship/matches
+ * @api {GET} /championships/:championship/matches listMatch
  * @apiName listMatch
  * @apiGroup Match
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8da01b6d39628dadd208b",
+ *   "guest": {
+ *     "name": "botafogo",
+ *     "picture": "http://pictures.com/botafogo.png"
+ *   },
+ *   "host": {
+ *     "name": "fluminense",
+ *     "picture": "http://pictures.com/fluminense.png"
+ *   },
+ *   "round": 1,
+ *   "date": "2015-03-05T22:34:41.401Z",
+ *   "finished": false,
+ *   "result": {
+ *     "host": 0,
+ *     "guest": 0
+ *   },
+ *   "pot": {
+ *     "draw": 0,
+ *     "host": 0,
+ *     "guest": 0
+ *   },
+ *   "winner": null,
+ *   "jackpot": 0,
+ *   "reward": 0,
+ *   "createdAt": "2015-03-05T22:34:41.401Z",
+ *   "updatedAt": "2015-03-05T22:34:41.404Z"
+ * }]
  */
 router
 .route('/championships/:championship/matches')
@@ -37,10 +67,6 @@ router
     query.limit(pageSize);
     query.exec(next);
   }, function (matches, next) {
-    async.map(matches, function (match, next) {
-      match.findBet(request.session._id, next);
-    }, next);
-  }, function (matches, next) {
     response.status(200);
     response.send(matches);
     next();
@@ -48,9 +74,39 @@ router
 });
 
 /**
- * @api {GET} /championships/:championship/matches/:match
+ * @api {GET} /championships/:championship/matches/:match getMatch
  * @apiName getMatch
  * @apiGroup Match
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8da01b6d39628dadd208b",
+ *   "guest": {
+ *     "name": "botafogo",
+ *     "picture": "http://pictures.com/botafogo.png"
+ *   },
+ *   "host": {
+ *     "name": "fluminense",
+ *     "picture": "http://pictures.com/fluminense.png"
+ *   },
+ *   "round": 1,
+ *   "date": "2015-03-05T22:34:41.401Z",
+ *   "finished": false,
+ *   "result": {
+ *     "host": 0,
+ *     "guest": 0
+ *   },
+ *   "pot": {
+ *     "draw": 0,
+ *     "host": 0,
+ *     "guest": 0
+ *   },
+ *   "winner": null,
+ *   "jackpot": 0,
+ *   "reward": 0,
+ *   "createdAt": "2015-03-05T22:34:41.401Z",
+ *   "updatedAt": "2015-03-05T22:34:41.404Z"
+ * }
  */
 router
 .route('/championships/:championship/matches/:match')
@@ -59,8 +115,6 @@ router
   async.waterfall([function (next) {
     var match;
     match = request.match;
-    match.findBet(request.session._id, next);
-  }, function (match, next) {
     response.status(200);
     response.send(match);
     next();

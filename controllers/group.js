@@ -13,7 +13,7 @@ crypto = require('crypto');
 Group = require('../models/group');
 
 /**
- * @api {POST} /groups
+ * @api {POST} /groups createGroup
  * @apiName createGroup
  * @apiGroup Group
  *
@@ -21,6 +21,56 @@ Group = require('../models/group');
  * @apiParam {String} [picture] Group picture.
  * @apiParam {Array} members Group members.
  * @apiParam (members) {ObjectId} user Member user.
+ *
+ * @apiExample HTTP/1.1 201
+ * {
+ *   "_id": "54f8e0f9adc77f27dcc8db01",
+ *   "name": "test",
+ *   "code": "rg2pg",
+ *   "owner": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "members": [{
+ *     "_id": "54f8e0f9adc77f27dcc8db02",
+ *     "user": {
+ *       "_id": "54f8dc3944fb8faeda457409",
+ *       "username": "roberval",
+ *       "verified": false,
+ *       "featured": false,
+ *       "ranking": null,
+ *       "previousRanking": null,
+ *       "history": [],
+ *       "active": true,
+ *       "country": "Brazil",
+ *       "stake": 0,
+ *       "funds": 100,
+ *       "entries": [],
+ *       "starred": [],
+ *       "createdAt": "2015-03-05T22:44:09.131Z",
+ *       "updatedAt": "2015-03-05T22:44:09.898Z"
+ *     },
+ *     "notifications": true,
+ *     "previousRanking": null,
+ *     "ranking": null
+ *   }],
+ *   "featured": false,
+ *   "createdAt": "2015-03-05T23:04:25.012Z",
+ *   "updatedAt": "2015-03-05T23:04:25.013Z"
+ * }
  */
 router
 .route('/groups')
@@ -47,9 +97,59 @@ router
 });
 
 /**
- * @api {GET} /groups
+ * @api {GET} /groups listGroup
  * @apiName listGroup
  * @apiGroup Group
+ *
+ * @apiExample HTTP/1.1 200
+ * [{
+ *   "_id": "54f8e0f9adc77f27dcc8db01",
+ *   "name": "test",
+ *   "code": "rg2pg",
+ *   "owner": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "members": [{
+ *     "_id": "54f8e0f9adc77f27dcc8db02",
+ *     "user": {
+ *       "_id": "54f8dc3944fb8faeda457409",
+ *       "username": "roberval",
+ *       "verified": false,
+ *       "featured": false,
+ *       "ranking": null,
+ *       "previousRanking": null,
+ *       "history": [],
+ *       "active": true,
+ *       "country": "Brazil",
+ *       "stake": 0,
+ *       "funds": 100,
+ *       "entries": [],
+ *       "starred": [],
+ *       "createdAt": "2015-03-05T22:44:09.131Z",
+ *       "updatedAt": "2015-03-05T22:44:09.898Z"
+ *     },
+ *     "notifications": true,
+ *     "previousRanking": null,
+ *     "ranking": null
+ *   }],
+ *   "featured": false,
+ *   "createdAt": "2015-03-05T23:04:25.012Z",
+ *   "updatedAt": "2015-03-05T23:04:25.013Z"
+ * }]
  */
 router
 .route('/groups')
@@ -80,9 +180,59 @@ router
 });
 
 /**
- * @api {GET} /groups/:group
+ * @api {GET} /groups/:group getGroup
  * @apiName getGroup
  * @apiGroup Group
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8e0f9adc77f27dcc8db01",
+ *   "name": "test",
+ *   "code": "rg2pg",
+ *   "owner": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "members": [{
+ *     "_id": "54f8e0f9adc77f27dcc8db02",
+ *     "user": {
+ *       "_id": "54f8dc3944fb8faeda457409",
+ *       "username": "roberval",
+ *       "verified": false,
+ *       "featured": false,
+ *       "ranking": null,
+ *       "previousRanking": null,
+ *       "history": [],
+ *       "active": true,
+ *       "country": "Brazil",
+ *       "stake": 0,
+ *       "funds": 100,
+ *       "entries": [],
+ *       "starred": [],
+ *       "createdAt": "2015-03-05T22:44:09.131Z",
+ *       "updatedAt": "2015-03-05T22:44:09.898Z"
+ *     },
+ *     "notifications": true,
+ *     "previousRanking": null,
+ *     "ranking": null
+ *   }],
+ *   "featured": false,
+ *   "createdAt": "2015-03-05T23:04:25.012Z",
+ *   "updatedAt": "2015-03-05T23:04:25.013Z"
+ * }
  */
 router
 .route('/groups/:group')
@@ -98,7 +248,7 @@ router
 });
 
 /**
- * @api {PUT} /groups/:group
+ * @api {PUT} /groups/:group updateGroup
  * @apiName updateGroup
  * @apiGroup Group
  *
@@ -106,6 +256,57 @@ router
  * @apiParam {String} [picture] Group picture.
  * @apiParam {Array} members Group members.
  * @apiParam (members) {ObjectId} user Member user.
+ *
+ *
+ * @apiExample HTTP/1.1 200
+ * {
+ *   "_id": "54f8e0f9adc77f27dcc8db01",
+ *   "name": "test",
+ *   "code": "rg2pg",
+ *   "owner": {
+ *     "_id": "54f8dc3944fb8faeda457409",
+ *     "username": "roberval",
+ *     "verified": false,
+ *     "featured": false,
+ *     "ranking": null,
+ *     "previousRanking": null,
+ *     "history": [],
+ *     "active": true,
+ *     "country": "Brazil",
+ *     "stake": 0,
+ *     "funds": 100,
+ *     "entries": [],
+ *     "starred": [],
+ *     "createdAt": "2015-03-05T22:44:09.131Z",
+ *     "updatedAt": "2015-03-05T22:44:09.898Z"
+ *   },
+ *   "members": [{
+ *     "_id": "54f8e0f9adc77f27dcc8db02",
+ *     "user": {
+ *       "_id": "54f8dc3944fb8faeda457409",
+ *       "username": "roberval",
+ *       "verified": false,
+ *       "featured": false,
+ *       "ranking": null,
+ *       "previousRanking": null,
+ *       "history": [],
+ *       "active": true,
+ *       "country": "Brazil",
+ *       "stake": 0,
+ *       "funds": 100,
+ *       "entries": [],
+ *       "starred": [],
+ *       "createdAt": "2015-03-05T22:44:09.131Z",
+ *       "updatedAt": "2015-03-05T22:44:09.898Z"
+ *     },
+ *     "notifications": true,
+ *     "previousRanking": null,
+ *     "ranking": null
+ *   }],
+ *   "featured": false,
+ *   "createdAt": "2015-03-05T23:04:25.012Z",
+ *   "updatedAt": "2015-03-05T23:04:25.013Z"
+ * }
  */
 router
 .route('/groups/:group')
@@ -129,9 +330,12 @@ router
 });
 
 /**
- * @api {DELETE} /groups/:group
+ * @api {DELETE} /groups/:group removeGroup
  * @apiName removeGroup
  * @apiGroup Group
+ *
+ * @apiExample HTTP/1.1 204
+ * {}
  */
 router
 .route('/groups/:group')
@@ -149,7 +353,7 @@ router
 });
 
 /**
- * @api {POST} /groups/:group/invite
+ * @api {POST} /groups/:group/invite inviteGroup
  * @apiName inviteGroup
  * @apiGroup Group
  *
@@ -158,20 +362,38 @@ router
 router
 .route('/groups/:group/invite')
 .post(auth.session())
-.post(function (request, response, next) {
-  async.waterfall([], next);
+.post(function inviteGroup(request, response, next) {
+  async.waterfall([function (next) {
+    var group;
+    group = request.group;
+    group.save(next);
+  }, function (group, _, next) {
+    response.status(200);
+    response.send(group);
+    next();
+  }], next);
 });
 
 /**
- * @api {DELETE} /groups/:group/leave
+ * @api {DELETE} /groups/:group/leave leaveGroup
  * @apiName leaveGroup
  * @apiGroup Group
  */
 router
 .route('/groups/:group/leave')
 .delete(auth.session())
-.delete(function (request, response, next) {
-  async.waterfall([], next);
+.delete(function leaveGroup(request, response, next) {
+  async.waterfall([function (next) {
+    var group;
+    group = request.group;
+    group.update({'$pull' : {
+      'members' : {'user' : request.session._id}
+    }}, next);
+  }, function (group, _, next) {
+    response.status(200);
+    response.send(group);
+    next();
+  }], next);
 });
 
 router.param('group', function findGroup(request, response, next, id) {

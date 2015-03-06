@@ -37,8 +37,7 @@ describe('championship', function () {
       championship = new Championship({
         'name'    : 'brasileirão',
         'type'    : 'national league',
-        'country' : 'Brazil',
-        'edition' : 2014
+        'country' : 'Brazil'
       });
       championship.save(done);
     });
@@ -65,8 +64,7 @@ describe('championship', function () {
       championship = new Championship({
         'name'    : 'brasileirão',
         'type'    : 'national league',
-        'country' : 'Brazil',
-        'edition' : 2014
+        'country' : 'Brazil'
       });
       championship.save(done);
     });
@@ -80,7 +78,6 @@ describe('championship', function () {
         response.body.should.have.property('name').be.equal('brasileirão');
         response.body.should.have.property('type').be.equal('national league');
         response.body.should.have.property('country').be.equal('Brazil');
-        response.body.should.have.property('edition').be.equal(2014);
       });
       request.end(done);
     });

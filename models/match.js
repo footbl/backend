@@ -101,7 +101,7 @@ schema.index({
 });
 
 schema.plugin(jsonSelect, {
-  '_id'          : 0,
+  '_id'          : 1,
   'championship' : 0,
   'guest'        : 1,
   'host'         : 1,
@@ -123,21 +123,6 @@ schema.pre('save', function setMatchUpdatedAt(next) {
   this.updatedAt = new Date();
   return next();
 });
-
-schema.methods.findBet = function findBet(user, next) {
-  return async.waterfall([function (next) {
-    var Bet, query;
-    Bet = require('./bet');
-    query = Bet.findOne();
-    query.where('match').equals(this._id);
-    query.where('user').equals(user);
-    query.populate('user');
-    query.exec(next);
-  }.bind(this), function (bet, next) {
-    this.bet = bet;
-    next(null, this);
-  }.bind(this)], next);
-};
 
 schema.pre('remove', function removeCascadeBets(next) {
   return async.waterfall([function (next) {

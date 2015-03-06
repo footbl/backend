@@ -25,8 +25,7 @@ describe('user', function () {
     championship = new Championship({
       'name'    : 'brasileirão',
       'type'    : 'national league',
-      'country' : 'Brazil',
-      'edition' : 2014
+      'country' : 'Brazil'
     });
     championship.save(done);
   });
