@@ -42,16 +42,30 @@ function getChampionshipMatches(championship) {
   };
 }
 
+function filterChampionshipMatches(championship) {
+  return function (games, next) {
+    async.filter(games, function (match, next) {
+      next(match.Comp === championship['365scoresCompId']);
+    }, function (matches) {
+      next(null, matches);
+    });
+  };
+}
+
 function parseMatches(matches, next) {
   async.map(matches, function (data, next) {
     var dateMask, date, events, guestScore, hostScore;
     dateMask = data.STime.split(/-|\s|:/).map(Number);
     date = new Date(dateMask[2], dateMask[1] - 1, dateMask[0], dateMask[3], dateMask[4]);
     events = data.Events || [];
-    guestScore = events.filter(function (e) {return e.Type === 0 && e.Comp === 2;}).length;
-    hostScore = events.filter(function (e) {return e.Type === 0 && e.Comp === 1;}).length;
-    if (!teams[data.Comps[0].ID]) return next({});
-    if (!teams[data.Comps[1].ID]) return next({});
+    guestScore = events.filter(function (e) {
+      return e.Type === 0 && e.Comp === 2;
+    }).length;
+    hostScore = events.filter(function (e) {
+      return e.Type === 0 && e.Comp === 1;
+    }).length;
+    if (!teams[data.Comps[0].ID]) return next(null, {});
+    if (!teams[data.Comps[1].ID]) return next(null, {});
     return next(null, {
       'guest'    : teams[data.Comps[1].ID],
       'host'     : teams[data.Comps[0].ID],
@@ -62,16 +76,6 @@ function parseMatches(matches, next) {
       'result'   : {'guest' : guestScore, 'host' : hostScore}
     });
   }, next);
-}
-
-function filterChampionshipMatches(championship) {
-  return function (games, next) {
-    async.filter(games, function (match, next) {
-      next(match.Comp === championship['365scoresCompId']);
-    }, function (matches) {
-      next(null, matches);
-    });
-  };
 }
 
 function filterInvalidMatches(matches, next) {
@@ -126,8 +130,8 @@ module.exports = function crawler(next) {
       getChampionshipMatches(championship),
       filterChampionshipMatches(championship),
       parseMatches,
-      //filterInvalidMatches,
-      saveMatches,
+      filterInvalidMatches,
+      saveMatches(championship),
       filterFinishedMatches,
       updateChampionshipCurrentRound
     ], next);
@@ -143,6 +147,8 @@ if (require.main === module) {
   async.whilst(function () {
     return Date.now() - now.getTime() < 1000 * 60 * 10;
   }, function (next) {
-    module.exports(function () {setTimeout(next, 1000);});
+    module.exports(function () {
+      setTimeout(next, 30000);
+    });
   }, process.exit);
 }
