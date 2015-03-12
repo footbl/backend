@@ -279,8 +279,6 @@ describe('user', function () {
         request.expect(function (response) {
           response.body.should.have.property('_id');
           response.body.should.have.property('verified').be.equal(false);
-          response.body.should.have.property('featured').be.equal(false);
-          response.body.should.have.property('active').be.equal(true);
           response.body.should.have.property('country').be.equal('Brazil');
           response.body.should.have.property('entries');
           response.body.entries[0].should.have.property('name').be.equal('brasileirão');

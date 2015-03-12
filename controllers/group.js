@@ -27,43 +27,18 @@ Group = require('../models/group');
  *   "_id": "54f8e0f9adc77f27dcc8db01",
  *   "name": "test",
  *   "code": "rg2pg",
- *   "owner": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "featured": false,
- *     "ranking": null,
- *     "previousRanking": null,
- *     "history": [],
- *     "active": true,
- *     "country": "Brazil",
- *     "stake": 0,
- *     "funds": 100,
- *     "entries": [],
- *     "starred": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
  *   "members": [{
  *     "_id": "54f8e0f9adc77f27dcc8db02",
  *     "user": {
  *       "_id": "54f8dc3944fb8faeda457409",
  *       "username": "roberval",
  *       "verified": false,
- *       "featured": false,
- *       "ranking": null,
- *       "previousRanking": null,
- *       "history": [],
- *       "active": true,
  *       "country": "Brazil",
- *       "stake": 0,
- *       "funds": 100,
  *       "entries": [],
- *       "starred": [],
  *       "createdAt": "2015-03-05T22:44:09.131Z",
  *       "updatedAt": "2015-03-05T22:44:09.898Z"
  *     },
- *     "notifications": true,
+ *     "owner": true,
  *     "previousRanking": null,
  *     "ranking": null
  *   }],
@@ -82,8 +57,7 @@ router
     group.name = request.body.name;
     group.code = new Date().getTime().toString(36).substring(3);
     group.picture = request.body.picture;
-    group.owner = request.session._id;
-    group.members = [{'user' : request.session._id}];
+    group.members = [{'user' : request.session._id, 'owner' : true}];
     group.save(next);
   }, function (group, _, next) {
     group.populate('owner');
@@ -106,43 +80,18 @@ router
  *   "_id": "54f8e0f9adc77f27dcc8db01",
  *   "name": "test",
  *   "code": "rg2pg",
- *   "owner": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "featured": false,
- *     "ranking": null,
- *     "previousRanking": null,
- *     "history": [],
- *     "active": true,
- *     "country": "Brazil",
- *     "stake": 0,
- *     "funds": 100,
- *     "entries": [],
- *     "starred": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
  *   "members": [{
  *     "_id": "54f8e0f9adc77f27dcc8db02",
  *     "user": {
  *       "_id": "54f8dc3944fb8faeda457409",
  *       "username": "roberval",
  *       "verified": false,
- *       "featured": false,
- *       "ranking": null,
- *       "previousRanking": null,
- *       "history": [],
- *       "active": true,
  *       "country": "Brazil",
- *       "stake": 0,
- *       "funds": 100,
  *       "entries": [],
- *       "starred": [],
  *       "createdAt": "2015-03-05T22:44:09.131Z",
  *       "updatedAt": "2015-03-05T22:44:09.898Z"
  *     },
- *     "notifications": true,
+ *     "owner": true,
  *     "previousRanking": null,
  *     "ranking": null
  *   }],
@@ -189,43 +138,18 @@ router
  *   "_id": "54f8e0f9adc77f27dcc8db01",
  *   "name": "test",
  *   "code": "rg2pg",
- *   "owner": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "featured": false,
- *     "ranking": null,
- *     "previousRanking": null,
- *     "history": [],
- *     "active": true,
- *     "country": "Brazil",
- *     "stake": 0,
- *     "funds": 100,
- *     "entries": [],
- *     "starred": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
  *   "members": [{
  *     "_id": "54f8e0f9adc77f27dcc8db02",
  *     "user": {
  *       "_id": "54f8dc3944fb8faeda457409",
  *       "username": "roberval",
  *       "verified": false,
- *       "featured": false,
- *       "ranking": null,
- *       "previousRanking": null,
- *       "history": [],
- *       "active": true,
  *       "country": "Brazil",
- *       "stake": 0,
- *       "funds": 100,
  *       "entries": [],
- *       "starred": [],
  *       "createdAt": "2015-03-05T22:44:09.131Z",
  *       "updatedAt": "2015-03-05T22:44:09.898Z"
  *     },
- *     "notifications": true,
+ *     "owner": true,
  *     "previousRanking": null,
  *     "ranking": null
  *   }],
@@ -263,43 +187,18 @@ router
  *   "_id": "54f8e0f9adc77f27dcc8db01",
  *   "name": "test",
  *   "code": "rg2pg",
- *   "owner": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "featured": false,
- *     "ranking": null,
- *     "previousRanking": null,
- *     "history": [],
- *     "active": true,
- *     "country": "Brazil",
- *     "stake": 0,
- *     "funds": 100,
- *     "entries": [],
- *     "starred": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
  *   "members": [{
  *     "_id": "54f8e0f9adc77f27dcc8db02",
  *     "user": {
  *       "_id": "54f8dc3944fb8faeda457409",
  *       "username": "roberval",
  *       "verified": false,
- *       "featured": false,
- *       "ranking": null,
- *       "previousRanking": null,
- *       "history": [],
- *       "active": true,
  *       "country": "Brazil",
- *       "stake": 0,
- *       "funds": 100,
  *       "entries": [],
- *       "starred": [],
  *       "createdAt": "2015-03-05T22:44:09.131Z",
  *       "updatedAt": "2015-03-05T22:44:09.898Z"
  *     },
- *     "notifications": true,
+ *     "owner": true,
  *     "previousRanking": null,
  *     "ranking": null
  *   }],
@@ -386,9 +285,11 @@ router
   async.waterfall([function (next) {
     var group;
     group = request.group;
-    group.update({'$pull' : {
-      'members' : {'user' : request.session._id}
-    }}, next);
+    group.update({
+      '$pull' : {
+        'members' : {'user' : request.session._id}
+      }
+    }, next);
   }, function (group, _, next) {
     response.status(200);
     response.send(group);

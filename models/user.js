@@ -9,105 +9,79 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'email'           : {
+  'email'      : {
     'type'   : String,
     'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
     'unique' : true,
     'sparse' : true
   },
-  'username'        : {
+  'username'   : {
     'type'   : String,
     'unique' : true,
     'sparse' : true
   },
-  'facebookId'      : {
+  'facebookId' : {
     'type'   : String,
     'unique' : true,
     'sparse' : true
   },
-  'password'        : {
+  'password'   : {
     'type'     : String,
     'required' : true
   },
-  'name'            : {
+  'name'       : {
     'type' : String
   },
-  'about'           : {
+  'about'      : {
     'type' : String
   },
-  'verified'        : {
+  'verified'   : {
     'type'     : Boolean,
     'required' : true,
     'default'  : false
   },
-  'featured'        : {
+  'featured'   : {
     'type'     : Boolean,
     'required' : true,
     'default'  : false
   },
-  'picture'         : {
+  'picture'    : {
     'type'  : String,
     'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
   },
-  'type'            : {
-    'type'     : String,
-    'required' : true,
-    'default'  : 'user',
-    'enum'     : ['user', 'admin']
-  },
-  'apnsToken'       : {
+  'apnsToken'  : {
     'type' : String
   },
-  'ranking'         : {
-    'type'     : Number,
-    'required' : true,
-    'default'  : Infinity
-  },
-  'previousRanking' : {
-    'type'     : Number,
-    'required' : true,
-    'default'  : Infinity
-  },
-  'history'         : [{
-    'date'  : {
-      'type'     : Date,
-      'required' : true
-    },
-    'funds' : {
-      'type'     : Number,
-      'required' : true
-    }
-  }],
-  'active'          : {
+  'active'     : {
     'type'    : Boolean,
     'default' : true
   },
-  'country'         : {
+  'country'    : {
     'type' : String
   },
-  'stake'           : {
-    'type'    : Number,
-    'default' : 0
-  },
-  'funds'           : {
-    'type'    : Number,
-    'default' : 100
-  },
-  'entries'         : [{
+  'entries'    : [{
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'Championship',
     'required' : true
   }],
-  'starred'         : [{
+  'starred'    : [{
     'type'     : Schema.Types.ObjectId,
     'ref'      : 'User',
     'required' : true
   }],
-  'createdAt'       : {
+  'stake'      : {
+    'type'    : Number,
+    'default' : 0
+  },
+  'funds'      : {
+    'type'    : Number,
+    'default' : 100
+  },
+  'createdAt'  : {
     'type'    : Date,
     'default' : Date.now
   },
-  'updatedAt'       : {
+  'updatedAt'  : {
     'type' : Date
   }
 }, {
@@ -119,29 +93,24 @@ schema = new Schema({
 });
 
 schema.plugin(require('mongoose-json-select'), {
-  '_id'             : 1,
-  'email'           : 1,
-  'username'        : 1,
-  'facebookId'      : 0,
-  'password'        : 0,
-  'name'            : 1,
-  'about'           : 1,
-  'verified'        : 1,
-  'featured'        : 1,
-  'picture'         : 1,
-  'type'            : 0,
-  'apnsToken'       : 0,
-  'ranking'         : 1,
-  'previousRanking' : 1,
-  'history'         : 1,
-  'active'          : 1,
-  'country'         : 1,
-  'stake'           : 1,
-  'funds'           : 1,
-  'entries'         : 1,
-  'starred'         : 0,
-  'createdAt'       : 1,
-  'updatedAt'       : 1
+  'email'      : 1,
+  'username'   : 1,
+  'facebookId' : 1,
+  'password'   : 0,
+  'name'       : 1,
+  'about'      : 1,
+  'verified'   : 1,
+  'featured'   : 0,
+  'picture'    : 1,
+  'apnsToken'  : 0,
+  'active'     : 0,
+  'country'    : 1,
+  'entries'    : 1,
+  'stake'      : 1,
+  'funds'      : 1,
+  'starred'    : 0,
+  'createdAt'  : 1,
+  'updatedAt'  : 1
 });
 
 schema.pre('save', function setUserUpdatedAt(next) {
@@ -162,9 +131,5 @@ schema.pre('save', function setUserDefaultEntry(next) {
     next();
   }.bind(this)], next);
 });
-
-schema.path('funds').validate(function (value) {
-  return value > 0;
-}, 'insufficient funds');
 
 module.exports = mongoose.model('User', schema);

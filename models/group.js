@@ -20,18 +20,13 @@ schema = new Schema({
   'picture'   : {
     'type' : String
   },
-  'owner'     : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'User',
-    'required' : true
-  },
-  'invites'   : [{
-    'type' : String
-  }],
   'featured'  : {
     'type'    : Boolean,
     'default' : false
   },
+  'invites'   : [{
+    'type' : String
+  }],
   'members'   : [{
     'user'            : {
       'type'     : Schema.Types.ObjectId,
@@ -48,9 +43,9 @@ schema = new Schema({
       'required' : true,
       'default'  : Infinity
     },
-    'notifications'   : {
+    'owner'           : {
       'type'    : Boolean,
-      'default' : true
+      'default' : false
     }
   }],
   'createdAt' : {
@@ -74,7 +69,6 @@ schema.plugin(jsonSelect, {
   'code'       : 1,
   'picture'    : 1,
   'freeToEdit' : 1,
-  'owner'      : 1,
   'invites'    : 0,
   'members'    : 1,
   'featured'   : 1,
