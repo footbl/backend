@@ -1,9 +1,9 @@
-/*globals describe, before, after, it*/
+/*globals describe, before, it*/
 'use strict';
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    Season, User, CreditRequest;
+Season, User, CreditRequest;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -11,9 +11,12 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+
 Season = require('../models/season');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
+
+nconf.defaults(require('../config'));
 
 describe('credit request', function () {
   var creditedUser, chargedUser;

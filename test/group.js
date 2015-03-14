@@ -11,6 +11,7 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+
 Season = require('../models/season');
 User = require('../models/user');
 Group = require('../models/group');
