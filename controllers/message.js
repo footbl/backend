@@ -15,7 +15,7 @@ Message = require('../models/message');
 /**
  * @api {POST} /rooms/:room/messages createMessage
  * @apiName createMessage
- * @apiRoom Message
+ * @apiGroup Message
  *
  * @apiParam {String} [message] Message message.
  * @apiParam {String} [type] Message type.
@@ -60,7 +60,7 @@ router
 /**
  * @api {GET} /rooms/:room/messages listMessage
  * @apiName listMessage
- * @apiRoom Message
+ * @apiGroup Message
  *
  * @apiExample HTTP/1.1 200
  * [{
@@ -105,7 +105,7 @@ router
 /**
  * @api {PUT} /rooms/:room/messages/all/mark-as-read markAllAsReadMessage
  * @apiName markAllAsReadMessage
- * @apiRoom Message
+ * @apiGroup Message
  *
  * @apiExample HTTP/1.1 200
  * [{
