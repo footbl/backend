@@ -123,25 +123,6 @@ schema.pre('save', function setMatchUpdatedAt(next) {
   return next();
 });
 
-schema.pre('save', function updateMatchBets(next) {
-  if (!this.finished) return next();
-  return async.waterfall([function (next) {
-    var Bet, query;
-    Bet = require('./bet');
-    query = Bet.find();
-    query.where('payed').equals(false);
-    query.populate('user');
-    query.exec(next);
-  }.bind(this), function (bets, next) {
-    async.each(bets, function (bet, next) {
-      bet.payed = true;
-      bet.user.stake -= bet.bid;
-      if (bet.result === this.winner) bet.user.funds += bet.bid * this.reward;
-      async.parallel([bet.save.bind(bet), bet.user.save.bind(bet.user)], next);
-    }.bind(this), next);
-  }.bind(this)], next);
-});
-
 schema.pre('remove', function removeCascadeBets(next) {
   async.waterfall([function (next) {
     var Bet, query;
@@ -157,7 +138,6 @@ schema.pre('remove', function removeCascadeBets(next) {
 });
 
 schema.virtual('winner').get(function getMatchWinner() {
-  if (!this.finished) return null;
   if (this.result.guest > this.result.host) return 'guest';
   if (this.result.guest < this.result.host) return 'host';
   return 'draw';
@@ -168,8 +148,51 @@ schema.virtual('jackpot').get(function getMatchJackpot() {
 });
 
 schema.virtual('reward').get(function getMatchReward() {
-  if (!this.jackpot) return 0;
   return this.jackpot / this.pot[this.winner];
+});
+
+schema.method('finish', function finishMatch(next) {
+  if (this.finshed) return next('match already finished');
+  return async.waterfall([function (next) {
+    this.finished = true;
+    this.save(next);
+  }.bind(this), function (_, __, next) {
+    var Bet, query;
+    Bet = require('./bet');
+    query = Bet.find();
+    query.where('match').equals(this._id);
+    query.populate('user');
+    query.exec(next);
+  }.bind(this), function (bets, next) {
+    async.each(bets, function (bet, next) {
+      bet.user.stake -= bet.bid;
+      if (bet.result === this.winner) {
+        bet.user.funds += bet.bid * this.reward;
+      }
+      bet.user.save(next);
+    }.bind(this), next);
+  }.bind(this), function (next) {
+    var Challenge, query;
+    Challenge = require('./challenge');
+    query = Challenge.find();
+    query.where('match').equals(this._id);
+    query.populate('challenger.user');
+    query.populate('challenged.user');
+    query.exec(next);
+  }.bind(this), function (challenges, next) {
+    async.each(challenges, function (challenge, next) {
+      if (challenge.challenger.result === this.winner) challenge.challenger.user.funds += 2 * challenge.bid;
+      challenge.challenger.user.stake -= challenge.bid;
+      if (challenge.challenged.result === this.winner) challenge.challenged.user.funds += 2 * challenge.bid;
+      challenge.challenged.user.stake -= challenge.bid;
+      async.parallel([
+        challenge.challenger.user.save.bind(challenge.challenger.user),
+        challenge.challenged.user.save.bind(challenge.challenged.user)
+      ], next);
+    }.bind(this), next);
+  }.bind(this), function (next) {
+    next(null, this);
+  }.bind(this)], next);
 });
 
 module.exports = mongoose.model('Match', schema);
