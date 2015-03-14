@@ -175,12 +175,13 @@ schema.pre('save', function setUserDefaultSeason(next) {
 });
 
 schema.pre('save', function insertUserIntoInvitedGroups(next) {
-  if (!this.isNew || (!this.facebookId && !this.email)) return next();
+  if (!this.facebookId && !this.email) return next();
   return async.waterfall([function (next) {
     var Group, query;
     Group = require('./group');
     query = Group.find();
     query.where('invites').equals(this.facebookId || this.email);
+    query.where('members.user').ne(this._id);
     query.exec(next);
   }.bind(this), function (groups, next) {
     async.each(groups, function (group, next) {

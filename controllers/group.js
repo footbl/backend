@@ -270,9 +270,9 @@ router
     } else {
       group.update({'$push' : {'invites' : request.body.user}}, next);
     }
-  }, function (group, _, next) {
+  }, function (__, _, next) {
     response.status(200);
-    response.send(group);
+    response.end();
     next();
   }], next);
 });
@@ -292,7 +292,7 @@ router
     group.update({'$pull' : {'members' : {'user' : request.session._id}}}, next);
   }, function (group, _, next) {
     response.status(200);
-    response.send(group);
+    response.end();
     next();
   }], next);
 });

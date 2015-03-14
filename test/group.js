@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    Season, User, Group;
+Season, User, Group;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -15,8 +15,10 @@ Season = require('../models/season');
 User = require('../models/user');
 Group = require('../models/group');
 
+nconf.defaults(require('../config'));
+
 describe('group', function () {
-  var user;
+  var user, invitedUser;
 
   before(Season.remove.bind(Season));
   before(User.remove.bind(User));
@@ -35,6 +37,13 @@ describe('group', function () {
     user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
     user.country = 'Brazil';
     user.save(done);
+  });
+
+  before(function (done) {
+    invitedUser = new User();
+    invitedUser.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
+    invitedUser.country = 'Brazil';
+    invitedUser.save(done);
   });
 
   describe('create', function () {
@@ -263,10 +272,86 @@ describe('group', function () {
   });
 
   describe('invite', function () {
+    describe('registered user', function () {
+      var group;
 
+      before(Group.remove.bind(Group));
+
+      before(function (done) {
+        group = new Group({
+          'name'    : 'test',
+          'code'    : '6wzji',
+          'members' : [{'user' : user, 'owner' : true}]
+        });
+        group.save(done);
+      });
+
+      it('should invite', function (done) {
+        var request;
+        request = app.post('/groups/' + group._id + '/invite');
+        request.set('auth-token', auth.token(user));
+        request.send({'user' : invitedUser._id});
+        request.expect(200);
+        request.end(done);
+      });
+    });
+
+    describe('facebook user', function () {
+      var group;
+
+      before(Group.remove.bind(Group));
+
+      before(function (done) {
+        group = new Group({
+          'name'    : 'test',
+          'code'    : '6wzji',
+          'members' : [{'user' : user, 'owner' : true}]
+        });
+        group.save(done);
+      });
+
+      nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
+
+      it('should invite', function (done) {
+        var request;
+        request = app.post('/groups/' + group._id + '/invite');
+        request.set('auth-token', auth.token(user));
+        request.send({'user' : '1234'});
+        request.expect(200);
+        request.end(done);
+      });
+
+      after(function (done) {
+        var request;
+        request = app.put('/users/' + invitedUser._id);
+        request.set('facebook-token', '1234');
+        request.set('auth-token', auth.token(invitedUser));
+        request.expect(200);
+        request.end(done);
+      });
+    });
   });
 
   describe('leave', function () {
+    var group;
 
+    before(Group.remove.bind(Group));
+
+    before(function (done) {
+      group = new Group({
+        'name'    : 'test',
+        'code'    : '6wzji',
+        'members' : [{'user' : user, 'owner' : true}, {'user' : invitedUser}]
+      });
+      group.save(done);
+    });
+
+    it('should invite', function (done) {
+      var request;
+      request = app.del('/groups/' + group._id + '/leave');
+      request.set('auth-token', auth.token(invitedUser));
+      request.expect(200);
+      request.end(done);
+    });
   });
 });
