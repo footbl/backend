@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    User, Championship, Match;
+    Season, User, Championship, Match;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -11,6 +11,7 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+Season = require('../models/season');
 User = require('../models/user');
 Championship = require('../models/championship');
 Match = require('../models/match');
@@ -20,14 +21,23 @@ nconf.defaults(require('../config'));
 describe('match', function () {
   var user, championship;
 
+  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
   before(Championship.remove.bind(Championship));
+
+  before(function (done) {
+    var season;
+    season = new Season({
+      'finishAt'  : new Date(),
+      'createdAt' : new Date()
+    });
+    season.save(done);
+  });
 
   before(function (done) {
     user = new User();
     user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
     user.country = 'Brazil';
-    user.funds = 110;
     user.save(done);
   });
 
@@ -104,6 +114,3 @@ describe('match', function () {
     });
   });
 });
-/**
- * Created by rerthal on 3/1/15.
- */

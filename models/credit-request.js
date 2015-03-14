@@ -45,8 +45,8 @@ schema.plugin(jsonSelect, {
   '_id'          : 1,
   'creditedUser' : 1,
   'chargedUser'  : 1,
-  'payed'        : 1,
   'value'        : 1,
+  'payed'        : 1,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });
@@ -75,21 +75,19 @@ schema.methods.approve = function approve(next) {
     available = this.creditedUser.funds + this.creditedUser.stake;
     this.payed = true;
     this.value = (available < 100) ? (100 - available) : 0;
-    this.save(next);
-  }.bind(this), function (__, _, next) {
     this.creditedUser.funds += this.value;
-    this.creditedUser.save(next);
-  }.bind(this), function (__, _, next) {
     this.chargedUser.funds -= this.value;
-    this.chargedUser.save(next);
-  }.bind(this), function (__, _, next) {
+    async.parallel([this.creditedUser.save.bind(this.creditedUser), this.chargedUser.save.bind(this.chargedUser), this.save.bind(this)], next);
+  }.bind(this), function (_, next) {
     var query;
     query = this.constructor.find();
     query.where('creditedUser').equals(this.creditedUser._id);
     query.where('payed').equals(false);
     query.exec(next);
   }.bind(this), function (requests, next) {
-    async.each(requests, function (request, next) { request.remove(next); }, next);
+    async.each(requests, function (request, next) {
+      request.remove(next);
+    }, next);
   }.bind(this)], next);
 };
 

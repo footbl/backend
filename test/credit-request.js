@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    User, CreditRequest;
+    Season, User, CreditRequest;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -11,19 +11,29 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+Season = require('../models/season');
 User = require('../models/user');
 CreditRequest = require('../models/credit-request');
 
 describe('credit request', function () {
   var creditedUser, chargedUser;
 
+  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
+
+  before(function (done) {
+    var season;
+    season = new Season({
+      'finishAt'  : new Date(),
+      'createdAt' : new Date()
+    });
+    season.save(done);
+  });
 
   before(function (done) {
     creditedUser = new User();
     creditedUser.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
     creditedUser.country = 'Brazil';
-    creditedUser.funds = 110;
     creditedUser.save(done);
   });
 
@@ -31,7 +41,6 @@ describe('credit request', function () {
     chargedUser = new User();
     chargedUser.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
     chargedUser.country = 'Brazil';
-    chargedUser.funds = 110;
     chargedUser.save(done);
   });
 

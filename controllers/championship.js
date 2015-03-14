@@ -23,7 +23,6 @@ Championship = require('../models/championship');
  *   "name": "brasileirão",
  *   "type": "national league",
  *   "country": "Brazil",
- *   "currentRound": 1,
  *   "createdAt": "2015-03-05T22:29:47.133Z",
  *   "updatedAt": "2015-03-05T22:29:47.135Z"
  * }]
@@ -58,7 +57,6 @@ router
  *   "name": "brasileirão",
  *   "type": "national league",
  *   "country": "Brazil",
- *   "currentRound": 1,
  *   "createdAt": "2015-03-05T22:29:47.133Z",
  *   "updatedAt": "2015-03-05T22:29:47.135Z"
  * }

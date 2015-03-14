@@ -9,25 +9,34 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'user'      : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'User',
-    'required' : true
-  },
-  'room'      : {
-    'type'     : Schema.Types.ObjectId,
-    'required' : true
-  },
-  'message'   : {
-    'type' : String
-  },
-  'type'      : {
-    'type' : String
-  },
-  'seenBy'    : [{
-    'type' : Schema.Types.ObjectId,
-    'ref'  : 'User'
+  'bets'      : [{
+    'user'     : {
+      'type'     : Schema.Types.ObjectId,
+      'ref'      : 'User',
+      'required' : true
+    },
+    'result'   : {
+      'type' : String,
+      'enum' : ['guest', 'host', 'draw']
+    },
+    'accepted' : {
+      'type'    : Boolean,
+      'default' : false
+    }
   }],
+  'match'     : {
+    'type'     : Schema.Types.ObjectId,
+    'ref'      : 'Match',
+    'required' : true
+  },
+  'bid'       : {
+    'type'     : Number,
+    'required' : true
+  },
+  'payed'     : {
+    'type'    : Boolean,
+    'default' : false
+  },
   'createdAt' : {
     'type'    : Date,
     'default' : Date.now
@@ -36,7 +45,7 @@ schema = new Schema({
     'type' : Date
   }
 }, {
-  'collection' : 'messages',
+  'collection' : 'challenges',
   'strict'     : true,
   'toJSON'     : {
     'virtuals' : true
@@ -45,18 +54,12 @@ schema = new Schema({
 
 schema.plugin(jsonSelect, {
   '_id'       : 1,
-  'user'      : 1,
-  'room'      : 0,
-  'message'   : 1,
-  'type'      : 1,
-  'seenBy'    : 0,
+  'users'     : 1,
+  'match'     : 1,
+  'bid'       : 1,
+  'payed'     : 0,
   'createdAt' : 1,
   'updatedAt' : 1
 });
 
-schema.pre('save', function setMessageUpdatedAt(next) {
-  this.updatedAt = new Date();
-  return next();
-});
-
-module.exports = mongoose.model('Message', schema);
+module.exports = mongoose.model('Challenge', schema);

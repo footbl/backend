@@ -60,6 +60,7 @@ domain.run(function () {
     app.use(auth.signature());
   }
   app.use(require('./controllers/championship'));
+  app.use(require('./controllers/season'));
   app.use(require('./controllers/user'));
   app.use(require('./controllers/prize'));
   app.use(require('./controllers/group'));

@@ -1,7 +1,7 @@
 'use strict';
 
 var router, nconf, async, auth, push, crypto,
-    Group;
+Group;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -265,7 +265,11 @@ router
   async.waterfall([function (next) {
     var group;
     group = request.group;
-    group.save(next);
+    if ((/^[0-9a-fA-F]{24}$/).test(request.body.user)) {
+      group.update({'$push' : {'members' : {'user' : request.body.user}}}, next);
+    } else {
+      group.update({'$push' : {'invites' : request.body.user}}, next);
+    }
   }, function (group, _, next) {
     response.status(200);
     response.send(group);
@@ -285,11 +289,7 @@ router
   async.waterfall([function (next) {
     var group;
     group = request.group;
-    group.update({
-      '$pull' : {
-        'members' : {'user' : request.session._id}
-      }
-    }, next);
+    group.update({'$pull' : {'members' : {'user' : request.session._id}}}, next);
   }, function (group, _, next) {
     response.status(200);
     response.send(group);

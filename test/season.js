@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    Season, User, Championship;
+Season, User;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -13,24 +13,14 @@ crypto = require('crypto');
 app = supertest(require('../index.js'));
 Season = require('../models/season');
 User = require('../models/user');
-Championship = require('../models/championship');
+Season = require('../models/season');
 
 nconf.defaults(require('../config'));
 
-describe('championship', function () {
+describe('season', function () {
   var user;
 
-  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
-
-  before(function (done) {
-    var season;
-    season = new Season({
-      'finishAt'  : new Date(),
-      'createdAt' : new Date()
-    });
-    season.save(done);
-  });
 
   before(function (done) {
     user = new User();
@@ -40,21 +30,21 @@ describe('championship', function () {
   });
 
   describe('list', function () {
-    before(Championship.remove.bind(Championship));
+    before(Season.remove.bind(Season));
 
     before(function (done) {
-      var championship;
-      championship = new Championship({
-        'name'    : 'brasileirão',
-        'type'    : 'national league',
-        'country' : 'Brazil'
+      var season;
+      season = new Season({
+        'sponsor'  : 'Barcelona FC.',
+        'gift'     : 'app store gift card',
+        'finishAt' : '2015-03-05T22:29:47.133Z'
       });
-      championship.save(done);
+      season.save(done);
     });
 
-    it('should list one championship', function (done) {
+    it('should list one season', function (done) {
       var request;
-      request = app.get('/championships');
+      request = app.get('/seasons');
       request.set('auth-token', auth.token(user));
       request.expect(200);
       request.expect(function (response) {
@@ -66,28 +56,27 @@ describe('championship', function () {
   });
 
   describe('get', function () {
-    var championship;
+    var season;
 
-    before(Championship.remove.bind(Championship));
+    before(Season.remove.bind(Season));
 
     before(function (done) {
-      championship = new Championship({
-        'name'    : 'brasileirão',
-        'type'    : 'national league',
-        'country' : 'Brazil'
+      season = new Season({
+        'sponsor'  : 'Barcelona FC.',
+        'gift'     : 'app store gift card',
+        'finishAt' : '2015-03-05T22:29:47.133Z'
       });
-      championship.save(done);
+      season.save(done);
     });
 
-    it('should list one championship', function (done) {
+    it('should list one season', function (done) {
       var request;
-      request = app.get('/championships/' + championship._id);
+      request = app.get('/seasons/' + season._id);
       request.set('auth-token', auth.token(user));
       request.expect(200);
       request.expect(function (response) {
-        response.body.should.have.property('name').be.equal('brasileirão');
-        response.body.should.have.property('type').be.equal('national league');
-        response.body.should.have.property('country').be.equal('Brazil');
+        response.body.should.have.property('sponsor').be.equal('Barcelona FC.');
+        response.body.should.have.property('gift').be.equal('app store gift card');
       });
       request.end(done);
     });

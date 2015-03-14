@@ -102,7 +102,7 @@ router
   }, function (prize, _, next) {
     response.status(200);
     response.send(prize);
-    User.update({'_id' : prize.user}, {'$inc' : {'funds' : prize.value}}, next);
+    User.update({'_id' : prize.user}, {'$inc' : {'seasons.0.funds' : prize.value}}, next);
   }], next);
 });
 

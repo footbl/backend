@@ -19,8 +19,7 @@ Prize = require('../models/prize');
  * @apiGroup User
  *
  * @apiParam {String} password User password.
- * @apiParam {Array[ObjectId]} entries User entries.
- * @apiParam {Array[ObjectId]} starred User starred.
+ * @apiParam {String} [country='Brazil'] User country.
  *
  * @apiExample HTTP/1.1 201
  * {
@@ -52,16 +51,11 @@ router
     query.where('facebookId').equals(request.facebook);
     query.exec(next);
   }, function (user, next) {
-    var freegeoip;
-    request.user = user && request.facebook ? user : new User();
-    freegeoip = require('node-freegeoip');
-    freegeoip.getLocation(request.ip, next);
-  }, function (country, next) {
-    var password, user;
+    var password;
     password = crypto.createHash('sha1').update(request.body.password + nconf.get('PASSWORD_SALT')).digest('hex');
-    user = request.user;
+    user = user && request.facebook ? user : new User();
     user.password = request.body.password ? password : null;
-    user.country = country && country['country_name'] ? country['country_name'] : 'Brazil';
+    user.country = request.body.country ? request.body.country : 'Brazil';
     user.active = true;
     user.save(next);
   }, function (user, _, next) {

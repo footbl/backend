@@ -19,19 +19,11 @@ schema = new Schema({
   },
   'type'         : {
     'type'     : String,
-    'enum'     : ['national league', 'continental league', 'world cup'],
-    'default'  : 'national league'
+    'enum'     : ['national league', 'continental league', 'world cup']
   },
   'country'      : {
     'type'     : String,
     'required' : true
-  },
-  'rounds'       : {
-    'type' : Number
-  },
-  'currentRound' : {
-    'type'    : Number,
-    'default' : 1
   },
   'createdAt'    : {
     'type'    : Date,
@@ -54,8 +46,6 @@ schema.plugin(jsonSelect, {
   'picture'      : 1,
   'type'         : 1,
   'country'      : 1,
-  'rounds'       : 1,
-  'currentRound' : 1,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });

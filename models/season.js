@@ -9,25 +9,15 @@ async = require('async');
 Schema = mongoose.Schema;
 
 schema = new Schema({
-  'user'      : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'User',
-    'required' : true
-  },
-  'room'      : {
-    'type'     : Schema.Types.ObjectId,
-    'required' : true
-  },
-  'message'   : {
+  'sponsor'   : {
     'type' : String
   },
-  'type'      : {
+  'gift'      : {
     'type' : String
   },
-  'seenBy'    : [{
-    'type' : Schema.Types.ObjectId,
-    'ref'  : 'User'
-  }],
+  'finishAt'  : {
+    'type' : Date
+  },
   'createdAt' : {
     'type'    : Date,
     'default' : Date.now
@@ -36,7 +26,7 @@ schema = new Schema({
     'type' : Date
   }
 }, {
-  'collection' : 'messages',
+  'collection' : 'seasons',
   'strict'     : true,
   'toJSON'     : {
     'virtuals' : true
@@ -45,18 +35,16 @@ schema = new Schema({
 
 schema.plugin(jsonSelect, {
   '_id'       : 1,
-  'user'      : 1,
-  'room'      : 0,
-  'message'   : 1,
-  'type'      : 1,
-  'seenBy'    : 0,
+  'sponsor'   : 1,
+  'gift'      : 1,
+  'finishAt'  : 1,
   'createdAt' : 1,
   'updatedAt' : 1
 });
 
-schema.pre('save', function setMessageUpdatedAt(next) {
+schema.pre('save', function setSeasonUpdatedAt(next) {
   this.updatedAt = new Date();
   return next();
 });
 
-module.exports = mongoose.model('Message', schema);
+module.exports = mongoose.model('Season', schema);

@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    User, Group, Message;
+    Season, User, Message;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -11,37 +11,36 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+Season = require('../models/season');
 User = require('../models/user');
-Group = require('../models/group');
 Message = require('../models/message');
 
 describe('message', function () {
-  var user, group;
+  var user;
 
+  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
+
+  before(function (done) {
+    var season;
+    season = new Season({
+      'finishAt'  : new Date(),
+      'createdAt' : new Date()
+    });
+    season.save(done);
+  });
 
   before(function (done) {
     user = new User();
     user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
     user.country = 'Brazil';
-    user.funds = 110;
     user.save(done);
-  });
-
-  before(function (done) {
-    group = new Group({
-      'name'    : 'test',
-      'code'    : '6wzji',
-      'owner'   : user,
-      'members' : [{'user' : user}]
-    });
-    group.save(done);
   });
 
   describe('create', function () {
     it('should create', function (done) {
       var request;
-      request = app.post('/groups/' + group._id + '/messages');
+      request = app.post('/rooms/5500ff04e353076617080cba/messages');
       request.set('auth-token', auth.token(user));
       request.send({'message' : 'test'});
       request.expect(201);
@@ -58,7 +57,7 @@ describe('message', function () {
     before(function (done) {
       var message;
       message = new Message({
-        'group'   : group,
+        'room'    : '5500ff04e353076617080cba',
         'user'    : user,
         'message' : 'test'
       });
@@ -68,7 +67,7 @@ describe('message', function () {
     before(function (done) {
       var message;
       message = new Message({
-        'group'   : group,
+        'room'    : '5500ff04e353076617080cba',
         'user'    : user,
         'message' : 'test',
         'seenBy'  : [user]
@@ -79,7 +78,7 @@ describe('message', function () {
     describe('filter unread messages', function () {
       it('should not list seen messages', function (done) {
         var request;
-        request = app.get('/groups/' + group._id + '/messages');
+        request = app.get('/rooms/5500ff04e353076617080cba/messages');
         request.set('auth-token', auth.token(user));
         request.send({'unreadMessages' : true});
         request.expect(200);
@@ -94,7 +93,7 @@ describe('message', function () {
     describe('without filter', function () {
       it('should list one message', function (done) {
         var request;
-        request = app.get('/groups/' + group._id + '/messages');
+        request = app.get('/rooms/5500ff04e353076617080cba/messages');
         request.set('auth-token', auth.token(user));
         request.expect(200);
         request.expect(function (response) {

@@ -36,11 +36,6 @@ Match = require('../models/match');
  *     "host": 0,
  *     "guest": 0
  *   },
- *   "pot": {
- *     "draw": 0,
- *     "host": 0,
- *     "guest": 0
- *   },
  *   "winner": null,
  *   "jackpot": 0,
  *   "reward": 0,
@@ -93,11 +88,6 @@ router
  *   "date": "2015-03-05T22:34:41.401Z",
  *   "finished": false,
  *   "result": {
- *     "host": 0,
- *     "guest": 0
- *   },
- *   "pot": {
- *     "draw": 0,
  *     "host": 0,
  *     "guest": 0
  *   },

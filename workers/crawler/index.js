@@ -26,8 +26,7 @@ function saveChampionship(championship) {
         'name'    : championship.name,
         'country' : championship.country,
         'type'    : championship.type,
-        'picture' : championship.picture,
-        'rounds'  : championship.rounds
+        'picture' : championship.picture
       }
     }, {'upsert' : true}, next);
   };
@@ -104,25 +103,6 @@ function saveMatches(champ) {
   };
 }
 
-function filterFinishedMatches(matches, next) {
-  async.filter(matches, function (match, next) {
-    next(match.finished);
-  }, function (matches) {
-    next(null, matches);
-  });
-}
-
-function updateChampionshipCurrentRound(matches, next) {
-  async.each(matches, function (match, next) {
-    Championship.collection.update({
-      '$or' : [
-        {'_id' : match.championship, 'currentRound' : {'$lt' : match.round}},
-        {'_id' : match.championship, 'currentRound' : {'$exists' : false}}
-      ]
-    }, {'$set' : {'currentRound' : match.round}}, next);
-  }, next);
-}
-
 module.exports = function crawler(next) {
   async.map(championships, function (championship, next) {
     async.waterfall([
@@ -131,9 +111,7 @@ module.exports = function crawler(next) {
       filterChampionshipMatches(championship),
       parseMatches,
       filterInvalidMatches,
-      saveMatches(championship),
-      filterFinishedMatches,
-      updateChampionshipCurrentRound
+      saveMatches(championship)
     ], next);
   }, next);
 };

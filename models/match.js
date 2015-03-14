@@ -114,7 +114,6 @@ schema.plugin(jsonSelect, {
   'winner'       : 1,
   'jackpot'      : 1,
   'reward'       : 1,
-  'bet'          : 1,
   'createdAt'    : 1,
   'updatedAt'    : 1
 });
@@ -124,15 +123,36 @@ schema.pre('save', function setMatchUpdatedAt(next) {
   return next();
 });
 
-schema.pre('remove', function removeCascadeBets(next) {
+schema.pre('save', function updateMatchBets(next) {
+  if (!this.finished) return next();
   return async.waterfall([function (next) {
+    var Bet, query;
+    Bet = require('./bet');
+    query = Bet.find();
+    query.where('payed').equals(false);
+    query.populate('user');
+    query.exec(next);
+  }.bind(this), function (bets, next) {
+    async.each(bets, function (bet, next) {
+      bet.payed = true;
+      bet.user.stake -= bet.bid;
+      if (bet.result === this.winner) bet.user.funds += bet.bid * this.reward;
+      async.parallel([bet.save.bind(bet), bet.user.save.bind(bet.user)], next);
+    }.bind(this), next);
+  }.bind(this)], next);
+});
+
+schema.pre('remove', function removeCascadeBets(next) {
+  async.waterfall([function (next) {
     var Bet, query;
     Bet = require('./bet');
     query = Bet.find();
     query.where('match').equals(this._id);
     query.exec(next);
   }.bind(this), function (bets, next) {
-    async.each(bets, function (bet, next) { bet.remove(next); }.bind(this), next);
+    async.each(bets, function (bet, next) {
+      bet.remove(next);
+    }.bind(this), next);
   }.bind(this)], next);
 });
 
@@ -149,9 +169,7 @@ schema.virtual('jackpot').get(function getMatchJackpot() {
 
 schema.virtual('reward').get(function getMatchReward() {
   if (!this.jackpot) return 0;
-  if (this.winner === 'guest') return this.jackpot / this.pot.guest;
-  if (this.winner === 'host') return this.jackpot / this.pot.host;
-  return this.jackpot / this.pot.draw;
+  return this.jackpot / this.pot[this.winner];
 });
 
 module.exports = mongoose.model('Match', schema);

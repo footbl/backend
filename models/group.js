@@ -28,22 +28,13 @@ schema = new Schema({
     'type' : String
   }],
   'members'   : [{
-    'user'            : {
+    'user'     : {
       'type'     : Schema.Types.ObjectId,
       'ref'      : 'User',
       'required' : true
     },
-    'ranking'         : {
-      'type'     : Number,
-      'required' : true,
-      'default'  : Infinity
-    },
-    'previousRanking' : {
-      'type'     : Number,
-      'required' : true,
-      'default'  : Infinity
-    },
-    'owner'           : {
+    'rankings' : [Number],
+    'owner'    : {
       'type'    : Boolean,
       'default' : false
     }
@@ -64,21 +55,36 @@ schema = new Schema({
 });
 
 schema.plugin(jsonSelect, {
-  '_id'        : 1,
-  'name'       : 1,
-  'code'       : 1,
-  'picture'    : 1,
-  'freeToEdit' : 1,
-  'invites'    : 0,
-  'members'    : 1,
-  'featured'   : 1,
-  'createdAt'  : 1,
-  'updatedAt'  : 1
+  '_id'                     : 1,
+  'name'                    : 1,
+  'code'                    : 1,
+  'picture'                 : 1,
+  'featured'                : 0,
+  'invites'                 : 0,
+  'members'                 : 1,
+  'members.user'            : 1,
+  'members.rankings'        : 0,
+  'members.owner'           : 1,
+  'members.ranking'         : 1,
+  'members.previousRanking' : 1,
+  'createdAt'               : 1,
+  'updatedAt'               : 1
 });
 
 schema.pre('save', function setGroupUpdatedAt(next) {
   this.updatedAt = new Date();
   return next();
+});
+
+schema.paths.members.schema.virtual('ranking').get(function () {
+  return this.rankings[0];
+}).set(function (ranking) {
+  this.rankings.unshift(ranking);
+  this.rankings.splice(2);
+});
+
+schema.paths.members.schema.virtual('previousRanking').get(function () {
+  return this.rankings[1];
 });
 
 module.exports = mongoose.model('Group', schema);

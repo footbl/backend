@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    User, Championship;
+    Season, User, Championship;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -11,6 +11,7 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+Season = require('../models/season');
 User = require('../models/user');
 Championship = require('../models/championship');
 
@@ -19,7 +20,17 @@ nconf.defaults(require('../config'));
 describe('user', function () {
   var championship;
 
+  before(Season.remove.bind(Season));
   before(Championship.remove.bind(Championship));
+
+  before(function (done) {
+    var season;
+    season = new Season({
+      'finishAt'  : new Date(),
+      'createdAt' : new Date()
+    });
+    season.save(done);
+  });
 
   before(function (done) {
     championship = new Championship({
@@ -302,7 +313,6 @@ describe('user', function () {
           user.password = '1234';
           user.country = 'Brazil';
           user.facebookId = '1234';
-          user.funds = 10;
           user.save(done);
         });
 
@@ -359,7 +369,6 @@ describe('user', function () {
           user = new User();
           user.password = '1234';
           user.country = 'Brazil';
-          user.funds = 10;
           user.save(done);
         });
 
@@ -471,6 +480,10 @@ describe('user', function () {
         user = new User();
         user.password = '1234';
         user.country = 'Brazil';
+        user.save(done);
+      });
+
+      before(function (done) {
         user.funds = 10;
         user.save(done);
       });
@@ -500,6 +513,10 @@ describe('user', function () {
         user = new User();
         user.password = '1234';
         user.country = 'Brazil';
+        user.save(done);
+      });
+
+      before(function (done) {
         user.funds = 10;
         user.save(done);
       });
@@ -643,5 +660,13 @@ describe('user', function () {
         request.end(done);
       });
     });
+  });
+
+  describe('follow', function () {
+
+  });
+
+  describe('unfollow', function () {
+
   });
 });

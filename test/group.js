@@ -3,7 +3,7 @@
 require('should');
 
 var supertest, auth, nock, nconf, crypto, app,
-    User, Group;
+    Season, User, Group;
 
 supertest = require('supertest');
 auth = require('auth');
@@ -11,19 +11,29 @@ nock = require('nock');
 nconf = require('nconf');
 crypto = require('crypto');
 app = supertest(require('../index.js'));
+Season = require('../models/season');
 User = require('../models/user');
 Group = require('../models/group');
 
 describe('group', function () {
   var user;
 
+  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
+
+  before(function (done) {
+    var season;
+    season = new Season({
+      'finishAt'  : new Date(),
+      'createdAt' : new Date()
+    });
+    season.save(done);
+  });
 
   before(function (done) {
     user = new User();
     user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
     user.country = 'Brazil';
-    user.funds = 110;
     user.save(done);
   });
 
