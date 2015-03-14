@@ -66,7 +66,7 @@ describe('match', function () {
       match.save(done);
     });
 
-    it('should list one championship', function (done) {
+    it('should list one match', function (done) {
       var request;
       request = app.get('/championships/' + championship._id + '/matches');
       request.set('auth-token', auth.token(user));
@@ -95,7 +95,7 @@ describe('match', function () {
       match.save(done);
     });
 
-    it('should list one championship', function (done) {
+    it('should return', function (done) {
       var request;
       request = app.get('/championships/' + championship._id + '/matches/' + match._id);
       request.set('auth-token', auth.token(user));

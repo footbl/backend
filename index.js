@@ -59,6 +59,7 @@ domain.run(function () {
   if (nconf.get('NODE_ENV') !== 'test') {
     app.use(auth.signature());
   }
+  app.use(require('./controllers/bet'));
   app.use(require('./controllers/championship'));
   app.use(require('./controllers/season'));
   app.use(require('./controllers/user'));

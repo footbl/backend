@@ -80,7 +80,7 @@ describe('championship', function () {
       championship.save(done);
     });
 
-    it('should list one championship', function (done) {
+    it('should return', function (done) {
       var request;
       request = app.get('/championships/' + championship._id);
       request.set('auth-token', auth.token(user));

@@ -81,6 +81,7 @@ schema.paths.members.schema.virtual('ranking').get(function () {
 }).set(function (ranking) {
   this.rankings.unshift(ranking);
   this.rankings.splice(2);
+  this.markModified('rankings');
 });
 
 schema.paths.members.schema.virtual('previousRanking').get(function () {

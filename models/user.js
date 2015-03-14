@@ -217,6 +217,7 @@ schema.virtual('funds').get(function () {
   } else {
     this.currentSeason.evolution.unshift({'funds' : this.funds + this.stake});
   }
+  this.markModified('seasons.0');
 });
 
 schema.virtual('stake').get(function () {
@@ -230,6 +231,7 @@ schema.virtual('ranking').get(function () {
 }).set(function (ranking) {
   this.currentSeason.rankings.unshift(ranking);
   this.currentSeason.rankings.splice(2);
+  this.markModified('seasons.rankings');
 });
 
 schema.virtual('previousRanking').get(function () {

@@ -71,7 +71,7 @@ schema.pre('save', function setBetUpdatedAt(next) {
 });
 
 schema.pre('save', function updateCascadeUserAndMatch(next) {
-  async.waterfall([function (next) {
+  return async.waterfall([function (next) {
     this.populate('user');
     this.populate('match');
     this.populate(next);
@@ -81,7 +81,7 @@ schema.pre('save', function updateCascadeUserAndMatch(next) {
     query.where('_id').equals(this._id);
     query.exec(next);
   }.bind(this), function (bet, next) {
-    if (bet) this.match.pot[bet.result] -= (bet ? bet.bid : 0);
+    if (bet) this.match.pot[bet.result] -= bet.bid;
     this.match.pot[this.result] += this.bid;
     this.user.stake += -(bet ? bet.bid : 0) + this.bid;
     this.user.funds += (bet ? bet.bid : 0) - this.bid;
@@ -90,7 +90,7 @@ schema.pre('save', function updateCascadeUserAndMatch(next) {
 });
 
 schema.pre('remove', function removeCascadeUserAndMatch(next) {
-  async.waterfall([function (next) {
+  return async.waterfall([function (next) {
     this.populate('user');
     this.populate('match');
     this.populate(next);
@@ -103,7 +103,8 @@ schema.pre('remove', function removeCascadeUserAndMatch(next) {
 });
 
 schema.path('match').validate(function validateStartedMatch(value, next) {
-  async.waterfall([function (next) {
+  if (!this.match) return next();
+  return async.waterfall([function (next) {
     this.populate('match');
     this.populate(next);
   }.bind(this)], function (error) {
@@ -112,7 +113,7 @@ schema.path('match').validate(function validateStartedMatch(value, next) {
 }, 'match already started');
 
 schema.path('bid').validate(function validateSufficientFunds(value, next) {
-  async.waterfall([function (next) {
+  return async.waterfall([function (next) {
     this.populate('user');
     this.populate(next);
   }.bind(this), function (_, next) {
