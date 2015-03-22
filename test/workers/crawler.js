@@ -20,6 +20,7 @@ nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=5').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=11').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=10').times(Infinity).reply(200, {Games : []});
+nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=17').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=18').times(Infinity).reply(200, {Games : []});
 nock('http://ws.365scores.com').get('/?action=1&Sid=1&curr_season=true&CountryID=19').times(Infinity).reply(200, {Games : []});
 

@@ -750,5 +750,77 @@
   "1075"                 : {
     "name"    : "Zenit",
     "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977049/Zenit_t6e2ao.png"
+  },
+  "8696"                 : {
+    "name"    : "Zamora",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Zamora_m8fooe.png"
+  },
+  "7646"                 : {
+    "name"    : "Universitário",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Universitario_bu8akl.png"
+  },
+  "8541"                 : {
+    "name"    : "Universidad de Chile",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Univ._de_Chile_mrbbkq.png"
+  },
+  "1264"                 : {
+    "name"    : "Tigres",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Tigres_sl8evf.png"
+  },
+  "8543"                 : {
+    "name"    : "Strongest",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/The_Strongest_ss3oa8.jpg"
+  },
+  "7644"                 : {
+    "name"    : "Santa Fé",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Santa_Fe_owowx6.png"
+  },
+  "7645"                 : {
+    "name"    : "San Jose",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062264/San_jos%C3%A9_rv9sf4.png"
+  },
+  "1238"                 : {
+    "name"    : "Palestino",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062264/Palestino_wlvikq.png"
+  },
+  "8614"                 : {
+    "name"    : "Montevideo",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062264/Montevideo_W._etzazx.png"
+  },
+  "8699"                 : {
+    "name"    : "Mineros",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Mineros_tzps0p.png"
+  },
+  "1286"                 : {
+    "name"    : "Libertad",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Libertad_marpb6.png"
+  },
+  "7205"                 : {
+    "name"    : "Juan Aurich",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Juan_Aurich_jlyqof.png"
+  },
+  "884"                  : {
+    "name"    : "Huracan",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Huracan_zvmbyp.png"
+  },
+  "7739"                 : {
+    "name"    : "Guarani",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Guarani_qbkp66.png"
+  },
+  "7203"                 : {
+    "name"    : "Emelec",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Emelec_ssxues.png"
+  },
+  "8611"                 : {
+    "name"    : "Danubio",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062262/Danubio_zezg45.png"
+  },
+  "8685"                 : {
+    "name"    : "Tachira",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062262/D._T%C3%A1chira_kmmeny.png"
+  },
+  "8640"                 : {
+    "name"    : "Atlético Nacional",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062261/Atl%C3%A9tico_Nacional_nsyef2.png"
   }
 }

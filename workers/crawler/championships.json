@@ -98,5 +98,15 @@
     "rounds"             : 38,
     "365scoresCountryId" : 19,
     "365scoresCompId"    : 572
+  },
+  {
+    "name"               : "Libertadores",
+    "country"            : "South America",
+    "type"               : "continental league",
+    "picture"            : "",
+    "edition"            : 2015,
+    "rounds"             : 38,
+    "365scoresCountryId" : 17,
+    "365scoresCompId"    : 102
   }
 ]
