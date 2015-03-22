@@ -104,7 +104,7 @@ router
     query = User.find();
     query.populate('entries');
     query.populate('starred');
-    query.sort('ranking');
+    query.sort('seasons.0.rankings.0');
     query.skip(page);
     query.limit(pageSize);
     query.where('active').ne(false);

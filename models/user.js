@@ -191,18 +191,12 @@ schema.pre('save', function insertUserIntoInvitedGroups(next) {
   }.bind(this)], next);
 });
 
-
 schema.virtual('currentSeason').get(function () {
-  return this.seasons[0] || {
-    'rankings'  : [Infinity],
-    'funds'     : 100,
-    'stake'     : 0,
-    'evolution' : []
-  };
+  return this.seasons[0] || {'rankings' : [Infinity], 'evolution' : []};
 });
 
 schema.virtual('funds').get(function () {
-  return this.currentSeason.funds;
+  return this.currentSeason.funds || 100;
 }).set(function (funds) {
   var now, lastDate, sameDay;
   now = new Date();
@@ -221,7 +215,7 @@ schema.virtual('funds').get(function () {
 });
 
 schema.virtual('stake').get(function () {
-  return this.currentSeason.stake;
+  return this.currentSeason.stake || 0;
 }).set(function (stake) {
   this.currentSeason.stake = stake;
 });
