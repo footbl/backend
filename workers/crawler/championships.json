@@ -103,7 +103,7 @@
     "name"               : "Libertadores",
     "country"            : "South America",
     "type"               : "continental league",
-    "picture"            : "",
+    "picture"            : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427065423/America_Latina_red_tq1ms7.svg",
     "edition"            : 2015,
     "rounds"             : 38,
     "365scoresCountryId" : 17,
