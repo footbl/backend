@@ -50,9 +50,15 @@ router
     bet.populate('match');
     bet.populate(next);
   }, function (bet, next) {
+    var user, match;
+    user = bet.user;
+    match = bet.match;
+    user.funds -= bet.bid;
+    user.stake += bet.bid;
+    match.pot[bet.result] += bet.bid;
     response.status(201);
     response.send(bet);
-    next();
+    async.parallel([user.save.bind(user), match.save.bind(match)], next);
   }], next);
 });
 
@@ -140,6 +146,8 @@ router
   async.waterfall([function (next) {
     var bet;
     bet = request.bet;
+    request.oldBid = bet.bid;
+    request.oldResult = bet.result;
     bet.bid = request.body.bid;
     bet.result = request.body.result;
     bet.save(next);
@@ -148,9 +156,16 @@ router
     bet.populate('match');
     bet.populate(next);
   }, function (bet, next) {
+    var user, match;
+    user = bet.user;
+    match = bet.match;
+    user.funds += request.oldBid - bet.bid;
+    user.stake += bet.bid - request.oldBid;
+    match.pot[bet.result] += bet.bid;
+    match.pot[request.oldResult] -= request.oldBid;
     response.status(200);
     response.send(bet);
-    next();
+    async.parallel([user.save.bind(user), match.save.bind(match)], next);
   }], next);
 });
 

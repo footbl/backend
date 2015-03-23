@@ -51,9 +51,13 @@ router
     challenge.populate('match');
     challenge.populate(next);
   }, function (challenge, next) {
+    var challenger;
+    challenger = challenge.challenger.user;
+    challenger.stake += challenge.bid;
+    challenger.funds -= challenge.bid;
     response.status(201);
     response.send(challenge);
-    next();
+    challenger.save(next);
   }], next);
 });
 
@@ -124,28 +128,35 @@ router
 .put(auth.session())
 .put(function rejectChallenge(request, response, next) {
   async.waterfall([function (next) {
-    var challenge;
+    var challenge, challenger;
     challenge = request.challenge;
-    challenge.reject(next);
-  }, function (challenge, next) {
+    challenger = challenge.challenger.user;
+    challenger.stake -= challenge.bid;
+    challenger.funds += challenge.bid;
+    challenge.accepted = false;
+    async.parallel([challenger.save.bind(challenger), challenge.save.bind(challenge)], next);
+  }, function (_, next) {
     response.status(200);
-    response.send(challenge);
+    response.end();
     next();
   }], next);
 });
-
 
 router
 .route('/users/:user/challenges/:challenge/accept')
 .put(auth.session())
 .put(function acceptChallenge(request, response, next) {
   async.waterfall([function (next) {
-    var challenge;
+    var challenge, challenged;
     challenge = request.challenge;
-    challenge.accept(next);
+    challenged = challenge.challenged.user;
+    challenged.stake += challenge.bid;
+    challenged.funds -= challenge.bid;
+    challenge.accepted = false;
+    async.parallel([challenged.save.bind(challenged), challenge.save.bind(challenge)], next);
   }, function (challenge, next) {
     response.status(200);
-    response.send(challenge);
+    response.end();
     next();
   }], next);
 });

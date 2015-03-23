@@ -65,38 +65,6 @@ schema.pre('save', function setBetUpdatedAt(next) {
   next();
 });
 
-schema.pre('save', function updateCascadeUserAndMatch(next) {
-  return async.waterfall([function (next) {
-    this.populate('user');
-    this.populate('match');
-    this.populate(next);
-  }.bind(this), function (_, next) {
-    var query;
-    query = this.constructor.findOne();
-    query.where('_id').equals(this._id);
-    query.exec(next);
-  }.bind(this), function (bet, next) {
-    if (bet) this.match.pot[bet.result] -= bet.bid;
-    this.match.pot[this.result] += this.bid;
-    this.user.stake += -(bet ? bet.bid : 0) + this.bid;
-    this.user.funds += (bet ? bet.bid : 0) - this.bid;
-    async.parallel([this.match.save.bind(this.match), this.user.save.bind(this.user)], next);
-  }.bind(this)], next);
-});
-
-schema.pre('remove', function removeCascadeUserAndMatch(next) {
-  return async.waterfall([function (next) {
-    this.populate('user');
-    this.populate('match');
-    this.populate(next);
-  }.bind(this), function (_, next) {
-    this.match.pot[this.result] -= this.bid;
-    this.user.stake -= this.bid;
-    this.user.funds += this.bid;
-    async.parallel([this.match.save.bind(this.match), this.user.save.bind(this.user)], next);
-  }.bind(this)], next);
-});
-
 schema.path('match').validate(function validateStartedMatch(value, next) {
   if (!this.match) return next();
   return async.waterfall([function (next) {
