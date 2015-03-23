@@ -185,7 +185,7 @@ schema.pre('save', function insertUserIntoInvitedGroups(next) {
     query.exec(next);
   }.bind(this), function (groups, next) {
     async.each(groups, function (group, next) {
-      group.members.push({'user' : this});
+      group.members.push(this);
       group.save(next);
     }.bind(this), next);
   }.bind(this)], next);

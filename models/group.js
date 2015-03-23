@@ -17,6 +17,11 @@ schema = new Schema({
     'type'     : String,
     'required' : true
   },
+  'owner'     : {
+    'type'     : Schema.Types.ObjectId,
+    'ref'      : 'User',
+    'required' : true
+  },
   'picture'   : {
     'type' : String
   },
@@ -28,15 +33,9 @@ schema = new Schema({
     'type' : String
   }],
   'members'   : [{
-    'user'  : {
-      'type'     : Schema.Types.ObjectId,
-      'ref'      : 'User',
-      'required' : true
-    },
-    'owner' : {
-      'type'    : Boolean,
-      'default' : false
-    }
+    'type'     : Schema.Types.ObjectId,
+    'ref'      : 'User',
+    'required' : true
   }],
   'createdAt' : {
     'type'    : Date,
@@ -54,17 +53,16 @@ schema = new Schema({
 });
 
 schema.plugin(jsonSelect, {
-  '_id'           : 1,
-  'name'          : 1,
-  'code'          : 1,
-  'picture'       : 1,
-  'featured'      : 0,
-  'invites'       : 0,
-  'members'       : 1,
-  'members.user'  : 1,
-  'members.owner' : 1,
-  'createdAt'     : 1,
-  'updatedAt'     : 1
+  '_id'       : 1,
+  'name'      : 1,
+  'code'      : 1,
+  'owner'     : 1,
+  'picture'   : 1,
+  'featured'  : 0,
+  'invites'   : 0,
+  'members'   : 1,
+  'createdAt' : 1,
+  'updatedAt' : 1
 });
 
 schema.pre('save', function setGroupUpdatedAt(next) {

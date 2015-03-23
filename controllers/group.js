@@ -19,8 +19,6 @@ Group = require('../models/group');
  *
  * @apiParam {String} name Group name.
  * @apiParam {String} [picture] Group picture.
- * @apiParam {Array} members Group members.
- * @apiParam (members) {ObjectId} user Member user.
  *
  * @apiExample HTTP/1.1 201
  * {
@@ -56,12 +54,13 @@ router
     group = new Group();
     group.name = request.body.name;
     group.code = new Date().getTime().toString(36).substring(3);
+    group.owner = request.session._id;
     group.picture = request.body.picture;
-    group.members = [{'user' : request.session._id, 'owner' : true}];
+    group.members = [request.session._id];
     group.save(next);
   }, function (group, _, next) {
     group.populate('owner');
-    group.populate('members.user');
+    group.populate('members');
     group.populate(next);
   }, function (group, next) {
     response.status(201);
@@ -110,7 +109,7 @@ router
     page = (request.query.page || 0) * pageSize;
     query = Group.find();
     query.populate('owner');
-    query.populate('members.user');
+    query.populate('members');
     query.skip(page);
     query.limit(pageSize);
     if (request.body.featured) {
@@ -118,7 +117,7 @@ router
     } else if (request.body.code) {
       query.where('code').equals(request.body.code);
     } else {
-      query.where('members.user').equals(request.session._id);
+      query.where('members').equals(request.session._id);
     }
     query.exec(next);
   }, function (groups, next) {
@@ -219,7 +218,7 @@ router
     group.save(next);
   }, function (group, _, next) {
     group.populate('owner');
-    group.populate('members.user');
+    group.populate('members');
     group.populate(next);
   }, function (group, next) {
     response.status(200);
@@ -266,9 +265,9 @@ router
     var group;
     group = request.group;
     if ((/^[0-9a-fA-F]{24}$/).test(request.body.user)) {
-      group.update({'$push' : {'members' : {'user' : request.body.user}}}, next);
+      group.update({'$addToSet' : {'members' : request.body.user}}, next);
     } else {
-      group.update({'$push' : {'invites' : request.body.user}}, next);
+      group.update({'$addToSet' : {'invites' : request.body.user}}, next);
     }
   }, function (__, _, next) {
     response.status(200);
@@ -289,7 +288,7 @@ router
   async.waterfall([function (next) {
     var group;
     group = request.group;
-    group.update({'$pull' : {'members' : {'user' : request.session._id}}}, next);
+    group.update({'$pull' : {'members' : request.session._id}}, next);
   }, function (group, _, next) {
     response.status(200);
     response.end();
@@ -303,7 +302,7 @@ router.param('group', function findGroup(request, response, next, id) {
     query = Group.findOne();
     query.where('_id').equals(id);
     query.populate('owner');
-    query.populate('members.user');
+    query.populate('members');
     query.exec(next);
   }, function (group, next) {
     request.group = group;

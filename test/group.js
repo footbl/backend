@@ -92,7 +92,7 @@ describe('group', function () {
         'name'    : 'test',
         'code'    : '6wzji',
         'owner'   : user,
-        'members' : [{'user' : user}]
+        'members' : [user._id]
       });
       group.save(done);
     });
@@ -163,7 +163,7 @@ describe('group', function () {
         'name'    : 'test',
         'code'    : '6wzji',
         'owner'   : user,
-        'members' : [{'user' : user}]
+        'members' : [user._id]
       });
       group.save(done);
     });
@@ -205,7 +205,7 @@ describe('group', function () {
         'name'    : 'test',
         'code'    : '6wzji',
         'owner'   : user,
-        'members' : [{'user' : user}]
+        'members' : [user._id]
       });
       group.save(done);
     });
@@ -250,7 +250,7 @@ describe('group', function () {
         'name'    : 'test',
         'code'    : '6wzji',
         'owner'   : user,
-        'members' : [{'user' : user}]
+        'members' : [user._id]
       });
       group.save(done);
     });
@@ -282,7 +282,8 @@ describe('group', function () {
         group = new Group({
           'name'    : 'test',
           'code'    : '6wzji',
-          'members' : [{'user' : user, 'owner' : true}]
+          'owner'   : user,
+          'members' : [user._id]
         });
         group.save(done);
       });
@@ -306,7 +307,8 @@ describe('group', function () {
         group = new Group({
           'name'    : 'test',
           'code'    : '6wzji',
-          'members' : [{'user' : user, 'owner' : true}]
+          'owner'   : user,
+          'members' : [user._id]
         });
         group.save(done);
       });
@@ -342,7 +344,8 @@ describe('group', function () {
       group = new Group({
         'name'    : 'test',
         'code'    : '6wzji',
-        'members' : [{'user' : user, 'owner' : true}, {'user' : invitedUser}]
+        'owner'   : user,
+        'members' : [user._id, invitedUser._id]
       });
       group.save(done);
     });

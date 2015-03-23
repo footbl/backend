@@ -421,8 +421,7 @@ router
   async.waterfall([function (next) {
     var user;
     user = request.session;
-    user.starred.push(request.user);
-    user.save(next);
+    user.update({'$addToSet' : {'starred' : request.session._id}}, next);
   }, function (user, _, next) {
     response.status(200);
     response.send(user);
