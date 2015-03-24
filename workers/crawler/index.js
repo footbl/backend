@@ -35,11 +35,11 @@ function parseChampionship(championship) {
 function parseMatch(data, next) {
   var dateMask = data.STime.split(/-|\s|:/).map(Number);
   if (!teams[data.Comps[0].ID]) {
-    console.log('[team not found]', data.Comps[0].Name);
+    console.log('[team not found]', data.Comps[0].Name, data.Comp);
     return next(null, {});
   }
   if (!teams[data.Comps[1].ID]) {
-    console.log('[team not found]', data.Comps[1].Name);
+    console.log('[team not found]', data.Comps[1].Name, data.Comp);
     return next(null, {});
   }
   return next(null, {

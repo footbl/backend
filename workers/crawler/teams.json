@@ -822,5 +822,77 @@
   "8640"                 : {
     "name"    : "Atlético Nacional",
     "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062261/Atl%C3%A9tico_Nacional_nsyef2.png"
+  },
+  "8389"                 : {
+    "name"    : "Vancouver Whitecaps",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164213/Vancouver_W_x0o5u2.png"
+  },
+  "1336"                 : {
+    "name"    : "Toronto",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Toronto_FC_wnnso5.png"
+  },
+  "1345"                 : {
+    "name"    : "San Jose",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164211/San_Jose_E_s9qbyo.png"
+  },
+  "1335"                 : {
+    "name"    : "Sporting Kansas City",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164213/S_Kansas_C_ifwu7w.png"
+  },
+  "1344"                 : {
+    "name"    : "Salt Lake",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/R_Salt_Lake_oyan0e.png"
+  },
+  "5916"                 : {
+    "name"    : "Portland Timbers",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164213/Portland_T_ohn3ye.png"
+  },
+  "7364"                 : {
+    "name"    : "Philadelphia Union",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Philadelphia_U_ooh3re.png"
+  },
+  "1346"                 : {
+    "name"    : "Houston Dynamo",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Houston_D_dt4khd.png"
+  },
+  "9127"                 : {
+    "name"    : "Montreal Impact",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Montreal_I_p8opd9.png"
+  },
+  "1341"                 : {
+    "name"    : "FC Dallas",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/FC_Dallas_f4oqtn.png"
+  },
+  "1339"                 : {
+    "name"    : "DC United",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/DC_United_jy0zhw.png"
+  },
+  "1334"                 : {
+    "name"    : "Columbus Crew",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/Columbus_C_hvfq6e.png"
+  },
+  "1340"                 : {
+    "name"    : "Colorado Rapids",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/Colorado_R_eqwvj7.png"
+  },
+  "1333"                 : {
+    "name"    : "Chicago Fire",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/Chicago_F_wumddj.png"
+  },
+  "20622"                : {
+    "name"    : "New York City FC",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165314/download_dhzf0t.jpg"
+  },
+  "12204"                : {
+    "name"    : "Orlando City",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165401/photo_men2ow.png"
+  },
+  "9130"                : {
+    "name"    : "Barcelona Guayaquil",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165482/download_1_uoedb3.jpg"
+  },
+  "8420"                : {
+    "name"    : "Sporting Cristal",
+    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165540/download_2_zdkktr.jpg"
   }
 }
