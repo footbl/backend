@@ -36,11 +36,11 @@ function parseMatch(data, next) {
   var dateMask = data.STime.split(/-|\s|:/).map(Number);
   if (!teams[data.Comps[0].ID]) {
     console.log('[team not found]', data.Comps[0].Name);
-    return next({});
+    return next(null, {});
   }
   if (!teams[data.Comps[1].ID]) {
     console.log('[team not found]', data.Comps[1].Name);
-    return next({});
+    return next(null, {});
   }
   return next(null, {
     'slug'     : 'round-' + (data.Round || 1) + '-' + slug(teams[data.Comps[0].ID].name) + '-vs-' + slug(teams[data.Comps[1].ID].name),
