@@ -100,7 +100,7 @@ router
   async.waterfall([function (next) {
     var pageSize, page, query;
     pageSize = nconf.get('PAGE_SIZE');
-    page = (request.body.page || 0) * pageSize;
+    page = (request.query.page || 0) * pageSize;
     query = User.find();
     query.populate('entries');
     query.populate('starred');
@@ -108,20 +108,20 @@ router
     query.skip(page);
     query.limit(pageSize);
     query.where('active').ne(false);
-    if (request.body.emails && request.body.facebookIds) {
+    if (request.query.emails && request.query.facebookIds) {
       query.where('email').or([
-        {'email' : {'$in' : request.body.emails || []}},
-        {'facebookId' : {'$in' : request.body.facebookIds || []}}
+        {'email' : {'$in' : request.query.emails || []}},
+        {'facebookId' : {'$in' : request.query.facebookIds || []}}
       ]);
-    } else if (request.body.emails) {
-      query.where('email').in(request.body.emails || []);
-    } else if (request.body.facebookIds) {
-      query.where('facebookId').in(request.body.facebookIds || []);
-    } else if (request.body.usernames) {
-      query.where('username').in(request.body.usernames || []);
-    } else if (request.body.name) {
-      query.where('name').equals(new RegExp(request.body.name, 'i'));
-    } else if (request.body.featured) {
+    } else if (request.query.emails) {
+      query.where('email').in(request.query.emails || []);
+    } else if (request.query.facebookIds) {
+      query.where('facebookId').in(request.query.facebookIds || []);
+    } else if (request.query.usernames) {
+      query.where('username').in(request.query.usernames || []);
+    } else if (request.query.name) {
+      query.where('name').equals(new RegExp(request.query.name, 'i'));
+    } else if (request.query.featured) {
       query.where('featured').equals(true);
     } else {
       query.or([{'email' : {'$exists' : true}}, {'facebookId' : {'$exists' : true}}]);
@@ -320,8 +320,8 @@ router
   async.waterfall([function (next) {
     var query, facebook, password, email;
     facebook = request.facebook;
-    email = request.body.email;
-    password = crypto.createHash('sha1').update(request.body.password + nconf.get('PASSWORD_SALT')).digest('hex');
+    email = request.query.email;
+    password = crypto.createHash('sha1').update(request.query.password + nconf.get('PASSWORD_SALT')).digest('hex');
     query = User.findOne();
     query.where('active').ne(false);
     if (facebook) {
@@ -370,7 +370,7 @@ router
 .get(function forgotPassword(request, response, next) {
   async.waterfall([function (next) {
     var query, email;
-    email = request.body.email;
+    email = request.query.email;
     query = User.findOne();
     query.where('email').equals(email);
     query.exec(next);
@@ -381,7 +381,7 @@ router
     mandrill.messages.sendTemplate({
       'template_name'    : 'password_recovery',
       'template_content' : [{'token' : auth.token(user)}],
-      'message'          : {'to' : [{'email' : request.body.email}]},
+      'message'          : {'to' : [{'email' : request.query.email}]},
       'async'            : true
     });
     response.status(200);

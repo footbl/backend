@@ -91,7 +91,7 @@ router
     query.where('room').equals(request.params.room);
     query.sort('-createdAt');
     query.populate('user');
-    if (request.body.unreadMessages) query.where('seenBy').ne(request.session._id);
+    if (request.query.unreadMessages) query.where('seenBy').ne(request.session._id);
     query.skip(page);
     query.limit(pageSize);
     query.exec(next);

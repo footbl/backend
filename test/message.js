@@ -81,9 +81,8 @@ describe('message', function () {
     describe('filter unread messages', function () {
       it('should not list seen messages', function (done) {
         var request;
-        request = app.get('/rooms/5500ff04e353076617080cba/messages');
+        request = app.get('/rooms/5500ff04e353076617080cba/messages?unreadMessages=true');
         request.set('auth-token', auth.token(user));
-        request.send({'unreadMessages' : true});
         request.expect(200);
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);

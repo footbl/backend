@@ -112,10 +112,10 @@ router
     query.populate('members');
     query.skip(page);
     query.limit(pageSize);
-    if (request.body.featured) {
+    if (request.query.featured) {
       query.where('featured').equals(true);
-    } else if (request.body.code) {
-      query.where('code').equals(request.body.code);
+    } else if (request.query.code) {
+      query.where('code').equals(request.query.code);
     } else {
       query.where('members').equals(request.session._id);
     }

@@ -46,8 +46,7 @@ describe('prize', function () {
 
       it('should give bonus', function (done) {
         var request;
-        request = app.get('/users/me/auth');
-        request.send({'password' : '1234'});
+        request = app.get('/users/me/auth?password=1234');
         request.expect(200);
         request.end(done);
       });
@@ -70,16 +69,14 @@ describe('prize', function () {
 
       before(function (done) {
         var request;
-        request = app.get('/users/me/auth');
-        request.send({'password' : '1234'});
+        request = app.get('/users/me/auth?password=1234');
         request.expect(200);
         request.end(done);
       });
 
       it('should not give bonus', function (done) {
         var request;
-        request = app.get('/users/me/auth');
-        request.send({'password' : '1234'});
+        request = app.get('/users/me/auth?password=1234');
         request.expect(200);
         request.end(done);
       });
@@ -115,9 +112,8 @@ describe('prize', function () {
     describe('filter unread prizes', function () {
       it('should not list seen prizes', function (done) {
         var request;
-        request = app.get('/users/' + user._id + '/prizes');
+        request = app.get('/users/' + user._id + '/prizes?unreadMessages=true');
         request.set('auth-token', auth.token(user));
-        request.send({'unreadMessages' : true});
         request.expect(200);
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);

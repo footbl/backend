@@ -38,7 +38,7 @@ router
     query = Prize.find();
     query.where('user').equals(request.session._id);
     query.sort('-createdAt');
-    if (request.body.unreadMessages) query.where('seenBy').ne(request.session._id);
+    if (request.query.unreadMessages) query.where('seenBy').ne(request.session._id);
     query.skip(page);
     query.limit(pageSize);
     query.exec(next);

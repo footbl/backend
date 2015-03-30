@@ -164,10 +164,8 @@ describe('user', function () {
     describe('filter by facebookIds and emails', function () {
       it('should list two users', function (done) {
         var request;
-        request = app.get('/users');
-        request.expect(200);
-        request.send({'facebookIds' : ['1234']});
-        request.send({'emails' : ['test1@test.com']});
+        request = app.get('/users?facebookIds[0]=1234&emails[0]=test1@test.com');
+        request.expect(200);;
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
           response.body.should.have.lengthOf(2);
@@ -179,9 +177,8 @@ describe('user', function () {
     describe('filter by emails', function () {
       it('should list one user', function (done) {
         var request;
-        request = app.get('/users');
+        request = app.get('/users?emails[0]=test1@test.com');
         request.expect(200);
-        request.send({'emails' : ['test1@test.com']});
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
           response.body.should.have.lengthOf(1);
@@ -193,9 +190,8 @@ describe('user', function () {
     describe('filter by facebookIds', function () {
       it('should list one user', function (done) {
         var request;
-        request = app.get('/users');
+        request = app.get('/users?facebookIds[0]=1234');
         request.expect(200);
-        request.send({'facebookIds' : ['1234']});
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
           response.body.should.have.lengthOf(1);
@@ -207,9 +203,8 @@ describe('user', function () {
     describe('filter by usernames', function () {
       it('should list one user', function (done) {
         var request;
-        request = app.get('/users');
+        request = app.get('/users?usernames[0]=test');
         request.expect(200);
-        request.send({'usernames' : ['test']});
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
           response.body.should.have.lengthOf(1);
@@ -221,9 +216,8 @@ describe('user', function () {
     describe('filter by name', function () {
       it('should list one user', function (done) {
         var request;
-        request = app.get('/users');
+        request = app.get('/users?name=test');
         request.expect(200);
-        request.send({'name' : 'test'});
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
           response.body.should.have.lengthOf(1);
@@ -235,9 +229,8 @@ describe('user', function () {
     describe('filter by featured', function () {
       it('should list one user', function (done) {
         var request;
-        request = app.get('/users');
+        request = app.get('/users?featured=true');
         request.expect(200);
-        request.send({'featured' : true});
         request.expect(function (response) {
           response.body.should.be.instanceOf(Array);
           response.body.should.have.lengthOf(1);
@@ -588,9 +581,7 @@ describe('user', function () {
 
       it('should auth', function (done) {
         var request;
-        request = app.get('/users/me/auth');
-        request.send({'email' : 'test@test.com'});
-        request.send({'password' : '1234'});
+        request = app.get('/users/me/auth?password=1234&email=test@test.com');
         request.expect(200);
         request.expect(function (response) {
           response.body.should.have.property('token');
@@ -613,8 +604,7 @@ describe('user', function () {
 
       it('should auth', function (done) {
         var request;
-        request = app.get('/users/me/auth');
-        request.send({'password' : '1234'});
+        request = app.get('/users/me/auth?password=1234');
         request.expect(200);
         request.expect(function (response) {
           response.body.should.have.property('token');
@@ -632,8 +622,7 @@ describe('user', function () {
 
       it('should raise error work', function (done) {
         var request;
-        request = app.get('/users/me/forgot-password');
-        request.send({'email' : 'test@test.com'});
+        request = app.get('/users/me/forgot-password?email=test@test.com');
         request.expect(404);
         request.end(done);
       });
@@ -655,8 +644,7 @@ describe('user', function () {
 
       it('should work', function (done) {
         var request;
-        request = app.get('/users/me/forgot-password');
-        request.send({'email' : 'test@test.com'});
+        request = app.get('/users/me/forgot-password?email=test@test.com');
         request.expect(200);
         request.end(done);
       });

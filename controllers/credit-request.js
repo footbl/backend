@@ -182,7 +182,7 @@ router
     query.where('creditedUser').equals(request.user._id);
     query.populate('creditedUser');
     query.populate('chargedUser');
-    if (request.body.unreadMessages) query.where('seenBy').ne(request.session._id);
+    if (request.query.unreadMessages) query.where('seenBy').ne(request.session._id);
     query.skip(page);
     query.limit(pageSize);
     query.exec(next);
