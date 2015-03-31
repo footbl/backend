@@ -41,7 +41,8 @@ domain.run(function () {
   app.use(methodOverride());
   app.enable('trust proxy');
   app.get('/', function (request, response) {
-    response.send(200, {'version' : nconf.get('VERSION')});
+    response.status(200);
+    response.json({'version' : nconf.get('VERSION')});
   });
   app.use('/docs', express.static(__dirname + '/docs'));
   app.use(function (request, response, next) {
