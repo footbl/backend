@@ -71,6 +71,7 @@ domain.run(function () {
   app.use(require('./controllers/credit-request'));
   app.use(function (error, request, response, next) {
     var errors, prop;
+    console.log(error);
     if (error.message === 'not found') {
       response.status(404).end();
     } else if (error.message === 'invalid signature') {
