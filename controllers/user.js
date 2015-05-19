@@ -325,19 +325,15 @@ router
     query = User.findOne();
     query.where('active').ne(false);
     if (facebook) {
-      console.log('vai pra puta que pariu! 1');
       query.where('facebookId').equals(facebook);
     } else if (email) {
-      console.log('vai pra puta que pariu! 2');
       query.where('email').equals(email);
       query.where('password').equals(password);
     } else {
-      console.log('vai pra puta que pariu! 3');
       query.where('password').equals(password);
     }
     query.exec(next);
   }, function (user, next) {
-    console.log(user)
     request.user = user;
     response.status(user ? 200 : 403);
     response.send(user ? {'token' : auth.token(user), '_id' : user._id} : null);
