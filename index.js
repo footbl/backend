@@ -71,17 +71,18 @@ domain.run(function () {
   app.use(require('./controllers/match'));
   app.use(require('./controllers/message'));
   app.use(require('./controllers/credit-request'));
-  app.use(function (error, request, response, next) {
-    var errors, prop;
+  app.use(function (error, request, response, next) {    var errors, prop, step;
     if (error.message === 'not found') {
       response.status(404).end();
     } else if (error.message === 'invalid signature') {
       response.status(401).end();
+    } else if (error.message === 'invalid version') {
+      response.status(412).end();
     } else if (error.message === 'invalid session') {
       response.status(401).end();
     } else if (error.message === 'invalid method') {
       response.status(405).end();
-    } else if ([11000, 11001].lastIndexOf(error.code) > -1) {
+    } else if ([11000, 11001].lastIndexOf(error.code) > -1 || error.message === 'duplicated') {
       response.status(409).end();
     } else if (error.errors) {
       errors = {};
@@ -90,14 +91,15 @@ domain.run(function () {
           errors[prop] = error.errors[prop].type === 'user defined' ? error.errors[prop].message : error.errors[prop].type;
         }
       }
-      response.status(400).send(errors);
+      response.status(400).json(errors);
     } else if (error.name === 'CastError' && error.type === 'ObjectId') {
       response.status(404).end();
+    } else if (error.name === 'MongoError' && error.message === 'Can\'t canonicalize query: BadValue bad skip value in query') {
+      response.status(400).json({'page' : 'invalid'});
     } else {
-      response.status(500).end();
-      emitter.emit('error', error);
+      step = error;
     }
-    next();
+    next(step);
   });
 
   app.listen(nconf.get('PORT'));
