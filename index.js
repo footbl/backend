@@ -9,7 +9,7 @@ nconf.argv();
 nconf.env();
 nconf.defaults(require('./config'));
 
-domain.on("error", function (error) {
+domain.on('error', function (error) {
   console.error(error.message);
   console.error(error.stack);
   console.error(JSON.stringify(error, 4, 4));
@@ -57,9 +57,11 @@ domain.run(function () {
     response.header('Access-Control-Allow-Headers', request.get('Access-Control-Request-Headers'));
     next();
   });
+
   if (nconf.get('NODE_ENV') !== 'test') {
     app.use(auth.signature());
   }
+
   app.use(require('./controllers/bet'));
   app.use(require('./controllers/championship'));
   app.use(require('./controllers/season'));
@@ -71,7 +73,6 @@ domain.run(function () {
   app.use(require('./controllers/credit-request'));
   app.use(function (error, request, response, next) {
     var errors, prop;
-    console.log(error);
     if (error.message === 'not found') {
       response.status(404).end();
     } else if (error.message === 'invalid signature') {
@@ -98,6 +99,7 @@ domain.run(function () {
     }
     next();
   });
+
   app.listen(nconf.get('PORT'));
   module.exports = app;
 });
