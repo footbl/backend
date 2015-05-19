@@ -349,6 +349,7 @@ router
     query.exec(next);
   }, function (prize, next) {
     if (prize) return next();
+    if (!request.user) return next();
     prize = new Prize();
     prize.user = request.user;
     prize.value = 2;
