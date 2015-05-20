@@ -1,7 +1,7 @@
 'use strict';
 
 var router, nconf, async, auth, push, crypto,
-    User, Prize;
+User, Prize;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -20,25 +20,6 @@ Prize = require('../models/prize');
  *
  * @apiParam {String} password User password.
  * @apiParam {String} [country='Brazil'] User country.
- *
- * @apiExample HTTP/1.1 201
- * {
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }
  */
 router
 .route('/users')
@@ -74,24 +55,11 @@ router
  * @apiName listUser
  * @apiGroup User
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }]
+ * @apiParam {Array[String]} emails Filter by emails.
+ * @apiParam {Array[String]} facebookIds Filter by facebook idds.
+ * @apiParam {Array[String]} usernames Filter by usernames.
+ * @apiParam {Array[String]} name Filter by name.
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/users')
@@ -108,24 +76,13 @@ router
     query.skip(page);
     query.limit(pageSize);
     query.where('active').ne(false);
-    if (request.query.emails && request.query.facebookIds) {
-      query.where('email').or([
-        {'email' : {'$in' : request.query.emails || []}},
-        {'facebookId' : {'$in' : request.query.facebookIds || []}}
-      ]);
-    } else if (request.query.emails) {
-      query.where('email').in(request.query.emails || []);
-    } else if (request.query.facebookIds) {
-      query.where('facebookId').in(request.query.facebookIds || []);
-    } else if (request.query.usernames) {
-      query.where('username').in(request.query.usernames || []);
-    } else if (request.query.name) {
-      query.where('name').equals(new RegExp(request.query.name, 'i'));
-    } else if (request.query.featured) {
-      query.where('featured').equals(true);
-    } else {
-      query.or([{'email' : {'$exists' : true}}, {'facebookId' : {'$exists' : true}}]);
-    }
+    if (request.query.emails && request.query.facebookIds) query.where('email').or([{'email' : {'$in' : request.query.emails || []}}, {'facebookId' : {'$in' : request.query.facebookIds || []}}]);
+    else if (request.query.emails) query.where('email').in(request.query.emails || []);
+    else if (request.query.facebookIds) query.where('facebookId').in(request.query.facebookIds || []);
+    else if (request.query.usernames) query.where('username').in(request.query.usernames || []);
+    else if (request.query.name) query.where('name').equals(new RegExp(request.query.name, 'i'));
+    else if (request.query.featured) query.where('featured').equals(true);
+    else query.or([{'email' : {'$exists' : true}}, {'facebookId' : {'$exists' : true}}]);
     query.exec(next);
   }, function (users, next) {
     response.status(200);
@@ -138,25 +95,6 @@ router
  * @api {GET} /users/:user getUser
  * @apiName getUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }
  */
 router
 .route('/users/:user')
@@ -178,31 +116,12 @@ router
  *
  * @apiParam {String} [email] User email.
  * @apiParam {String} [username] User username.
- * @apiParam {String} password User password.
  * @apiParam {String} [name] User name.
+ * @apiParam {String} password User password.
  * @apiParam {String} [about] User about.
  * @apiParam {String} [picture] User picture.
  * @apiParam {String} [apnsToken] User apnsToken.
  * @apiParam {Array[ObjectId]} entries User entries.
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }
  */
 router
 .route('/users/:user')
@@ -221,7 +140,6 @@ router
     user.about = request.body.about;
     user.password = request.body.password ? password : user.password;
     user.picture = request.body.picture;
-    user.language = request.body.language;
     user.apnsToken = request.body.apnsToken;
     user.entries = request.body.entries;
     user.save(next);
@@ -240,9 +158,6 @@ router
  * @api {DELETE} /users/:user removeUser
  * @apiName removeUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 204
- * {}
  */
 router
 .route('/users/:user')
@@ -265,25 +180,6 @@ router
  * @api {GET} /users/:user/recharge rechargeUser
  * @apiName rechargeUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }
  */
 router
 .route('/users/:user/recharge')
@@ -306,12 +202,6 @@ router
  * @api {GET} /users/me/auth authUser
  * @apiName authUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "token": "1234"
- * }
  */
 router
 .route('/users/me/auth')
@@ -362,9 +252,6 @@ router
  * @api {GET} /users/me/forgot-password forgotPassword
  * @apiName forgotPassword
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * {}
  */
 router
 .route('/users/me/forgot-password')
@@ -395,25 +282,6 @@ router
  * @api {POST} /users/:user/follow followUser
  * @apiName followUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }
  */
 router
 .route('/users/:user/follow')
@@ -434,9 +302,6 @@ router
  * @api {DELETE} /users/:user/unfollow unfollowUser
  * @apiName unfollowUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 204
- * {}
  */
 router
 .route('/users/:user/unfollow')
@@ -457,25 +322,6 @@ router
  * @api {GET} /users/:user/followers followersUser
  * @apiName followersUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }]
  */
 router
 .route('/users/:user/followers')
@@ -497,25 +343,6 @@ router
  * @api {GET} /users/:user/following followingUser
  * @apiName followingUser
  * @apiGroup User
- *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8dc3944fb8faeda457409",
- *   "username": "roberval",
- *   "verified": false,
- *   "country": "Brazil",
- *   "entries": [{
- *     "_id": "54f8d8db89b71fc5d9dd47c1",
- *     "name": "brasileirão",
- *     "type": "national league",
- *     "country": "Brazil",
- *     "currentRound": 1,
- *     "createdAt": "2015-03-05T22:29:47.133Z",
- *     "updatedAt": "2015-03-05T22:29:47.135Z"
- *   }],
- *   "createdAt": "2015-03-05T22:44:09.131Z",
- *   "updatedAt": "2015-03-05T22:44:09.898Z"
- * }]
  */
 router
 .route('/users/:user/following')

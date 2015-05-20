@@ -16,21 +16,11 @@ User = require('../models/user');
 /**
  * @api {post} /users/:user/bets Creates a new bet.
  * @apiName createBet
- * @apiVersion 2.2.0
  * @apiGroup bet
- * @apiPermission user
  *
  * @apiParam {ObjectId} match Bet match.
  * @apiParam {Number} bid Bet bid.
  * @apiParam {String} result Bet result.
- *
- * @apiErrorExample
- * HTTP/1.1 409 Conflict
- *
- * @apiSuccessExample
- * HTTP/1.1 201 Created
- * {
- * }
  */
 router
 .route('/users/:user/bets')
@@ -65,16 +55,9 @@ router
 /**
  * @api {get} /users/:user/bets List all bets.
  * @apiName listBet
- * @apiVersion 2.2.0
  * @apiGroup bet
- * @apiPermission user
  *
  * @apiParam {String} [page=0] The page to be displayed.
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * [{
- * }]
  */
 router
 .route('/users/:user/bets')
@@ -101,14 +84,7 @@ router
 /**
  * @api {get} /users/:user/bets/:bet Get bet.
  * @apiName getBet
- * @apiVersion 2.2.0
  * @apiGroup bet
- * @apiPermission user
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * {
- * }
  */
 router
 .route('/users/:user/bets/:bet')
@@ -126,17 +102,10 @@ router
 /**
  * @api {put} /users/:user/bets/:bet Updates bet.
  * @apiName updateBet
- * @apiVersion 2.2.0
  * @apiGroup bet
- * @apiPermission user
  *
  * @apiParam {Number} bid Bet bid.
  * @apiParam {String} result Bet result.
- *
- * @apiSuccessExample
- * HTTP/1.1 201 Created
- * {
- * }
  */
 router
 .route('/users/:user/bets/:bet')

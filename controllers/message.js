@@ -19,23 +19,6 @@ Message = require('../models/message');
  *
  * @apiParam {String} [message] Message message.
  * @apiParam {String} [type] Message type.
- *
- * @apiExample HTTP/1.1 201
- * {
- *   "_id": "54f8eca8b00be0dbdc112dda",
- *   "user": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "message": "test",
- *   "createdAt": "2015-03-05T23:54:16.846Z",
- *   "updatedAt": "2015-03-05T23:54:16.847Z"
- * }
  */
 router
 .route('/rooms/:room/messages')
@@ -62,22 +45,8 @@ router
  * @apiName listMessage
  * @apiGroup Message
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8eca8b00be0dbdc112dda",
- *   "user": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "message": "test",
- *   "createdAt": "2015-03-05T23:54:16.846Z",
- *   "updatedAt": "2015-03-05T23:54:16.847Z"
- * }]
+ * @apiParam {Boolean} unreadMessages Filter by unread messages.
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/rooms/:room/messages')
@@ -106,23 +75,6 @@ router
  * @api {PUT} /rooms/:room/messages/all/mark-as-read markAllAsReadMessage
  * @apiName markAllAsReadMessage
  * @apiGroup Message
- *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8eca8b00be0dbdc112dda",
- *   "user": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "message": "test",
- *   "createdAt": "2015-03-05T23:54:16.846Z",
- *   "updatedAt": "2015-03-05T23:54:16.847Z"
- * }]
  */
 router
 .route('/rooms/:room/messages/all/mark-as-read')

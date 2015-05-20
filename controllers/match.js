@@ -1,7 +1,7 @@
 'use strict';
 
 var router, nconf, async, auth, push, crypto,
-    Championship, Match;
+Championship, Match;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -18,30 +18,7 @@ Match = require('../models/match');
  * @apiName listMatch
  * @apiGroup Match
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8da01b6d39628dadd208b",
- *   "guest": {
- *     "name": "botafogo",
- *     "picture": "http://pictures.com/botafogo.png"
- *   },
- *   "host": {
- *     "name": "fluminense",
- *     "picture": "http://pictures.com/fluminense.png"
- *   },
- *   "round": 1,
- *   "date": "2015-03-05T22:34:41.401Z",
- *   "finished": false,
- *   "result": {
- *     "host": 0,
- *     "guest": 0
- *   },
- *   "winner": null,
- *   "jackpot": 0,
- *   "reward": 0,
- *   "createdAt": "2015-03-05T22:34:41.401Z",
- *   "updatedAt": "2015-03-05T22:34:41.404Z"
- * }]
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/championships/:championship/matches')
@@ -54,10 +31,7 @@ router
     page = (request.query.page || 0) * pageSize;
     query = Match.find();
     query.where('championship').equals(championship._id);
-    query.or([
-      {'round' : {'$gte' : (championship.currentRound || 1) - 3}},
-      {'finished' : false}
-    ]);
+    query.or([{'round' : {'$gte' : (championship.currentRound || 1) - 3}}, {'finished' : false}]);
     query.skip(page);
     query.limit(pageSize);
     query.exec(next);
@@ -72,31 +46,6 @@ router
  * @api {GET} /championships/:championship/matches/:match getMatch
  * @apiName getMatch
  * @apiGroup Match
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8da01b6d39628dadd208b",
- *   "guest": {
- *     "name": "botafogo",
- *     "picture": "http://pictures.com/botafogo.png"
- *   },
- *   "host": {
- *     "name": "fluminense",
- *     "picture": "http://pictures.com/fluminense.png"
- *   },
- *   "round": 1,
- *   "date": "2015-03-05T22:34:41.401Z",
- *   "finished": false,
- *   "result": {
- *     "host": 0,
- *     "guest": 0
- *   },
- *   "winner": null,
- *   "jackpot": 0,
- *   "reward": 0,
- *   "createdAt": "2015-03-05T22:34:41.401Z",
- *   "updatedAt": "2015-03-05T22:34:41.404Z"
- * }
  */
 router
 .route('/championships/:championship/matches/:match')

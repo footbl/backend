@@ -17,14 +17,7 @@ Season = require('../models/season');
  * @apiName listSeason
  * @apiGroup Season
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "sponsor": "Barcelona FC.",
- *   "gift": "app store gift card",
- *   "finishAt": "2015-03-05T22:29:47.133Z",
- *   "createdAt": "2015-03-05T22:29:47.133Z",
- *   "updatedAt": "2015-03-05T22:29:47.135Z"
- * }]
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/seasons')
@@ -49,15 +42,6 @@ router
  * @api {GET} /seasons/:season getSeason
  * @apiName getSeason
  * @apiGroup Season
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "sponsor": "Barcelona FC.",
- *   "gift": "app store gift card",
- *   "finishAt": "2015-03-05T22:29:47.133Z",
- *   "createdAt": "2015-03-05T22:29:47.133Z",
- *   "updatedAt": "2015-03-05T22:29:47.135Z"
- * }
  */
 router
 .route('/seasons/:season')

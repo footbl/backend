@@ -16,16 +16,6 @@ Championship = require('../models/championship');
  * @api {GET} /championships listChampionship
  * @apiName listChampionship
  * @apiGroup Championship
- *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8d8db89b71fc5d9dd47c1",
- *   "name": "brasileirão",
- *   "type": "national league",
- *   "country": "Brazil",
- *   "createdAt": "2015-03-05T22:29:47.133Z",
- *   "updatedAt": "2015-03-05T22:29:47.135Z"
- * }]
  */
 router
 .route('/championships')
@@ -51,15 +41,7 @@ router
  * @apiName getChampionship
  * @apiGroup Championship
  *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8d8db89b71fc5d9dd47c1",
- *   "name": "brasileirão",
- *   "type": "national league",
- *   "country": "Brazil",
- *   "createdAt": "2015-03-05T22:29:47.133Z",
- *   "updatedAt": "2015-03-05T22:29:47.135Z"
- * }
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/championships/:championship')

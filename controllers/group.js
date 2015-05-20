@@ -19,31 +19,6 @@ Group = require('../models/group');
  *
  * @apiParam {String} name Group name.
  * @apiParam {String} [picture] Group picture.
- *
- * @apiExample HTTP/1.1 201
- * {
- *   "_id": "54f8e0f9adc77f27dcc8db01",
- *   "name": "test",
- *   "code": "rg2pg",
- *   "members": [{
- *     "_id": "54f8e0f9adc77f27dcc8db02",
- *     "user": {
- *       "_id": "54f8dc3944fb8faeda457409",
- *       "username": "roberval",
- *       "verified": false,
- *       "country": "Brazil",
- *       "entries": [],
- *       "createdAt": "2015-03-05T22:44:09.131Z",
- *       "updatedAt": "2015-03-05T22:44:09.898Z"
- *     },
- *     "owner": true,
- *     "previousRanking": null,
- *     "ranking": null
- *   }],
- *   "featured": false,
- *   "createdAt": "2015-03-05T23:04:25.012Z",
- *   "updatedAt": "2015-03-05T23:04:25.013Z"
- * }
  */
 router
 .route('/groups')
@@ -74,30 +49,7 @@ router
  * @apiName listGroup
  * @apiGroup Group
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8e0f9adc77f27dcc8db01",
- *   "name": "test",
- *   "code": "rg2pg",
- *   "members": [{
- *     "_id": "54f8e0f9adc77f27dcc8db02",
- *     "user": {
- *       "_id": "54f8dc3944fb8faeda457409",
- *       "username": "roberval",
- *       "verified": false,
- *       "country": "Brazil",
- *       "entries": [],
- *       "createdAt": "2015-03-05T22:44:09.131Z",
- *       "updatedAt": "2015-03-05T22:44:09.898Z"
- *     },
- *     "owner": true,
- *     "previousRanking": null,
- *     "ranking": null
- *   }],
- *   "featured": false,
- *   "createdAt": "2015-03-05T23:04:25.012Z",
- *   "updatedAt": "2015-03-05T23:04:25.013Z"
- * }]
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/groups')
@@ -112,13 +64,9 @@ router
     query.populate('members');
     query.skip(page);
     query.limit(pageSize);
-    if (request.query.featured) {
-      query.where('featured').equals(true);
-    } else if (request.query.code) {
-      query.where('code').equals(request.query.code);
-    } else {
-      query.where('members').equals(request.session._id);
-    }
+    if (request.query.featured) query.where('featured').equals(true);
+    else if (request.query.code) query.where('code').equals(request.query.code);
+    else query.where('members').equals(request.session._id);
     query.exec(next);
   }, function (groups, next) {
     response.status(200);
@@ -131,31 +79,6 @@ router
  * @api {GET} /groups/:group getGroup
  * @apiName getGroup
  * @apiGroup Group
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8e0f9adc77f27dcc8db01",
- *   "name": "test",
- *   "code": "rg2pg",
- *   "members": [{
- *     "_id": "54f8e0f9adc77f27dcc8db02",
- *     "user": {
- *       "_id": "54f8dc3944fb8faeda457409",
- *       "username": "roberval",
- *       "verified": false,
- *       "country": "Brazil",
- *       "entries": [],
- *       "createdAt": "2015-03-05T22:44:09.131Z",
- *       "updatedAt": "2015-03-05T22:44:09.898Z"
- *     },
- *     "owner": true,
- *     "previousRanking": null,
- *     "ranking": null
- *   }],
- *   "featured": false,
- *   "createdAt": "2015-03-05T23:04:25.012Z",
- *   "updatedAt": "2015-03-05T23:04:25.013Z"
- * }
  */
 router
 .route('/groups/:group')
@@ -177,34 +100,6 @@ router
  *
  * @apiParam {String} name Group name.
  * @apiParam {String} [picture] Group picture.
- * @apiParam {Array} members Group members.
- * @apiParam (members) {ObjectId} user Member user.
- *
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8e0f9adc77f27dcc8db01",
- *   "name": "test",
- *   "code": "rg2pg",
- *   "members": [{
- *     "_id": "54f8e0f9adc77f27dcc8db02",
- *     "user": {
- *       "_id": "54f8dc3944fb8faeda457409",
- *       "username": "roberval",
- *       "verified": false,
- *       "country": "Brazil",
- *       "entries": [],
- *       "createdAt": "2015-03-05T22:44:09.131Z",
- *       "updatedAt": "2015-03-05T22:44:09.898Z"
- *     },
- *     "owner": true,
- *     "previousRanking": null,
- *     "ranking": null
- *   }],
- *   "featured": false,
- *   "createdAt": "2015-03-05T23:04:25.012Z",
- *   "updatedAt": "2015-03-05T23:04:25.013Z"
- * }
  */
 router
 .route('/groups/:group')
@@ -231,9 +126,6 @@ router
  * @api {DELETE} /groups/:group removeGroup
  * @apiName removeGroup
  * @apiGroup Group
- *
- * @apiExample HTTP/1.1 204
- * {}
  */
 router
 .route('/groups/:group')
@@ -264,11 +156,8 @@ router
   async.waterfall([function (next) {
     var group;
     group = request.group;
-    if ((/^[0-9a-fA-F]{24}$/).test(request.body.user)) {
-      group.update({'$addToSet' : {'members' : request.body.user}}, next);
-    } else {
-      group.update({'$addToSet' : {'invites' : request.body.user}}, next);
-    }
+    if ((/^[0-9a-fA-F]{24}$/).test(request.body.user)) group.update({'$addToSet' : {'members' : request.body.user}}, next);
+    else group.update({'$addToSet' : {'invites' : request.body.user}}, next);
   }, function (__, _, next) {
     response.status(200);
     response.end();

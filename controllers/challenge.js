@@ -16,21 +16,11 @@ User = require('../models/user');
 /**
  * @api {post} /users/:user/challenges Creates a new challenge.
  * @apiName createChallenge
- * @apiVersion 2.2.0
  * @apiGroup challenge
- * @apiPermission user
  *
  * @apiParam {ObjectId} match Challenge match.
  * @apiParam {Number} bid Challenge bid.
  * @apiParam {String} result Challenge result.
- *
- * @apiErrorExample
- * HTTP/1.1 409 Conflict
- *
- * @apiSuccessExample
- * HTTP/1.1 201 Created
- * {
- * }
  */
 router
 .route('/users/:user/challenges')
@@ -64,16 +54,9 @@ router
 /**
  * @api {get} /users/:user/challenges List all challenges.
  * @apiName listChallenge
- * @apiVersion 2.2.0
  * @apiGroup challenge
- * @apiPermission user
  *
  * @apiParam {String} [page=0] The page to be displayed.
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * [{
- * }]
  */
 router
 .route('/users/:user/challenges')
@@ -101,14 +84,7 @@ router
 /**
  * @api {get} /users/:user/challenges/:challenge Get challenge.
  * @apiName getChallenge
- * @apiVersion 2.2.0
  * @apiGroup challenge
- * @apiPermission user
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * {
- * }
  */
 router
 .route('/users/:user/challenges/:challenge')
@@ -123,6 +99,11 @@ router
   }], next);
 });
 
+/**
+ * @api {put} /users/:user/challenges/:challenge/reject Reject challenge.
+ * @apiName rejectChallenge
+ * @apiGroup challenge
+ */
 router
 .route('/users/:user/challenges/:challenge/reject')
 .put(auth.session())
@@ -142,6 +123,11 @@ router
   }], next);
 });
 
+/**
+ * @api {put} /users/:user/challenges/:challenge/accept Accept challenge.
+ * @apiName acceptChallenge
+ * @apiGroup challenge
+ */
 router
 .route('/users/:user/challenges/:challenge/accept')
 .put(auth.session())

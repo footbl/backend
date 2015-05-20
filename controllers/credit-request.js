@@ -1,7 +1,7 @@
 'use strict';
 
 var router, nconf, async, auth, push, crypto,
-    User, CreditRequest;
+User, CreditRequest;
 
 router = require('express').Router();
 nconf = require('nconf');
@@ -17,32 +17,6 @@ CreditRequest = require('../models/credit-request');
  * @api {POST} /users/:userOrFacebookId/credit-requests createCreditRequest
  * @apiName createCreditRequest
  * @apiGroup CreditRequest
- *
- * @apiExample HTTP/1.1 201
- * {
- *   "_id": "54f8de21b54cf548db39e00d",
- *   "creditedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "chargedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "payed": false,
- *   "createdAt": "2015-03-05T22:52:17.368Z",
- *   "updatedAt": "2015-03-05T22:52:17.368Z"
- * }
  */
 router
 .route('/users/:userOrFacebookId/credit-requests')
@@ -52,11 +26,8 @@ router
     var query, id;
     query = User.findOne();
     id = request.params.userOrFacebookId;
-    if (!require('mongoose').Types.ObjectId.isValid(id)) {
-      query.where('facebookId').equals(id);
-    } else {
-      query.where('_id').equals(id);
-    }
+    if (!require('mongoose').Types.ObjectId.isValid(id)) query.where('facebookId').equals(id);
+    else query.where('_id').equals(id);
     query.exec(next);
   }, function (user, next) {
     if (user) return next(null, user, null);
@@ -91,31 +62,7 @@ router
  * @apiName listCreditRequest
  * @apiGroup CreditRequest
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8de21b54cf548db39e00d",
- *   "creditedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "chargedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "payed": false,
- *   "createdAt": "2015-03-05T22:52:17.368Z",
- *   "updatedAt": "2015-03-05T22:52:17.368Z"
- * }]
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/users/:user/credit-requests')
@@ -144,31 +91,8 @@ router
  * @apiName listRequestedCredits
  * @apiGroup CreditRequest
  *
- * @apiExample HTTP/1.1 200
- * [{
- *   "_id": "54f8de21b54cf548db39e00d",
- *   "creditedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "chargedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "payed": false,
- *   "createdAt": "2015-03-05T22:52:17.368Z",
- *   "updatedAt": "2015-03-05T22:52:17.368Z"
- * }]
+ * @apiParam {Boolean} unreadMessages Filter by unread messages.
+ * @apiParam {String} [page=0] The page to be displayed.
  */
 router
 .route('/users/:user/requested-credits')
@@ -197,32 +121,6 @@ router
  * @api {GET} /users/:user/credit-requests/:creditRequest getCreditRequest
  * @apiName getCreditRequest
  * @apiGroup CreditRequest
- *
- * @apiExample HTTP/1.1 200
- * {
- *   "_id": "54f8de21b54cf548db39e00d",
- *   "creditedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "chargedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "payed": false,
- *   "createdAt": "2015-03-05T22:52:17.368Z",
- *   "updatedAt": "2015-03-05T22:52:17.368Z"
- * }
  */
 router
 .route('/users/:user/credit-requests/:creditRequest')
@@ -241,32 +139,6 @@ router
  * @api {PUT} /users/:user/credit-requests/:creditRequest/approve approveCreditRequest
  * @apiName approveCreditRequest
  * @apiGroup CreditRequest
- *
- * @apiExample HTTP/1.1 201
- * {
- *   "_id": "54f8de21b54cf548db39e00d",
- *   "creditedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "chargedUser": {
- *     "_id": "54f8dc3944fb8faeda457409",
- *     "username": "roberval",
- *     "verified": false,
- *     "country": "Brazil",
- *     "entries": [],
- *     "createdAt": "2015-03-05T22:44:09.131Z",
- *     "updatedAt": "2015-03-05T22:44:09.898Z"
- *   },
- *   "payed": false,
- *   "createdAt": "2015-03-05T22:52:17.368Z",
- *   "updatedAt": "2015-03-05T22:52:17.368Z"
- * }
  */
 router
 .route('/users/:user/credit-requests/:creditRequest/approve')
