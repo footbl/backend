@@ -267,7 +267,7 @@ describe('user', function () {
         before(User.remove.bind(User));
 
         before(function (done) {
-          nock('https://graph.facebook.com').get('/v2.0/me?access_token=1234').times(1).reply(200, {id : '1234'});
+          nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
           done();
         });
 
@@ -303,7 +303,7 @@ describe('user', function () {
         before(User.remove.bind(User));
 
         before(function (done) {
-          nock('https://graph.facebook.com').get('/v2.0/me?access_token=1234').times(1).reply(200, {id : '1234'});
+          nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
           done();
         });
 
@@ -516,7 +516,7 @@ describe('user', function () {
       before(User.remove.bind(User));
 
       before(function (done) {
-        nock('https://graph.facebook.com').get('/v2.0/me?access_token=1234').times(1).reply(200, {id : '1234'});
+        nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
         done();
       });
 
