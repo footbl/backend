@@ -74,40 +74,6 @@ describe('user', function () {
         request.end(done);
       });
     });
-
-    describe('with deactivated account', function () {
-      var user;
-
-      before(User.remove.bind(User));
-
-      nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
-
-      before(function (done) {
-        user = new User();
-        user.password = '1234';
-        user.country = 'Brazil';
-        user.active = false;
-        user.username = 'facebook user';
-        user.facebookId = '1234';
-        user.save(done);
-      });
-
-      it('should create', function (done) {
-        var request;
-        request = app.post('/users');
-        request.set('facebook-token', '1234');
-        request.send({'password' : '1234'});
-        request.expect(201);
-        request.expect(function (response) {
-          response.body.should.have.property('_id');
-          response.body.should.have.property('username').be.equal('facebook user');
-          response.body.should.have.property('country').be.equal('Brazil');
-          response.body.should.have.property('entries');
-          response.body.entries[0].should.have.property('name').be.equal('brasileirão');
-        });
-        request.end(done);
-      });
-    });
   });
 
   describe('list', function () {
@@ -300,7 +266,10 @@ describe('user', function () {
 
         before(User.remove.bind(User));
 
-        nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
+        before(function (done) {
+          nock('https://graph.facebook.com').get('/v2.0/me?access_token=1234').times(1).reply(200, {id : '1234'});
+          done();
+        });
 
         before(function (done) {
           user = new User();
@@ -333,7 +302,10 @@ describe('user', function () {
 
         before(User.remove.bind(User));
 
-        nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
+        before(function (done) {
+          nock('https://graph.facebook.com').get('/v2.0/me?access_token=1234').times(1).reply(200, {id : '1234'});
+          done();
+        });
 
         before(function (done) {
           user = new User();
@@ -543,7 +515,10 @@ describe('user', function () {
     describe('facebook user', function () {
       before(User.remove.bind(User));
 
-      nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
+      before(function (done) {
+        nock('https://graph.facebook.com').get('/v2.0/me?access_token=1234').times(1).reply(200, {id : '1234'});
+        done();
+      });
 
       before(function (done) {
         var user;

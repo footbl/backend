@@ -24,29 +24,26 @@
     "node": "0.10.21"
   },
   "dependencies": {
-    "apidoc": "^0.12.1",
-    "async": "^0.7.0",
+    "apidoc": "^0.13.1",
+    "async": "^1.4.2",
     "auth": "footbl/auth.git",
-    "body-parser": "1.0.x",
+    "body-parser": "^1.14.1",
     "cluster-start": "^0.1.4",
-    "express": "^4.1.x",
-    "fbgraph": "^0.2.10",
-    "mandrill-api": "^1.0.39",
-    "method-override": "^1.0.0",
-    "mongoose": "^3.8.24",
-    "mongoose-json-select": "0.2.x",
-    "nconf": "0.6.x",
+    "express": "^4.13.3",
+    "fbgraph": "^1.1.0",
+    "mandrill-api": "^1.0.45",
+    "mongoose": "^4.1.9",
+    "mongoose-json-select": "^0.2.1",
+    "nconf": "^0.8.1",
     "push": "footbl/push.git",
-    "redis": "0.10.x",
-    "request": "^2.39.0",
-    "slug": "^0.5.0"
+    "request": "^2.64.0"
   },
   "devDependencies": {
-    "blanket": "^1.1.6",
-    "mocha": "^2.0.1",
-    "mocha-spec-cov-alt": "^0.2.3",
-    "nock": "^0.42.1",
-    "should": "^4.0.4",
-    "supertest": "^0.13.0"
+    "blanket": "^1.1.7",
+    "mocha": "^2.1.0",
+    "mocha-spec-cov-alt": "^0.2.4",
+    "nock": "^2.13.0",
+    "should": "^7.1.0",
+    "supertest": "^1.1.0"
   }
 }

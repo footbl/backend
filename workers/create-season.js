@@ -31,6 +31,6 @@ if (require.main === module) {
   nconf.argv();
   nconf.env();
   nconf.defaults(require('../../config'));
-  mongoose.connect(nconf.get('MONGOHQ_URL'));
+  mongoose.connect(nconf.get('MONGOLAB_URI'));
   module.exports(process.exit);
 }

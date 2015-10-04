@@ -1,6 +1,6 @@
 {
-  "MONGOHQ_URL"     : "mongodb://localhost/footbl",
-  "REDISCLOUD_URL"  : null,
+  "MONGOLAB_URI"    : "mongodb://localhost/footbl",
+  "REDISTOGO_URL"   : null,
   "MANDRILL_APIKEY" : "tbBa-7QGpKRaN8o0ehSDRw",
   "PAGE_SIZE"       : 20,
   "PORT"            : 8080,

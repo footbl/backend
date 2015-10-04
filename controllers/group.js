@@ -158,7 +158,7 @@ router
     group = request.group;
     if ((/^[0-9a-fA-F]{24}$/).test(request.body.user)) group.update({'$addToSet' : {'members' : request.body.user}}, next);
     else group.update({'$addToSet' : {'invites' : request.body.user}}, next);
-  }, function (__, _, next) {
+  }, function (_, next) {
     response.status(200);
     response.end();
     next();
@@ -178,7 +178,7 @@ router
     var group;
     group = request.group;
     group.update({'$pull' : {'members' : request.session._id}}, next);
-  }, function (group, _, next) {
+  }, function (_, next) {
     response.status(200);
     response.end();
     next();
