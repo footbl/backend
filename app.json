@@ -6,17 +6,11 @@
     "NEW_RELIC_NO_CONFIG_FILE":{
       "required":true
     },
-    "VERSION":{
-      "required":true
-    },
-    "ZEROPUSH_TOKEN":{
+    "NEW_RELIC_APP_NAME":{
       "required":true
     }
   },
   "addons":[
-    "mandrill",
-    "papertrail",
-    "cloudinary",
     "mongolab"
   ]
 }
