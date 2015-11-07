@@ -6,8 +6,8 @@ now, today;
 mongoose = require('mongoose');
 nconf = require('nconf');
 async = require('async');
-Season = require('../../models/season');
-User = require('../../models/user');
+Season = require('../models/season');
+User = require('../models/user');
 now = new Date();
 today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -20,7 +20,7 @@ module.exports = function createSeason(done) {
   }, function (season, next) {
     if (season) done();
     season = new Season();
-    season.finishAt(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7));
+    season.finishAt = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
     season.save(next);
   }, function (season, _, next) {
     User.update({}, {'$set' : {'funds' : 100, 'stake' : 0}}, {'multi' : true}, next);
@@ -28,9 +28,8 @@ module.exports = function createSeason(done) {
 };
 
 if (require.main === module) {
-  nconf.argv();
   nconf.env();
-  nconf.defaults(require('../../config'));
+  nconf.defaults({'MONGOLAB_URI' : 'mongodb://localhost/footbl'});
   mongoose.connect(nconf.get('MONGOLAB_URI'));
   module.exports(process.exit);
 }
