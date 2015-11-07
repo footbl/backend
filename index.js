@@ -11,7 +11,8 @@ nconf.defaults({
   'MONGOLAB_URI'    : 'mongodb://localhost/footbl',
   'MANDRILL_APIKEY' : 'tbBa-7QGpKRaN8o0ehSDRw',
   'PORT'            : 8080,
-  'PASSWORD_SALT'   : 'MQE*zaHAVyt|nt#B&1RvN]`~exu@4&L/k a-,IS&Qz.|0`za~4YBqbNrL +L>J/0'
+  'PASSWORD_SALT'   : 'MQE*zaHAVyt|nt#B&1RvN]`~exu@4&L/k a-,IS&Qz.|0`za~4YBqbNrL +L>J/0',
+  'VERSION'         : '3.0.0'
 });
 
 
@@ -75,6 +76,10 @@ domain.run(function () {
       request.session = user;
       next();
     }], next);
+  });
+
+  app.get('/', function (request, response) {
+    response.status(200).send({'version' : nconf.get('VERSION')});
   });
 
   app.use(require('./controllers/bet'));
