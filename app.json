@@ -1,0 +1,22 @@
+{
+  "name":"backend",
+  "description":"footbl app backend",
+  "scripts":{},
+  "env":{
+    "NEW_RELIC_NO_CONFIG_FILE":{
+      "required":true
+    },
+    "VERSION":{
+      "required":true
+    },
+    "ZEROPUSH_TOKEN":{
+      "required":true
+    }
+  },
+  "addons":[
+    "mandrill",
+    "papertrail",
+    "cloudinary",
+    "mongolab"
+  ]
+}
