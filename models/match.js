@@ -1,21 +1,13 @@
 'use strict';
 
-var mongoose, jsonSelect, nconf, async, Schema, schema;
-
-mongoose = require('mongoose');
-jsonSelect = require('mongoose-json-select');
-nconf = require('nconf');
-async = require('async');
-Schema = mongoose.Schema;
-
-schema = new Schema({
-  'slug'         : {
-    'type' : String
-  },
+var mongoose = require('mongoose');
+var async = require('async');
+var schema = new mongoose.Schema({
   'championship' : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'Championship',
-    'required' : true
+    'type'         : mongoose.Schema.Types.ObjectId,
+    'ref'          : 'Championship',
+    'required'     : true,
+    'autopopulate' : true
   },
   'guest'        : {
     'name'    : {
@@ -25,9 +17,6 @@ schema = new Schema({
     'picture' : {
       'type'  : String,
       'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-    },
-    'slug'    : {
-      'type' : String
     }
   },
   'host'         : {
@@ -38,9 +27,6 @@ schema = new Schema({
     'picture' : {
       'type'  : String,
       'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-    },
-    'slug'    : {
-      'type' : String
     }
   },
   'round'        : {
@@ -84,13 +70,6 @@ schema = new Schema({
       'type'    : Number,
       'default' : 0
     }
-  },
-  'createdAt'    : {
-    'type'    : Date,
-    'default' : Date.now
-  },
-  'updatedAt'    : {
-    'type' : Date
   }
 }, {
   'collection' : 'matches',
@@ -100,18 +79,11 @@ schema = new Schema({
   }
 });
 
-schema.index({
-  'championship' : 1,
-  'guest'        : 1,
-  'host'         : 1,
-  'round'        : 1
-}, {
-  'unique' : true
-});
+schema.index({'championship' : 1, 'guest' : 1, 'host' : 1, 'round' : 1}, {'unique' : true});
 
-schema.plugin(jsonSelect, {
-  '_id'          : 0,
-  'slug'         : 1,
+schema.plugin(require('mongoose-autopopulate'));
+schema.plugin(require('mongoose-json-select'), {
+  '_id'          : 1,
   'championship' : 0,
   'guest'        : 1,
   'host'         : 1,
@@ -123,71 +95,21 @@ schema.plugin(jsonSelect, {
   'pot'          : 1,
   'winner'       : 1,
   'jackpot'      : 1,
-  'reward'       : 1,
-  'bet'          : 1,
-  'createdAt'    : 1,
-  'updatedAt'    : 1
+  'reward'       : 1
 });
 
-schema.pre('save', function setMatchUpdatedAt(next) {
-  this.updatedAt = new Date();
-  next();
-});
-
-schema.methods.findBet = function findBet(user, next) {
-  var Bet, query;
-  Bet = require('./bet');
-  query = Bet.findOne();
-  query.where('match').equals(this._id);
-  query.where('user').equals(user);
-  query.populate('user');
-  query.exec(function (error, bet) {
-    this._bet = bet;
-    next(error);
-  }.bind(this));
-};
-
-schema.pre('remove', function removeCascadeBets(next) {
-  var Bet;
-  Bet = require('./bet');
-  async.waterfall([function (next) {
-    var query;
-    query = Bet.find();
-    query.where('match').equals(this._id);
-    query.exec(next);
-  }.bind(this), function (bets, next) {
-    async.each(bets, function (bet, next) {
-      bet._forceRemove = true;
-      bet.remove(next);
-    }.bind(this), next);
-  }.bind(this)], next);
-});
-
-schema.virtual('bet').get(function getMatchBet() {
-  return this._bet;
-});
-
-schema.virtual('winner').get(function getMatchWinner() {
-  if (!this.finished) return null;
+schema.virtual('winner').get(function () {
   if (this.result.guest > this.result.host) return 'guest';
   if (this.result.guest < this.result.host) return 'host';
   return 'draw';
 });
 
-schema.virtual('jackpot').get(function getMatchJackpot() {
+schema.virtual('jackpot').get(function () {
   return this.pot.guest + this.pot.draw + this.pot.host;
 });
 
-schema.virtual('reward').get(function getMatchReward() {
-  if (!this.jackpot) return 0;
-  switch (this.winner) {
-    case 'guest' :
-      return this.jackpot / this.pot.guest;
-    case 'host'  :
-      return this.jackpot / this.pot.host;
-    default      :
-      return this.jackpot / this.pot.draw;
-  }
+schema.virtual('reward').get(function () {
+  return this.jackpot / this.pot[this.winner];
 });
 
 module.exports = mongoose.model('Match', schema);

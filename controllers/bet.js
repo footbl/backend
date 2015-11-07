@@ -1,519 +1,104 @@
 'use strict';
 
-var router, nconf, slug, async, auth, push, Championship, Match, Bet, User;
-
-router = require('express').Router();
-nconf = require('nconf');
-slug = require('slug');
-async = require('async');
-auth = require('auth');
-push = require('push');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Bet = require('../models/bet');
-User = require('../models/user');
+var router = require('express').Router();
+var async = require('async');
+var Bet = require('../models/bet');
 
 /**
- * @api {post} /championships/:championship/matches/:match/bets Creates a new bet.
- * @apiName createBet
- * @apiVersion 2.2.0
- * @apiGroup bet
- * @apiPermission user
- *
- * @apiParam {Number} bid Bet bid.
- * @apiParam {String} result Bet result.
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "bid": "required",
- *   "result": "required"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "match": "match already started"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "bid": "insufficient funds"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 409 Conflict
- *
- * @apiSuccessExample
- * HTTP/1.1 201 Created
- * {
- *  "slug": "vandoren",
- *  "user": {
- *    "slug": "vandoren",
- *    "email": "vandoren@vandoren.com",
- *    "username": "vandoren",
- *    "ranking": "2",
- *    "previousRanking": "1",
- *    "funds": 100,
- *    "stake": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo"
- *    "guest": {
- *      "name": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "host": {
- *      "name": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "round": 3,
- *    "date": "2014-07-01T12:22:25.058Z",
- *    "finished": true,
- *    "elapsed": null,
- *    "result": {
- *      "guest": 0,
- *      "host" 0
- *    },
- *    "pot": {
- *      "guest": 0,
- *      "host" 0,
- *      "draw" 0
- *    },
- *    "winner": "draw",
- *    "jackpot": 0,
- *    "reward": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "bid": 5,
- *  "result": "guest",
- *  "reward": 15,
- *  "profit": 10,
- *  "createdAt": "2014-07-01T12:22:25.058Z",
- *  "updatedAt": "2014-07-01T12:22:25.058Z"
- * }
+ * @api {post} /bets Creates a new bet.
+ * @apiName create
+ * @apiGroup Bet
  */
 router
-.route('/championships/:championship/matches/:match/bets')
-.post(auth.session())
-.post(function createBet(request, response, next) {
+.route('/bets')
+.post(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var bet;
-    bet = new Bet({
-      'slug'   : request.match.slug + '-' + request.session.slug,
-      'user'   : request.session._id,
-      'match'  : request.match._id,
-      'bid'    : request.param('bid'),
-      'result' : request.param('result')
-    });
-    bet.save(next);
-  }, function (bet, _, next) {
-    bet.populate('user');
-    bet.populate('match');
-    bet.populate(next);
-  }, function (bet, next) {
-    response.status(201);
-    response.send(bet);
-    next();
+    require('../models/match').findOne().where('_id').equals(request.body.match).exec(next);
+  }, function (match, next) {
+    if (!match) return next(new Error('not found'));
+    var bet = new Bet();
+    bet.bid = request.body.bid;
+    bet.result = request.body.result;
+    bet.match = match;
+    bet.user = request.session;
+    async.series([bet.validate.bind(bet), bet.save.bind(bet), function (next) {
+      request.session.update({'$inc' : {'funds' : -bet.bid, 'stake' : bet.bid}}, next);
+    }, function (next) {
+      var inc = {};
+      inc['pot.' + bet.result] = bet.bid;
+      match.update({'$inc' : inc}, next);
+    }], next);
+  }, function (result) {
+    response.status(201).send(result[2].id);
   }], next);
 });
 
 /**
- * @api {get} /championships/:championship/matches/:match/bets List all match bets.
- * @apiName listBet
- * @apiVersion 2.2.0
- * @apiGroup bet
- * @apiPermission user
- *
- * @apiParam {String} [page=0] The page to be displayed.
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * [{
- *  "slug": "vandoren",
- *  "user": {
- *    "slug": "vandoren",
- *    "email": "vandoren@vandoren.com",
- *    "username": "vandoren",
- *    "ranking": "2",
- *    "previousRanking": "1",
- *    "funds": 100,
- *    "stake": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
- *    "guest": {
- *      "name": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "host": {
- *      "name": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "round": 3,
- *    "date": "2014-07-01T12:22:25.058Z",
- *    "finished": true,
- *    "elapsed": null,
- *    "result": {
- *      "guest": 0,
- *      "host" 0
- *    },
- *    "pot": {
- *      "guest": 0,
- *      "host" 0,
- *      "draw" 0
- *    },
- *    "winner": "draw",
- *    "jackpot": 0,
- *    "reward": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "bid": 5,
- *  "result": "guest",
- *  "reward": 15,
- *  "profit": 10,
- *  "createdAt": "2014-07-01T12:22:25.058Z",
- *  "updatedAt": "2014-07-01T12:22:25.058Z"
- * }]
+ * @api {get} /bets List all bets.
+ * @apiName list
+ * @apiGroup Bet
  */
 router
-.route('/championships/:championship/matches/:match/bets')
-.get(auth.session())
-.get(function listBet(request, response, next) {
+.route('/bets')
+.get(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Bet.find();
-    query.where('match').equals(request.match._id);
-    query.populate('user');
-    query.populate('match');
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (bets, next) {
-    response.status(200);
-    response.send(bets);
-    next();
+    Bet.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+  }, function (bets) {
+    response.status(200).send(bets);
   }], next);
 });
 
 /**
- * @api {get} /championships/:championship/matches/:match/bets/:bet Get bet.
- * @apiName getBet
- * @apiVersion 2.2.0
- * @apiGroup bet
- * @apiPermission user
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * {
- *  "slug": "vandoren",
- *  "user": {
- *    "slug": "vandoren",
- *    "email": "vandoren@vandoren.com",
- *    "username": "vandoren",
- *    "ranking": "2",
- *    "previousRanking": "1",
- *    "funds": 100,
- *    "stake": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
- *    "guest": {
- *      "name": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "host": {
- *      "name": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "round": 3,
- *    "date": "2014-07-01T12:22:25.058Z",
- *    "finished": true,
- *    "elapsed": null,
- *    "result": {
- *      "guest": 0,
- *      "host" 0
- *    },
- *    "pot": {
- *      "guest": 0,
- *      "host" 0,
- *      "draw" 0
- *    },
- *    "winner": "draw",
- *    "jackpot": 0,
- *    "reward": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "bid": 5,
- *  "result": "guest",
- *  "reward": 15,
- *  "profit": 10,
- *  "createdAt": "2014-07-01T12:22:25.058Z",
- *  "updatedAt": "2014-07-01T12:22:25.058Z"
- * }
+ * @api {get} /bets/:id Get bet.
+ * @apiName get
+ * @apiGroup Bet
  */
 router
-.route('/championships/:championship/matches/:match/bets/:bet')
-.get(auth.session())
-.get(function getBet(request, response, next) {
-  async.waterfall([function (next) {
-    var bet;
-    bet = request.bet;
-    response.status(200);
-    response.send(bet);
-    next();
-  }], next);
+.route('/bets/:id')
+.get(function (request, response) {
+  if (!request.session) throw new Error('invalid session');
+  response.status(200).send(request.bet);
 });
 
 /**
- * @api {put} /championships/:championship/matches/:match/bets/:bet Updates bet.
- * @apiName updateBet
- * @apiVersion 2.2.0
- * @apiGroup bet
- * @apiPermission user
- *
- * @apiParam {Number} bid Bet bid.
- * @apiParam {String} result Bet result.
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "bid": "required",
- *   "result": "required"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "match": "match already started"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "bid": "insufficient funds"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 405 Method Not Allowed
- *
- * @apiSuccessExample
- * HTTP/1.1 201 Created
- * {
- *  "slug": "vandoren",
- *  "user": {
- *    "slug": "vandoren",
- *    "email": "vandoren@vandoren.com",
- *    "username": "vandoren",
- *    "ranking": "2",
- *    "previousRanking": "1",
- *    "funds": 100,
- *    "stake": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "match": {
- *    "slug": "brasilerao-brasil-2014-3-fluminense-vs-botafogo",
- *    "guest": {
- *      "name": "fluminense",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "host": {
- *      "name": "botafogo",
- *      "picture": "http://res.cloudinary.com/hivstsgwo/image/upload/v1403968689/world_icon_2x_frtfue.png"
- *    },
- *    "round": 3,
- *    "date": "2014-07-01T12:22:25.058Z",
- *    "finished": true,
- *    "elapsed": null,
- *    "result": {
- *      "guest": 0,
- *      "host" 0
- *    },
- *    "pot": {
- *      "guest": 0,
- *      "host" 0,
- *      "draw" 0
- *    },
- *    "winner": "draw",
- *    "jackpot": 0,
- *    "reward": 0,
- *    "createdAt": "2014-07-01T12:22:25.058Z",
- *    "updatedAt": "2014-07-01T12:22:25.058Z"
- *  },
- *  "bid": 5,
- *  "result": "guest",
- *  "reward": 15,
- *  "profit": 10,
- *  "createdAt": "2014-07-01T12:22:25.058Z",
- *  "updatedAt": "2014-07-01T12:22:25.058Z"
- * }
+ * @api {put} /bets/:id Updates bet.
+ * @apiName update
+ * @apiGroup Bet
  */
 router
-.route('/championships/:championship/matches/:match/bets/:bet')
-.put(auth.session())
-.put(auth.checkMethod('bet', 'user'))
-.put(function updateBet(request, response, next) {
+.route('/bets/:id')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.bet.user.id) throw new Error('invalid method');
   async.waterfall([function (next) {
-    var bet;
-    bet = request.bet;
-    bet.bid = request.param('bid');
-    bet.result = request.param('result');
-    bet.save(next);
-  }, function (bet, _, next) {
-    bet.populate('user');
-    bet.populate('match');
-    bet.populate(next);
-  }, function (bet, next) {
-    response.status(200);
-    response.send(bet);
-    next();
+    var bet = request.bet;
+    var oldBid = bet.bid;
+    var oldResult = bet.result;
+    bet.bid = request.body.bid;
+    bet.result = request.body.result;
+    async.series([bet.validate.bind(bet), bet.save.bind(bet), function (next) {
+      request.session.update({'$inc' : {'funds' : -bet.bid + oldBid, 'stake' : bet.bid - oldBid}}, next);
+    }, function (next) {
+      var inc = {};
+      inc['pot.' + oldResult] = inc['pot.' + oldResult] || 0;
+      inc['pot.' + oldResult] -= oldBid;
+      inc['pot.' + bet.result] = inc['pot.' + bet.result] || 0;
+      inc['pot.' + bet.result] += bet.bid;
+      bet.match.update({'$inc' : inc}, next);
+    }], next);
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 
-/**
- * @api {delete} /championships/:championship/matches/:match/bets/:bet Removes bet.
- * @apiName removeBet
- * @apiVersion 2.2.0
- * @apiGroup bet
- * @apiPermission user
- *
- * @apiErrorExample
- * HTTP/1.1 400 Bad Request
- * {
- *   "match": "match already started"
- * }
- *
- * @apiErrorExample
- * HTTP/1.1 405 Method Not Allowed
- *
- * @apiSuccessExample
- * HTTP/1.1 204 Empty
- */
-router
-.route('/championships/:championship/matches/:match/bets/:bet')
-.delete(auth.session())
-.delete(auth.checkMethod('bet', 'user'))
-.delete(function removeBet(request, response, next) {
+router.param('id', function (request, response, next, id) {
   async.waterfall([function (next) {
-    var bet;
-    bet = request.bet;
-    bet.remove(next);
-  }, function (_, next) {
-    response.status(204);
-    response.end();
-    next();
-  }], next);
-});
-
-/**
- * @api {get} /user/:bet/bets List all user bets
- * @apiName listUserBet
- * @apiVersion 2.2.0
- * @apiGroup bet
- * @apiPermission user
- *
- * @apiParam {String} [page=0] The page to be displayed.
- *
- * @apiSuccessExample
- * HTTP/1.1 200 Ok
- * [{
- * }]
- */
-router
-.route('/users/:user/bets')
-.get(auth.session())
-.get(function listUserBets(request, response, next) {
-  async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = request.param('page', 0) * pageSize;
-    query = Bet.find();
-    query.where('user').equals(request.user._id);
-    query.populate('user');
-    query.populate('match');
-    query.sort('-updatedAt');
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (bets, next) {
-    response.status(200);
-    response.send(bets);
-    next();
-  }], next);
-});
-
-router.param('user', auth.session());
-router.param('user', function findUser(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = User.findOne();
-    if (id === 'me') {
-      query.where('_id').equals(request.session._id);
-    } else {
-      query.where('slug').equals(id);
-    }
-    query.exec(next);
-  }, function (user, next) {
-    request.user = user;
-    next(!user ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('bet', auth.session());
-router.param('bet', function findBet(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = Bet.findOne();
-    query.populate('user');
-    query.populate('match');
-    query.where('match').equals(request.match._id);
-    if (id === 'mine') {
-      query.where('user').equals(request.session._id);
-    } else {
-      query.where('slug').equals(id);
-    }
-    query.exec(next);
+    Bet.findOne().where('_id').equals(id).exec(next);
   }, function (bet, next) {
     request.bet = bet;
     next(!bet ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('match', function findMatch(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = Match.findOne();
-    query.where('championship').equals(request.championship._id);
-    query.where('slug').equals(id);
-    query.exec(next);
-  }, function (match, next) {
-    request.match = match;
-    next(!match ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('championship', function findChampionship(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = Championship.findOne();
-    query.where('slug').equals(id);
-    query.exec(next);
-  }, function (championship, next) {
-    request.championship = championship;
-    next(!championship ? new Error('not found') : null);
   }], next);
 });
 
