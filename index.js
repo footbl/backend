@@ -1,4 +1,5 @@
 'use strict';
+if (process.env.NEW_RELIC_LICENSE_KEY) require('newrelic');
 var Domain, cluster, domain, nconf, async;
 Domain = require('domain');
 cluster = require('cluster');
