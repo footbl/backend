@@ -8,6 +8,9 @@ var Group = require('../models/group');
  * @api {post} /groups Creates a new group.
  * @apiName create
  * @apiGroup Group
+ *
+ * @apiParam {String} name
+ * @apiParam {String} [picture]
  */
 router
 .route('/groups')
@@ -58,6 +61,9 @@ router
  * @api {put} /groups/:id Updates group.
  * @apiName update
  * @apiGroup Group
+ *
+ * @apiParam {String} name
+ * @apiParam {String} [picture]
  */
 router
 .route('/groups/:id')
@@ -95,6 +101,8 @@ router
  * @api {put} /groups/:id/invite Invites user to group.
  * @apiName invite
  * @apiGroup Group
+ *
+ * @apiParam {String} user
  */
 router
 .route('/groups/:id/invite')

@@ -8,6 +8,11 @@ var Challenge = require('../models/challenge');
  * @api {post} /challenges Creates a new challenge.
  * @apiName create
  * @apiGroup Challenge
+ *
+ * @apiParam {Number} bid
+ * @apiParam {ObjectId} match
+ * @apiParam {ObjectId} user
+ * @apiParam {String=draw,guest,host} result
  */
 router
 .route('/challenges')

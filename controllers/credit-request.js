@@ -8,6 +8,8 @@ var CreditRequest = require('../models/credit-request');
  * @api {post} /credit-requests Creates a new credit request.
  * @apiName create
  * @apiGroup CreditRequest
+ *
+ * @apiParam {String} user
  */
 router
 .route('/credit-requests')

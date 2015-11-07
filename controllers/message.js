@@ -8,6 +8,11 @@ var Message = require('../models/message');
  * @api {post} /messages Creates a message.
  * @apiName create
  * @apiGroup Message
+ *
+ * @apiParam {String} rom
+ * @apiParam {String} [message]
+ * @apiParam {String} [type]
+ * @apiParam {ObjectId[]} visibleTo
  */
 router
 .route('/messages')
@@ -49,6 +54,8 @@ router
  * @api {put} /messages/all/mark-as-read Mark all messages as read.
  * @apiName markAllAsRead
  * @apiGroup Message
+ *
+ * @apiParam {String} rom
  */
 router
 .route('/messages/all/mark-as-read')

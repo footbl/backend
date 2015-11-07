@@ -8,6 +8,9 @@ var User = require('../models/user');
  * @api {post} /users Creates a new user.
  * @apiName create
  * @apiGroup User
+ *
+ * @apiParam {String} password
+ * @apiParam {String} [country='Brazil']
  */
 router
 .route('/users')
@@ -56,6 +59,14 @@ router
  * @api {put} /users/:id Update user.
  * @apiName update
  * @apiGroup User
+ *
+ * @apiParam {String} [email]
+ * @apiParam {String} [username]
+ * @apiParam {String} [facebook]
+ * @apiParam {String} [about]
+ * @apiParam {String} [password]
+ * @apiParam {String} [picture]
+ * @apiParam {String} [apnsToken]
  */
 router
 .route('/users/:id')
@@ -68,12 +79,11 @@ router
     user.email = request.body.email;
     user.username = request.body.username;
     user.name = request.body.name;
-    user.facebookId = request.facebook ? request.facebook : user.facebookId;
+    user.facebook = request.facebook ? request.facebook : user.facebook;
     user.about = request.body.about;
     user.password = request.body.password ? password : user.password;
     user.picture = request.body.picture;
     user.apnsToken = request.body.apnsToken;
-    user.entries = request.body.entries;
     user.save(next);
   }, function () {
     response.status(200).end();
