@@ -63,8 +63,14 @@ function parseMatches(matches, next) {
     hostScore = events.filter(function (e) {
       return e.Type === 0 && e.Comp === 1;
     }).length;
-    if (!teams[data.Comps[0].ID]) return next(null, {});
-    if (!teams[data.Comps[1].ID]) return next(null, {});
+    if (!teams[data.Comps[0].ID]) {
+      console.log('[missing team]', data.Comps[0].ID, data.Comps[0].Name);
+      return next(null, {});
+    }
+    if (!teams[data.Comps[1].ID]) {
+      console.log('[missing team]', data.Comps[1].ID, data.Comps[1].Name);
+      return next(null, {});
+    }
     return next(null, {
       'guest'    : teams[data.Comps[1].ID],
       'host'     : teams[data.Comps[0].ID],

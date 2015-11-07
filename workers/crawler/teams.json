@@ -1,898 +1,954 @@
 {
-  "113"                  : {
+  "113"   : {
     "name"    : "West Ham",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/West_Ham_spvp4u.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/cm1wc2cgm70ycbz3lkmn.png"
   },
-  "5"                    : {
+  "5"     : {
     "name"    : "W. Bromwich",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/W_Bromwich_glhhii.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/vtop7y89togs2zrmacex.png"
   },
-  "114"                  : {
+  "114"   : {
     "name"    : "Tottenham",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Tottenham_hull4p.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/c53jeijylu9qdnc9hib2.png"
   },
-  "28"                   : {
+  "28"    : {
     "name"    : "Swansea",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Swansea_bndhhr.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/zmngymahle0j7cnoj6ux.png"
   },
-  "117"                  : {
+  "117"   : {
     "name"    : "Sunderland",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Sunderland_vqlb9l.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/firftld1odwhxovdrqex.png"
   },
-  "7"                    : {
+  "7"     : {
     "name"    : "Stoke",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Stoke_wt1cqa.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/jin3ku7hvjfvqjxdunv7.png"
   },
-  "21"                   : {
+  "21"    : {
     "name"    : "Southampton",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Southampton_fdmgzm.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/gbpbc8h80mxmr24xg3iy.png"
   },
-  "18"                   : {
+  "18"    : {
     "name"    : "Queens P.R.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Queens_P_R_pklu67.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/tyytcygr0qu6jhqfp8yg.png"
   },
-  "116"                  : {
+  "116"   : {
     "name"    : "Newcastle",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Newcastle_k7tvxy.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/jieubmfwfcgr38yolkkr.png"
   },
-  "105"                  : {
+  "105"   : {
     "name"    : "Manch. Utd",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Man_United_oyhawt.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/vrl2styrbdx2mxnwboap.png"
   },
-  "110"                  : {
+  "110"   : {
     "name"    : "Manch. City",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Man_City_t5zktu.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/pomlcliohltuatnhsbfz.png"
   },
-  "108"                  : {
+  "108"   : {
     "name"    : "Liverpool",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101121/Liverpool_jtt9xv.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/jlhnotxl7bwamfbr2v2a.png"
   },
-  "22"                   : {
+  "22"    : {
     "name"    : "Leicester",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Leicester_eipa0n.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/wim7uxl9whi6grjqcadd.png"
   },
-  "11"                   : {
+  "11"    : {
     "name"    : "Hull",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Hull_sz9jvd.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/ddpxihyznfiidgusqqti.png"
   },
-  "107"                  : {
+  "107"   : {
     "name"    : "Everton",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Everton_jncyk9.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/bw5nkfooum60rfhhu7gy.png"
   },
-  "10"                   : {
+  "10"    : {
     "name"    : "Crystal Palace",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Crystal_Palace_jkoyyp.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/kycys0l6an8inwzeme4o.png"
   },
-  "106"                  : {
+  "106"   : {
     "name"    : "Chelsea",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Chelsea_fgmj6e.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/yuznch4yp5nukhai6apu.png"
   },
-  "12"                   : {
+  "12"    : {
     "name"    : "Burnley",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Burnley_r5dclo.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/bh5yzewxwifkhkuxvzns.png"
   },
-  "109"                  : {
+  "109"   : {
     "name"    : "Aston Villa",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Aston_Villa_tvdxdq.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932040/l6fa5srg3bykz5jieojc.png"
   },
-  "104"                  : {
+  "104"   : {
     "name"    : "Arsenal",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101120/Arsenal_dgfvkq.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932042/qxrgtaa3wxcucz8uqwlp.png"
   },
-  "138"                  : {
+  "138"   : {
     "name"    : "Almeria",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101388/Almeria_ndwnxr.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/qrgd32lubcvs8mhkp3gr.png"
   },
-  "144"                  : {
+  "144"   : {
     "name"    : "Athl. Bilbao",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101388/Athl_Bilbao_cwwlk1.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/roxfd9gxzr1g4nrvmave.png"
   },
-  "134"                  : {
+  "134"   : {
     "name"    : "Atl. Madrid",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101388/Atl_Madrid_ufcq5h.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/ikbpee2jh5ucsyoeadeb.png"
   },
-  "132"                  : {
+  "132"   : {
     "name"    : "Barcelona",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101388/Barcelona_e0gst4.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/dwk9zkamisltscslqin2.png"
   },
-  "158"                  : {
+  "158"   : {
     "name"    : "Celta Vigo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101388/Celta_Vigo_kyynqo.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/zmwwpaw6bdnhan8ielfg.png"
   },
-  "165"                  : {
+  "165"   : {
     "name"    : "Cordoba",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Cordoba_g5cko4.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/yxumm7uzf8eyiys9gqpq.png"
   },
-  "148"                  : {
+  "148"   : {
     "name"    : "D. La Coruna",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/D_La_Coruna_xmpfix.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/ayzuifpodmsj1ru1ogmq.png"
   },
-  "164"                  : {
+  "164"   : {
     "name"    : "Eibar",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Eibar_qmyhd8.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/qmu73kpfnhmt3uyptkqc.png"
   },
-  "156"                  : {
+  "156"   : {
     "name"    : "Elche",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Elche_vyjj1k.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/lzpubpj64qkosiwbivit.png"
   },
-  "136"                  : {
+  "136"   : {
     "name"    : "Espanyol",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Espanyol_wqdiy7.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/iwp8qxonpviiw1t51szx.png"
   },
-  "140"                  : {
+  "140"   : {
     "name"    : "Getafe",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Getafe_eartcd.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/ygmi4sm3qcbmdbv2cnvc.png"
   },
-  "159"                  : {
+  "159"   : {
     "name"    : "Granada",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Granada_vlfdta.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/hjgsbionc9vdigpkwmu5.png"
   },
-  "150"                  : {
+  "150"   : {
     "name"    : "Levante",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101391/Levante_wqsaem.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932047/mykmtfpujkv2miy1z6at.png"
   },
-  "152"                  : {
+  "152"   : {
     "name"    : "Malaga",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/Malaga_vku66n.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932044/zuml7wixn7y5zvgprq00.png"
   },
-  "174"                  : {
+  "174"   : {
     "name"    : "R. Vallecano",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101389/R_Vallecano_pfi70y.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/olwgy9yer7tyeezrkqrc.png"
   },
-  "131"                  : {
+  "131"   : {
     "name"    : "Real Madrid",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101391/Real_Madrid_f0exyy.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932045/tgarg7wt14xyvi6xee6h.png"
   },
-  "154"                  : {
+  "154"   : {
     "name"    : "Real Sociedad",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101390/Real_Sociedad_hg3xft.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932044/wmh6yuqclhdwmskt10nj.png"
   },
-  "135"                  : {
+  "135"   : {
     "name"    : "Sevilla",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101390/Sevilla_sfacg2.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/thplrljwlzoktoo80kaq.png"
   },
-  "139"                  : {
+  "139"   : {
     "name"    : "Valencia",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101390/Valencia_kxfvz2.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932044/stidyge6drwcfyjjdlze.png"
   },
-  "133"                  : {
-    "name"    : "Villarreal",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101390/Villareal_t5lzp7.png"
-  },
-  "227"                  : {
+  "227"   : {
     "name"    : "AC Milan",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Milan_hmjnjg.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/evsikgbk8glpzpcvacst.png"
   },
-  "225"                  : {
+  "225"   : {
     "name"    : "AS Roma",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/AS_Roma_un3yfd.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/g46zmtr4an0nycqor17u.png"
   },
-  "232"                  : {
+  "232"   : {
     "name"    : "Atalanta",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101639/Atalanta_itaoc4.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/qyw7rkhnqpgnfnt45aib.png"
   },
-  "243"                  : {
+  "243"   : {
     "name"    : "Cagliari",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101639/Cagliari_zwvpie.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/s6fjp4c7uphqzp5plf4p.png"
   },
-  "264"                  : {
+  "264"   : {
     "name"    : "Cesena",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101639/Cesena_hxrme6.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/lkala9jfwpe9qtr3gcyo.png"
   },
-  "244"                  : {
+  "244"   : {
     "name"    : "Chievo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101639/Chievo_ptgjff.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/yv7fwbgjdswoacbesoc4.png"
   },
-  "237"                  : {
+  "237"   : {
     "name"    : "Empoli",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101639/Empoli_zoiwmy.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/ojaoziynvviw0cn9q0ds.png"
   },
-  "228"                  : {
+  "228"   : {
     "name"    : "Fiorentina",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Fiorentina_v2g7nj.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/neqpepi6hubmwzugsifr.png"
   },
-  "231"                  : {
+  "231"   : {
     "name"    : "Genoa",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Genoa_qwj0ne.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/qducht7qsqajhzvgqho9.png"
   },
-  "224"                  : {
-    "name"    : "Inter Milan",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Internazionale_jnth0u.png"
-  },
-  "226"                  : {
+  "226"   : {
     "name"    : "Juventus",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Juventus_ce7cb8.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/dhe3epanz8ykcxmewcwg.png"
   },
-  "236"                  : {
+  "236"   : {
     "name"    : "Lazio",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Lazio-Roma_j8exr7.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/sxu4puc5xcqnbhh6ltau.png"
   },
-  "234"                  : {
+  "234"   : {
     "name"    : "Napoli",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Napoli_hk6qmb.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/gszvsrz95dpujtoezx7n.png"
   },
-  "233"                  : {
+  "233"   : {
     "name"    : "Palermo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Palermo_efaldz.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/nyvd5bfb8n4zeji0krig.png"
   },
-  "241"                  : {
+  "241"   : {
     "name"    : "Parma",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Parma_d5s8gb.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/zsxkaajk3qm0ccstlvia.png"
   },
-  "230"                  : {
+  "230"   : {
     "name"    : "Sampdoria",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101640/Sampdoria_d4mghs.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/axrr82rn9kt2eta6jaud.png"
   },
-  "266"                  : {
+  "266"   : {
     "name"    : "Sassuolo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101641/Sassuolo_cxnu9i.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932068/xjiyt9vy518zi5rcndvr.png"
   },
-  "235"                  : {
+  "235"   : {
     "name"    : "Torino",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101641/Torino_cvnt46.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/gbbhu079oqfgdkqsg5fm.png"
   },
-  "229"                  : {
+  "229"   : {
     "name"    : "Udinese",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101641/Udinese_ayqxme.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/qulohm6dze94qwpugjcb.png"
   },
-  "316"                  : {
+  "316"   : {
     "name"    : "Verona",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101641/Verona_oyskc7.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/ggaqxuzg4xz7qea0kfld.png"
   },
-  "331"                  : {
-    "name"    : "Bayern Mun.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/B_M%C3%BCnchen_sunmv7.png"
-  },
-  "341"                  : {
+  "341"   : {
     "name"    : "B. Dortmund",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/Bor_Dortmund_ih2dc2.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/sdoar1piachjmndfbgvc.png"
   },
-  "337"                  : {
+  "337"   : {
     "name"    : "E. Frankfurt",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/E_Frankfurt_iueuww.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/isklyzutt4w1lttrogaa.png"
   },
-  "342"                  : {
+  "342"   : {
     "name"    : "Hertha Berlin",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/Hertha_mx4k6h.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/qzzzph7cd57cgzrxecpl.png"
   },
-  "358"                  : {
+  "358"   : {
     "name"    : "Augsburg",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/Augsburg_h3mowp.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/ugrfvfftj1f7wuysuekz.png"
   },
-  "333"                  : {
+  "333"   : {
     "name"    : "B. Leverkusen",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/B_Leverkusen_rscohi.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/rzxqw0v87anespixeawz.png"
   },
-  "349"                  : {
+  "349"   : {
     "name"    : "B. Monchen.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/B_M%C3%B6nchengladbach_ixcmyw.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/tiz1xxj55r8ewapxn0vu.png"
   },
-  "350"                  : {
+  "350"   : {
     "name"    : "FC Koln",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/FC_Koln_bnd0vc.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/if2zzimoaunbyhuqdc64.png"
   },
-  "354"                  : {
+  "354"   : {
     "name"    : "Freiburg",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/Freiburg_dmkm1f.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/qsblnvnhhmm74oyyptti.png"
   },
-  "334"                  : {
+  "334"   : {
     "name"    : "Hamburger",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/Hamburger_xlaysz.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/fzjo2khefedtlznyqekr.png"
   },
-  "340"                  : {
+  "340"   : {
     "name"    : "Hannover",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099818/Hannover_96_zeklnp.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/wjtljimwsbkml1y6ubch.png"
   },
-  "351"                  : {
+  "351"   : {
     "name"    : "Hoffenheim",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099820/Hoffenheim_lvn4dx.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932024/hkck8mpv7jhdyuwzk12m.png"
   },
-  "352"                  : {
+  "352"   : {
     "name"    : "Mainz 05",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/Mainz_05_dzta3a.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/fsnyubaogctfi6wqlcgc.png"
   },
-  "366"                  : {
+  "366"   : {
     "name"    : "Paderborn",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/Paderborn_qzzfxi.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/npcffuesjanp2df4mfpa.png"
   },
-  "335"                  : {
+  "335"   : {
     "name"    : "Schalke 04",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/Schalke_04_tqk2pa.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/soxc2fzf8hmsk1zqehxn.png"
   },
-  "338"                  : {
+  "338"   : {
     "name"    : "Stuttgart",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/Stuttgart_zfoyhh.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/vihf1ggmcaoc8tvvzf7k.png"
   },
-  "332"                  : {
+  "332"   : {
     "name"    : "W. Bremen",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/W_Bremen_qh7qef.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/noazpmojsv89r084iqb9.png"
   },
-  "339"                  : {
+  "339"   : {
     "name"    : "Wolfsburg",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409099819/Wolfsburg_s4ydck.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/wcsnxkd3ngtlyzvldyyw.png"
   },
-  "489"                  : {
+  "489"   : {
     "name"    : "Bastia",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Bastia_pvuvz7.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/knqhwckdhzaqac6y1bqb.png"
   },
-  "466"                  : {
+  "466"   : {
     "name"    : "Bordeaux",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Bordeaux_ijcxmf.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/merwnvz0k70vopjla2ds.png"
   },
-  "475"                  : {
+  "475"   : {
     "name"    : "Caen",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Caen_toducw.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/ipl1w7zgmrxqw7c01wgz.png"
   },
-  "532"                  : {
+  "532"   : {
     "name"    : "Evian",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Evian_zhivv5.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932036/vv2hddveps6j0zo6jcvs.png"
   },
-  "496"                  : {
+  "496"   : {
     "name"    : "Guingamp",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Guingamp_yzlnsc.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/x4mb7vdrtaaaps4ac04f.png"
   },
-  "481"                  : {
+  "481"   : {
     "name"    : "Lens",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Lens_jx3zvt.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/dyy3nhsuqiyncngwzivl.png"
   },
-  "478"                  : {
+  "478"   : {
     "name"    : "Lille",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Lille_ersydj.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/wergob5tisrsx1ixzjq1.png"
   },
-  "472"                  : {
+  "472"   : {
     "name"    : "Lorient",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Lorient_ayth0o.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/naxiz2dj7oc2thfldbkf.png"
   },
-  "465"                  : {
+  "465"   : {
     "name"    : "Lyon",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Lyon_swpbnb.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/dlkerugyp8ar29a0mpkl.png"
   },
-  "469"                  : {
+  "469"   : {
     "name"    : "Marseille",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Marseille_y7wxws.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/wkkrleigac3irebmk8g6.png"
   },
-  "484"                  : {
+  "484"   : {
     "name"    : "Metz",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100641/Metz_cykqou.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/quxth8vg7uefmbfuzhhl.png"
   },
-  "471"                  : {
+  "471"   : {
     "name"    : "Monaco",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Monaco_a0wvla.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/kxzcarfw4fz883fcq3jy.png"
   },
-  "491"                  : {
+  "491"   : {
     "name"    : "Montpellier",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Montpellier_dguvij.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/fdzbuki7u5zuubgrhvkm.png"
   },
-  "486"                  : {
+  "486"   : {
     "name"    : "Nantes",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Nantes_f0jhdr.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/fcq3snovozqd05tn6y6g.png"
   },
-  "470"                  : {
+  "470"   : {
     "name"    : "Nice",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Nice_lpy27v.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/wyskurhd9wkrirr61w48.png"
   },
-  "480"                  : {
+  "480"   : {
     "name"    : "Paris SG",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Paris_SG_sxbn6o.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/ze4zldwmtfr8zgpbczqc.png"
   },
-  "499"                  : {
+  "499"   : {
     "name"    : "Reims",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Reims_ub2yxb.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/ziexy9snv9cb82vlvdyg.png"
   },
-  "477"                  : {
+  "477"   : {
     "name"    : "Rennes",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Rennes_gpnize.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932036/y3r0yf4rmhl80mtkitwp.png"
   },
-  "474"                  : {
+  "474"   : {
     "name"    : "Saint-Éttiene",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Saint_%C3%89tienne_ujocxh.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/psbbmbadx0dfquhjah8g.png"
   },
-  "482"                  : {
+  "482"   : {
     "name"    : "Toulouse",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100642/Toulouse_i918ff.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/tnqrq4ih521hcyvrpz2v.png"
   },
-  "899"                  : {
+  "899"   : {
     "name"    : "Académica",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100287/Acad%C3%A9mica_yidjau.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/spiqf9646vvdugvaotqu.png"
   },
-  "927"                  : {
+  "927"   : {
     "name"    : "Arouca",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Arouca_unthcq.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932034/utwegrfcnz5q3fqknkx4.png"
   },
-  "893"                  : {
+  "893"   : {
     "name"    : "Belenenses",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100287/Belenenses_qx0t7q.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/urx9oo5ukwf1eziwlxua.png"
   },
-  "888"                  : {
+  "888"   : {
     "name"    : "Benfica",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100287/Benfica_qbxf1j.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/cjpxwjagysziwkublbli.png"
   },
-  "896"                  : {
+  "896"   : {
     "name"    : "Boavista",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100287/Boavista_xen8ed.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/dooka1j4vvwbw7ii3skw.png"
   },
-  "895"                  : {
+  "895"   : {
     "name"    : "Braga",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100287/Braga_fh1u0m.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/oh1fh1s9ymghkl9ispf5.png"
   },
-  "909"                  : {
+  "909"   : {
     "name"    : "Estoril",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Estoril_yrkadq.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/sae4k77pibfgbpfdfriu.png"
   },
-  "905"                  : {
+  "905"   : {
     "name"    : "Gil Vicente",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Gil_Vicente_gyk4di.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/ef5cnrsm9mfmewjqjejh.png"
   },
-  "892"                  : {
+  "892"   : {
     "name"    : "Marítimo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Maritimo_ouvbhe.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/bw5pvix7ta41hftsofbq.png"
   },
-  "7573"                 : {
+  "7573"  : {
     "name"    : "Moreirense",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Moreirense_zyknad.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/rwu6dary7ohna6a8i0yt.png"
   },
-  "894"                  : {
+  "894"   : {
     "name"    : "Nacional",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Nacional_bgksi8.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/lmlwhwwlrbdbbqht2ix7.png"
   },
-  "901"                  : {
+  "901"   : {
     "name"    : "P. Ferreira",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/P_Ferreira_hvlhbs.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/afblm6x6ivp09nqj6rao.png"
   },
-  "914"                  : {
+  "914"   : {
     "name"    : "Penafiel",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Penafiel_kugle8.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/ifnxs7ahdtlqcyqatehf.png"
   },
-  "887"                  : {
+  "887"   : {
     "name"    : "Porto",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Porto_q0svmv.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/my7nawmoayn1bwfsdg8y.png"
   },
-  "904"                  : {
+  "904"   : {
     "name"    : "Rio Ave",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Rio_Ave_xbvqtn.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/il6ievbpntz2z3ydavdo.png"
   },
-  "890"                  : {
+  "890"   : {
     "name"    : "Sporting",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/Sporting_bweacc.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/eiwsykfbwinkdibnj5pg.png"
   },
-  "889"                  : {
+  "889"   : {
     "name"    : "V. Guimarães",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100288/V_Guimar%C3%A3es_btdzgy.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/vioyhqnq2noglxjce20v.png"
   },
-  "891"                  : {
+  "891"   : {
     "name"    : "V. Setúbal",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409100289/V_Set%C3%BAbal_jx4wsl.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/jfy9zigldluvma5rem5p.png"
   },
-  "1209"                 : {
+  "1209"  : {
     "name"    : "Atlético MG",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272811/Atle%C3%8C_tico_Mineiro_dftper.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/nkxcivquhb134qjihzho.png"
   },
-  "1210"                 : {
+  "1210"  : {
     "name"    : "Atlético PR",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272811/Atle%C3%8C_tico_Paranaense_kk4axt.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/fjtppma1vrlwcd0ebruy.png"
   },
-  "1767"                 : {
+  "1767"  : {
     "name"    : "Bahia",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272812/Bahia_lkkknx.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/ggnwlxbhwd0dhenozgtf.png"
   },
-  "1211"                 : {
+  "1211"  : {
     "name"    : "Botafogo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272811/Botafogo_tugfzp.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932069/lpcxrzzqfxxjekw0hnbr.png"
   },
-  "7387"                 : {
+  "7387"  : {
     "name"    : "Chapecoense",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272812/Chapecoense_jeyde9.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/ujjzufs7rvstwxvlixik.png"
   },
-  "1267"                 : {
+  "1267"  : {
     "name"    : "Corinthians",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272817/Corinthians_pwfida.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932032/pxaj6hxamzuakwzz9q8t.png"
   },
-  "1212"                 : {
+  "1212"  : {
     "name"    : "Coritiba",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272813/Coritiba_gmhywc.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/bkrsvrjqshabjbhzqsfo.png"
   },
-  "1780"                 : {
+  "1780"  : {
     "name"    : "Criciúma",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272812/Criciu%C3%8C_ma_yk0duw.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/xrxbyhbskg8mdg5ikb3s.png"
   },
-  "1213"                 : {
+  "1213"  : {
     "name"    : "Cruzeiro",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272814/Cruzeiro_sh1kop.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/l0oncq3kunzhbn44liuu.png"
   },
-  "1214"                 : {
+  "1214"  : {
     "name"    : "Figueirense",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272813/Figueirense_iu4ain.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932069/rlo78tupx5nfbcps57jd.png"
   },
-  "1215"                 : {
+  "1215"  : {
     "name"    : "Flamengo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272813/Flamengo_bjdujv.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/r4mzr9tydxnfifpgrrf3.png"
   },
-  "1216"                 : {
+  "1216"  : {
     "name"    : "Fluminense",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272814/Fluminense_nhyvvj.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/yzpoismhhmyosoxnbs6z.png"
   },
-  "1217"                 : {
+  "1217"  : {
     "name"    : "Goiás",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272814/Goia%C3%8C_s_madl9c.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/kxdlceki04h3mn0x8x97.png"
   },
-  "1218"                 : {
+  "1218"  : {
     "name"    : "Grêmio",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272817/Gre%C3%8C_mio_dczosn.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/t01nmbwm1digqqkrh31n.png"
   },
-  "1219"                 : {
+  "1219"  : {
     "name"    : "Internacional",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272816/Internacional_ya1tgj.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/jxaivvmso4iug0vgfc6z.png"
   },
-  "1222"                 : {
+  "1222"  : {
     "name"    : "Palmeiras",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272816/Palmeiras_kjifsh.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/p2rwvgnninadpvdjefnc.png"
   },
-  "1224"                 : {
+  "1224"  : {
     "name"    : "Santos",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272819/Santos_aql4v8.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932069/evehjpoehn2cc3ga9fca.png"
   },
-  "1225"                 : {
+  "1225"  : {
     "name"    : "São Paulo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272818/Sa%C3%8C_o_Paulo_qojwyh.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/pepf74uy37i3dn06lyuq.png"
   },
-  "1226"                 : {
+  "1226"  : {
     "name"    : "Sport",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272817/Sport_zdztry.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/ngfyj8pbrslf5eot1jeh.png"
   },
-  "1228"                 : {
+  "1228"  : {
     "name"    : "Vitória",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1405272817/Vito%C3%8C_ria_v8zequ.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932069/yvrhg2iltee0nqko9lxu.png"
   },
-  "5913"                 : {
+  "5913"  : {
     "name"    : "Arsenal Sar.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Arsenal_Sar_howgpz.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/xnikpgrptucodbhdlbfe.png"
   },
-  "5968"                 : {
+  "5968"  : {
     "name"    : "Atl. Rafaela",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Atl_Rafaela_gwj383.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/epps2qnx5y5imzv0zejk.png"
   },
-  "878"                  : {
+  "878"   : {
     "name"    : "Banfield",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Banfield_i61ful.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/lyi07m8tcwymeuzh63m3.png"
   },
-  "5783"                 : {
+  "5783"  : {
     "name"    : "Belgrano",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Belgrano_kbr62g.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/sqheqypxfoczxesojarc.png"
   },
-  "866"                  : {
+  "866"   : {
     "name"    : "Boca Juniors",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Boca_Juniors_awqkrf.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/qea35nypnj9grbuwpiln.png"
   },
-  "7217"                 : {
+  "7217"  : {
     "name"    : "Defensa Y J.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Defensa_Y_J_nzlvxs.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/o094w3si4gtmru2vjtf8.png"
   },
-  "867"                  : {
+  "867"   : {
     "name"    : "Estudiantes",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Estudiantes_mraz7p.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/korcbwqmkzhkfbjy7fmk.png"
   },
-  "880"                  : {
-    "name"    : "Gimnasia Lp",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Gimnasia_Lp_edlrrb.png"
-  },
-  "873"                  : {
-    "name"    : "Godoy Cruz",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Godoy_Cruz_oxlrfg.png"
-  },
-  "874"                  : {
+  "874"   : {
     "name"    : "Independiente",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Independiente_gfhou1.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/ib42ghwmdltgqejyj7zz.png"
   },
-  "869"                  : {
+  "869"   : {
     "name"    : "Lanus",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102255/Lan%C3%BAs_imho9r.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/amwamdjkle81qpqu77ej.png"
   },
-  "877"                  : {
+  "877"   : {
     "name"    : "Newells Ob",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Newells_O_B_ku12u7.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/thrfh0isoqadj1gqb26x.png"
   },
-  "7216"                 : {
+  "7216"  : {
     "name"    : "Olimpo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Olimpo_loun5i.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/fcch3tpacpgmv7obm5ju.png"
   },
-  "7225"                 : {
+  "7225"  : {
     "name"    : "Quilmes",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Quilmes_nkkcgv.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/mhxrqtm7zfl54dgfl2a3.png"
   },
-  "876"                  : {
+  "876"   : {
     "name"    : "Racing Club",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Racing_t4qpm4.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/g9fwwbbt5tyy8wizrefs.png"
   },
-  "868"                  : {
+  "868"   : {
     "name"    : "River Plate",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/River_Plate_iryqqv.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/g3h8zg5wzunw2yjzstud.png"
   },
-  "875"                  : {
+  "875"   : {
     "name"    : "Rosario Cen.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Rosario_Cen_vilh8l.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/pfguusja4wzawlw5mzmk.png"
   },
-  "865"                  : {
+  "865"   : {
     "name"    : "San Lorenzo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/San_Lorenzo_xlimwp.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/k6zphohiup6xpcfedrm1.png"
   },
-  "883"                  : {
+  "883"   : {
     "name"    : "Tigre",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102256/Tigre_m8qara.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/uck7riajoluplfi0betg.png"
   },
-  "872"                  : {
+  "872"   : {
     "name"    : "Velez Sarsf.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409102257/Velez_Sarsf_aerkms.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/vxsxaf9i9irn9yszminf.png"
   },
-  "Chicago Fire"         : {
-    "name"    : "Chicago F.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101922/Chicago_F_ztvwhm.png"
-  },
-  "Chivas USA"           : {
-    "name"    : "Chivas USA",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101922/Chivas_USA_ytatel.png"
-  },
-  "Colorado Rapids"      : {
-    "name"    : "Colorado R.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101922/Colorado_R_vuz3sy.png"
-  },
-  "Columbus Crew"        : {
-    "name"    : "Columbus C.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101922/Columbus_C_wci7ry.png"
-  },
-  "DC United"            : {
-    "name"    : "DC United",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/DC_United_xgeyee.png"
-  },
-  "FC Dallas"            : {
-    "name"    : "FC Dallas",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101922/FC_Dallas_sxpeyu.png"
-  },
-  "Houston Dynamo"       : {
-    "name"    : "Houston D.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101924/Houston_D_zgwkge.png"
-  },
-  "1342"                 : {
+  "1342"  : {
     "name"    : "LA Galaxy",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/LA_Galaxy_hbr7ig.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/v4ezq5p555h6n55equr4.png"
   },
-  "Montreal Impact"      : {
-    "name"    : "Montreal I.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/Montreal_I_exkynh.png"
-  },
-  "1338"                 : {
+  "1338"  : {
     "name"    : "NY Red Bulls",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/NY_Red_Bulls_ux31ke.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/t2tyaofj3aqpvyakaxs7.png"
   },
-  "1337"                 : {
+  "1337"  : {
     "name"    : "N. England R.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/N_England_R_ftwfnt.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/b3kipinacvso42xuenfl.png"
   },
-  "Philadelphia Union"   : {
-    "name"    : "Philadelphia U.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/Philadelphia_U_ugr4bu.png"
-  },
-  "Portland Timbers"     : {
-    "name"    : "Portland T.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101925/Portland_T_o1zc5y.png"
-  },
-  "Real Salt Lake"       : {
-    "name"    : "R. Salt Lake",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/R_Salt_Lake_l2y2tj.png"
-  },
-  "San Jose"             : {
-    "name"    : "San Jose E.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/San_Jose_E_hzyiig.png"
-  },
-  "1347"                 : {
+  "1347"  : {
     "name"    : "Seattle S.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/Seattle_S_lqxihr.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/uryaetemqtmg2qponswr.png"
   },
-  "Sporting Kansas City" : {
-    "name"    : "S. Kansas C.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101924/S_Kansas_C_qlgtow.png"
-  },
-  "Toronto FC"           : {
-    "name"    : "Toronto FC",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101923/Toronto_FC_dqrnn8.png"
-  },
-  "Vancouver Whitecaps"  : {
-    "name"    : "Vancouver W.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1409101924/Vancouver_W_iaz3ht.png"
-  },
-  "690"                  : {
-    "name"    : "Ajax",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977046/Ajax_jxqdg2.png"
-  },
-  "1173"                 : {
-    "name"    : "Anderlecht",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977046/Anderlecht_zmxstl.png"
-  },
-  "2261"                 : {
-    "name"    : "Apoel",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977046/Apoel_enwdwq.png"
-  },
-  "1138"                 : {
-    "name"    : "Basel",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977046/Basel_g9jwiw.png"
-  },
-  "5441"                 : {
-    "name"    : "Bate Borisov",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977046/Bate_rc32g8.png"
-  },
-  "1077"                 : {
-    "name"    : "CSKA Moscow",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977047/CSKA_Moscow_wnoerc.png"
-  },
-  "945"                  : {
-    "name"    : "Galatasaray",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977048/Galatasaray_yue2rb.png"
-  },
-  "8528"                 : {
-    "name"    : "Ludogorets",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977047/Ludogorets_ncux27.png"
-  },
-  "1891"                 : {
+  "1891"  : {
     "name"    : "Malmo FF",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977047/Malmo_og8qq1.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932025/jls4lkpdp7m4enx8cchw.png"
   },
-  "2346"                 : {
-    "name"    : "Maribor",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977048/Maribor_hurr4o.png"
-  },
-  "1023"                 : {
-    "name"    : "Olympiakos",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977049/Olympiacos_gxbmug.png"
-  },
-  "1955"                 : {
-    "name"    : "Shakhtar Don.",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977049/Shakhtar_Don_b4rsvt.png"
-  },
-  "1075"                 : {
-    "name"    : "Zenit",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/c_scale,w_180/v1415977049/Zenit_t6e2ao.png"
-  },
-  "8696"                 : {
+  "8696"  : {
     "name"    : "Zamora",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Zamora_m8fooe.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932032/bl5hvsuct04onzhh4jnq.png"
   },
-  "7646"                 : {
+  "7646"  : {
     "name"    : "Universitário",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Universitario_bu8akl.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932032/u9vc8stbd4cua7qyztwq.png"
   },
-  "8541"                 : {
+  "8541"  : {
     "name"    : "Universidad de Chile",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Univ._de_Chile_mrbbkq.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/k1biglaga9vw9nptohoo.png"
   },
-  "1264"                 : {
+  "1264"  : {
     "name"    : "Tigres",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Tigres_sl8evf.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/nxhffdrb1mps6klmuenl.png"
   },
-  "8543"                 : {
+  "8543"  : {
     "name"    : "Strongest",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/The_Strongest_ss3oa8.jpg"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/a2ek2nsgrfq1upbyoft1.jpg"
   },
-  "7644"                 : {
+  "7644"  : {
     "name"    : "Santa Fé",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062265/Santa_Fe_owowx6.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/bxsxy0a10ibhyeoqlo3r.png"
   },
-  "7645"                 : {
+  "7645"  : {
     "name"    : "San Jose",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062264/San_jos%C3%A9_rv9sf4.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/dvmoybi7zeonxlwnx8vp.png"
   },
-  "1238"                 : {
+  "1238"  : {
     "name"    : "Palestino",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062264/Palestino_wlvikq.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/jnpqfacz2rhomazw3uzk.png"
   },
-  "8614"                 : {
+  "8614"  : {
     "name"    : "Montevideo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062264/Montevideo_W._etzazx.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/suzkjrh3kzwdhbjbgfua.png"
   },
-  "8699"                 : {
+  "8699"  : {
     "name"    : "Mineros",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Mineros_tzps0p.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/opssbo7vkzhdupfvq0ej.png"
   },
-  "1286"                 : {
+  "1286"  : {
     "name"    : "Libertad",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Libertad_marpb6.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/npbmsoibxvmgqrvkjzfh.png"
   },
-  "7205"                 : {
+  "7205"  : {
     "name"    : "Juan Aurich",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Juan_Aurich_jlyqof.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/iqtknqa0i6pf5d7ctj9d.png"
   },
-  "884"                  : {
+  "884"   : {
     "name"    : "Huracan",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Huracan_zvmbyp.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/oklrciqcnbydkb31lp4b.png"
   },
-  "7739"                 : {
+  "7739"  : {
     "name"    : "Guarani",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Guarani_qbkp66.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/nvn1yljjjiundmze6cmz.png"
   },
-  "7203"                 : {
+  "7203"  : {
     "name"    : "Emelec",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062263/Emelec_ssxues.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/cgaei87mtbcfuxnvufhj.png"
   },
-  "8611"                 : {
+  "8611"  : {
     "name"    : "Danubio",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062262/Danubio_zezg45.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/ma9ypgz3gpd4jpwjbptg.png"
   },
-  "8685"                 : {
+  "8685"  : {
     "name"    : "Tachira",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062262/D._T%C3%A1chira_kmmeny.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/hs0ihigevydt6b0komdj.png"
   },
-  "8640"                 : {
+  "8640"  : {
     "name"    : "Atlético Nacional",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427062261/Atl%C3%A9tico_Nacional_nsyef2.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/douq5wafyyukxmyaodtf.png"
   },
-  "8389"                 : {
+  "8389"  : {
     "name"    : "Vancouver Whitecaps",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164213/Vancouver_W_x0o5u2.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/nzbhqsniu6dn4hdf6m7b.png"
   },
-  "1336"                 : {
+  "1336"  : {
     "name"    : "Toronto",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Toronto_FC_wnnso5.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/u0t3e6yhurjhebkiqyfy.png"
   },
-  "1345"                 : {
+  "1345"  : {
     "name"    : "San Jose",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164211/San_Jose_E_s9qbyo.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/z8ou7xhwzzorai12myte.png"
   },
-  "1335"                 : {
+  "1335"  : {
     "name"    : "Sporting Kansas City",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164213/S_Kansas_C_ifwu7w.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/d7bsgxnv75z3iehze17w.png"
   },
-  "1344"                 : {
+  "1344"  : {
     "name"    : "Salt Lake",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/R_Salt_Lake_oyan0e.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/cmhs4nptuwexlhzmxfsj.png"
   },
-  "5916"                 : {
+  "5916"  : {
     "name"    : "Portland Timbers",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164213/Portland_T_ohn3ye.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932039/m9pbfmj8piljkvsqwb9p.png"
   },
-  "7364"                 : {
+  "7364"  : {
     "name"    : "Philadelphia Union",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Philadelphia_U_ooh3re.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/b7ywmfjsnxq6achqflp0.png"
   },
-  "1346"                 : {
+  "1346"  : {
     "name"    : "Houston Dynamo",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Houston_D_dt4khd.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932039/yybzgngzvsud1ozxdnqy.png"
   },
-  "9127"                 : {
+  "9127"  : {
     "name"    : "Montreal Impact",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164210/Montreal_I_p8opd9.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932039/qmdeyctzhlkg3wwrimok.png"
   },
-  "1341"                 : {
+  "1341"  : {
     "name"    : "FC Dallas",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/FC_Dallas_f4oqtn.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/qp9usiiyz9acn8du71ww.png"
   },
-  "1339"                 : {
+  "1339"  : {
     "name"    : "DC United",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/DC_United_jy0zhw.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/b4zzujqayazl0o0qwqw9.png"
   },
-  "1334"                 : {
+  "1334"  : {
     "name"    : "Columbus Crew",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/Columbus_C_hvfq6e.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/fwnuxkf854vsaxxn9iin.png"
   },
-  "1340"                 : {
+  "1340"  : {
     "name"    : "Colorado Rapids",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/Colorado_R_eqwvj7.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/usceawqwmbieunokuxts.png"
   },
-  "1333"                 : {
+  "1333"  : {
     "name"    : "Chicago Fire",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427164209/Chicago_F_wumddj.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932037/bbsmfuqes2zj3805zzpd.png"
   },
-  "20622"                : {
+  "20622" : {
     "name"    : "New York City FC",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165314/download_dhzf0t.jpg"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932039/elix1vfybmez8ret07sc.png"
   },
-  "12204"                : {
+  "12204" : {
     "name"    : "Orlando City",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165401/photo_men2ow.png"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932038/gqrdidghlcg6mumoo8ba.png"
   },
-  "9130"                : {
+  "9130"  : {
     "name"    : "Barcelona Guayaquil",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165482/download_1_uoedb3.jpg"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/mwwxw1mi0ujdakzq5ebw.png"
   },
-  "8420"                : {
+  "8420"  : {
     "name"    : "Sporting Cristal",
-    "picture" : "http://res.cloudinary.com/hivstsgwo/image/upload/v1427165540/download_2_zdkktr.jpg"
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/bzheavqawbqaw6deoqh6.png"
+  },
+  "6471"  : {
+    "name"    : "Uniao Madeira",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932033/zzu4xwpdzqbjl7jpsqiy.png"
+  },
+  "6470"  : {
+    "name"    : "Tondela",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932034/vswtbocop2tvumplgj6c.png"
+  },
+  "488"   : {
+    "name"    : "Troyes",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932036/hhb2n7ytuikcmfrqrjbf.png"
+  },
+  "8781"  : {
+    "name"    : "GFCO Ajaccio",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/aarye3k8o097ku0tcr03.png"
+  },
+  "493"   : {
+    "name"    : "Angers",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932035/zbpn7wnu45sa7gd4xmhj.svg"
+  },
+  "9147"  : {
+    "name"    : "Joinville",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932071/bjc2sd0lecjizjzv7fks.png"
+  },
+  "1227"  : {
+    "name"    : "Vasco da Gama",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/ghschflyq5zucjrwladj.png"
+  },
+  "1777"  : {
+    "name"    : "Avai",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932069/i8as8kj4zughpwetqg0h.png"
+  },
+  "1266"  : {
+    "name"    : "Ponte Preta",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932070/nnhretprvalgbx8yz3rm.png"
+  },
+  "9289"  : {
+    "name"    : "Crucero del Norte",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932049/fs02z7zr2a3jzw2tpen5.png"
+  },
+  "1208"  : {
+    "name"    : "Nueva Chicago",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932051/pltdj7heixvmp445lr3z.png"
+  },
+  "7102"  : {
+    "name"    : "Temperley",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/gyahuwbhnhm7s3plxal8.png"
+  },
+  "7206"  : {
+    "name"    : "Union Santa Fe",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932031/bxsxy0a10ibhyeoqlo3r.png"
+  },
+  "7208"  : {
+    "name"    : "San Martin Juan",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/gjqrdb2zbma1th9ecl4b.png"
+  },
+  "870"   : {
+    "name"    : "Colon",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/hyucg9zwiei8lymep2l3.svg"
+  },
+  "873"   : {
+    "name"    : "Godoy Cruz",
+    "picture" : ""
+  },
+  "7117"  : {
+    "name"    : "Sarmiento Junin",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/vxjci14umpjtwrbvoi2d.png"
+  },
+  "871"   : {
+    "name"    : "Argentinos Juniors",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/px7gd6v8nynonjqn5wi0.png"
+  },
+  "7223"  : {
+    "name"    : "Aldosivi",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932048/m9tfzv9rvmkyipfck80x.png"
+  },
+  "880"   : {
+    "name"    : "Gimnasia Lp",
+    "picture" : ""
+  },
+  "5441"  : {
+    "name"    : "BATE Borisov",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/radolpnqhr64ombg2gi8.png"
+  },
+  "331"   : {
+    "name"    : "Bayern Munich",
+    "picture" : ""
+  },
+  "1023"  : {
+    "name"    : "Olympiakos",
+    "picture" : ""
+  },
+  "566"   : {
+    "name"    : "Maccabi Tel Aviv",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/a3o6yan874oxgrnqi4gx.png"
+  },
+  "1956"  : {
+    "name"    : "Dinamo Kiev",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/ollsh7vqaisafhgrmizn.png"
+  },
+  "1075"  : {
+    "name"    : "Zenit Petersburg",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/lukd1iapt2csjg4ryjnc.png"
+  },
+  "1174"  : {
+    "name"    : "KAA Gent",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/sw3xugvjl4eb3hpjgwll.png"
+  },
+  "945"   : {
+    "name"    : "Galatasaray",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/dp20uhysu2oad9rluhpl.png"
+  },
+  "1955"  : {
+    "name"    : "Shakhtar Donetsk",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932027/ecb2i1prr7shyxcbue6b.png"
+  },
+  "1077"  : {
+    "name"    : "CSKA Moscow",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/so3yk4psdh1w4arshfhc.png"
+  },
+  "725"   : {
+    "name"    : "PSV Eindhoven",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932025/xrkjtxfpwvslrf7plxwn.png"
+  },
+  "10785" : {
+    "name"    : "Astana",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932025/ljc83xvroknyw0pcdvrg.png"
+  },
+  "454"   : {
+    "name"    : "SV Darmstadt 98",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/uehgczccor3tncw4xjet.png"
+  },
+  "369"   : {
+    "name"    : "FC Ingolstadt 04",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932023/mcopvnq4yqdkaaqkapt3.png"
+  },
+  "254"   : {
+    "name"    : "Frosinone",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932068/ozkt7fsghzeyxtx69pyb.png"
+  },
+  "8552"  : {
+    "name"    : "Carpi",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932068/bh2xherzs7sjmf1rooho.png"
+  },
+  "224"   : {
+    "name"    : "Inter Milan",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932067/evsikgbk8glpzpcvacst.png"
+  },
+  "245"   : {
+    "name"    : "Bologna",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932068/zhqnwjizjhy2jlnuyl79.png"
+  },
+  "153"   : {
+    "name"    : "Sporting Gijon",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/gwyhkauqljei5cprfpoa.png"
+  },
+  "133"   : {
+    "name"    : "Villarreal",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932043/hpkytevzwcuhieql43df.png"
+  },
+  "146"   : {
+    "name"    : "Real Betis",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932044/fuvd7l27sdastu9ubkhu.png"
+  },
+  "167"   : {
+    "name"    : "Las Palmas",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932044/gnnjhpj4upsqtc080gpa.png"
+  },
+  "4"     : {
+    "name"    : "Watford",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/owfhch2rdrxmeq1hoazd.png"
+  },
+  "16"    : {
+    "name"    : "Norwich",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/f2yzveaptwexpppzmtoz.png"
+  },
+  "50"    : {
+    "name"    : "Bournemouth",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932041/svdzhdabopiwozgo1ryh.png"
+  },
+  "2245"  : {
+    "name"    : "Nk Dinamo Zagreb",
+    "picture" : "http://res.cloudinary.com/hqsehn3vw/image/upload/v1446932026/ollsh7vqaisafhgrmizn.png"
   }
 }
