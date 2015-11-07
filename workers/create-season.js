@@ -20,10 +20,10 @@ module.exports = function createSeason(done) {
   }, function (season, next) {
     if (season) done();
     season = new Season();
-    season.finishAt(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 28));
+    season.finishAt(new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7));
     season.save(next);
   }, function (season, _, next) {
-    User.update({}, {'$push' : {'season' : season._id}}, {'multi' : true}, next);
+    User.update({}, {'$set' : {'funds' : 100, 'stake' : 0}}, {'multi' : true}, next);
   }], done);
 };
 
