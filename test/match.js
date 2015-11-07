@@ -1,54 +1,20 @@
-/*globals describe, before, it, after*/
+/*globals describe, before, it*/
 'use strict';
 require('should');
-
-var supertest, auth, nock, nconf, crypto, app,
-Season, User, Championship, Match, Bet;
-
-supertest = require('supertest');
-auth = require('auth');
-nock = require('nock');
-nconf = require('nconf');
-crypto = require('crypto');
-app = supertest(require('../index.js'));
-
-Season = require('../models/season');
-User = require('../models/user');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Bet = require('../models/bet');
-
-nconf.defaults(require('../config'));
-
 describe('match', function () {
-  var user, championship;
+  var supertest = require('supertest');
+  var app = supertest(require('../index.js'));
+  var Championship = require('../models/championship');
+  var Match = require('../models/match');
 
-  before(Season.remove.bind(Season));
-  before(User.remove.bind(User));
   before(Championship.remove.bind(Championship));
 
   before(function (done) {
-    var season;
-    season = new Season({
-      'finishAt'  : new Date(),
-      'createdAt' : new Date()
-    });
-    season.save(done);
-  });
-
-  before(function (done) {
-    user = new User();
-    user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
-    user.country = 'Brazil';
-    user.save(done);
-  });
-
-  before(function (done) {
-    championship = new Championship({
-      'name'    : 'brasileirão',
-      'type'    : 'national league',
-      'country' : 'Brazil'
-    });
+    var championship = new Championship();
+    championship._id = '563d72882cb3e53efe2827fc';
+    championship.name = 'brasileirão';
+    championship.type = 'national league';
+    championship.country = 'Brazil';
     championship.save(done);
   });
 
@@ -56,63 +22,58 @@ describe('match', function () {
     before(Match.remove.bind(Match));
 
     before(function (done) {
-      var match;
-      match = new Match({
-        'round'        : 1,
-        'date'         : new Date(),
-        'guest'        : {'name' : 'botafogo', 'picture' : 'http://pictures.com/botafogo.png'},
-        'host'         : {'name' : 'fluminense', 'picture' : 'http://pictures.com/fluminense.png'},
-        'championship' : championship._id
-      });
+      var match = new Match();
+      match._id = '563d72882cb3e53efe2827fd';
+      match.round = 1;
+      match.date = new Date();
+      match.guest = {'name' : 'botafogo', 'picture' : 'http://pictures.com/botafogo.png'};
+      match.host = {'name' : 'fluminense', 'picture' : 'http://pictures.com/fluminense.png'};
+      match.championship = '563d72882cb3e53efe2827fc';
       match.save(done);
     });
 
     it('should list one match', function (done) {
-      var request;
-      request = app.get('/championships/' + championship._id + '/matches');
-      request.set('auth-token', auth.token(user));
-      request.expect(200);
-      request.expect(function (response) {
+      app.get('/matches').expect(200).expect(function (response) {
         response.body.should.be.instanceOf(Array);
-        response.body.should.have.lengthOf(1);
-      });
-      request.end(done);
+        response.body.should.have.lengthOf(1)
+      }).end(done)
     });
   });
 
   describe('get', function () {
-    var match;
-
     before(Match.remove.bind(Match));
 
     before(function (done) {
-      match = new Match({
-        'round'        : 1,
-        'date'         : new Date(),
-        'guest'        : {'name' : 'botafogo', 'picture' : 'http://pictures.com/botafogo.png'},
-        'host'         : {'name' : 'fluminense', 'picture' : 'http://pictures.com/fluminense.png'},
-        'championship' : championship._id
-      });
+      var match = new Match();
+      match._id = '563d72882cb3e53efe2827fd';
+      match.round = 1;
+      match.date = new Date();
+      match.guest = {'name' : 'botafogo', 'picture' : 'http://pictures.com/botafogo.png'};
+      match.host = {'name' : 'fluminense', 'picture' : 'http://pictures.com/fluminense.png'};
+      match.championship = '563d72882cb3e53efe2827fc';
       match.save(done);
     });
 
-    it('should return', function (done) {
-      var request;
-      request = app.get('/championships/' + championship._id + '/matches/' + match._id);
-      request.set('auth-token', auth.token(user));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.have.property('guest').with.property('name').be.equal('botafogo');
-        response.body.should.have.property('guest').with.property('picture').be.equal('http://pictures.com/botafogo.png');
-        response.body.should.have.property('host').with.property('name').be.equal('fluminense');
-        response.body.should.have.property('host').with.property('picture').be.equal('http://pictures.com/fluminense.png');
-        response.body.should.have.property('round').be.equal(1);
-        response.body.should.have.property('date');
-        response.body.should.have.property('finished').be.equal(false);
-        response.body.should.have.property('result').with.property('guest').be.equal(0);
-        response.body.should.have.property('result').with.property('host').be.equal(0);
+    describe('without valid id', function () {
+      it('should return', function (done) {
+        app.get('/matches/invalid').expect(404).end(done);
       });
-      request.end(done);
+    });
+
+    describe('with valid id', function () {
+      it('should return', function (done) {
+        app.get('/matches/563d72882cb3e53efe2827fd').expect(200).expect(function (response) {
+          response.body.should.have.property('guest').with.property('name').be.equal('botafogo');
+          response.body.should.have.property('guest').with.property('picture').be.equal('http://pictures.com/botafogo.png');
+          response.body.should.have.property('host').with.property('name').be.equal('fluminense');
+          response.body.should.have.property('host').with.property('picture').be.equal('http://pictures.com/fluminense.png');
+          response.body.should.have.property('round').be.equal(1);
+          response.body.should.have.property('date');
+          response.body.should.have.property('finished').be.equal(false);
+          response.body.should.have.property('result').with.property('guest').be.equal(0);
+          response.body.should.have.property('result').with.property('host').be.equal(0);
+        }).end(done);
+      });
     });
   });
 });

@@ -1,28 +1,15 @@
 'use strict';
 
-var mongoose, jsonSelect, nconf, async, Schema, schema;
-
-mongoose = require('mongoose');
-jsonSelect = require('mongoose-json-select');
-nconf = require('nconf');
-async = require('async');
-Schema = mongoose.Schema;
-
-schema = new Schema({
-  'sponsor'   : {
+var mongoose = require('mongoose');
+var async = require('async');
+var schema = new mongoose.Schema({
+  'sponsor'  : {
     'type' : String
   },
-  'gift'      : {
+  'gift'     : {
     'type' : String
   },
-  'finishAt'  : {
-    'type' : Date
-  },
-  'createdAt' : {
-    'type'    : Date,
-    'default' : Date.now
-  },
-  'updatedAt' : {
+  'finishAt' : {
     'type' : Date
   }
 }, {
@@ -33,18 +20,12 @@ schema = new Schema({
   }
 });
 
-schema.plugin(jsonSelect, {
-  '_id'       : 1,
-  'sponsor'   : 1,
-  'gift'      : 1,
-  'finishAt'  : 1,
-  'createdAt' : 1,
-  'updatedAt' : 1
-});
-
-schema.pre('save', function setSeasonUpdatedAt(next) {
-  this.updatedAt = new Date();
-  return next();
+schema.plugin(require('mongoose-autopopulate'));
+schema.plugin(require('mongoose-json-select'), {
+  '_id'      : 1,
+  'sponsor'  : 1,
+  'gift'     : 1,
+  'finishAt' : 1
 });
 
 module.exports = mongoose.model('Season', schema);

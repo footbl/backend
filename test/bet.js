@@ -1,219 +1,139 @@
-/*globals describe, before, it, after*/
+/*globals describe, before, it*/
 'use strict';
 require('should');
-
-var supertest, auth, nock, nconf, crypto, app,
-Season, User, Championship, Match, Bet;
-
-supertest = require('supertest');
-auth = require('auth');
-nock = require('nock');
-nconf = require('nconf');
-crypto = require('crypto');
-app = supertest(require('../index.js'));
-
-Season = require('../models/season');
-User = require('../models/user');
-Championship = require('../models/championship');
-Match = require('../models/match');
-Bet = require('../models/bet');
-
-nconf.defaults(require('../config'));
-
 describe('bet', function () {
-  var user, championship, match;
+  var supertest = require('supertest');
+  var app = supertest(require('../index.js'));
+  var User = require('../models/user');
+  var Championship = require('../models/championship');
+  var Match = require('../models/match');
+  var Bet = require('../models/bet');
 
-  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
   before(Championship.remove.bind(Championship));
   before(Match.remove.bind(Match));
 
   before(function (done) {
-    var season;
-    season = new Season({
-      'finishAt'  : new Date(),
-      'createdAt' : new Date()
-    });
-    season.save(done);
-  });
-
-  before(function (done) {
-    user = new User();
-    user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
-    user.country = 'Brazil';
-    user.save(done);
-  });
-
-  before(function (done) {
-    championship = new Championship({
-      'name'    : 'brasileirão',
-      'type'    : 'national league',
-      'country' : 'Brazil'
-    });
+    var championship = new Championship();
+    championship._id = '563d72882cb3e53efe2827c1';
+    championship.name = 'brasileirão';
+    championship.type = 'national league';
+    championship.country = 'Brazil';
     championship.save(done);
   });
 
   before(function (done) {
-    match = new Match({
-      'round'        : 1,
-      'date'         : new Date(),
-      'guest'        : {'name' : 'botafogo', 'picture' : 'http://pictures.com/botafogo.png'},
-      'host'         : {'name' : 'fluminense', 'picture' : 'http://pictures.com/fluminense.png'},
-      'championship' : championship._id
-    });
+    var match = new Match();
+    match._id = '563d72882cb3e53efe2827m1';
+    match.round = 1;
+    match.date = new Date();
+    match.guest = {'name' : 'botafogo', 'picture' : 'http://pictures.com/botafogo.png'};
+    match.host = {'name' : 'fluminense', 'picture' : 'http://pictures.com/fluminense.png'};
+    match.championship = '563d72882cb3e53efe2827c1';
     match.save(done);
   });
 
+  before(function (done) {
+    var user = new User();
+    user._id = '563decb2a6269cb39236de97';
+    user.email = 'u0@footbl.co';
+    user.username = 'owner';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
+    user.save(done);
+  });
+
+  before(function (done) {
+    var user = new User();
+    user._id = '563decb7a6269cb39236de98';
+    user.email = 'u1@footbl.co';
+    user.username = 'u1';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
+    user.save(done);
+  });
+
   describe('create', function () {
-    before(Bet.remove.bind(Bet));
+    beforeEach(Bet.remove.bind(Bet));
 
-    describe('with finished match', function () {
-      before(function (done) {
-        match.finished = true;
-        match.pot.guest = 0;
-        match.pot.host = 0;
-        match.pot.draw = 0;
-        match.save(done);
-      });
-
+    describe('without valid credentials', function () {
       it('should raise error', function (done) {
-        var request;
-        request = app.post('/users/' + user._id + '/bets');
-        request.set('auth-token', auth.token(user));
-        request.send({'match' : match._id});
-        request.send({'bid' : 50});
-        request.send({'result' : 'draw'});
-        request.expect(400);
-        request.expect(function (response) {
-          response.body.should.have.property('match').be.equal('match already started');
-        });
-        request.end(done);
+        app.post('/bets').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('with unfinished match', function () {
-      before(function (done) {
-        match.finished = false;
-        match.pot.guest = 0;
-        match.pot.host = 0;
-        match.pot.draw = 0;
-        match.save(done);
-      });
-
-      describe('with insufficient funds', function () {
+    describe('with valid credentials', function () {
+      describe('with match started', function () {
         before(function (done) {
-          user.funds = 10;
-          user.stake = 0;
-          user.save(done);
+          User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 100}}, done);
+        });
+
+        before(function (done) {
+          User.update({'_id' : '563decb7a6269cb39236de98'}, {'$set' : {'funds' : 100}}, done);
+        });
+
+        before(function (done) {
+          Match.update({'_id' : '563d72882cb3e53efe2827m1'}, {'$set' : {'finished' : true}}, done);
         });
 
         it('should raise error', function (done) {
-          var request;
-          request = app.post('/users/' + user._id + '/bets');
-          request.set('auth-token', auth.token(user));
-          request.send({'match' : match._id});
-          request.send({'bid' : 50});
-          request.send({'result' : 'draw'});
-          request.expect(400);
-          request.expect(function (response) {
-            response.body.should.have.property('bid').be.equal('insufficient funds');
-          });
-          request.end(done);
+          app.post('/bets').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).send({
+            'match'  : '563d72882cb3e53efe2827m1',
+            'result' : 'draw',
+            'bid'    : 10
+          }).expect(400).end(done)
         });
       });
 
-      describe('with sufficient funds', function () {
-        before(function (done) {
-          user.funds = 100;
-          user.stake = 0;
-          user.save(done);
+      describe('with match unstarted', function () {
+        beforeEach(function (done) {
+          Match.update({'_id' : '563d72882cb3e53efe2827m1'}, {'$set' : {'finished' : false}}, done);
         });
 
-        describe('without match', function () {
-          it('raise error', function (done) {
-            var request;
-            request = app.post('/users/' + user._id + '/bets');
-            request.set('auth-token', auth.token(user));
-            request.send({'bid' : 50});
-            request.send({'result' : 'draw'});
-            request.expect(400);
-            request.expect(function (response) {
-              response.body.should.have.property('match').be.equal('required');
-            });
-            request.end(done);
+        describe('with insufficient funds', function () {
+          before(function (done) {
+            User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 0}}, done);
+          });
+
+          before(function (done) {
+            User.update({'_id' : '563decb7a6269cb39236de98'}, {'$set' : {'funds' : 0}}, done);
+          });
+
+          it('should raise error', function (done) {
+            app.post('/bets').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).send({
+              'match'  : '563d72882cb3e53efe2827m1',
+              'result' : 'draw',
+              'bid'    : 10
+            }).expect(400).end(done);
           });
         });
 
-        describe('without bid', function () {
-          it('raise error', function (done) {
-            var request;
-            request = app.post('/users/' + user._id + '/bets');
-            request.set('auth-token', auth.token(user));
-            request.send({'match' : match._id});
-            request.send({'result' : 'draw'});
-            request.expect(400);
-            request.expect(function (response) {
-              response.body.should.have.property('bid').be.equal('required');
-            });
-            request.end(done);
+        describe('with sufficient funds', function () {
+          before(function (done) {
+            User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 100}}, done);
           });
-        });
 
-        describe('without result', function () {
-          it('raise error', function (done) {
-            var request;
-            request = app.post('/users/' + user._id + '/bets');
-            request.set('auth-token', auth.token(user));
-            request.send({'match' : match._id});
-            request.send({'bid' : 50});
-            request.expect(400);
-            request.expect(function (response) {
-              response.body.should.have.property('result').be.equal('required');
-            });
-            request.end(done);
+          before(function (done) {
+            User.update({'_id' : '563decb7a6269cb39236de98'}, {'$set' : {'funds' : 100}}, done);
           });
-        });
 
-        describe('with valid bid, match and result', function () {
           it('should create', function (done) {
-            var request;
-            request = app.post('/users/' + user._id + '/bets');
-            request.set('auth-token', auth.token(user));
-            request.send({'match' : match._id});
-            request.send({'bid' : 50});
-            request.send({'result' : 'draw'});
-            request.expect(201);
-            request.expect(function (response) {
-              response.body.should.have.property('match').with.property('round').be.equal(1);
-              response.body.should.have.property('bid').be.equal(50);
-              response.body.should.have.property('result').be.equal('draw');
-            });
-            request.end(done);
+            app.post('/bets').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).send({
+              'match'  : '563d72882cb3e53efe2827m1',
+              'result' : 'draw',
+              'bid'    : 10
+            }).expect(201).end(done)
           });
 
           after(function (done) {
-            var request;
-            request = app.get('/championships/' + championship._id + '/matches/' + match._id);
-            request.set('auth-token', auth.token(user));
-            request.expect(200);
-            request.expect(function (response) {
-              response.body.should.have.property('pot').with.property('guest').be.equal(0);
-              response.body.should.have.property('pot').with.property('host').be.equal(0);
-              response.body.should.have.property('pot').with.property('draw').be.equal(50);
-            });
-            request.end(done);
+            app.get('/users/563decb2a6269cb39236de97').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(function (response) {
+              response.body.should.have.property('funds').be.equal(90);
+              response.body.should.have.property('stake').be.equal(10);
+            }).end(done);
           });
 
           after(function (done) {
-            var request;
-            request = app.get('/users/' + user._id);
-            request.set('auth-token', auth.token(user));
-            request.expect(200);
-            request.expect(function (response) {
-              response.body.should.have.property('funds').be.equal(50);
-              response.body.should.have.property('stake').be.equal(50);
-            });
-            request.end(done);
+            app.get('/matches/563d72882cb3e53efe2827m1').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(function (response) {
+              response.body.should.have.property('pot').have.property('draw').be.equal(10);
+            }).end(done);
           });
         });
       });
@@ -224,218 +144,168 @@ describe('bet', function () {
     before(Bet.remove.bind(Bet));
 
     before(function (done) {
-      match.finished = false;
-      match.pot.guest = 0;
-      match.pot.host = 0;
-      match.pot.draw = 0;
-      match.save(done);
-    });
-
-    before(function (done) {
-      user.funds = 100;
-      user.stake = 0;
-      user.save(done);
-    });
-
-    before(function (done) {
-      var bet;
-      bet = new Bet();
-      bet.bid = 40;
+      var bet = new Bet();
+      bet._id = '563d72882cb3e53efe2827fc';
+      bet.user = '563decb2a6269cb39236de97';
+      bet.match = '563d72882cb3e53efe2827m1';
       bet.result = 'draw';
-      bet.match = match;
-      bet.user = user;
+      bet.bid = 10;
       bet.save(done);
     });
 
-    it('should list one bet', function (done) {
-      var request;
-      request = app.get('/users/' + user._id + '/bets');
-      request.set('auth-token', auth.token(user));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.be.instanceOf(Array);
-        response.body.should.have.lengthOf(1);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.get('/bets').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
-      request.end(done);
+    });
+
+    describe('with credentials', function () {
+      it('should list one bet', function (done) {
+        app.get('/bets').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+          response.body.should.be.instanceOf(Array);
+          response.body.should.have.lengthOf(1)
+        }).end(done)
+      });
     });
   });
 
-  describe('details', function () {
-    var bet;
-
+  describe('get', function () {
     before(Bet.remove.bind(Bet));
 
     before(function (done) {
-      match.finished = false;
-      match.pot.guest = 0;
-      match.pot.host = 0;
-      match.pot.draw = 0;
-      match.save(done);
-    });
-
-    before(function (done) {
-      user.funds = 100;
-      user.stake = 0;
-      user.save(done);
-    });
-
-    before(function (done) {
-      bet = new Bet();
-      bet.bid = 40;
+      var bet = new Bet();
+      bet._id = '563d72882cb3e53efe2827fc';
+      bet.user = '563decb2a6269cb39236de97';
+      bet.match = '563d72882cb3e53efe2827m1';
       bet.result = 'draw';
-      bet.match = match;
-      bet.user = user;
+      bet.bid = 10;
       bet.save(done);
     });
 
-    it('should return', function (done) {
-      var request;
-      request = app.get('/users/' + user._id + '/bets/' + bet._id);
-      request.set('auth-token', auth.token(user));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.have.property('bid').be.equal(40);
-        response.body.should.have.property('result').be.equal('draw');
-        response.body.should.have.property('match');
-        response.body.should.have.property('user');
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.get('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
-      request.end(done);
+    });
+
+    describe('with credentials', function () {
+      describe('without valid id', function () {
+        it('should return', function (done) {
+          app.get('/bets/invalid').expect(404).end(done);
+        });
+      });
+
+      describe('with valid id', function () {
+        it('should return', function (done) {
+          app.get('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+            response.body.should.have.property('user');
+            response.body.should.have.property('match');
+            response.body.should.have.property('result');
+            response.body.should.have.property('bid');
+          }).end(done);
+        });
+      });
     });
   });
 
   describe('update', function () {
-    var bet;
+    beforeEach(Bet.remove.bind(Bet));
 
-    before(Bet.remove.bind(Bet));
+    beforeEach(function (done) {
+      User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 90, 'stake' : 10}}, done);
+    });
 
-    before(function (done) {
-      bet = new Bet();
-      bet.bid = 40;
-      bet.result = 'guest';
-      bet.match = match;
-      bet.user = user;
+    beforeEach(function (done) {
+      Match.update({'_id' : '563d72882cb3e53efe2827m1'}, {'$set' : {'finished' : false}}, done);
+    });
+
+    beforeEach(function (done) {
+      var bet = new Bet();
+      bet._id = '563d72882cb3e53efe2827fc';
+      bet.user = '563decb2a6269cb39236de97';
+      bet.match = '563d72882cb3e53efe2827m1';
+      bet.result = 'draw';
+      bet.bid = 10;
       bet.save(done);
     });
 
-    describe('with finished match', function () {
-      before(function (done) {
-        match.finished = true;
-        match.pot.guest = 40;
-        match.pot.host = 0;
-        match.pot.draw = 0;
-        match.save(done);
-      });
-
+    describe('without valid credentials', function () {
       it('should raise error', function (done) {
-        var request;
-        request = app.put('/users/' + user._id + '/bets/' + bet._id);
-        request.set('auth-token', auth.token(user));
-        request.send({'match' : match._id});
-        request.send({'bid' : 50});
-        request.send({'result' : 'draw'});
-        request.expect(400);
-        request.expect(function (response) {
-          response.body.should.have.property('match').be.equal('match already started');
-        });
-        request.end(done);
+        app.put('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('with unfinished match', function () {
-      before(function (done) {
-        match.finished = false;
-        match.pot.guest = 40;
-        match.pot.host = 0;
-        match.pot.draw = 0;
-        match.save(done);
-      });
-
-      describe('with insufficient funds', function () {
-        before(function (done) {
-          user.funds = 5;
-          user.stake = 40;
-          user.save(done);
-        });
-
+    describe('with credentials', function () {
+      describe('with other user credentials', function () {
         it('should raise error', function (done) {
-          var request;
-          request = app.put('/users/' + user._id + '/bets/' + bet._id);
-          request.set('auth-token', auth.token(user));
-          request.send({'match' : match._id});
-          request.send({'bid' : 50});
-          request.send({'result' : 'draw'});
-          request.expect(400);
-          request.expect(function (response) {
-            response.body.should.have.property('bid').be.equal('insufficient funds');
-          });
-          request.end(done);
+          app.put('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(405).end(done);
         });
       });
 
-      describe('with sufficient funds', function () {
-        before(function (done) {
-          user.funds = 60;
-          user.stake = 40;
-          user.save(done);
-        });
-
-        describe('without bid', function () {
-          it('raise error', function (done) {
-            var request;
-            request = app.put('/users/' + user._id + '/bets/' + bet._id);
-            request.set('auth-token', auth.token(user));
-            request.send({'match' : match._id});
-            request.send({'result' : 'draw'});
-            request.expect(400);
-            request.expect(function (response) {
-              response.body.should.have.property('bid').be.equal('required');
-            });
-            request.end(done);
+      describe('with user credentials', function () {
+        describe('without valid id', function () {
+          it('should return', function (done) {
+            app.put('/bets/invalid').expect(404).end(done);
           });
         });
 
-        describe('without result', function () {
-          it('raise error', function (done) {
-            var request;
-            request = app.put('/users/' + user._id + '/bets/' + bet._id);
-            request.set('auth-token', auth.token(user));
-            request.send({'match' : match._id});
-            request.send({'bid' : 50});
-            request.expect(400);
-            request.expect(function (response) {
-              response.body.should.have.property('result').be.equal('required');
+        describe('with valid id', function () {
+          describe('with match started', function () {
+            beforeEach(function (done) {
+              User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 90}}, done);
             });
-            request.end(done);
-          });
-        });
 
-        describe('with valid bid, match and result', function () {
-          it('should update', function (done) {
-            var request;
-            request = app.put('/users/' + user._id + '/bets/' + bet._id);
-            request.set('auth-token', auth.token(user));
-            request.send({'match' : match._id});
-            request.send({'bid' : 50});
-            request.send({'result' : 'draw'});
-            request.expect(200);
-            request.expect(function (response) {
-              response.body.should.have.property('match').with.property('round').be.equal(1);
-              response.body.should.have.property('bid').be.equal(50);
-              response.body.should.have.property('result').be.equal('draw');
+            beforeEach(function (done) {
+              Match.update({'_id' : '563d72882cb3e53efe2827m1'}, {'$set' : {'finished' : true}}, done);
             });
-            request.end(done);
+
+            it('should raise error', function (done) {
+              app.put('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(400).end(done)
+            });
           });
 
-          after(function (done) {
-            var request;
-            request = app.get('/users/' + user._id);
-            request.set('auth-token', auth.token(user));
-            request.expect(200);
-            request.expect(function (response) {
-              response.body.should.have.property('funds').be.equal(50);
-              response.body.should.have.property('stake').be.equal(50);
+          describe('with match unstarted', function () {
+            beforeEach(function (done) {
+              Match.update({'_id' : '563d72882cb3e53efe2827m1'}, {'$set' : {'finished' : false}}, done);
             });
-            request.end(done);
+
+            describe('with insufficient funds', function () {
+              beforeEach(function (done) {
+                User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 0}}, done);
+              });
+
+              it('should raise error', function (done) {
+                app.put('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(400).end(done);
+              });
+            });
+
+            describe('with sufficient funds', function () {
+              beforeEach(function (done) {
+                User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 90}}, done);
+              });
+
+              it('should update', function (done) {
+                app.put('/bets/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).send({
+                  'match'  : '563d72882cb3e53efe2827m1',
+                  'result' : 'guest',
+                  'bid'    : 10
+                }).expect(200).end(done)
+              });
+
+              after(function (done) {
+                app.get('/users/563decb2a6269cb39236de97').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(function (response) {
+                  response.body.should.have.property('funds').be.equal(90);
+                  response.body.should.have.property('stake').be.equal(10);
+                }).end(done);
+              });
+
+              after(function (done) {
+                app.get('/matches/563d72882cb3e53efe2827m1').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(function (response) {
+                  response.body.should.have.property('pot').have.property('draw').be.equal(0);
+                  response.body.should.have.property('pot').have.property('guest').be.equal(10);
+                }).end(done);
+              });
+            });
           });
         });
       });

@@ -1,196 +1,117 @@
 'use strict';
 
-var router, nconf, async, auth, push, crypto,
-User, CreditRequest;
-
-router = require('express').Router();
-nconf = require('nconf');
-async = require('async');
-auth = require('auth');
-push = require('push');
-crypto = require('crypto');
-
-User = require('../models/user');
-CreditRequest = require('../models/credit-request');
+var router = require('express').Router();
+var async = require('async');
+var CreditRequest = require('../models/credit-request');
 
 /**
- * @api {POST} /users/:userOrFacebookId/credit-requests createCreditRequest
- * @apiName createCreditRequest
+ * @api {post} /credit-requests Creates a new credit request.
+ * @apiName create
  * @apiGroup CreditRequest
  */
 router
-.route('/users/:userOrFacebookId/credit-requests')
-.post(auth.session())
-.post(function createCreditRequest(request, response, next) {
+.route('/credit-requests')
+.post(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var query, id;
-    query = User.findOne();
-    id = request.params.userOrFacebookId;
-    if (!require('mongoose').Types.ObjectId.isValid(id)) query.where('facebookId').equals(id);
-    else query.where('_id').equals(id);
-    query.exec(next);
+    if ((/^[0-9a-fA-F]{24}$/).test(request.body.user)) {
+      require('../models/user').findOne().where('_id').equals(request.body.user).exec(next);
+    } else {
+      require('../models/user').findOne().where('facebookId').equals(request.body.user).exec(next);
+    }
   }, function (user, next) {
-    if (user) return next(null, user, null);
-    user = new User({'facebookId' : request.params.userOrFacebookId, 'password' : 'temp', 'active' : false});
-    return user.save(next);
-  }, function (user, _, next) {
-    var creditRequest;
-    creditRequest = new CreditRequest();
+    var User = require('../models/user');
+    if (!user) user = new User({'facebookId' : request.body.user, 'password' : 'tmp', 'active' : false});
+    var creditRequest = new CreditRequest();
     creditRequest.creditedUser = request.session._id;
     creditRequest.chargedUser = user._id;
+    async.parallel([user.save.bind(user), creditRequest.save.bind(creditRequest)], next);
+  }, function (result) {
+    response.status(201).send(result[1].id);
+  }], next);
+});
+
+/**
+ * @api {get} /credit-requests List all credit request.
+ * @apiName list
+ * @apiGroup CreditRequest
+ */
+router
+.route('/credit-requests')
+.get(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  async.waterfall([function (next) {
+    CreditRequest.find()
+    .or([{'creditedUser' : request.session.id}, {'chargedUser' : request.session.id}])
+    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+  }, function (creditRequests) {
+    response.status(200).send(creditRequests);
+  }], next);
+});
+
+/**
+ * @api {get} /credit-requests/:creditRequest Get credit request.
+ * @apiName get
+ * @apiGroup CreditRequest
+ */
+router
+.route('/credit-requests/:id')
+.get(function (request, response) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.creditRequest.creditedUser.id && request.session.id !== request.creditRequest.chargedUser.id) throw new Error('invalid method');
+  response.status(200).send(request.creditRequest);
+});
+
+/**
+ * @api {put} /credit-requests/:creditRequest/approve Approve credit request.
+ * @apiName approve
+ * @apiGroup CreditRequest
+ */
+router
+.route('/credit-requests/:id/approve')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.creditRequest.chargedUser.id) throw new Error('invalid method');
+  async.waterfall([function (next) {
+    var creditRequest = request.creditRequest;
+    var availableCredits = creditRequest.creditedUser.funds + creditRequest.creditedUser.stake;
+    creditRequest.status = 'payed';
+    creditRequest.value = (availableCredits < 100) ? (100 - availableCredits) : 0;
+    async.parallel([creditRequest.save.bind(creditRequest), function (next) {
+      creditRequest.creditedUser.update({'$inc' : {'funds' : creditRequest.value}}, next)
+    }, function (next) {
+      creditRequest.chargedUser.update({'$inc' : {'funds' : -creditRequest.value}}, next)
+    }], next);
+  }, function () {
+    response.status(200).end();
+  }], next);
+});
+
+/**
+ * @api {put} /credit-requests/:creditRequest/reject Reject credit request.
+ * @apiName reject
+ * @apiGroup CreditRequest
+ */
+router
+.route('/credit-requests/:id/reject')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.creditRequest.chargedUser.id) throw new Error('invalid method');
+  async.waterfall([function (next) {
+    var creditRequest = request.creditRequest;
+    creditRequest.status = 'rejected';
     creditRequest.save(next);
-  }, function (creditRequest, _, next) {
-    creditRequest.populate('creditedUser');
-    creditRequest.populate('chargedUser');
-    creditRequest.populate(next);
-  }, function (creditRequest, next) {
-    response.status(201);
-    response.send(creditRequest);
-    push(nconf.get('ZEROPUSH_TOKEN'), {
-      'device' : creditRequest.chargedUser.apnsToken,
-      'sound'  : 'get_money.mp3',
-      'alert'  : {
-        'loc-key'  : 'NOTIFICATION_SOMEONE_NEED_CASH',
-        'loc-args' : [request.session.username || request.session.name]
-      }
-    }, next);
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 
-/**
- * @api {GET} /users/:user/credit-requests listCreditRequest
- * @apiName listCreditRequest
- * @apiGroup CreditRequest
- *
- * @apiParam {String} [page=0] The page to be displayed.
- */
-router
-.route('/users/:user/credit-requests')
-.get(auth.session())
-.get(function listCreditRequest(request, response, next) {
+router.param('id', function (request, response, next, id) {
   async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = (request.query.page || 0) * pageSize;
-    query = CreditRequest.find();
-    query.where('chargedUser').equals(request.user._id);
-    query.populate('creditedUser');
-    query.populate('chargedUser');
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (creditRequests, next) {
-    response.status(200);
-    response.send(creditRequests);
-    next();
-  }], next);
-});
-
-/**
- * @api {GET} /users/:user/requested-credits listRequestedCredits
- * @apiName listRequestedCredits
- * @apiGroup CreditRequest
- *
- * @apiParam {Boolean} unreadMessages Filter by unread messages.
- * @apiParam {String} [page=0] The page to be displayed.
- */
-router
-.route('/users/:user/requested-credits')
-.get(auth.session())
-.get(function listRequestedCredits(request, response, next) {
-  async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = (request.query.page || 0) * pageSize;
-    query = CreditRequest.find();
-    query.where('creditedUser').equals(request.user._id);
-    query.populate('creditedUser');
-    query.populate('chargedUser');
-    if (request.query.unreadMessages) query.where('seenBy').ne(request.session._id);
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (creditRequests, next) {
-    response.status(200);
-    response.send(creditRequests);
-    next();
-  }], next);
-});
-
-/**
- * @api {GET} /users/:user/credit-requests/:creditRequest getCreditRequest
- * @apiName getCreditRequest
- * @apiGroup CreditRequest
- */
-router
-.route('/users/:user/credit-requests/:creditRequest')
-.get(auth.session())
-.get(function getCreditRequest(request, response, next) {
-  async.waterfall([function (next) {
-    var creditRequest;
-    creditRequest = request.creditRequest;
-    response.status(200);
-    response.send(creditRequest);
-    next();
-  }], next);
-});
-
-/**
- * @api {PUT} /users/:user/credit-requests/:creditRequest/approve approveCreditRequest
- * @apiName approveCreditRequest
- * @apiGroup CreditRequest
- */
-router
-.route('/users/:user/credit-requests/:creditRequest/approve')
-.put(auth.session())
-.put(auth.checkMethod('creditRequest', 'chargedUser'))
-.put(function approveCreditRequest(request, response, next) {
-  async.waterfall([function (next) {
-    var creditRequest;
-    creditRequest = request.creditRequest;
-    creditRequest.approve(next);
-  }, function (next) {
-    var creditRequest;
-    creditRequest = request.creditRequest;
-    response.status(200);
-    response.send(creditRequest);
-    next(null, creditRequest);
-  }, function (creditRequest, next) {
-    push(nconf.get('ZEROPUSH_TOKEN'), {
-      'device' : creditRequest.creditedUser.apnsToken,
-      'sound'  : 'get_money.mp3',
-      'alert'  : {
-        'loc-key'  : 'NOTIFICATION_RECEIVED_CASH',
-        'loc-args' : [request.session.username || request.session.name]
-      }
-    }, next);
-  }], next);
-});
-
-router.param('creditRequest', function findCreditRequest(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = CreditRequest.findOne();
-    query.where('chargedUser').equals(request.user._id);
-    query.where('_id').equals(id);
-    query.populate('creditedUser');
-    query.populate('chargedUser');
-    query.exec(next);
+    CreditRequest.findOne().where('_id').equals(id).exec(next);
   }, function (creditRequest, next) {
     request.creditRequest = creditRequest;
     next(!creditRequest ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('user', function findUser(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = User.findOne();
-    query.where('_id').equals(id);
-    query.exec(next);
-  }, function (user, next) {
-    request.user = user;
-    next(!user ? new Error('not found') : null);
   }], next);
 });
 

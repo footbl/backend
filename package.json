@@ -13,7 +13,12 @@
     }
   },
   "name": "footbl",
-  "version": "2.2.0",
+  "description": "footbl app backend",
+  "version": "3.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:footbl/backend.git"
+  },
   "scripts": {
     "test": "NODE_ENV=test mocha test/* --require blanket -R mocha-spec-cov-alt",
     "prestart": "apidoc -i controllers/ -o docs/",
@@ -21,29 +26,34 @@
     "coverage": "mocha test/* -R html-cov --require blanket > coverage.html"
   },
   "engines": {
-    "node": "0.10.21"
+    "node": "0.10.21",
+    "npm": "2.5.1"
   },
   "dependencies": {
     "apidoc": "^0.13.1",
-    "async": "^1.4.2",
-    "auth": "footbl/auth.git",
+    "async": "^1.5.0",
+    "basic-auth": "^1.0.3",
     "body-parser": "^1.14.1",
     "cluster-start": "^0.1.4",
+    "compression": "^1.6.0",
+    "connect-timeout": "^1.7.0",
     "express": "^4.13.3",
-    "fbgraph": "^1.1.0",
+    "helmet": "^0.14.0",
     "mandrill-api": "^1.0.45",
-    "mongoose": "^4.1.9",
+    "mongoose": "^4.2.4",
+    "mongoose-autopopulate": "^0.4.0",
     "mongoose-json-select": "^0.2.1",
-    "nconf": "^0.8.1",
-    "push": "footbl/push.git",
-    "request": "^2.64.0"
+    "nconf": "^0.8.2",
+    "newrelic": "^1.23.1",
+    "response-time": "^2.3.1",
+    "rollbar": "^0.5.8"
   },
   "devDependencies": {
-    "blanket": "^1.1.7",
-    "mocha": "2.1.0",
-    "mocha-spec-cov-alt": "0.2.4",
-    "nock": "^2.13.0",
-    "should": "^7.1.0",
+    "blanket": "^1.1.9",
+    "mocha": "2.2.5",
+    "mocha-spec-cov-alt": "^0.3.0",
+    "nock": "^2.17.0",
+    "should": "^7.1.1",
     "supertest": "^1.1.0"
   }
 }

@@ -1,174 +1,111 @@
 'use strict';
 
-var router, nconf, async, auth, push, crypto,
-Challenge, User;
-
-router = require('express').Router();
-nconf = require('nconf');
-async = require('async');
-auth = require('auth');
-push = require('push');
-crypto = require('crypto');
-
-Challenge = require('../models/challenge');
-User = require('../models/user');
+var router = require('express').Router();
+var async = require('async');
+var Challenge = require('../models/challenge');
 
 /**
- * @api {post} /users/:user/challenges Creates a new challenge.
- * @apiName createChallenge
- * @apiGroup challenge
- *
- * @apiParam {ObjectId} match Challenge match.
- * @apiParam {Number} bid Challenge bid.
- * @apiParam {String} result Challenge result.
+ * @api {post} /challenges Creates a new challenge.
+ * @apiName create
+ * @apiGroup Challenge
  */
 router
-.route('/users/:user/challenges')
-.post(auth.session())
-.post(auth.checkMethod('user'))
-.post(function createChallenge(request, response, next) {
+.route('/challenges')
+.post(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var challenge;
-    challenge = new Challenge();
+    var challenge = new Challenge();
     challenge.bid = request.body.bid;
-    challenge.result = request.body.result;
     challenge.match = request.body.match;
-    challenge.user = request.session._id;
-    challenge.save(next);
-  }, function (challenge, _, next) {
-    challenge.populate('challenger.user');
-    challenge.populate('challenged.user');
-    challenge.populate('match');
-    challenge.populate(next);
-  }, function (challenge, next) {
-    var challenger;
-    challenger = challenge.challenger.user;
-    challenger.stake += challenge.bid;
-    challenger.funds -= challenge.bid;
-    response.status(201);
-    response.send(challenge);
-    challenger.save(next);
+    challenge.challenger.user = request.session;
+    challenge.challenger.result = request.body.result;
+    challenge.challenged.user = request.body.user;
+    async.series([challenge.validate.bind(challenge), challenge.save.bind(challenge), function (next) {
+      request.session.update({'$inc' : {'funds' : -challenge.bid, 'stake' : challenge.bid}}, next);
+    }], next);
+  }, function (result) {
+    response.status(201).send(result[1].id);
   }], next);
 });
 
 /**
- * @api {get} /users/:user/challenges List all challenges.
- * @apiName listChallenge
- * @apiGroup challenge
- *
- * @apiParam {String} [page=0] The page to be displayed.
+ * @api {get} /challenges List all challenges.
+ * @apiName list
+ * @apiGroup Challenge
  */
 router
-.route('/users/:user/challenges')
-.get(auth.session())
-.get(function listChallenge(request, response, next) {
+.route('/challenges')
+.get(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = (request.query.page || 0) * pageSize;
-    query = Challenge.find();
-    query.where('user').equals(request.user._id);
-    query.populate('challenger.user');
-    query.populate('challenged.user');
-    query.populate('match');
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (challenges, next) {
-    response.status(200);
-    response.send(challenges);
-    next();
+    Challenge.find()
+    .or([{'challenger.user' : request.session.id}, {'challenged.user' : request.session.id}])
+    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+  }, function (challenges) {
+    response.status(200).send(challenges);
   }], next);
 });
 
 /**
- * @api {get} /users/:user/challenges/:challenge Get challenge.
- * @apiName getChallenge
- * @apiGroup challenge
+ * @api {get} /challenges/:id Get challenge.
+ * @apiName get
+ * @apiGroup Challenge
  */
 router
-.route('/users/:user/challenges/:challenge')
-.get(auth.session())
-.get(function getChallenge(request, response, next) {
+.route('/challenges/:id')
+.get(function (request, response) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.challenge.challenger.user.id && request.session.id !== request.challenge.challenged.user.id) throw new Error('invalid method');
+  response.status(200).send(request.challenge);
+});
+
+/**
+ * @api {put} /challenges/:id/reject Reject challenge.
+ * @apiName reject
+ * @apiGroup Challenge
+ */
+router
+.route('/challenges/:id/reject')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.challenge.challenged.user.id) throw new Error('invalid method');
   async.waterfall([function (next) {
-    var challenge;
-    challenge = request.challenge;
-    response.status(200);
-    response.send(challenge);
-    next();
+    var challenge = request.challenge;
+    async.series([challenge.validate.bind(challenge), function (next) {
+      challenge.update({'$set' : {'accepted' : false}}, next);
+    }, function (next) {
+      challenge.challenger.user.update({'$inc' : {'funds' : challenge.bid, 'stake' : -challenge.bid}}, next);
+    }], next);
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 
 /**
- * @api {put} /users/:user/challenges/:challenge/reject Reject challenge.
- * @apiName rejectChallenge
- * @apiGroup challenge
+ * @api {put} /challenges/:id/accept Accept challenge.
+ * @apiName accept
+ * @apiGroup Challenge
  */
 router
-.route('/users/:user/challenges/:challenge/reject')
-.put(auth.session())
-.put(function rejectChallenge(request, response, next) {
+.route('/challenges/:id/accept')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.challenge.challenged.user.id) throw new Error('invalid method');
   async.waterfall([function (next) {
-    var challenge, challenger;
-    challenge = request.challenge;
-    challenger = challenge.challenger.user;
-    challenger.stake -= challenge.bid;
-    challenger.funds += challenge.bid;
-    challenge.accepted = false;
-    async.parallel([challenger.save.bind(challenger), challenge.save.bind(challenge)], next);
-  }, function (_, next) {
-    response.status(200);
-    response.end();
-    next();
+    var challenge = request.challenge;
+    async.series([challenge.validate.bind(challenge), function (next) {
+      challenge.update({'$set' : {'accepted' : true}}, next);
+    }, function (next) {
+      challenge.challenged.user.update({'$inc' : {'funds' : -challenge.bid, 'stake' : challenge.bid}}, next);
+    }], next);
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 
-/**
- * @api {put} /users/:user/challenges/:challenge/accept Accept challenge.
- * @apiName acceptChallenge
- * @apiGroup challenge
- */
-router
-.route('/users/:user/challenges/:challenge/accept')
-.put(auth.session())
-.put(function acceptChallenge(request, response, next) {
+router.param('id', function (request, response, next, id) {
   async.waterfall([function (next) {
-    var challenge, challenged;
-    challenge = request.challenge;
-    challenged = challenge.challenged.user;
-    challenged.stake += challenge.bid;
-    challenged.funds -= challenge.bid;
-    challenge.accepted = false;
-    async.parallel([challenged.save.bind(challenged), challenge.save.bind(challenge)], next);
-  }, function (challenge, next) {
-    response.status(200);
-    response.end();
-    next();
-  }], next);
-});
-
-router.param('user', function findUser(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = User.findOne();
-    query.where('_id').equals(id);
-    query.exec(next);
-  }, function (user, next) {
-    request.user = user;
-    next(!user ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('challenge', function findChallenge(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = Challenge.findOne();
-    query.populate('challenger.user');
-    query.populate('challenged.user');
-    query.populate('match');
-    query.where('user').equals(request.user._id);
-    query.where('_id').equals(id);
-    query.exec(next);
+    Challenge.findOne().where('_id').equals(id).exec(next);
   }, function (challenge, next) {
     request.challenge = challenge;
     next(!challenge ? new Error('not found') : null);

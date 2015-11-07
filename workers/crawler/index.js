@@ -130,3 +130,48 @@ if (require.main === module) {
     });
   }, process.exit);
 }
+
+
+/*
+ if (this.finshed) return next('match already finished');
+ return async.waterfall([function (next) {
+ this.finished = true;
+ this.save(next);
+ }.bind(this), function (_, __, next) {
+ var Bet, query;
+ Bet = require('./bet');
+ query = Bet.find();
+ query.where('match').equals(this._id);
+ query.populate('user');
+ query.exec(next);
+ }.bind(this), function (bets, next) {
+ async.each(bets, function (bet, next) {
+ bet.user.stake -= bet.bid;
+ if (bet.result === this.winner) {
+ bet.user.funds += bet.bid * this.reward;
+ }
+ bet.user.save(next);
+ }.bind(this), next);
+ }.bind(this), function (next) {
+ var Challenge, query;
+ Challenge = require('./challenge');
+ query = Challenge.find();
+ query.where('match').equals(this._id);
+ query.populate('challenger.user');
+ query.populate('challenged.user');
+ query.exec(next);
+ }.bind(this), function (challenges, next) {
+ async.each(challenges, function (challenge, next) {
+ if (challenge.challenger.result === this.winner) challenge.challenger.user.funds += 2 * challenge.bid;
+ challenge.challenger.user.stake -= challenge.bid;
+ if (challenge.challenged.result === this.winner) challenge.challenged.user.funds += 2 * challenge.bid;
+ challenge.challenged.user.stake -= challenge.bid;
+ async.parallel([
+ challenge.challenger.user.save.bind(challenge.challenger.user),
+ challenge.challenged.user.save.bind(challenge.challenged.user)
+ ], next);
+ }.bind(this), next);
+ }.bind(this), function (next) {
+ next(null, this);
+ }.bind(this)], next);
+* */

@@ -1,74 +1,61 @@
 /*globals describe, before, it*/
 'use strict';
 require('should');
-
-var supertest, auth, nock, nconf, crypto, app,
-Season, User, CreditRequest;
-
-supertest = require('supertest');
-auth = require('auth');
-nock = require('nock');
-nconf = require('nconf');
-crypto = require('crypto');
-app = supertest(require('../index.js'));
-
-Season = require('../models/season');
-User = require('../models/user');
-CreditRequest = require('../models/credit-request');
-
-nconf.defaults(require('../config'));
-
 describe('credit request', function () {
-  var creditedUser, chargedUser;
+  var supertest = require('supertest');
+  var app = supertest(require('../index.js'));
+  var User = require('../models/user');
+  var CreditRequest = require('../models/credit-request');
 
-  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
 
   before(function (done) {
-    var season;
-    season = new Season({
-      'finishAt'  : new Date(),
-      'createdAt' : new Date()
-    });
-    season.save(done);
+    var user = new User();
+    user._id = '563decb2a6269cb39236de97';
+    user.email = 'u0@footbl.co';
+    user.username = 'owner';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
+    user.save(done);
   });
 
   before(function (done) {
-    creditedUser = new User();
-    creditedUser.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
-    creditedUser.country = 'Brazil';
-    creditedUser.save(done);
+    var user = new User();
+    user._id = '563decb7a6269cb39236de98';
+    user.email = 'u1@footbl.co';
+    user.username = 'u1';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
+    user.save(done);
   });
 
   before(function (done) {
-    chargedUser = new User();
-    chargedUser.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
-    chargedUser.country = 'Brazil';
-    chargedUser.save(done);
+    var user = new User();
+    user._id = '563decb7a6269cb39236de99';
+    user.email = 'u2@footbl.co';
+    user.username = 'u2';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
+    user.save(done);
   });
 
   describe('create', function () {
-    describe('facebook user', function () {
-      before(CreditRequest.remove.bind(CreditRequest));
+    beforeEach(CreditRequest.remove.bind(CreditRequest));
 
-      it('should create', function (done) {
-        var request;
-        request = app.post('/users/1234/credit-requests');
-        request.set('auth-token', auth.token(creditedUser));
-        request.expect(201);
-        request.end(done);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.post('/credit-requests').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('registered user', function () {
-      before(CreditRequest.remove.bind(CreditRequest));
+    describe('with valid credentials', function () {
+      describe('registered user', function () {
+        it('should create', function (done) {
+          app.post('/credit-requests').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).send({'user' : '563decb7a6269cb39236de98'}).expect(201).end(done)
+        });
+      });
 
-      it('should create', function (done) {
-        var request;
-        request = app.post('/users/' + chargedUser._id + '/credit-requests');
-        request.set('auth-token', auth.token(creditedUser));
-        request.expect(201);
-        request.end(done);
+      describe('unregistered user', function () {
+        it('should create', function (done) {
+          app.post('/credit-requests').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).send({'user' : '1234'}).expect(201).end(done)
+        });
       });
     });
   });
@@ -77,131 +64,186 @@ describe('credit request', function () {
     before(CreditRequest.remove.bind(CreditRequest));
 
     before(function (done) {
-      var creditRequest;
-      creditRequest = new CreditRequest({
-        'creditedUser' : creditedUser,
-        'chargedUser'  : chargedUser
-      });
+      var creditRequest = new CreditRequest();
+      creditRequest._id = '563d72882cb3e53efe2827fc';
+      creditRequest.creditedUser = '563decb2a6269cb39236de97';
+      creditRequest.chargedUser = '563decb7a6269cb39236de98';
       creditRequest.save(done);
     });
 
-    it('should list two credit request', function (done) {
-      var request;
-      request = app.get('/users/' + chargedUser._id + '/credit-requests');
-      request.set('auth-token', auth.token(chargedUser));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.be.instanceOf(Array);
-        response.body.should.have.lengthOf(1);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.get('/credit-requests').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
-      request.end(done);
     });
 
-    it('should list two requested credit', function (done) {
-      var request;
-      request = app.get('/users/' + creditedUser._id + '/requested-credits');
-      request.set('auth-token', auth.token(creditedUser));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.be.instanceOf(Array);
-        response.body.should.have.lengthOf(1);
+    describe('with credentials', function () {
+      describe('with visible user', function () {
+        it('should list one credit request', function (done) {
+          app.get('/credit-requests').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+            response.body.should.be.instanceOf(Array);
+            response.body.should.have.lengthOf(1)
+          }).end(done)
+        });
       });
-      request.end(done);
+
+      describe('without visible user', function () {
+        it('should list zero credit requests', function (done) {
+          app.get('/credit-requests').set('authorization', 'Basic ' + new Buffer('u2@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+            response.body.should.be.instanceOf(Array);
+            response.body.should.have.lengthOf(0)
+          }).end(done)
+        });
+      });
     });
   });
 
-  describe('get', function () {
-    var creditRequest;
-
+  describe('details', function () {
     before(CreditRequest.remove.bind(CreditRequest));
 
     before(function (done) {
-      creditRequest = new CreditRequest({
-        'creditedUser' : creditedUser,
-        'chargedUser'  : chargedUser
-      });
+      var creditRequest = new CreditRequest();
+      creditRequest._id = '563d72882cb3e53efe2827fc';
+      creditRequest.creditedUser = '563decb2a6269cb39236de97';
+      creditRequest.chargedUser = '563decb7a6269cb39236de98';
       creditRequest.save(done);
     });
 
-    describe('without id', function () {
+    describe('without valid credentials', function () {
       it('should raise error', function (done) {
-        var request;
-        request = app.get('/users/' + chargedUser._id + '/credit-requests/1234');
-        request.set('auth-token', auth.token(chargedUser));
-        request.expect(404);
-        request.end(done);
+        app.get('/credit-requests/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('with valid id', function () {
-      it('should get', function (done) {
-        var request;
-        request = app.get('/users/' + chargedUser._id + '/credit-requests/' + creditRequest._id);
-        request.set('auth-token', auth.token(chargedUser));
-        request.expect(200);
-        request.end(done);
+    describe('with credentials', function () {
+      describe('with other user credentials', function () {
+        it('should raise error', function (done) {
+          app.get('/credit-requests/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u2@footbl.co:1234').toString('base64')).expect(405).end(done);
+        });
+      });
+
+      describe('with user credentials', function () {
+        describe('without valid id', function () {
+          it('should return', function (done) {
+            app.get('/credit-requests/invalid').expect(404).end(done);
+          });
+        });
+
+        describe('with valid id', function () {
+          it('should return', function (done) {
+            app.get('/credit-requests/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+              response.body.should.have.property('creditedUser');
+              response.body.should.have.property('chargedUser');
+            }).end(done);
+          });
+        });
       });
     });
   });
 
   describe('approve', function () {
-    var creditRequest;
+    beforeEach(CreditRequest.remove.bind(CreditRequest));
 
-    before(CreditRequest.remove.bind(CreditRequest));
+    beforeEach(function (done) {
+      User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 0}}, done);
+    });
 
-    before(function (done) {
-      creditRequest = new CreditRequest({
-        'creditedUser' : creditedUser,
-        'chargedUser'  : chargedUser
-      });
+    beforeEach(function (done) {
+      User.update({'_id' : '563decb7a6269cb39236de98'}, {'$set' : {'funds' : 200}}, done);
+    });
+
+    beforeEach(function (done) {
+      var creditRequest = new CreditRequest();
+      creditRequest._id = '563d72882cb3e53efe2827fc';
+      creditRequest.creditedUser = '563decb2a6269cb39236de97';
+      creditRequest.chargedUser = '563decb7a6269cb39236de98';
       creditRequest.save(done);
     });
 
-    describe('with other user token', function () {
+    describe('without valid credentials', function () {
       it('should raise error', function (done) {
-        var request;
-        request = app.put('/users/' + chargedUser._id + '/credit-requests/' + creditRequest._id + '/approve');
-        request.set('auth-token', auth.token(creditedUser));
-        request.expect(405);
-        request.end(done);
+        app.put('/credit-requests/563d72882cb3e53efe2827fc/approve').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('with valid token', function () {
-      describe('requester with less than 100 of funds', function () {
-        describe('with suficcient funds', function () {
-          before(function (done) {
-            chargedUser.funds = 110;
-            chargedUser.save(done);
-          });
-
-          before(function (done) {
-            creditedUser.funds = 90;
-            creditedUser.save(done);
-          });
-
-          it('should recharge user wallet', function (done) {
-            var request;
-            request = app.put('/users/' + chargedUser._id + '/credit-requests/' + creditRequest._id + '/approve');
-            request.set('auth-token', auth.token(chargedUser));
-            request.expect(200);
-            request.end(done);
-          });
+    describe('with credentials', function () {
+      describe('with other user credentials', function () {
+        it('should raise error', function (done) {
+          app.put('/credit-requests/563d72882cb3e53efe2827fc/approve').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(405).end(done);
         });
       });
 
-      describe('requester with more than 100 of funds', function () {
-        before(function (done) {
-          chargedUser.funds = 110;
-          chargedUser.save(done);
+      describe('with user credentials', function () {
+        describe('without valid id', function () {
+          it('should return', function (done) {
+            app.put('/credit-requests/invalid/approve').expect(404).end(done);
+          });
         });
 
-        it('should not recharge wallet', function (done) {
-          var request;
-          request = app.put('/users/' + chargedUser._id + '/credit-requests/' + creditRequest._id + '/approve');
-          request.set('auth-token', auth.token(chargedUser));
-          request.expect(200);
-          request.end(done);
+        describe('with valid id', function () {
+          it('should approve', function (done) {
+            app.put('/credit-requests/563d72882cb3e53efe2827fc/approve').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(200).end(done);
+          });
+
+          after(function (done) {
+            app.get('/users/563decb2a6269cb39236de97').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(function (response) {
+              response.body.should.have.property('funds').be.equal(100);
+            }).end(done);
+          });
+
+          after(function (done) {
+            app.get('/users/563decb2a6269cb39236de97').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(function (response) {
+              response.body.should.have.property('funds').be.equal(100);
+            }).end(done);
+          });
+        });
+      });
+    });
+  });
+
+  describe('reject', function () {
+    beforeEach(CreditRequest.remove.bind(CreditRequest));
+
+    beforeEach(function (done) {
+      User.update({'_id' : '563decb2a6269cb39236de97'}, {'$set' : {'funds' : 0}}, done);
+    });
+
+    beforeEach(function (done) {
+      User.update({'_id' : '563decb7a6269cb39236de98'}, {'$set' : {'funds' : 200}}, done);
+    });
+
+    beforeEach(function (done) {
+      var creditRequest = new CreditRequest();
+      creditRequest._id = '563d72882cb3e53efe2827fc';
+      creditRequest.creditedUser = '563decb2a6269cb39236de97';
+      creditRequest.chargedUser = '563decb7a6269cb39236de98';
+      creditRequest.save(done);
+    });
+
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.put('/credit-requests/563d72882cb3e53efe2827fc/reject').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
+      });
+    });
+
+    describe('with credentials', function () {
+      describe('with other user credentials', function () {
+        it('should raise error', function (done) {
+          app.put('/credit-requests/563d72882cb3e53efe2827fc/reject').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(405).end(done);
+        });
+      });
+
+      describe('with user credentials', function () {
+        describe('without valid id', function () {
+          it('should return', function (done) {
+            app.put('/credit-requests/invalid/reject').expect(404).end(done);
+          });
+        });
+
+        describe('with valid id', function () {
+          it('should reject', function (done) {
+            app.put('/credit-requests/563d72882cb3e53efe2827fc/reject').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(200).end(done);
+          });
         });
       });
     });

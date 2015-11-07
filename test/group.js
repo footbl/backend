@@ -1,84 +1,44 @@
-/*globals describe, before, after, it*/
+/*globals describe, before, it*/
 'use strict';
 require('should');
-
-var supertest, auth, nock, nconf, crypto, app,
-Season, User, Group;
-
-supertest = require('supertest');
-auth = require('auth');
-nock = require('nock');
-nconf = require('nconf');
-crypto = require('crypto');
-app = supertest(require('../index.js'));
-
-Season = require('../models/season');
-User = require('../models/user');
-Group = require('../models/group');
-
-nconf.defaults(require('../config'));
-
 describe('group', function () {
-  var user, invitedUser;
+  var supertest = require('supertest');
+  var app = supertest(require('../index.js'));
+  var User = require('../models/user');
+  var Group = require('../models/group');
 
-  before(Season.remove.bind(Season));
   before(User.remove.bind(User));
 
   before(function (done) {
-    var season;
-    season = new Season({
-      'finishAt'  : new Date(),
-      'createdAt' : new Date()
-    });
-    season.save(done);
-  });
-
-  before(function (done) {
-    user = new User();
-    user.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
-    user.country = 'Brazil';
+    var user = new User();
+    user._id = '563decb2a6269cb39236de97';
+    user.email = 'owner@footbl.co';
+    user.username = 'owner';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
     user.save(done);
   });
 
   before(function (done) {
-    invitedUser = new User();
-    invitedUser.password = crypto.createHash('sha1').update('1234' + nconf.get('PASSWORD_SALT')).digest('hex');
-    invitedUser.country = 'Brazil';
-    invitedUser.save(done);
+    var user = new User();
+    user._id = '563decb7a6269cb39236de98';
+    user.email = 'u1@footbl.co';
+    user.username = 'u1';
+    user.password = require('crypto').createHash('sha1').update('1234' + require('nconf').get('PASSWORD_SALT')).digest('hex');
+    user.save(done);
   });
 
   describe('create', function () {
-    describe('without name', function () {
-      before(Group.remove.bind(Group));
+    beforeEach(Group.remove.bind(Group));
 
+    describe('without valid credentials', function () {
       it('should raise error', function (done) {
-        var request;
-        request = app.post('/groups');
-        request.set('auth-token', auth.token(user));
-        request.expect(400);
-        request.expect(function (response) {
-          response.body.should.have.property('name').be.equal('required');
-        });
-        request.end(done);
+        app.post('/groups').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('with name', function () {
-      before(Group.remove.bind(Group));
-
+    describe('with valid credentials', function () {
       it('should create', function (done) {
-        var request;
-        request = app.post('/groups');
-        request.set('auth-token', auth.token(user));
-        request.send({'name' : 'test'});
-        request.expect(201);
-        request.expect(function (response) {
-          response.body.should.have.property('name').be.equal('test');
-          response.body.should.have.property('code');
-          response.body.should.have.property('members').be.instanceOf(Array);
-          response.body.should.have.property('members').lengthOf(1);
-        });
-        request.end(done);
+        app.post('/groups').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).send({'name' : 'teste'}).expect(201).end(done)
       });
     });
   });
@@ -87,275 +47,241 @@ describe('group', function () {
     before(Group.remove.bind(Group));
 
     before(function (done) {
-      var group;
-      group = new Group({
-        'name'    : 'test',
-        'code'    : '6wzji',
-        'owner'   : user,
-        'members' : [user._id]
-      });
+      var group = new Group();
+      group._id = '563d72882cb3e53efe2827fc';
+      group.name = 'teste';
+      group.code = new Date().getTime().toString(36).substring(3);
+      group.owner = '563decb2a6269cb39236de97';
+      group.picture = 'picture';
+      group.members = ['563decb2a6269cb39236de97'];
       group.save(done);
     });
 
-    before(function (done) {
-      var group;
-      group = new Group({
-        'name'     : 'test',
-        'code'     : '7wzji',
-        'owner'    : user,
-        'featured' : true
-      });
-      group.save(done);
-    });
-
-    describe('filter by featured', function () {
-      it('should list one group', function (done) {
-        var request;
-        request = app.get('/groups');
-        request.set('auth-token', auth.token(user));
-        request.send({'featured' : true});
-        request.expect(200);
-        request.expect(function (response) {
-          response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(1);
-        });
-        request.end(done);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.get('/groups').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('filter by code', function () {
+    describe('with credentials', function () {
       it('should list one group', function (done) {
-        var request;
-        request = app.get('/groups');
-        request.set('auth-token', auth.token(user));
-        request.send({'code' : '7wzji'});
-        request.expect(200);
-        request.expect(function (response) {
+        app.get('/groups').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
           response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(1);
-        });
-        request.end(done);
-      });
-    });
-
-    describe('without filter', function () {
-      it('should list one group', function (done) {
-        var request;
-        request = app.get('/groups');
-        request.set('auth-token', auth.token(user));
-        request.expect(200);
-        request.expect(function (response) {
-          response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(1);
-        });
-        request.end(done);
+          response.body.should.have.lengthOf(1)
+        }).end(done)
       });
     });
   });
 
   describe('get', function () {
-    var group;
-
     before(Group.remove.bind(Group));
 
     before(function (done) {
-      group = new Group({
-        'name'    : 'test',
-        'code'    : '6wzji',
-        'owner'   : user,
-        'members' : [user._id]
-      });
+      var group = new Group();
+      group._id = '563d72882cb3e53efe2827fc';
+      group.name = 'teste';
+      group.code = new Date().getTime().toString(36).substring(3);
+      group.owner = '563decb2a6269cb39236de97';
+      group.picture = 'picture';
+      group.members = ['563decb2a6269cb39236de97'];
       group.save(done);
     });
 
-    describe('without id', function () {
+    describe('without valid credentials', function () {
       it('should raise error', function (done) {
-        var request;
-        request = app.get('/groups/1234');
-        request.set('auth-token', auth.token(user));
-        request.expect(404);
-        request.end(done);
+        app.get('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('with valid id', function () {
-      it('should get', function (done) {
-        var request;
-        request = app.get('/groups/' + group._id);
-        request.set('auth-token', auth.token(user));
-        request.expect(200);
-        request.expect(function (response) {
-          response.body.should.have.property('name').be.equal('test');
-          response.body.should.have.property('code');
-          response.body.should.have.property('members').be.instanceOf(Array);
-          response.body.should.have.property('members').lengthOf(1);
+    describe('with credentials', function () {
+      describe('without valid id', function () {
+        it('should return', function (done) {
+          app.get('/groups/invalid').expect(404).end(done);
         });
-        request.end(done);
+      });
+
+      describe('with valid id', function () {
+        it('should return', function (done) {
+          app.get('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+            response.body.should.have.property('name').be.equal('teste');
+            response.body.should.have.property('code');
+            response.body.should.have.property('owner');
+            response.body.should.have.property('picture').be.equal('picture');
+          }).end(done);
+        });
       });
     });
   });
 
   describe('update', function () {
-    var group;
+    beforeEach(Group.remove.bind(Group));
 
-    before(Group.remove.bind(Group));
-
-    before(function (done) {
-      group = new Group({
-        'name'    : 'test',
-        'code'    : '6wzji',
-        'owner'   : user,
-        'members' : [user._id]
-      });
+    beforeEach(function (done) {
+      var group = new Group();
+      group._id = '563d72882cb3e53efe2827fc';
+      group.name = 'teste';
+      group.code = new Date().getTime().toString(36).substring(3);
+      group.owner = '563decb2a6269cb39236de97';
+      group.picture = 'picture';
+      group.members = ['563decb2a6269cb39236de97'];
       group.save(done);
     });
 
-    it('should update', function (done) {
-      var request;
-      request = app.put('/groups/' + group._id);
-      request.set('auth-token', auth.token(user));
-      request.send({'name' : 'test'});
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.have.property('name').be.equal('test');
-        response.body.should.have.property('code');
-        response.body.should.have.property('members').be.instanceOf(Array);
-        response.body.should.have.property('members').lengthOf(1);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.put('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
-      request.end(done);
     });
 
-    after(function (done) {
-      var request;
-      request = app.get('/groups/' + group._id);
-      request.set('auth-token', auth.token(user));
-      request.expect(200);
-      request.expect(function (response) {
-        response.body.should.have.property('name').be.equal('test');
-        response.body.should.have.property('code');
-        response.body.should.have.property('members').be.instanceOf(Array);
-        response.body.should.have.property('members').lengthOf(1);
+    describe('with valid credentials', function () {
+      describe('without owner credentials', function () {
+        it('should raise error', function (done) {
+          app.put('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(405).end(done)
+        });
       });
-      request.end(done);
-    });
-  });
 
-  describe('delete', function () {
-    var group;
+      describe('with owner credentials', function () {
+        describe('without valid id', function () {
+          it('should raise error', function (done) {
+            app.put('/groups/invalid').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(404).end(done)
+          });
+        });
 
-    before(Group.remove.bind(Group));
-
-    before(function (done) {
-      group = new Group({
-        'name'    : 'test',
-        'code'    : '6wzji',
-        'owner'   : user,
-        'members' : [user._id]
+        describe('with valid id', function () {
+          it('should update', function (done) {
+            app.put('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).send({'name' : 'teste'}).expect(200).end(done)
+          });
+        });
       });
-      group.save(done);
-    });
-
-    it('should remove', function (done) {
-      var request;
-      request = app.del('/groups/' + group._id);
-      request.set('auth-token', auth.token(user));
-      request.expect(204);
-      request.end(done);
-    });
-
-    after(function (done) {
-      var request;
-      request = app.get('/groups/' + group._id);
-      request.set('auth-token', auth.token(user));
-      request.expect(404);
-      request.end(done);
     });
   });
 
   describe('invite', function () {
-    describe('registered user', function () {
-      var group;
+    beforeEach(Group.remove.bind(Group));
 
-      before(Group.remove.bind(Group));
+    beforeEach(function (done) {
+      var group = new Group();
+      group._id = '563d72882cb3e53efe2827fc';
+      group.name = 'teste';
+      group.code = new Date().getTime().toString(36).substring(3);
+      group.owner = '563decb2a6269cb39236de97';
+      group.picture = 'picture';
+      group.members = ['563decb2a6269cb39236de97'];
+      group.save(done);
+    });
 
-      before(function (done) {
-        group = new Group({
-          'name'    : 'test',
-          'code'    : '6wzji',
-          'owner'   : user,
-          'members' : [user._id]
-        });
-        group.save(done);
-      });
-
-      it('should invite', function (done) {
-        var request;
-        request = app.post('/groups/' + group._id + '/invite');
-        request.set('auth-token', auth.token(user));
-        request.send({'user' : invitedUser._id});
-        request.expect(200);
-        request.end(done);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.put('/groups/563d72882cb3e53efe2827fc/invite').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
       });
     });
 
-    describe('facebook user', function () {
-      var group;
-
-      before(Group.remove.bind(Group));
-
-      before(function (done) {
-        group = new Group({
-          'name'    : 'test',
-          'code'    : '6wzji',
-          'owner'   : user,
-          'members' : [user._id]
+    describe('with valid credentials', function () {
+      describe('without owner credentials', function () {
+        it('should raise error', function (done) {
+          app.put('/groups/563d72882cb3e53efe2827fc/invite').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(405).end(done)
         });
-        group.save(done);
       });
 
-      nock('https://graph.facebook.com').get('/me?access_token=1234').times(1).reply(200, {id : '1234'});
+      describe('with owner credentials', function () {
+        describe('without valid id', function () {
+          it('should raise error', function (done) {
+            app.put('/groups/invalid/invite').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(404).end(done)
+          });
+        });
 
-      it('should invite', function (done) {
-        var request;
-        request = app.post('/groups/' + group._id + '/invite');
-        request.set('auth-token', auth.token(user));
-        request.send({'user' : '1234'});
-        request.expect(200);
-        request.end(done);
-      });
+        describe('with valid id', function () {
+          describe('registered user', function () {
+            it('should invite', function (done) {
+              app.put('/groups/563d72882cb3e53efe2827fc/invite').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).send({'user' : '563decb7a6269cb39236de98'}).expect(200).end(done)
+            });
+          });
 
-      after(function (done) {
-        var request;
-        request = app.put('/users/' + invitedUser._id);
-        request.set('facebook-token', '1234');
-        request.set('auth-token', auth.token(invitedUser));
-        request.expect(200);
-        request.end(done);
+          describe('unregistered user', function () {
+            it('should invite', function (done) {
+              app.put('/groups/563d72882cb3e53efe2827fc/invite').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).send({'user' : 'ungestired@footbl.co'}).expect(200).end(done)
+            });
+          });
+        });
       });
     });
   });
 
   describe('leave', function () {
-    var group;
+    beforeEach(Group.remove.bind(Group));
 
-    before(Group.remove.bind(Group));
-
-    before(function (done) {
-      group = new Group({
-        'name'    : 'test',
-        'code'    : '6wzji',
-        'owner'   : user,
-        'members' : [user._id, invitedUser._id]
-      });
+    beforeEach(function (done) {
+      var group = new Group();
+      group._id = '563d72882cb3e53efe2827fc';
+      group.name = 'teste';
+      group.code = new Date().getTime().toString(36).substring(3);
+      group.owner = '563decb2a6269cb39236de97';
+      group.picture = 'picture';
+      group.members = ['563decb2a6269cb39236de97', '563decb7a6269cb39236de98'];
       group.save(done);
     });
 
-    it('should invite', function (done) {
-      var request;
-      request = app.del('/groups/' + group._id + '/leave');
-      request.set('auth-token', auth.token(invitedUser));
-      request.expect(200);
-      request.end(done);
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.put('/groups/563d72882cb3e53efe2827fc/leave').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
+      });
+    });
+
+    describe('with valid credentials', function () {
+      describe('without valid id', function () {
+        it('should raise error', function (done) {
+          app.put('/groups/invalid/leave').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(404).end(done)
+        });
+      });
+
+      describe('with valid id', function () {
+        it('should leave', function (done) {
+          app.put('/groups/563d72882cb3e53efe2827fc/leave').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(200).end(done)
+        });
+      });
+    });
+  });
+
+  describe('delete', function () {
+    beforeEach(Group.remove.bind(Group));
+
+    beforeEach(function (done) {
+      var group = new Group();
+      group._id = '563d72882cb3e53efe2827fc';
+      group.name = 'teste';
+      group.code = new Date().getTime().toString(36).substring(3);
+      group.owner = '563decb2a6269cb39236de97';
+      group.picture = 'picture';
+      group.members = ['563decb2a6269cb39236de97'];
+      group.save(done);
+    });
+
+    describe('without valid credentials', function () {
+      it('should raise error', function (done) {
+        app.del('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
+      });
+    });
+
+    describe('with valid credentials', function () {
+      describe('without owner credentials', function () {
+        it('should raise error', function (done) {
+          app.del('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('u1@footbl.co:1234').toString('base64')).expect(405).end(done)
+        });
+      });
+
+      describe('with owner credentials', function () {
+        describe('without valid id', function () {
+          it('should raise error', function (done) {
+            app.del('/groups/invalid').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(404).end(done)
+          });
+        });
+
+        describe('with valid id', function () {
+          it('should delete', function (done) {
+            app.del('/groups/563d72882cb3e53efe2827fc').set('authorization', 'Basic ' + new Buffer('owner@footbl.co:1234').toString('base64')).expect(204).end(done)
+          });
+        });
+      });
     });
   });
 });

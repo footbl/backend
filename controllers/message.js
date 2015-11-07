@@ -1,99 +1,70 @@
 'use strict';
 
-var router, nconf, async, auth, push, crypto,
-    Message;
-
-router = require('express').Router();
-nconf = require('nconf');
-async = require('async');
-auth = require('auth');
-push = require('push');
-crypto = require('crypto');
-
-Message = require('../models/message');
+var router = require('express').Router();
+var async = require('async');
+var Message = require('../models/message');
 
 /**
- * @api {POST} /rooms/:room/messages createMessage
- * @apiName createMessage
+ * @api {post} /messages Creates a message.
+ * @apiName create
  * @apiGroup Message
- *
- * @apiParam {String} [message] Message message.
- * @apiParam {String} [type] Message type.
  */
 router
-.route('/rooms/:room/messages')
-.post(auth.session())
-.post(function createMessage(request, response, next) {
+.route('/messages')
+.post(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var message;
-    message = new Message();
-    message.room = request.params.room;
-    message.user = request.session._id;
+    var message = new Message();
+    message.user = request.session;
+    message.room = request.body.room;
     message.message = request.body.message;
     message.type = request.body.type;
-    message.seenBy = [request.session._id];
+    message.seenBy = [request.session];
+    message.visibleTo = (request.body.visibleTo || []).concat(request.session);
     message.save(next);
-  }, function (message, _, next) {
-    response.status(201);
-    response.send(message);
-    next();
+  }, function (message) {
+    response.status(201).send(message.id);
   }], next);
 });
 
 /**
- * @api {GET} /rooms/:room/messages listMessage
- * @apiName listMessage
+ * @api {get} /messages List all messages.
+ * @apiName list
  * @apiGroup Message
- *
- * @apiParam {Boolean} unreadMessages Filter by unread messages.
- * @apiParam {String} [page=0] The page to be displayed.
  */
 router
-.route('/rooms/:room/messages')
-.get(auth.session())
-.get(function listMessage(request, response, next) {
+.route('/messages')
+.get(function (request, response) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = (request.query.page || 0) * pageSize;
-    query = Message.find();
-    query.where('room').equals(request.params.room);
-    query.sort('-createdAt');
-    query.populate('user');
-    if (request.query.unreadMessages) query.where('seenBy').ne(request.session._id);
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (messages, next) {
-    response.status(200);
-    response.send(messages);
-    next();
-  }], next);
+    Message.find()
+    .where('visibleTo').equals(request.session.id)
+    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+  }, function (messages) {
+    response.status(200).send(messages);
+  }]);
 });
 
 /**
- * @api {PUT} /rooms/:room/messages/all/mark-as-read markAllAsReadMessage
- * @apiName markAllAsReadMessage
+ * @api {put} /messages/all/mark-as-read Mark all messages as read.
+ * @apiName markAllAsRead
  * @apiGroup Message
  */
 router
-.route('/rooms/:room/messages/all/mark-as-read')
-.put(auth.session())
-.put(function markAllAsReadMessage(request, response, next) {
+.route('/messages/all/mark-as-read')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var query;
-    query = Message.find();
-    query.where('room').equals(request.params.room);
+    var query = Message.find()
+    .where('visibleTo').equals(request.session.id);
+    if (request.body.room) query.where('room').equals(request.body.room);
     query.exec(next);
   }, function (messages, next) {
     async.map(messages, function (message, next) {
-      message.seenBy.push(request.session._id);
-      message.save(next);
+      message.update({'$addToSet' : {'seenBy' : request.session.id}}).exec(next);
     }, next);
-  }, function (messages, next) {
-    response.status(200);
-    response.send(messages);
-    next();
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 

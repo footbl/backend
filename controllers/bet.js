@@ -1,164 +1,101 @@
 'use strict';
 
-var router, nconf, async, auth, push, crypto,
-    Bet, User;
-
-router = require('express').Router();
-nconf = require('nconf');
-async = require('async');
-auth = require('auth');
-push = require('push');
-crypto = require('crypto');
-
-Bet = require('../models/bet');
-User = require('../models/user');
+var router = require('express').Router();
+var async = require('async');
+var Bet = require('../models/bet');
 
 /**
- * @api {post} /users/:user/bets Creates a new bet.
- * @apiName createBet
- * @apiGroup bet
- *
- * @apiParam {ObjectId} match Bet match.
- * @apiParam {Number} bid Bet bid.
- * @apiParam {String} result Bet result.
+ * @api {post} /bets Creates a new bet.
+ * @apiName create
+ * @apiGroup Bet
  */
 router
-.route('/users/:user/bets')
-.post(auth.session())
-.post(auth.checkMethod('user'))
-.post(function createBet(request, response, next) {
+.route('/bets')
+.post(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var bet;
-    bet = new Bet();
+    require('../models/match').findOne().where('_id').equals(request.body.match).exec(next);
+  }, function (match, next) {
+    if (!match) return next(new Error('not found'));
+    var bet = new Bet();
     bet.bid = request.body.bid;
     bet.result = request.body.result;
-    bet.match = request.body.match;
-    bet.user = request.session._id;
-    bet.save(next);
-  }, function (bet, _, next) {
-    bet.populate('user');
-    bet.populate('match');
-    bet.populate(next);
-  }, function (bet, next) {
-    var user, match;
-    user = bet.user;
-    match = bet.match;
-    user.funds -= bet.bid;
-    user.stake += bet.bid;
-    match.pot[bet.result] += bet.bid;
-    response.status(201);
-    response.send(bet);
-    async.parallel([user.save.bind(user), match.save.bind(match)], next);
+    bet.match = match;
+    bet.user = request.session;
+    async.series([bet.validate.bind(bet), bet.save.bind(bet), function (next) {
+      request.session.update({'$inc' : {'funds' : -bet.bid, 'stake' : bet.bid}}, next);
+    }, function (next) {
+      var inc = {};
+      inc['pot.' + bet.result] = bet.bid;
+      match.update({'$inc' : inc}, next);
+    }], next);
+  }, function (result) {
+    response.status(201).send(result[2].id);
   }], next);
 });
 
 /**
- * @api {get} /users/:user/bets List all bets.
- * @apiName listBet
- * @apiGroup bet
- *
- * @apiParam {String} [page=0] The page to be displayed.
+ * @api {get} /bets List all bets.
+ * @apiName list
+ * @apiGroup Bet
  */
 router
-.route('/users/:user/bets')
-.get(auth.session())
-.get(function listBet(request, response, next) {
+.route('/bets')
+.get(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = (request.query.page || 0) * pageSize;
-    query = Bet.find();
-    query.where('user').equals(request.user._id);
-    query.populate('user');
-    query.populate('match');
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (bets, next) {
-    response.status(200);
-    response.send(bets);
-    next();
+    Bet.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+  }, function (bets) {
+    response.status(200).send(bets);
   }], next);
 });
 
 /**
- * @api {get} /users/:user/bets/:bet Get bet.
- * @apiName getBet
- * @apiGroup bet
+ * @api {get} /bets/:id Get bet.
+ * @apiName get
+ * @apiGroup Bet
  */
 router
-.route('/users/:user/bets/:bet')
-.get(auth.session())
-.get(function getBet(request, response, next) {
-  async.waterfall([function (next) {
-    var bet;
-    bet = request.bet;
-    response.status(200);
-    response.send(bet);
-    next();
-  }], next);
+.route('/bets/:id')
+.get(function (request, response) {
+  if (!request.session) throw new Error('invalid session');
+  response.status(200).send(request.bet);
 });
 
 /**
- * @api {put} /users/:user/bets/:bet Updates bet.
- * @apiName updateBet
- * @apiGroup bet
- *
- * @apiParam {Number} bid Bet bid.
- * @apiParam {String} result Bet result.
+ * @api {put} /bets/:id Updates bet.
+ * @apiName update
+ * @apiGroup Bet
  */
 router
-.route('/users/:user/bets/:bet')
-.put(auth.session())
-.put(auth.checkMethod('bet', 'user'))
-.put(function updateBet(request, response, next) {
+.route('/bets/:id')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.bet.user.id) throw new Error('invalid method');
   async.waterfall([function (next) {
-    var bet;
-    bet = request.bet;
-    request.oldBid = bet.bid;
-    request.oldResult = bet.result;
+    var bet = request.bet;
+    var oldBid = bet.bid;
+    var oldResult = bet.result;
     bet.bid = request.body.bid;
     bet.result = request.body.result;
-    bet.save(next);
-  }, function (bet, _, next) {
-    bet.populate('user');
-    bet.populate('match');
-    bet.populate(next);
-  }, function (bet, next) {
-    var user, match;
-    user = bet.user;
-    match = bet.match;
-    user.funds += request.oldBid - bet.bid;
-    user.stake += bet.bid - request.oldBid;
-    match.pot[bet.result] += bet.bid;
-    match.pot[request.oldResult] -= request.oldBid;
-    response.status(200);
-    response.send(bet);
-    async.parallel([user.save.bind(user), match.save.bind(match)], next);
+    async.series([bet.validate.bind(bet), bet.save.bind(bet), function (next) {
+      request.session.update({'$inc' : {'funds' : -bet.bid + oldBid, 'stake' : bet.bid - oldBid}}, next);
+    }, function (next) {
+      var inc = {};
+      inc['pot.' + oldResult] = inc['pot.' + oldResult] || 0;
+      inc['pot.' + oldResult] -= oldBid;
+      inc['pot.' + bet.result] = inc['pot.' + bet.result] || 0;
+      inc['pot.' + bet.result] += bet.bid;
+      bet.match.update({'$inc' : inc}, next);
+    }], next);
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 
-router.param('user', function findUser(request, response, next, id) {
+router.param('id', function (request, response, next, id) {
   async.waterfall([function (next) {
-    var query;
-    query = User.findOne();
-    query.where('_id').equals(id);
-    query.exec(next);
-  }, function (user, next) {
-    request.user = user;
-    next(!user ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('bet', function findBet(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = Bet.findOne();
-    query.populate('user');
-    query.populate('match');
-    query.where('user').equals(request.user._id);
-    query.where('_id').equals(id);
-    query.exec(next);
+    Bet.findOne().where('_id').equals(id).exec(next);
   }, function (bet, next) {
     request.bet = bet;
     next(!bet ? new Error('not found') : null);

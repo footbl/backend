@@ -1,109 +1,67 @@
 'use strict';
 
-var router, nconf, async, auth, push, crypto,
-    User, Prize;
-
-router = require('express').Router();
-nconf = require('nconf');
-async = require('async');
-auth = require('auth');
-push = require('push');
-crypto = require('crypto');
-
-User = require('../models/user');
-Prize = require('../models/prize');
+var router = require('express').Router();
+var async = require('async');
+var Prize = require('../models/prize');
 
 /**
- * @api {GET} /users/:user/prizes listPrize
- * @apiName listPrize
+ * @api {get} /prizes List all prizes.
+ * @apiName list
  * @apiGroup Prize
- *
- * @apiParam {Boolean} unreadMessages Filter by unread messages.
- * @apiParam {String} [page=0] The page to be displayed.
  */
 router
-.route('/users/:user/prizes')
-.get(auth.session())
-.get(function listPrize(request, response, next) {
+.route('/prizes')
+.get(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    var pageSize, page, query;
-    pageSize = nconf.get('PAGE_SIZE');
-    page = (request.query.page || 0) * pageSize;
-    query = Prize.find();
-    query.where('user').equals(request.session._id);
-    query.sort('-createdAt');
-    if (request.query.unreadMessages) query.where('seenBy').ne(request.session._id);
-    query.skip(page);
-    query.limit(pageSize);
-    query.exec(next);
-  }, function (prizes, next) {
-    response.status(200);
-    response.send(prizes);
-    next();
+    Prize.find()
+    .where('user').equals(request.session.id)
+    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+  }, function (prizes) {
+    response.status(200).send(prizes);
   }], next);
 });
 
 /**
- * @api {GET} /users/:user/prizes/:prize getPrize
- * @apiName getPrize
+ * @api {get} /prizes/:id Get prize.
+ * @apiName get
  * @apiGroup Prize
  */
 router
-.route('/users/:user/prizes/:prize')
-.get(auth.session())
-.get(function getPrize(request, response, next) {
-  async.waterfall([function (next) {
-    var prize;
-    prize = request.prize;
-    response.status(200);
-    response.send(prize);
-    next();
-  }], next);
+.route('/prizes/:id')
+.get(function (request, response) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.prize.user.id) throw new Error('invalid method');
+  response.status(200).send(request.prize);
 });
 
 /**
- * @api {PUT} /users/:user/prizes/:prize/mark-as-read markAsReadPrize
- * @apiName markAsReadPrize
+ * @api {put} /prizes/:id/mark-as-read Mark prize as read.
+ * @apiName markAsRead
  * @apiGroup Prize
  */
 router
-.route('/users/:user/prizes/:prize/mark-as-read')
-.put(auth.session())
-.put(function markAsReadPrize(request, response, next) {
+.route('/prizes/:id/mark-as-read')
+.put(function (request, response, next) {
+  if (!request.session) throw new Error('invalid session');
+  if (request.session.id !== request.prize.user.id) throw new Error('invalid method');
   async.waterfall([function (next) {
-    var prize;
-    prize = request.prize;
-    prize.seenBy.push(request.user._id);
-    prize.save(next);
-  }, function (prize, _, next) {
-    response.status(200);
-    response.send(prize);
-    User.update({'_id' : prize.user}, {'$inc' : {'seasons.0.funds' : prize.value}}, next);
+    async.parallel([function (next) {
+      request.prize.update({'$addToSet' : {'seenBy' : request.session.id}}, next);
+    }, function (next) {
+      request.prize.user.update({'$inc' : {'funds' : request.prize.value}}, next);
+    }], next);
+  }, function () {
+    response.status(200).end();
   }], next);
 });
 
-router.param('prize', function findPrize(request, response, next, id) {
+router.param('id', function (request, response, next, id) {
   async.waterfall([function (next) {
-    var query;
-    query = Prize.findOne();
-    query.where('user').equals(request.user._id);
-    query.where('_id').equals(id);
-    query.exec(next);
+    Prize.findOne().where('_id').equals(id).exec(next);
   }, function (prize, next) {
     request.prize = prize;
     next(!prize ? new Error('not found') : null);
-  }], next);
-});
-
-router.param('user', function findUser(request, response, next, id) {
-  async.waterfall([function (next) {
-    var query;
-    query = User.findOne();
-    query.where('_id').equals(id);
-    query.exec(next);
-  }, function (user, next) {
-    request.user = user;
-    next(!user ? new Error('not found') : null);
   }], next);
 });
 

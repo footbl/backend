@@ -1,49 +1,38 @@
 'use strict';
 
-var mongoose, jsonSelect, nconf, async, Schema, schema;
-
-mongoose = require('mongoose');
-jsonSelect = require('mongoose-json-select');
-nconf = require('nconf');
-async = require('async');
-Schema = mongoose.Schema;
-
-schema = new Schema({
-  'name'      : {
+var mongoose = require('mongoose');
+var async = require('async');
+var schema = new mongoose.Schema({
+  'name'     : {
     'type'     : String,
     'required' : true
   },
-  'code'      : {
+  'code'     : {
     'type'     : String,
     'required' : true
   },
-  'owner'     : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'User',
-    'required' : true
+  'owner'    : {
+    'type'         : mongoose.Schema.Types.ObjectId,
+    'ref'          : 'User',
+    'required'     : true,
+    'autopopulate' : true
   },
-  'picture'   : {
+  'picture'  : {
     'type' : String
   },
-  'featured'  : {
+  'featured' : {
     'type'    : Boolean,
     'default' : false
   },
-  'invites'   : [{
+  'invites'  : [{
     'type' : String
   }],
-  'members'   : [{
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'User',
-    'required' : true
-  }],
-  'createdAt' : {
-    'type'    : Date,
-    'default' : Date.now
-  },
-  'updatedAt' : {
-    'type' : Date
-  }
+  'members'  : [{
+    'type'         : mongoose.Schema.Types.ObjectId,
+    'ref'          : 'User',
+    'required'     : true,
+    'autopopulate' : true
+  }]
 }, {
   'collection' : 'groups',
   'strict'     : true,
@@ -52,22 +41,16 @@ schema = new Schema({
   }
 });
 
-schema.plugin(jsonSelect, {
-  '_id'       : 1,
-  'name'      : 1,
-  'code'      : 1,
-  'owner'     : 1,
-  'picture'   : 1,
-  'featured'  : 0,
-  'invites'   : 0,
-  'members'   : 1,
-  'createdAt' : 1,
-  'updatedAt' : 1
-});
-
-schema.pre('save', function setGroupUpdatedAt(next) {
-  this.updatedAt = new Date();
-  return next();
+schema.plugin(require('mongoose-autopopulate'));
+schema.plugin(require('mongoose-json-select'), {
+  '_id'      : 1,
+  'name'     : 1,
+  'code'     : 1,
+  'owner'    : 1,
+  'picture'  : 1,
+  'featured' : 0,
+  'invites'  : 0,
+  'members'  : 1
 });
 
 module.exports = mongoose.model('Group', schema);

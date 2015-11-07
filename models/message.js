@@ -1,21 +1,16 @@
 'use strict';
 
-var mongoose, jsonSelect, nconf, async, Schema, schema;
-
-mongoose = require('mongoose');
-jsonSelect = require('mongoose-json-select');
-nconf = require('nconf');
-async = require('async');
-Schema = mongoose.Schema;
-
-schema = new Schema({
+var mongoose = require('mongoose');
+var async = require('async');
+var schema = new mongoose.Schema({
   'user'      : {
-    'type'     : Schema.Types.ObjectId,
-    'ref'      : 'User',
-    'required' : true
+    'type'         : mongoose.Schema.Types.ObjectId,
+    'ref'          : 'User',
+    'required'     : true,
+    'autopopulate' : true
   },
   'room'      : {
-    'type'     : Schema.Types.ObjectId,
+    'type'     : mongoose.Schema.Types.ObjectId,
     'required' : true
   },
   'message'   : {
@@ -25,16 +20,13 @@ schema = new Schema({
     'type' : String
   },
   'seenBy'    : [{
-    'type' : Schema.Types.ObjectId,
+    'type' : mongoose.Schema.Types.ObjectId,
     'ref'  : 'User'
   }],
-  'createdAt' : {
-    'type'    : Date,
-    'default' : Date.now
-  },
-  'updatedAt' : {
-    'type' : Date
-  }
+  'visibleTo' : [{
+    'type' : mongoose.Schema.Types.ObjectId,
+    'ref'  : 'User'
+  }]
 }, {
   'collection' : 'messages',
   'strict'     : true,
@@ -43,20 +35,17 @@ schema = new Schema({
   }
 });
 
-schema.plugin(jsonSelect, {
+schema.plugin(require('mongoose-autopopulate'));
+schema.plugin(require('mongoose-json-select'), {
   '_id'       : 1,
   'user'      : 1,
   'room'      : 0,
   'message'   : 1,
   'type'      : 1,
   'seenBy'    : 0,
+  'visibleTo' : 0,
   'createdAt' : 1,
   'updatedAt' : 1
-});
-
-schema.pre('save', function setMessageUpdatedAt(next) {
-  this.updatedAt = new Date();
-  return next();
 });
 
 module.exports = mongoose.model('Message', schema);
