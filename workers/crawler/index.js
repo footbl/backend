@@ -1,8 +1,8 @@
 'use strict';
 var mongoose, nconf, request, async,
-    Championship, Match, User,
-    championships, teams,
-    now, yesterday, today, tomorrow, url365;
+Championship, Match, User,
+championships, teams,
+now, yesterday, today, tomorrow, url365;
 
 mongoose = require('mongoose');
 nconf = require('nconf');
@@ -117,9 +117,8 @@ module.exports = function crawler(next) {
 };
 
 if (require.main === module) {
-  nconf.argv();
   nconf.env();
-  nconf.defaults(require('../../config'));
+  nconf.defaults({'MONGOLAB_URI' : 'mongodb://localhost/footbl'});
   mongoose.connect(nconf.get('MONGOLAB_URI'));
 
   async.whilst(function () {
@@ -174,4 +173,4 @@ if (require.main === module) {
  }.bind(this), function (next) {
  next(null, this);
  }.bind(this)], next);
-* */
+ * */
