@@ -16,7 +16,15 @@ module.exports = function createSeason(done) {
     season.finishAt = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
     season.save(next);
   }, function (season, _, next) {
-    User.update({}, {'$set' : {'funds' : 100, 'stake' : 0, 'history' : []}}, {'multi' : true}, next);
+    User.update({}, {
+      '$set' : {
+        'funds'           : 100,
+        'stake'           : 0,
+        'history'         : [],
+        'ranking'         : Infinity,
+        'previousRanking' : Infinity
+      }
+    }, {'multi' : true}, next);
   }], done);
 };
 

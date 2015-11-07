@@ -3,70 +3,78 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var schema = new mongoose.Schema({
-  'email'     : {
+  'email'           : {
     'type'   : String,
     'match'  : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
     'unique' : true,
     'sparse' : true
   },
-  'username'  : {
+  'username'        : {
     'type'   : String,
     'unique' : true,
     'sparse' : true
   },
-  'facebook'  : {
+  'facebook'        : {
     'type'   : String,
     'unique' : true,
     'sparse' : true
   },
-  'password'  : {
+  'password'        : {
     'type'     : String,
     'required' : true
   },
-  'name'      : {
+  'name'            : {
     'type' : String
   },
-  'about'     : {
+  'about'           : {
     'type' : String
   },
-  'verified'  : {
+  'verified'        : {
     'type'     : Boolean,
     'required' : true,
     'default'  : false
   },
-  'featured'  : {
+  'featured'        : {
     'type'     : Boolean,
     'required' : true,
     'default'  : false
   },
-  'picture'   : {
+  'picture'         : {
     'type'  : String,
     'match' : /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
   },
-  'apnsToken' : {
+  'apnsToken'       : {
     'type' : String
   },
-  'active'    : {
+  'active'          : {
     'type'    : Boolean,
     'default' : true
   },
-  'country'   : {
+  'country'         : {
     'type' : String
   },
-  'stake'     : {
+  'ranking'         : {
+    'type'    : Number,
+    'default' : Infinity
+  },
+  'previousRanking' : {
+    'type'    : Number,
+    'default' : Infinity
+  },
+  'stake'           : {
     'type'    : Number,
     'default' : 0
   },
-  'funds'     : {
+  'funds'           : {
     'type'    : Number,
     'default' : 100
   },
-  'history'   : [{
+  'history'         : [{
     'date'  : Date,
     'stake' : Number,
     'funds' : Number
   }],
-  'starred'   : [{
+  'starred'         : [{
     'type'     : mongoose.Schema.Types.ObjectId,
     'ref'      : 'User',
     'required' : true
@@ -81,23 +89,25 @@ var schema = new mongoose.Schema({
 
 schema.plugin(require('mongoose-autopopulate'));
 schema.plugin(require('mongoose-json-select'), {
-  '_id'       : 1,
-  'email'     : 1,
-  'username'  : 1,
-  'facebook'  : 1,
-  'password'  : 0,
-  'name'      : 1,
-  'about'     : 1,
-  'verified'  : 1,
-  'featured'  : 0,
-  'picture'   : 1,
-  'apnsToken' : 0,
-  'active'    : 0,
-  'country'   : 1,
-  'stake'     : 1,
-  'funds'     : 1,
-  'history'   : 1,
-  'starred'   : 0
+  '_id'             : 1,
+  'email'           : 1,
+  'username'        : 1,
+  'facebook'        : 1,
+  'password'        : 0,
+  'name'            : 1,
+  'about'           : 1,
+  'verified'        : 1,
+  'featured'        : 0,
+  'picture'         : 1,
+  'apnsToken'       : 0,
+  'active'          : 0,
+  'country'         : 1,
+  'ranking'         : 1,
+  'previousRanking' : 1,
+  'stake'           : 1,
+  'funds'           : 1,
+  'history'         : 1,
+  'starred'         : 0
 });
 
 schema.pre('save', function (next) {
