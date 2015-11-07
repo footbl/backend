@@ -1,29 +1,22 @@
 'use strict';
-var mongoose, nconf, async,
-Season, User,
-now, today;
-
-mongoose = require('mongoose');
-nconf = require('nconf');
-async = require('async');
-Season = require('../models/season');
-User = require('../models/user');
-now = new Date();
-today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+var mongoose = require('mongoose');
+var nconf = require('nconf');
+var async = require('async');
+var Season = require('../models/season');
+var User = require('../models/user');
+var now = new Date();
+var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
 module.exports = function createSeason(done) {
   async.waterfall([function (next) {
-    var query;
-    query = Season.findOne();
-    query.where('finishAt').gt(today);
-    query.exec(next);
+    Season.findOne().where('finishAt').gt(today).exec(next);
   }, function (season, next) {
     if (season) done();
     season = new Season();
     season.finishAt = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
     season.save(next);
   }, function (season, _, next) {
-    User.update({}, {'$set' : {'funds' : 100, 'stake' : 0}}, {'multi' : true}, next);
+    User.update({}, {'$set' : {'funds' : 100, 'stake' : 0, 'history' : []}}, {'multi' : true}, next);
   }], done);
 };
 
