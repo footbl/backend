@@ -37,15 +37,20 @@ router
  * @api {get} /challenges List all challenges.
  * @apiName list
  * @apiGroup Challenge
+ *
+ * @apiParam {ObjectId} filterByChallenger
+ * @apiParam {ObjectId} filterByChallenged
  */
 router
 .route('/challenges')
 .get(function (request, response, next) {
   if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    Challenge.find()
-    .or([{'challenger.user' : request.session.id}, {'challenged.user' : request.session.id}])
-    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = Challenge.find().skip((request.query.page || 0) * 20).limit(20)
+    .or([{'challenger.user' : request.session.id}, {'challenged.user' : request.session.id}]);
+    if (request.query.filterByChallenger) query.where('challenger.user').equals(request.query.filterByChallenger);
+    if (request.query.filterByChallenged) query.where('challenged.user').equals(request.query.filterByChallenged);
+    query.exec(next);
   }, function (challenges) {
     response.status(200).send(challenges);
   }], next);

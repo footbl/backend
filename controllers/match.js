@@ -8,12 +8,18 @@ var Match = require('../models/match');
  * @api {GET} /matches List all matches.
  * @apiName list
  * @apiGroup Match
+ *
+ * @apiParam {ObjectId} filterByChampionship
+ * @apiParam {Number} filterByRound
  */
 router
 .route('/matches')
 .get(function (request, response, next) {
   async.waterfall([function (next) {
-    Match.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = Match.find().skip((request.query.page || 0) * 20).limit(20);
+    if (request.query.filterByChampionship) query.where('championship').equals(request.query.filterByChampionship);
+    if (request.query.filterByRound) query.where('round').equals(request.query.filterByRound);
+    query.exec(next);
   }, function (matches) {
     response.status(200).send(matches);
   }], next);

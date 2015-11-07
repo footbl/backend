@@ -37,15 +37,20 @@ router
  * @api {get} /credit-requests List all credit request.
  * @apiName list
  * @apiGroup CreditRequest
+ *
+ * @apiParam {ObjectId} filterByCreditedUser
+ * @apiParam {ObjectId} filterByChargedUser
  */
 router
 .route('/credit-requests')
 .get(function (request, response, next) {
   if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    CreditRequest.find()
-    .or([{'creditedUser' : request.session.id}, {'chargedUser' : request.session.id}])
-    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = CreditRequest.find().skip((request.query.page || 0) * 20).limit(20)
+    .or([{'creditedUser' : request.session.id}, {'chargedUser' : request.session.id}]);
+    if (request.query.filterByCreditedUser) query.where('creditedUser').equals(request.query.filterByCreditedUser);
+    if (request.query.filterByChargedUser) query.where('chargedUser').equals(request.query.filterByChargedUser);
+    query.exec(next);
   }, function (creditRequests) {
     response.status(200).send(creditRequests);
   }], next);

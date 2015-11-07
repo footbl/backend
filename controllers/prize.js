@@ -8,15 +8,18 @@ var Prize = require('../models/prize');
  * @api {get} /prizes List all prizes.
  * @apiName list
  * @apiGroup Prize
+ *
+ * @apiParam {Boolean} filterByUnread
  */
 router
 .route('/prizes')
 .get(function (request, response, next) {
   if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    Prize.find()
-    .where('user').equals(request.session.id)
-    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = Prize.find().skip((request.query.page || 0) * 20).limit(20)
+    .where('user').equals(request.session.id);
+    if (request.query.filterByUnread) query.where('seenBy').ne(request.session.id);
+    query.exec(next);
   }, function (prizes) {
     response.status(200).send(prizes);
   }], next);

@@ -36,15 +36,20 @@ router
  * @api {get} /messages List all messages.
  * @apiName list
  * @apiGroup Message
+ *
+ * @apiParam {String} filterByRoom
+ * @apiParam {Boolean} filterByUnread
  */
 router
 .route('/messages')
 .get(function (request, response) {
   if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    Message.find()
-    .where('visibleTo').equals(request.session.id)
-    .skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = Message.find().skip((request.query.page || 0) * 20).limit(20)
+    .where('visibleTo').equals(request.session.id);
+    if (request.query.filterByRoom) query.where('room').equals(request.query.filterByRoom);
+    if (request.query.filterByUnread) query.where('seenBy').ne(request.session.id);
+    query.exec(next);
   }, function (messages) {
     response.status(200).send(messages);
   }]);

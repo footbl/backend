@@ -42,13 +42,19 @@ router
  * @api {get} /bets List all bets.
  * @apiName list
  * @apiGroup Bet
+ *
+ * @apiParam {ObjectId} filterByMatch
+ * @apiParam {ObjectId} filterByUser
  */
 router
 .route('/bets')
 .get(function (request, response, next) {
   if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    Bet.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = Bet.find().skip((request.query.page || 0) * 20).limit(20);
+    if (request.query.filterByMatch) query.where('match').equals(request.query.filterByMatch);
+    if (request.query.filterByUser) query.where('user').equals(request.query.filterByUser);
+    query.exec(next);
   }, function (bets) {
     response.status(200).send(bets);
   }], next);

@@ -33,13 +33,17 @@ router
  * @api {get} /groups List all groups.
  * @apiName list
  * @apiGroup Group
+ *
+ * @apiParam {String} filterByCode
  */
 router
 .route('/groups')
 .get(function (request, response, next) {
   if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    Group.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = Group.find().skip((request.query.page || 0) * 20).limit(20);
+    if (request.query.filterByCode) query.where('code').equals(request.query.filterByCode);
+    query.exec(next);
   }, function (groups) {
     response.status(200).send(groups);
   }], next);
