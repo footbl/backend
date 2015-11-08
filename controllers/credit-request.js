@@ -8,6 +8,7 @@ var CreditRequest = require('../models/credit-request');
  * @api {post} /credit-requests Creates a new credit request.
  * @apiName create
  * @apiGroup CreditRequest
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} user
  */
@@ -37,6 +38,8 @@ router
  * @api {get} /credit-requests List all credit request.
  * @apiName list
  * @apiGroup CreditRequest
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
  *
  * @apiParam {ObjectId} filterByCreditedUser
  * @apiParam {ObjectId} filterByChargedUser
@@ -60,6 +63,7 @@ router
  * @api {get} /credit-requests/:creditRequest Get credit request.
  * @apiName get
  * @apiGroup CreditRequest
+ * @apiUse defaultHeaders
  */
 router
 .route('/credit-requests/:id')
@@ -73,6 +77,7 @@ router
  * @api {put} /credit-requests/:creditRequest/approve Approve credit request.
  * @apiName approve
  * @apiGroup CreditRequest
+ * @apiUse defaultHeaders
  */
 router
 .route('/credit-requests/:id/approve')
@@ -98,6 +103,7 @@ router
  * @api {put} /credit-requests/:creditRequest/reject Reject credit request.
  * @apiName reject
  * @apiGroup CreditRequest
+ * @apiUse defaultHeaders
  */
 router
 .route('/credit-requests/:id/reject')

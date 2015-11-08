@@ -16,6 +16,15 @@ nconf.defaults({
   'VERSION'         : '3.0.0'
 });
 
+/** @apiDefine defaultHeaders
+ *
+ *  @apiHeader {String} authorization User credentials in the format 'Basic <user_email>:<user_password>' encoded in base 64.
+ */
+
+/** @apiDefine defaultPaging
+ *
+ *  @apiParam {Number} [page=0] Page to display.
+ */
 
 domain.on('error', function (error) {
   console.error(error.message);

@@ -8,6 +8,7 @@ var Group = require('../models/group');
  * @api {post} /groups Creates a new group.
  * @apiName create
  * @apiGroup Group
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} name
  * @apiParam {String} [picture]
@@ -33,6 +34,8 @@ router
  * @api {get} /groups List all groups.
  * @apiName list
  * @apiGroup Group
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
  *
  * @apiParam {String} filterByCode
  */
@@ -53,6 +56,7 @@ router
  * @api {get} /groups/:id Get group.
  * @apiName get
  * @apiGroup Group
+ * @apiUse defaultHeaders
  */
 router
 .route('/groups/:id')
@@ -65,6 +69,7 @@ router
  * @api {put} /groups/:id Updates group.
  * @apiName update
  * @apiGroup Group
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} name
  * @apiParam {String} [picture]
@@ -88,6 +93,7 @@ router
  * @api {delete} /groups/:id Removes group.
  * @apiName remove
  * @apiGroup Group
+ * @apiUse defaultHeaders
  */
 router
 .route('/groups/:id')
@@ -105,6 +111,7 @@ router
  * @api {put} /groups/:id/invite Invites user to group.
  * @apiName invite
  * @apiGroup Group
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} user
  */
@@ -128,6 +135,7 @@ router
  * @api {put} /groups/:id/leave Leaves group.
  * @apiName leave
  * @apiGroup Group
+ * @apiUse defaultHeaders
  */
 router
 .route('/groups/:id/leave')

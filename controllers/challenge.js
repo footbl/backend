@@ -8,6 +8,7 @@ var Challenge = require('../models/challenge');
  * @api {post} /challenges Creates a new challenge.
  * @apiName create
  * @apiGroup Challenge
+ * @apiUse defaultHeaders
  *
  * @apiParam {Number} bid
  * @apiParam {ObjectId} match
@@ -37,6 +38,8 @@ router
  * @api {get} /challenges List all challenges.
  * @apiName list
  * @apiGroup Challenge
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
  *
  * @apiParam {ObjectId} filterByChallenger
  * @apiParam {ObjectId} filterByChallenged
@@ -60,6 +63,7 @@ router
  * @api {get} /challenges/:id Get challenge.
  * @apiName get
  * @apiGroup Challenge
+ * @apiUse defaultHeaders
  */
 router
 .route('/challenges/:id')
@@ -73,6 +77,7 @@ router
  * @api {put} /challenges/:id/reject Reject challenge.
  * @apiName reject
  * @apiGroup Challenge
+ * @apiUse defaultHeaders
  */
 router
 .route('/challenges/:id/reject')
@@ -95,6 +100,7 @@ router
  * @api {put} /challenges/:id/accept Accept challenge.
  * @apiName accept
  * @apiGroup Challenge
+ * @apiUse defaultHeaders
  */
 router
 .route('/challenges/:id/accept')

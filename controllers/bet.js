@@ -8,6 +8,7 @@ var Bet = require('../models/bet');
  * @api {post} /bets Creates a new bet.
  * @apiName create
  * @apiGroup Bet
+ * @apiUse defaultHeaders
  *
  * @apiParam {Number} bid
  * @apiParam {ObjectId} match
@@ -42,6 +43,9 @@ router
  * @api {get} /bets List all bets.
  * @apiName list
  * @apiGroup Bet
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
+ * @apiUse defaultPaging
  *
  * @apiParam {ObjectId} filterByMatch
  * @apiParam {ObjectId} filterByUser
@@ -64,6 +68,7 @@ router
  * @api {get} /bets/:id Get bet.
  * @apiName get
  * @apiGroup Bet
+ * @apiUse defaultHeaders
  */
 router
 .route('/bets/:id')
@@ -76,6 +81,7 @@ router
  * @api {put} /bets/:id Updates bet.
  * @apiName update
  * @apiGroup Bet
+ * @apiUse defaultHeaders
  *
  * @apiParam {Number} bid
  * @apiParam {String=draw,guest,host} result

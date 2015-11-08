@@ -8,6 +8,7 @@ var Championship = require('../models/championship');
  * @api {GET} /championships List all championships.
  * @apiName list
  * @apiGroup Championship
+ * @apiUse defaultPaging
  */
 router
 .route('/championships')

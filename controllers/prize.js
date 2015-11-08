@@ -8,6 +8,8 @@ var Prize = require('../models/prize');
  * @api {get} /prizes List all prizes.
  * @apiName list
  * @apiGroup Prize
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
  *
  * @apiParam {Boolean} filterByUnread
  */
@@ -29,6 +31,7 @@ router
  * @api {get} /prizes/:id Get prize.
  * @apiName get
  * @apiGroup Prize
+ * @apiUse defaultHeaders
  */
 router
 .route('/prizes/:id')
@@ -42,6 +45,7 @@ router
  * @api {put} /prizes/:id/mark-as-read Mark prize as read.
  * @apiName markAsRead
  * @apiGroup Prize
+ * @apiUse defaultHeaders
  */
 router
 .route('/prizes/:id/mark-as-read')

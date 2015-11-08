@@ -8,6 +8,7 @@ var Season = require('../models/season');
  * @api {GET} /seasons List all seasons.
  * @apiName list
  * @apiGroup Season
+ * @apiUse defaultPaging
  */
 router
 .route('/seasons')

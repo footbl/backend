@@ -8,6 +8,7 @@ var Message = require('../models/message');
  * @api {post} /messages Creates a message.
  * @apiName create
  * @apiGroup Message
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} rom
  * @apiParam {String} [message]
@@ -36,6 +37,8 @@ router
  * @api {get} /messages List all messages.
  * @apiName list
  * @apiGroup Message
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
  *
  * @apiParam {String} filterByRoom
  * @apiParam {Boolean} filterByUnread
@@ -59,6 +62,7 @@ router
  * @api {put} /messages/all/mark-as-read Mark all messages as read.
  * @apiName markAllAsRead
  * @apiGroup Message
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} rom
  */

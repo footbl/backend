@@ -31,6 +31,8 @@ router
  * @api {get} /users List all users.
  * @apiName list
  * @apiGroup User
+ * @apiUse defaultHeaders
+ * @apiUse defaultPaging
  */
 router
 .route('/users')
@@ -47,6 +49,7 @@ router
  * @api {get} /users/:id Get user.
  * @apiName get
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id')
@@ -59,6 +62,7 @@ router
  * @api {put} /users/:id Update user.
  * @apiName update
  * @apiGroup User
+ * @apiUse defaultHeaders
  *
  * @apiParam {String} [email]
  * @apiParam {String} [username]
@@ -94,6 +98,7 @@ router
  * @api {delete} /users/:id Remove user.
  * @apiName remove
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id')
@@ -113,6 +118,7 @@ router
  * @api {put} /users/:id/recharge Recharge user.
  * @apiName recharge
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id/recharge')
@@ -132,6 +138,7 @@ router
  * @api {get} /users/me/forgot-password Forgot password.
  * @apiName forgotPassword
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/me/forgot-password')
@@ -143,6 +150,7 @@ router
  * @api {put} /users/:id/follow Follow user.
  * @apiName follow
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id/follow')
@@ -159,6 +167,7 @@ router
  * @api {put} /users/:id/unfollow Unfollow user.
  * @apiName unfollow
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id/unfollow')
@@ -175,6 +184,7 @@ router
  * @api {get} /users/:id/followers Followers user.
  * @apiName followers
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id/followers')
@@ -191,6 +201,7 @@ router
  * @api {get} /users/:id/following Following user.
  * @apiName following
  * @apiGroup User
+ * @apiUse defaultHeaders
  */
 router
 .route('/users/:id/following')

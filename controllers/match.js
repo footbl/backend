@@ -8,6 +8,7 @@ var Match = require('../models/match');
  * @api {GET} /matches List all matches.
  * @apiName list
  * @apiGroup Match
+ * @apiUse defaultPaging
  *
  * @apiParam {ObjectId} filterByChampionship
  * @apiParam {Number} filterByRound
