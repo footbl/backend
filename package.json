@@ -58,7 +58,7 @@
     "supertest": "^1.1.0"
   },
   "apidoc": {
-    "sampleUrl": "http://footbl-staging.herokuapp.com/",
+    "sampleUrl": "http://footbl-staging.herokuapp.com",
     "template": {
       "withCompare": false
     }
