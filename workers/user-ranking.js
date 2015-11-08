@@ -4,7 +4,7 @@ var nconf = require('nconf');
 var async = require('async');
 var User = require('../models/user');
 
-module.exports = function createSeason(done) {
+module.exports = function (done) {
   async.waterfall([function (next) {
     User.find().exec(next);
   }, function (users, next) {

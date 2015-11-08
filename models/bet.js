@@ -23,6 +23,10 @@ var schema = new mongoose.Schema({
     'type'     : String,
     'required' : true,
     'enum'     : ['guest', 'host', 'draw']
+  },
+  'payed'  : {
+    'type'    : Boolean,
+    'default' : false
   }
 }, {
   'collection' : 'bets',
@@ -40,7 +44,8 @@ schema.plugin(require('mongoose-json-select'), {
   'user'   : 1,
   'match'  : 1,
   'bid'    : 1,
-  'result' : 1
+  'result' : 1,
+  'payed'  : 0
 });
 
 schema.path('match').validate(function (value, next) {

@@ -38,6 +38,10 @@ var schema = new mongoose.Schema({
   },
   'accepted'   : {
     'type' : Boolean
+  },
+  'payed'      : {
+    'type'    : Boolean,
+    'default' : false
   }
 }, {
   'collection' : 'challenges',
@@ -54,7 +58,8 @@ schema.plugin(require('mongoose-json-select'), {
   'challenged' : 1,
   'match'      : 1,
   'bid'        : 1,
-  'accepted'   : 1
+  'accepted'   : 1,
+  'payed'      : 0
 });
 
 schema.path('match').validate(function (value, next) {

@@ -7,7 +7,7 @@ var User = require('../models/user');
 var now = new Date();
 var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-module.exports = function createSeason(done) {
+module.exports = function (done) {
   async.waterfall([function (next) {
     Season.findOne().where('finishAt').gt(today).exec(next);
   }, function (season, next) {
