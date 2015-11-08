@@ -79,7 +79,11 @@ domain.run(function () {
       email = credentials ? credentials.name : '';
       password = crypto.createHash('sha1').update((credentials ? credentials.pass : '') + nconf.get('PASSWORD_SALT')).digest('hex');
       query = User.findOne();
-      query.where('email').equals(email);
+      if ((/^[0-9a-fA-F]{24}$/).test(email)) {
+        query.where('_id').equals(email);
+      } else {
+        query.where('email').equals(email);
+      }
       query.where('password').equals(password);
       query.exec(next);
     }, function (user, next) {
