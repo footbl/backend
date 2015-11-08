@@ -13,19 +13,20 @@ module.exports = function (done) {
   }, function (challenges, next) {
     async.each(challenges, function (challenge, next) {
       if (!challenge.match.finished) return next();
+      var hasWinner = challenge.challenger.result === challenge.match.winner || challenge.challenged.result === challenge.match.winner;
       async.parallel([function (next) {
         challenge.update({'$set' : {'payed' : true}}, next);
       }, function (next) {
         challenge.challenger.user.update({
           '$inc' : {
-            'funds' : challenge.challenger.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0,
+            'funds' : hasWinner ? (challenge.challenger.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
             'stake' : -challenge.bid
           }
         }, next);
       }, function (next) {
         challenge.challenged.user.update({
           '$inc' : {
-            'funds' : challenge.challenged.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0,
+            'funds' : hasWinner ? (challenge.challenged.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
             'stake' : -challenge.bid
           }
         }, next);
