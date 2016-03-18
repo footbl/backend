@@ -37,9 +37,11 @@ router
 router
 .route('/users')
 .get(function (request, response, next) {
-  if (!request.session) throw new Error('invalid session');
   async.waterfall([function (next) {
-    User.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+    var query = User.find().skip((request.query.page || 0) * 20).limit(20);
+    if (request.query.filterByEmail) query.where('email').equals(request.query.filterByEmail);
+    if (request.query.filterByUsername) query.where('username').equals(request.query.filterByUsername);
+    query.exec(next);
   }, function (users) {
     response.status(200).send(users);
   }], next);
@@ -216,7 +218,7 @@ router
 
 router.param('id', function (request, response, next, id) {
   async.waterfall([function (next) {
-    User.findOne().where('_id').equals(id).exec(next);
+    User.findOne().where('_id').equals((id === 'me' && request.session) ? request.session._id  : id).exec(next);
   }, function (user, next) {
     request.user = user;
     next(!user ? new Error('not found') : null);

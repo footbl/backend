@@ -15,5 +15,7 @@ coverage.html
 npm-debug.log
 newrelic_agent.log
 node_modules/
+mongod
 .idea/
 docs/
+data/

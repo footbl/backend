@@ -37,19 +37,11 @@ describe('user', function () {
   describe('list', function () {
     beforeEach(User.remove.bind(User, {'_id' : {'$nin' : ['563decb2a6269cb39236de97', '563decb7a6269cb39236de98']}}));
 
-    describe('without valid credentials', function () {
-      it('should raise error', function (done) {
-        app.get('/users').set('authorization', 'Basic ' + new Buffer('invalid@footbl.co:1234').toString('base64')).expect(401).end(done)
-      });
-    });
-
-    describe('with credentials', function () {
-      it('should list one user', function (done) {
-        app.get('/users').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
-          response.body.should.be.instanceOf(Array);
-          response.body.should.have.lengthOf(2);
-        }).end(done)
-      });
+    it('should list one user', function (done) {
+      app.get('/users').set('authorization', 'Basic ' + new Buffer('u0@footbl.co:1234').toString('base64')).expect(200).expect(function (response) {
+        response.body.should.be.instanceOf(Array);
+        response.body.should.have.lengthOf(2);
+      }).end(done)
     });
   });
 
