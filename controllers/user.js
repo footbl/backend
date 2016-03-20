@@ -42,6 +42,7 @@ router
     if (request.query.filterByEmail) query.where('email').equals(request.query.filterByEmail);
     if (request.query.filterByUsername) query.where('username').equals(request.query.filterByUsername);
     if (request.query.filterByName) query.where('name').equals(request.query.filterByName);
+    if (request.query.filterByCountry) query.where('country').equals(request.query.filterByCountry);
     query.exec(next);
   }, function (users) {
     response.status(200).send(users);
