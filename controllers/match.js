@@ -17,7 +17,7 @@ router
 .route('/matches')
 .get(function (request, response, next) {
   async.waterfall([function (next) {
-    var query = Match.find().skip((request.query.page || 0) * 20).limit(20);
+    var query = Match.find().skip((request.query.page || 0) * 20).limit(20).sort({'date' : -1});
     if (request.query.filterByChampionship) query.where('championship').equals(request.query.filterByChampionship);
     if (request.query.filterByRound) query.where('round').equals(request.query.filterByRound);
     query.exec(next);
