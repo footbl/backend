@@ -41,6 +41,7 @@ router
     var query = User.find().skip((request.query.page || 0) * 20).limit(20);
     if (request.query.filterByEmail) query.where('email').equals(request.query.filterByEmail);
     if (request.query.filterByUsername) query.where('username').equals(request.query.filterByUsername);
+    if (request.query.filterByName) query.where('name').equals(request.query.filterByName);
     query.exec(next);
   }, function (users) {
     response.status(200).send(users);
