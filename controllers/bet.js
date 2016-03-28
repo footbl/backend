@@ -58,6 +58,7 @@ router
     var query = Bet.find().skip((request.query.page || 0) * 20).limit(20);
     if (request.query.filterByMatch) query.where('match').equals(request.query.filterByMatch);
     if (request.query.filterByUser) query.where('user').equals(request.query.filterByUser);
+    if (request.query.filterByNotEmpty) query.where('bid').ne(0);
     query.exec(next);
   }, function (bets) {
     response.status(200).send(bets);
