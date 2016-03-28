@@ -43,6 +43,7 @@ router
     if (request.query.filterByUsername) query.where('username').equals(request.query.filterByUsername);
     if (request.query.filterByName) query.where('name').equals(request.query.filterByName);
     if (request.query.filterByCountry) query.where('country').equals(request.query.filterByCountry);
+    if (request.query.filterByFeatured) query.where('featured').equals(true);
     query.exec(next);
   }, function (users) {
     response.status(200).send(users);
