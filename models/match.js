@@ -99,6 +99,7 @@ schema.plugin(require('mongoose-json-select'), {
 });
 
 schema.virtual('winner').get(function () {
+  if (!this.finished) return null;
   if (this.result.guest > this.result.host) return 'guest';
   if (this.result.guest < this.result.host) return 'host';
   return 'draw';
