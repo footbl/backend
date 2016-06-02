@@ -28,9 +28,10 @@ var schema = new mongoose.Schema({
     }
   },
   'match'      : {
-    'type'     : mongoose.Schema.Types.ObjectId,
-    'ref'      : 'Match',
-    'required' : true
+    'type'         : mongoose.Schema.Types.ObjectId,
+    'ref'          : 'Match',
+    'required'     : true,
+    'autopopulate' : true
   },
   'bid'        : {
     'type'     : Number,
