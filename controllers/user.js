@@ -19,7 +19,7 @@ router
     var password = require('crypto').createHash('sha1').update(request.body.password + require('nconf').get('PASSWORD_SALT')).digest('hex');
     var user = new User();
     user.password = request.body.password ? password : null;
-    user.country = request.body.country ? request.body.country : 'Brazil';
+    user.country = request.body.country ? request.body.country : 'BR';
     user.active = true;
     user.save(next);
   }, function (user) {
