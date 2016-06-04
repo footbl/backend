@@ -41,13 +41,6 @@ schema.statics.giveTrophy = function (user, trophy, level, next) {
   }, {
     'upsert' : true
   }, next);
-}
-
-schema.statics.walletLevel = function (user, next) {
-  async.each([150, 200, 500, 1000, 5000, 10000], function (level, next) {
-    if (user.funds < level) return next();
-    this.giveTrophy(user, 'WALLET', level, next);
-  }, next);
 };
 
 module.exports = mongoose.model('Badge', schema);

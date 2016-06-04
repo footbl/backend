@@ -130,7 +130,10 @@ schema.pre('save', function (next) {
 });
 
 schema.post('save', function () {
-  require('./badge').walletLevel(this);
+  async.each([150, 200, 500, 1000, 5000, 10000], function (level, next) {
+    if (this.funds < level) return next();
+    require('./badge').giveTrophy(this, 'WALLET', level, next);
+  }.bind(this));
 });
 
 module.exports = mongoose.model('User', schema);
