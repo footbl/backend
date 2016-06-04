@@ -8,6 +8,7 @@ var Badge = require('../models/badge');
  * @api {GET} /badges List all badges.
  * @apiName list
  * @apiGroup Badge
+ * @apiUse defaultPaging
  * 
  * @apiParam {ObjectId} filterByUser
  */

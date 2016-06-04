@@ -45,7 +45,6 @@ router
  * @apiGroup Bet
  * @apiUse defaultHeaders
  * @apiUse defaultPaging
- * @apiUse defaultPaging
  *
  * @apiParam {ObjectId} filterByMatch
  * @apiParam {ObjectId} filterByUser
