@@ -19,15 +19,17 @@ module.exports = function (done) {
       }, function (next) {
         challenge.challenger.user.update({
           '$inc' : {
-            'funds' : hasWinner ? (challenge.challenger.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
-            'stake' : -challenge.bid
+            'experience' : hasWinner ? (challenge.challenger.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
+            'funds'      : hasWinner ? (challenge.challenger.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
+            'stake'      : -challenge.bid
           }
         }, next);
       }, function (next) {
         challenge.challenged.user.update({
           '$inc' : {
-            'funds' : hasWinner ? (challenge.challenged.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
-            'stake' : -challenge.bid
+            'experience' : hasWinner ? (challenge.challenged.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
+            'funds'      : hasWinner ? (challenge.challenged.result === challenge.match.winner ? challenge.bid * challenge.match.reward : 0) : challenge.bid,
+            'stake'      : -challenge.bid
           }
         }, next);
       }], next);

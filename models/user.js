@@ -74,6 +74,10 @@ var schema = new mongoose.Schema({
     'stake' : Number,
     'funds' : Number
   }],
+  'experience'      : {
+    'type'    : Number,
+    'default' : 0
+  },
   'starred'         : [{
     'type'     : mongoose.Schema.Types.ObjectId,
     'ref'      : 'User',
@@ -107,6 +111,7 @@ schema.plugin(require('mongoose-json-select'), {
   'stake'           : 1,
   'funds'           : 1,
   'history'         : 1,
+  'experience'      : 1,
   'starred'         : 0
 });
 

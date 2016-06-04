@@ -18,8 +18,9 @@ module.exports = function (done) {
       }, function (next) {
         bet.user.update({
           '$inc' : {
-            'funds' : bet.result === bet.match.winner ? bet.bid * bet.match.reward : 0,
-            'stake' : -bet.bid
+            'experience' : bet.result === bet.match.winner ? bet.bid * bet.match.reward : 0,
+            'funds'      : bet.result === bet.match.winner ? bet.bid * bet.match.reward : 0,
+            'stake'      : -bet.bid
           }
         }, next);
       }], next);
