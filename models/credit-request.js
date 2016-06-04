@@ -48,4 +48,13 @@ schema.path('value').validate(function (value, next) {
   }.bind(this));
 }, 'insufficient funds');
 
+schema.pre('save', function (next) {
+  require('./badge').giveTrophy(this.creditedUser, 'WALLET', 'BEGGAR', next);
+});
+
+schema.pre('save', function (next) {
+  if (!this.payed) return next();
+  require('./badge').giveTrophy(this.chargedUser, 'WALLET', 'GIVER', next);
+});
+
 module.exports = mongoose.model('CreditRequest', schema);

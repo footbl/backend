@@ -129,4 +129,8 @@ schema.pre('save', function (next) {
   }.bind(this)], next);
 });
 
+schema.post('save', function () {
+  require('./badge').walletLevel(this);
+});
+
 module.exports = mongoose.model('User', schema);

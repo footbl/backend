@@ -131,9 +131,10 @@ router
   if (!request.session) throw new Error('invalid session');
   if (request.session.id !== request.user.id) throw new Error('invalid method');
   async.waterfall([function (next) {
+    var Badge = require('../model/badge')
     var user = request.user;
     user.funds = 100;
-    user.save(next);
+    async.parallel([user.save.bind(user), Badge.giveTrophy.bind({}, user, 'WALLET', 'RESET')]);
   }, function () {
     response.status(200).end();
   }], next);
