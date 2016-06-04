@@ -96,6 +96,7 @@ domain.run(function () {
     response.status(200).send({'version' : nconf.get('VERSION')});
   });
 
+  app.use(require('./controllers/badge'));
   app.use(require('./controllers/bet'));
   app.use(require('./controllers/championship'));
   app.use(require('./controllers/challenge'));
