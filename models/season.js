@@ -3,6 +3,12 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var schema = new mongoose.Schema({
+  'title'    : {
+    'type' : String
+  },
+  'image'    : {
+    'type' : String
+  },
   'sponsor'  : {
     'type' : String
   },
@@ -26,6 +32,8 @@ var schema = new mongoose.Schema({
 schema.plugin(require('mongoose-autopopulate'));
 schema.plugin(require('mongoose-json-select'), {
   '_id'      : 1,
+  'title'    : 1,
+  'image'    : 1,
   'sponsor'  : 1,
   'gift'     : 1,
   'finishAt' : 1,
