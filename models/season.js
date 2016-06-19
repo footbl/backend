@@ -11,6 +11,9 @@ var schema = new mongoose.Schema({
   },
   'finishAt' : {
     'type' : Date
+  },
+  'startAt'  : {
+    'type' : Date
   }
 }, {
   'collection' : 'seasons',
@@ -25,7 +28,8 @@ schema.plugin(require('mongoose-json-select'), {
   '_id'      : 1,
   'sponsor'  : 1,
   'gift'     : 1,
-  'finishAt' : 1
+  'finishAt' : 1,
+  'startAt'  : 1
 });
 
 module.exports = mongoose.model('Season', schema);

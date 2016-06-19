@@ -13,6 +13,7 @@ module.exports = function (done) {
   }, function (season, next) {
     if (season) done();
     season = new Season();
+    season.startAt = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     season.finishAt = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
     season.save(next);
   }, function (season, _, next) {
