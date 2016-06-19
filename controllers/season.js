@@ -14,7 +14,7 @@ router
 .route('/seasons')
 .get(function (request, response, next) {
   async.waterfall([function (next) {
-    Season.find().skip((request.query.page || 0) * 20).limit(20).exec(next);
+    Season.find().skip((request.query.page || 0) * 20).limit(20).sort({'finishAt' : -1}).exec(next);
   }, function (seasons) {
     response.status(200).send(seasons);
   }], next);
